@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Standalone Extender)
+nameProper: PapyrusUtil SE - Modders Scripting Utility Functions
+nameShort: PapU
+indexedVersion: "4.6"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/13048
+nexusIndexedFileId: 462773
+gitRepo: https://github.com/eeveelo/PapyrusUtil # TENTATIVE - This may not be the correct repo but it sure look right to me

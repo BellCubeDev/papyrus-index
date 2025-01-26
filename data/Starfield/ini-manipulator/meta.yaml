@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Standalone Extender)
+nameProper: Papyrus Ini Manipulator
+nameShort: INI
+indexedVersion: "1.0.1"
+nexusPage: https://www.nexusmods.com/starfield/mods/10704
+nexusIndexedFileId: 47503
+gitRepo: https://github.com/Meridiano/StarfieldDLL/tree/main/PapyrusIniManipulator

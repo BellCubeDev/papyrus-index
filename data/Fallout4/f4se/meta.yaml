@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE
+indexedVersion: "0.7.2"
+nameProper: Fallout 4 Script Extender
+nameShort: F4SE
+silverlockPage: https://f4se.silverlock.org/
+nexusPage: https://www.nexusmods.com/fallout4/mods/42147
+nexusIndexedFileId: 316287

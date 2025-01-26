@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Incidental Extender)
+nameProper: Complete Alchemy and Cooking Overhaul
+nameShort: CACO
+indexedVersion: "2.1.5"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/19924
+nexusIndexedFileId: 496826
+gitRepo: null
+allowedScripts:
+  - DP_Extender
+  - ExReplaceATKDataScript
+  - MagExtend

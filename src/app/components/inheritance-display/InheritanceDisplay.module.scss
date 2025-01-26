@@ -1,0 +1,77 @@
+@use '../../vars.scss' as *;
+
+.extendedByNone {
+    color: #bbb
+}
+
+.table {
+    text-align: center;
+
+    width: 100%;
+    padding: .75em;
+    border-radius: .5em;
+    background: #333;
+    margin: .5em 0;
+
+    &--root-table {
+        padding: 2em;
+        border-radius: 1em;
+        margin: 1em 0;
+        --table-background-1: #242424;
+        --table-background-2: #1a1a1a;
+    }
+
+    //border-collapse:collapse;
+
+    > thead {
+        background: #000;
+        > tr {
+            > th {
+                padding: 1em;
+            }
+        }
+    }
+    > tbody > tr {
+        background: var(--table-background-1);
+
+        &:nth-child(odd) {
+            background: var(--table-background-2);
+        }
+
+        > td {
+            padding: .5em 1em;
+
+            --table-background-1: #1a1a1a;
+            --table-background-2: #242424;
+
+            height: 100%;
+
+            &:first-child > div {
+                height: 100%;
+                max-height: css-max(3em, calc(100% - 6em));
+                > span {
+                    position: sticky;
+                    height: 1lh;
+                    display: block;
+                    padding: 0 1em;
+                    //will-change: transform;
+
+                    // Fallback positioning in case lh is not supported
+                    bottom: css-max(1em, calc(50% - 4em));
+                    top: css-max(1em, calc(50% - 4em));
+
+                    bottom: css-max(1em, calc(50% - .5lh));
+                    top: css-max(1em, calc(50% - .5lh));
+                }
+            }
+        }
+
+        &:nth-child(odd) {
+            > td {
+                --table-background-1: #242424;
+                --table-background-2: #1a1a1a;
+            }
+        }
+
+    }
+}

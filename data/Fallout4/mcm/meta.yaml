@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: Standalone
+nameProper: Mod Configuration Menu
+nameShort: MCM
+indexedVersion: "1.39"
+nexusPage: https://www.nexusmods.com/fallout4/mods/21497
+nexusIndexedFileId: 172180
+gitRepo: https://github.com/Neanka/MCM_0.1_AS3

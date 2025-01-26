@@ -1,0 +1,153 @@
+@use './vars' as *;
+
+html, body {
+    overflow: hidden;
+    overflow-y: auto;
+    background: #09090b;
+    color: #ccc;
+
+    color-scheme: dark;
+
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+
+    line-height: 1.3;
+    letter-spacing: 0.007em;
+    word-spacing: 0.02em;
+
+    scroll-behavior: smooth;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    font-size: 18px;
+}
+
+* {
+    max-width: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html, body {
+        scroll-behavior: auto;
+    }
+}
+
+h1 {
+    color: #fff;
+}
+
+h2 {
+    color: #eee;
+}
+
+h3 {
+    color: #ddd;
+}
+
+p {
+    margin: .6em 0;
+}
+
+main, article {
+    > :first-child {
+        &h1, &h2, &h3, &h4, &h5, &h6 {
+            margin-top: 0;
+        }
+    }
+}
+
+:root {
+    --link-txt-color-noncurrent-normal: hsl(275, 100%, 68%);
+    --link-udl-color-noncurrent-normal: hsla(275deg, 100%, 40%, 0%);
+
+    --link-txt-color-noncurrent-hover: hsl(275deg, 100%, 80%);
+    --link-udl-color-noncurrent-hover: hsla(275deg, 100%, 60%, 90%);
+
+    --link-txt-color-current-normal: hsl(275deg, 100%, 85%);
+    --link-udl-color-current-normal: hsla(275deg, 100%, 70%, 0%);
+
+    --link-txt-color-current-hover: hsl(275deg, 100%, 95%);
+    --link-udl-color-current-hover: hsla(275deg, 100%, 70%, 90%);
+}
+
+a {
+    &, * {
+        transition-property: color, text-decoration-color;
+        transition-duration: 0.25s;
+        transition-timing-function: cubic-bezier(0.19, 0.01, 0.23, 0.73);
+
+        text-decoration: underline;
+        text-decoration-thickness: 0.1em;
+
+        color: var(--link-txt-color-noncurrent-normal);
+        text-decoration-color: var(--link-udl-color-noncurrent-normal);
+    }
+    &:hover {
+        &, * {
+            transition-duration: 0.4s;
+            transition-timing-function: cubic-bezier(0.13, 0.7, 0.52, 1);
+
+            color: var(--link-txt-color-noncurrent-hover);
+            text-decoration-color: var(--link-udl-color-noncurrent-hover);
+        }
+    }
+    &[aria-current="page"] {
+        &, * {
+            color: var(--link-txt-color-current-normal);
+            text-decoration-color: var(--link-udl-color-current-normal);
+        }
+        &:hover {
+            &, * {
+                color: var(--link-txt-color-current-hover);
+                text-decoration-color: var(--link-udl-color-current-hover);
+            }
+        }
+    }
+}
+
+pre, code {
+    color: #ddd;
+    font-family: var(--code-font);
+    font-weight: 600;
+    font-size: 0.9em;
+}
+
+code {
+    background: #1b1b1b;
+    padding: 0.3em 0.5em 0.2em;
+    border-radius: 0.3em;
+    position: relative;
+    line-height: 1.1;
+}
+
+pre {
+    border-radius: 8px;
+    padding: 1em;
+    margin: 1em 0;
+    overflow-x: auto;
+    max-height: 75vh;
+    overflow-y: auto;
+    line-height: 1.45;
+    background: #1b1b1b;
+    > code {
+        padding: 0;
+        background: #1b1b1b;
+        line-height: unset;
+    }
+    counter-reset: linenumber;
+
+    --tooltipBG: #111;
+}
+
+main {
+    padding: css-min(2vw, 32px) css-min(3vw, 48px) css-min(10vw, 64px);
+    max-width: css-clamp(10in, calc(90vw - css-min(3vw, 48px)), 100%);
+}
+
+article {
+    max-width: css-min(10in, 100%);
+    text-wrap: pretty;
+}

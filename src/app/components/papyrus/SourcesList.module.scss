@@ -1,0 +1,41 @@
+.sourcesList {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: baseline;
+
+    padding: 4px;
+    padding-left: 0;
+    margin: 0;
+
+    gap: 14px;
+    font-size: .8em;
+
+    --link-txt-color-noncurrent-normal: hsl(275deg, 70%, 90%);
+    --link-txt-color-noncurrent-hover: hsl(275deg, 100%, 100%);
+    --link-txt-color-current-normal: hsl(275deg, 100%, 90%);
+    --link-txt-color-current-hover: hsl(275deg, 100%, 100%);
+
+    > li {
+        display: contents;
+        > a {
+            list-style: none;
+            margin: 0;
+            padding: 0.4em 0.6em;
+            gap: 0.6em;
+
+            background-color: hsl(275, 59%, 32%);
+            transition: background-color 0.15s cubic-bezier(0.19, 0.01, 0.23, 0.73);
+
+            display: flex;
+            align-items: center;
+            > svg {
+                padding-bottom: 2px;
+            }
+        }
+    }
+
+    > a:hover > li {
+        background-color: #5f2b8a;
+    }
+}

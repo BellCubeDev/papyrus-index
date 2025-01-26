@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Incidental Extender)
+nameProper: DynDOLOD DLL
+nameShort: DynDOLOD
+indexedVersion: "3.00 Alpha-33"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/97720
+gitRepo: null
+nexusIndexedFileId: 550668

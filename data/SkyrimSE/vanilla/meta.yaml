@@ -1,0 +1,4 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: Vanilla
+indexedVersion: "1.6.1170.0"

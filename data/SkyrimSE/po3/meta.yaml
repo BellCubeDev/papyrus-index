@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Standalone Extender)
+nameProper: powerofthree's Papyrus Extender
+nameShort: PO3
+indexedVersion: "5.9.0"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/22854
+gitRepo: https://github.com/powerof3/PapyrusExtenderSSE
+nexusIndexedFileId: 553159

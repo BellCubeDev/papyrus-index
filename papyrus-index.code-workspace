@@ -1,0 +1,49 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"cSpell.customDictionaries": {
+			"brand": {
+				"name": "Papyrus Terminology",
+				"path": "${workspaceFolder}/.vscode/cspell/papyrus-terminology.cspell",
+				"addWords": true,
+				"scope": "workspace"
+			},
+			"extended": {
+				"name": "Extended English",
+				"path": "${workspaceFolder}/.vscode/cspell/extended-english.cspell",
+				"addWords": true,
+				"scope": "workspace"
+			},
+			"names": {
+				"name": "Names",
+				"path": "${workspaceFolder}/.vscode/cspell/names.cspell",
+				"addWords": true,
+				"scope": "workspace"
+			},
+			"acceptable-slang": {
+				"name": "Acceptable Slang",
+				"path": "${workspaceFolder}/.vscode/cspell/acceptable-slang.cspell",
+				"addWords": true,
+				"scope": "workspace"
+			},
+		},
+		"cSpell.ignorePaths": [
+			"package-lock.json",
+			"node_modules",
+			"vscode-extension",
+			".git/{info,lfs,logs,refs,objects}/**",
+			".git/{index,*refs,*HEAD}",
+			".vscode",
+			".vscode-insiders",
+			"*.psc",
+			"test.json",
+			"pnpm-lock.yaml"
+		],
+		"typescript.tsdk": "node_modules\\typescript\\lib",
+		"commentAnchors.workspace.excludeFiles": "**/{node_modules,.git,.idea,target,out,build,bin,obj,dist,vendor,src/external/xml.js}/**/*"
+	},
+}

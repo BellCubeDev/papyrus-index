@@ -1,0 +1,28 @@
+pre > code > [data-l] {
+    counter-incement: linenumber;
+    position: relative;
+    padding-left: 4em;
+    &::before {
+        display: inline-block;
+        width: 2em;
+        color: #444;
+        text-align: right;
+        padding-right: 1.5em;
+        user-select: none;
+
+        content: counter(linenumber);
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+    &::after {
+        display: inline-block;
+        content: ' ';
+        position: absolute;
+        top: -0.35em;
+        left: 3em;
+        width: 2px;
+        height: 170%;
+        background: #3a3a3a;
+    }
+}

@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Standalone Extender)
+nameProper: Lighthouse Papyrus Extender
+nameShort: LH
+indexedVersion: "1.13.0"
+nexusPage: https://www.nexusmods.com/fallout4/mods/71420
+nexusIndexedFileId: 172180
+gitRepo: https://github.com/GELUXRUM/LighthousePapyrusExtender

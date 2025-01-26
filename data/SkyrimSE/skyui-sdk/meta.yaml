@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: Standalone
+nameProper: SkyUI
+nameShort: SkyUI
+indexedVersion: "5.1"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/12604
+gitRepo: https://github.com/schlangster/skyui
+nexusIndexedFileId: null # https://github.com/schlangster/skyui/wiki#skyui-sdk links to https://drive.google.com/file/d/0B4iEH8ar3jtxbFlkVzZSVHN0alk/view?usp=sharing&resourcekey=0-bTFKQxbSl6Y_4-dZDHE0AQ

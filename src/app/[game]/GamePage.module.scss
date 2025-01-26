@@ -1,0 +1,43 @@
+.sourceGrid {
+    display: flex;
+    flex-direction: row;
+    gap: 32px;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+.source {
+    background-color: #17181a;
+    font-size: 1.25em;
+
+    padding: 32px;
+
+    min-width: 25%;
+
+    > .sourceTop {
+        color: #bbb;
+        font-size: 0.9em;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: nowrap;
+        gap: 24px;
+        > :nth-child(2) {
+            flex-grow: 1;
+        }
+        >:last-child {
+            font-size: 0.9em;
+        }
+    }
+
+    > .sourceBody {
+        margin-top: 16px;
+        color: #ddd;
+        font-size: 1em;
+
+        > h3 {
+            margin: 0;
+        }
+    }
+}

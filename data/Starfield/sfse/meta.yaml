@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE
+indexedVersion: "0.2.16"
+nameProper: Starfield Script Extender
+nameShort: SFSE
+silverlockPage: https://sfse.silverlock.org/
+nexusPage: https://www.nexusmods.com/starfield/mods/106
+nexusIndexedFileId: 47484

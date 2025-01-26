@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Standalone Extender)
+nameProper: JContainers
+nameShort: JCont
+indexedVersion: "4.1.13"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/16495
+gitRepo: https://github.com/ryobg/JContainers
+nexusIndexedFileId: 463765

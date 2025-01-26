@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Standalone Extender)
+nameProper: Papyrus Ini Manipulator
+nameShort: INI
+indexedVersion: "1.9.7"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/65634
+nexusIndexedFileId: 541531
+gitRepo: https://github.com/Meridiano/SkyrimDLL/tree/main/PapyrusIniManipulator

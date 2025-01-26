@@ -1,0 +1,18 @@
+.reference {
+    font-family: var(--code-font);
+    font-weight: 600;
+
+    color: hsl(60deg, 42%, 76%);
+
+    --link-txt-color-noncurrent-normal: hsl(60deg, 42%, 76%);
+    --link-udl-color-noncurrent-normal: hsl(60, 22%, 44%);
+
+    --link-txt-color-noncurrent-hover: hsl(0, 0%, 100%);
+    --link-udl-color-noncurrent-hover: hsla(60, 90%, 76%, 0.9);
+
+    --link-txt-color-current-normal: hsl(60deg, 42%, 76%);
+    --link-udl-color-current-normal: #0000;
+
+    --link-txt-color-current-hover: hsl(0, 0%, 100%);
+    --link-udl-color-current-hover: #0000;
+}

@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: Standalone
+nameProper: Yet Another Soul Trap Manager
+nameShort: YASTM
+indexedVersion: "3.0.0"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/56144
+gitRepo: https://github.com/Seally/yastm
+nexusIndexedFileId: 367328

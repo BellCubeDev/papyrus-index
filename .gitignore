@@ -1,0 +1,60 @@
+src/nexus-api/GraphQL.ts
+src/nexus-api/GraphQL.ts.unused
+*.reference.*
+*.inspect.*
+.env
+tmp
+/test.*
+
+# Don't store the raw data JSON file since it's just regenerated every time
+/public/raw.json
+
+# Don't just store raw wiki data and whatever else we cache; that's not nice! (even if it is allowed)
+/cache
+
+
+# BSArch, used to download mods automatically
+/src/papyrus/scraping/download/BSArch.exe
+# Auto-Downloaded Mods
+/data/*/*/download
+
+
+
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env*.local
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+data/SourceMetadata.schema.json
+
+data/IgnoreYaml.schema.json

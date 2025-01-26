@@ -1,0 +1,80 @@
+name: Build Next.js App
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - prod
+  schedule: # every sunday at midnight (so we always have Function of the Day up to date and our wiki data is reasonably fresh)
+    - cron: '0 0 * * 0'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4 # uses version in package.json
+
+      - name: Use Node.js v22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Restore Custom Caches
+        id: cache-restore-custom
+        uses: actions/cache/restore@v4
+        with:
+          path: cache
+          key: does-not-exist-${{ github.run_id }}
+          restore-keys: custom-cache- # we don't need any specific info; we just store this data so we don't have to DOS the hosting server every time we build.
+
+      - name: Use Next.js Caching
+        uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('src/**/*.js', 'src/**/*.jsx', 'src/**/*.ts', 'src/**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
+
+      - name: Run Build Script
+        run: pnpm run build
+
+      - name: Create .nojekyll File
+        run: touch out/.nojekyll
+
+      - name: Save Custom Caches
+        id: cache-save-custom
+        uses: actions/cache/save@v4
+        with:
+          path: cache
+          key: custom-cache-${{ hashFiles('cache/**/index.json') }} # only need to save a new version of the cache if something updated
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: github-pages
+          path: out
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    name: Deploy to GitHub Pages
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: GitHub Pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: github-pages

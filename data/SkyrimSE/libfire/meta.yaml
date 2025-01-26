@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Standalone Extender)
+nameProper: LibFire
+nameShort: Fire
+indexedVersion: "1.0.8.2"
+nexusPage: null
+gitRepo: https://github.com/fireundubh/LibFire
+nexusIndexedFileId: null
+preferredModPage: https://letsplaywithfire.com/releases/file/libfire/

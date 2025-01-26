@@ -1,0 +1,39 @@
+@use '../../vars.scss' as *;
+
+@font-face {
+    font-family: 'Papyrus';
+    src: url('/papyrus.ttf') format('truetype');
+}
+
+.title {
+    margin: 1em 3em;
+    width: 25em;
+    line-height: 1.4;
+    > h1 {
+        text-align: center;
+        > .papyrus {
+            font-family: 'Papyrus', sans-serif;
+            font-size-adjust: 0.6;
+            position: relative;
+            top: 0.15em;
+            width: 50%;
+            margin-left: -.33em;
+            margin-bottom: .1em;
+            > * {
+                position: relative;
+                padding: 0 0.7em;
+                z-index: 4;
+                color: #fff;
+            }
+            > :not(:first-child) {
+                user-select: none;
+                pointer-events: none;
+                position: absolute;
+                left: 0;
+                filter: blur(.5em);
+                color: hsl($themehue, 100%, 70%, 85%);
+                z-index: 3;
+            }
+        }
+    }
+}

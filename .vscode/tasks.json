@@ -1,0 +1,37 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+            "label": "Dev Server",
+            "detail": "next dev",
+
+            "type": "npm",
+            "script": "dev",
+
+            "problemMatcher": [
+                {
+                    "background": {
+                        "activeOnStart": true,
+                        "beginsPattern": "\\s*▲ Next.js|○ Compiling",
+                        "endsPattern": "✓ Ready | GET .* 200 in \\d+ms"
+                    },
+                    "pattern": {
+                        "regexp": "9{2147483647}"
+                    }
+                }
+            ],
+
+            "isBackground": true,
+
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+
+            "icon": {
+                "id": "server-environment",
+                "color": "terminal.ansiCyan"
+            },
+        },
+	]
+}

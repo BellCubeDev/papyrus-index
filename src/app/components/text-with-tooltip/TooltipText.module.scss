@@ -1,0 +1,10 @@
+.textWithTooltip {
+    cursor: help;
+    text-decoration: underline dotted .18em hsla(0, 0%, 100%, 0.33);
+    text-decoration-skip-ink: none;
+    transition: text-decoration-color 0.3s;
+    transition-timing-function: ease-in-out;
+    &:hover {
+        text-decoration-color: hsla(0, 0%, 100%, 0.67);
+    }
+}

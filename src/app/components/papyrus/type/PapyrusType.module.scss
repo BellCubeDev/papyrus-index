@@ -1,0 +1,80 @@
+.type {
+    &--void {
+        background: none !important;
+        color: #686868;
+        font-style: italic;
+        padding-left: 0.4em !important;
+        padding-right: 0.6em !important;
+    }
+    &--primitive {
+        color: #569cd6;
+    }
+    &--array {
+        color: #eee;
+        //font-weight: 600;
+        position: relative;
+        top: -.1ch;
+        left: 0.1ch;
+        margin-right: .1ch;
+    }
+    &--var {
+        color: #569cd6;
+        font-weight: 400;
+    }
+    &--scriptInstance, &--struct {
+        color: #4fc9b1;
+
+        --link-txt-color-noncurrent-normal: hsl(168deg, 53%, 55%);
+        --link-udl-color-noncurrent-normal: hsla(168deg, 53%, 55%, 75%);
+
+        --link-txt-color-noncurrent-hover: hsl(158deg, 100%, 70%);
+        --link-udl-color-noncurrent-hover: hsla(158deg, 100%, 60%, 90%);
+
+        --link-txt-color-current-normal: hsl(168deg, 53%, 55%);
+        --link-udl-color-current-normal: hsla(207deg, 0%, 45%, 75%);
+
+        --link-txt-color-current-hover: hsl(158deg, 100%, 70%);
+        --link-udl-color-current-hover: hsla(207deg, 0%, 60%, 90%);
+    }
+}
+
+.valueName {
+
+}
+
+.value {
+    &--bool, &--none {
+        color: #569cd6;
+    }
+
+    &--int, &--float {
+        color: #b5cea8;
+    }
+
+    &--string {
+        color: #ce9178;
+    }
+
+    &--var {
+        color: #eee;
+    }
+}
+
+
+.typeWithName, .wrapableSection {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    gap: 1ch;
+    width: max-content;
+    background: #1b1b1b;
+    padding: 0.3em 0.5em 0.2em;
+    border-radius: 0.2em;
+    font-family: var(--code-font);
+    font-weight: 600;
+
+    .typeWithName {
+        padding: 0;
+    }
+}

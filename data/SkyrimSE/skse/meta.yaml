@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE
+nameProper: Skyrim Script Extender x64
+nameShort: SKSE
+indexedVersion: "2.2.6"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/30379
+silverlockPage: https://skse.silverlock.org/
+nexusIndexedFileId: 462377

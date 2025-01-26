@@ -1,0 +1,11 @@
+.variants {
+    display: flex;
+    margin-bottom: 1.5em;
+}
+
+.variant {
+    display: flex;
+    flex-direction: column;
+    gap: .5em;
+    flex-wrap: nowrap;
+}
