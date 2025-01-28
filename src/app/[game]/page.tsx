@@ -7,9 +7,10 @@ import { InheritanceDisplay } from "../components/inheritance-display/Inheritanc
 import { SourceIcon } from "../components/papyrus/SourceIcon";
 import { SourceName } from "../components/papyrus/SourceName";
 import { SourceTypeString } from "../components/papyrus/SourceTypeString";
-import { VariablePlate } from "../components/variable-plate";
 import styles from "./GamePage.module.scss";
 import { getGameFromParams, type GameRouteParams } from "./getGameFromParams";
+import { PapyrusTypeValueToken } from "../components/papyrus/type/PapyrusType";
+import { PapyrusScriptTypeArchetype } from "../../papyrus/data-structures/pure/type";
 
 
 export function generateStaticParams() {
@@ -42,7 +43,7 @@ export default async function GamePage({params}: {readonly params: Promise<GameR
                 <div className={styles.sourceTop}>
                     <SourceIcon sourceType={source.type} />
                     <span><SourceTypeString sourceType={source.type} /></span>
-                    <VariablePlate level={3} value={source.sourceIdentifier} />
+                    <PapyrusTypeValueToken game={game} type={{type: PapyrusScriptTypeArchetype.String, isArray: false, value: source.sourceIdentifier}} />
                 </div>
                 <div className={styles.sourceBody}>
                     <h3><SourceName source={source} long /></h3>

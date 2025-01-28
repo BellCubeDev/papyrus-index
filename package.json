@@ -9,7 +9,7 @@
     "start": "npx serve out",
     "lint": "next lint",
     "prepare": "typescript-json-schema './src/papyrus/data-structures/pure/scriptSource.ts' PapyrusScriptSourceMetadata --required --noExtraProps --strictNullChecks --skipLibCheck -o './data/SourceMetadata.schema.json' --include './src/papyrus/data-structures/pure/**' && typescript-json-schema './src/papyrus/data-structures/ignore-yaml.ts' IgnoreYaml --required --noExtraProps --strictNullChecks --skipLibCheck -o './data/IgnoreYaml.schema.json' --include './src/papyrus/data-structures/ignore-yaml.ts'",
-    "download-mods": "tsx  --env-file=./.env ./src/papyrus/scraping/download/DownloadNeededMods.ts",
+    "download-mods": "tsx  --env-file-if-exists=./.env ./src/papyrus/scraping/download/DownloadNeededMods.ts",
     "parse:reset": "rm -f ./public/raw.json",
     "parse": "pnpm run parse:reset && tsx ./src/papyrus/parsing/parse-or-load-all.ts",
     "parse:and-index": "pnpm run parse && tsx ./src/papyrus/indexing/index-all.ts",

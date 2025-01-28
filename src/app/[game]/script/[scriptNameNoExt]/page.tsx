@@ -10,6 +10,7 @@ import { SourceName } from "../../../components/papyrus/SourceName";
 import { getGameAndScriptFromParams, type ScriptRouteParams } from "./getGameAndScriptFromParams";
 import styles from './ScriptPage.module.scss';
 import { PapyrusTypeWithValue } from "../../../components/papyrus/type/PapyrusType";
+import { toLowerCase } from "../../../../utils/toLowerCase";
 
 export function generateStaticParams(): ScriptRouteParams[] {
     const params: [complexity: number, paramObj: ScriptRouteParams][] = [];
@@ -18,7 +19,7 @@ export function generateStaticParams(): ScriptRouteParams[] {
         for (const [scriptNameLowercase, scriptData] of Object.entries(gameData.scripts)) {
             params.push([
                 Object.keys(scriptData[AllSourcesCombined].functions).length + Object.keys(scriptData[AllSourcesCombined].propertyGroups).length + Object.keys(scriptData[AllSourcesCombined].events).length + Object.keys(scriptData[AllSourcesCombined].structs).length,
-                {game, scriptNameNoExt: scriptNameLowercase}
+                {game: toLowerCase(game), scriptNameNoExt: scriptNameLowercase}
             ]);
         }
     }
