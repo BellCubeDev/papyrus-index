@@ -69,8 +69,11 @@ jobs:
         id: cache-save-custom
         uses: actions/cache/save@v4
         with:
-          path: cache
-          key: custom-cache-${{ hashFiles('cache/**/index.json') }} # only need to save a new version of the cache if something updated
+          path: |
+            cache
+            src/papyrus/scraping/download/BSArch.exe
+            data/*/*/download
+          key: custom-cache-${{ hashFiles('cache/**/index.json', 'src/papyrus/scraping/download/BSArch.exe', 'data/*/*/download/.nexusFileId') }} # only need to save a new version of the cache if something updated
 
       - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
