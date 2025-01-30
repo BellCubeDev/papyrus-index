@@ -42,11 +42,17 @@ install_wine () {
     sudo dpkg --add-architecture i386
 
     printf "${NC}Getting repo key from WineHQ..."
-    wget -nc https://dl.winehq.org/wine-builds/winehq.key
+    if ! wget -nc https://dl.winehq.org/wine-builds/winehq.key; then
+        printf "${RED}Failed to download WineHQ key\n"
+        terminate
+    fi
     print_done
 
     printf "${NC}Adding keys..."
-    sudo apt-key add winehq.key
+    if ! sudo apt-key add winehq.key; then
+        printf "${RED}Failed to add WineHQ key\n"
+        terminate
+    fi
     print_done
 
     printf "${NC}Adding WineHQ repository to APT (bionic main)..."
