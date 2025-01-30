@@ -19,5 +19,10 @@ If you're familiar (or willing to get familiar) with the project structure and/o
 #### Git Message Style - gitmoji
 This repository makes use of gitmoji, an emoji-based commit message convention. The goal is to boil the purpose of a commit down to a single image, making it easier to quickly parse a commit's message. You can find out more about gitmoji [here](https://gitmoji.dev/).
 
+For example:
+> 🎨 Improve formatting of search results
+> 🔍 Add dynamic descriptions to function pages
+> 🐛 Fix struct member types not displaying tooltips when hovered
+
 ### Translation
 The Papyrus Index is not accepting localization contributions at this time.
