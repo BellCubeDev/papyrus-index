@@ -46,6 +46,5 @@ EndFunction
 
 
 Function Guard()
-    Debug.MessageBox("AhzMoreHud: Dom't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
+    Debug.MessageBox("AhzMoreHud: Don't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
 EndFunction
-

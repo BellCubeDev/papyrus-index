@@ -224,6 +224,5 @@ function ClearAll(string FileName) global native
 
 
 Function Guard()
-    Debug.MessageBox("JsonUtil: Dom't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
+    Debug.MessageBox("JsonUtil: Don't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
 EndFunction
-

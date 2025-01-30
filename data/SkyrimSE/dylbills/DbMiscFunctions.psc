@@ -1,4 +1,4 @@
-Scriptname DbMiscFunctions Hidden 
+Scriptname DbMiscFunctions Hidden
 
 ;/
 Function MoveToLocalOffset(ObjectReference RefToMove, ObjectReference CenterRef, Float Angle, Float Distance, float afZOffset = 0.0, bool abMatchRotation = true)
@@ -76,8 +76,8 @@ Int[] Function GetGameActorSoulLevels()
 String[] Function GetGameSoulLevelNames()
 Int Function GetActorSoulSize(Actor akActor)
 String Function GetActorSoulSizeString(Actor akActor, String sBlackSize = "Black")
-Bool Function ActorHasFormEquiped(Actor akActor, Form akForm) global 
-Bool function CanInteractWith(ObjectReference ref, bool checkAshPile = true) global 
+Bool Function ActorHasFormEquiped(Actor akActor, Form akForm) global
+Bool function CanInteractWith(ObjectReference ref, bool checkAshPile = true) global
 Bool Function IsActorNPC(Actor akActor)
 Bool Function IsActorMoving(Actor akActor)
 Form Function GetRandomFormFromRef(ObjectReference Ref, Int[] TypeArrayFilter = None, Formlist ListFilter = None, Bool TypeFilterHasType = true, Bool akListHasForm = true)
@@ -289,11 +289,11 @@ Function WriteJsonSaveAndLoadFunctionsToFile(String SourceFilePath, String Desti
     Bool GlobalVariablesToggle = true, Bool FloatsToggle = true, Bool StringsToggle = true, Bool IntsToggle = true, Bool BoolsToggle = true, \
     Bool GlobalVariableArraysToggle = true, Bool FloatArraysToggle = true, Bool StringArraysToggle = true, Bool IntArraysToggle = true, Bool BoolArraysToggle = true, \
     int Messages = 0, String ConfirmMessage = "Done Writing Json Functions", Bool UsePropertiesAsDefaults = True)
-    
-Function WriteDynamicArrayState(Int i)
-/; 
 
-;bool function IsIndexInBlockComment(string s, int index, string blockCommentStart = ";/", string blockCommentEnd = "/;") 
+Function WriteDynamicArrayState(Int i)
+/;
+
+;bool function IsIndexInBlockComment(string s, int index, string blockCommentStart = ";/", string blockCommentEnd = "/;")
 
 
 
@@ -304,9 +304,9 @@ Function WriteDynamicArrayState(Int i)
 ;If angle == 180, moves object behind centerRef by Distance ect.
 ;Example: MoveToLocalOffset(MyRef, Game.GetPlayer(), 90.0, 500.0) moves MyRef 500 units to the right of the player.
 ;No requirements
-Function MoveToLocalOffset(ObjectReference RefToMove, ObjectReference CenterRef, Float Angle, Float Distance, float afZOffset = 0.0, bool abMatchRotation = true) global  
+Function MoveToLocalOffset(ObjectReference RefToMove, ObjectReference CenterRef, Float Angle, Float Distance, float afZOffset = 0.0, bool abMatchRotation = true) global
     Guard()
-EndFunction  
+EndFunction
 
 ;PlaceAtMe but moves placed ref using MoveToLocalOffset function. PlaceAtMeRef is centerRef, new placed ref is RefToMove.
 ObjectReference Function PlaceAndMoveToLocalOffset(ObjectReference PlaceAtMeRef, Form akFormToPlace, int aiCount = 1, bool abForcePersist = false, bool abInitiallyDisabled = false, \
@@ -315,26 +315,26 @@ Float Angle = 0.0, Float Distance = 100.0, float afZOffset = 0.0, bool abMatchRo
 Endfunction
 
 ;Apply Havok Impulse from left / right angle + Z direction. No requirements.
-;Examples: 
-;ApplyHavokImpulseLocal(MyRef, 0, 5, 10) applies havok impulse so the ref flies forward and up 
-;ApplyHavokImpulseLocal(MyRef, 90, -5, 10) applies havok impulse so the ref flies to the right and down 
+;Examples:
+;ApplyHavokImpulseLocal(MyRef, 0, 5, 10) applies havok impulse so the ref flies forward and up
+;ApplyHavokImpulseLocal(MyRef, 90, -5, 10) applies havok impulse so the ref flies to the right and down
 Function ApplyHavokImpulseLocal(ObjectReference Ref, Float Angle, float afZ, Float afMagnitude) Global
     Guard()
-EndFunction 
+EndFunction
 
 ;Get the full Version Text displayed in the journal menu e.g "1.5.97.0.8 (SKSE64 2.0.20 rel 65)"
-;The Journal Menu system page must be open for this function to work. 
+;The Journal Menu system page must be open for this function to work.
 ;Use RegisterForMenu("Journal Menu") and the OnMenuOpen event to ensure the Journal Menu is open.
-;Or, if your mod has an MCM, this will work when the MCM Menu is open, so use OnConfigOpen in your MCM script. 
+;Or, if your mod has an MCM, this will work when the MCM Menu is open, so use OnConfigOpen in your MCM script.
 ;requires skse
 String Function GetSkyrimVersionFullString() Global
     Guard()
 EndFunction
 
 ;Get the Skyrim Version Text displayed in the journal menu, e.g "1.5.97"
-;The Journal Menu system page must be open for this function to work. 
+;The Journal Menu system page must be open for this function to work.
 ;Use RegisterForMenu("Journal Menu") and the OnMenuOpen event to ensure the Journal Menu is open.
-;Or, if your mod has an MCM, this will work when the MCM Menu is open, so use OnConfigOpen in your MCM script. 
+;Or, if your mod has an MCM, this will work when the MCM Menu is open, so use OnConfigOpen in your MCM script.
 ;requires skse
 String Function GetSkyrimVersion() Global
     Guard()
@@ -343,32 +343,32 @@ EndFunction
 ;requires skse
 String Function GetSKSEVersion() Global
     Guard()
-EndFunction 
+EndFunction
 
-;show or hide creation kit markers in Game 
+;show or hide creation kit markers in Game
 ;If ShowMarkers == true, shows them, otherwise hides them.
 ;If moveToRef == None (default), moves player to either whiterun or markarth fast travel markers.
 ;Must move player to new area after changing bShowMarkers ini so cells reload to display markers.
-;no requirements 
+;no requirements
 Bool Function ToggleCreationKitMarkers(Bool ShowMarkers = true, ObjectReference MoveToRef = none) Global
     Guard()
 EndFunction
 
-;create new xMarker ObjectReference 
+;create new xMarker ObjectReference
 ;if PlaceAtMeRef == none (default) places new marker at the player.
 ;no requirements
 ObjectReference Function CreateXMarkerRef(Bool PersistentRef = false, ObjectReference PlaceAtMeRef = none) Global
     Guard()
-EndFunction 
+EndFunction
 
-;unequip all items on actor with delay in between. 
+;unequip all items on actor with delay in between.
 ;requires skse and po3's papyrus extender
 Function UnequipAllItems(Actor akActor, bool abPreventEquip = false, bool abSilent = true, float delay = 0.1) Global
     Guard()
 EndFunction
 
 ;remove all items from ref which must be a container or actor to optional otherContainer
-;requires skse and papyrus extender and SSE 
+;requires skse and papyrus extender and SSE
 ;use Form[] Items = PO3_SKSEFunctions.AddAllInventoryItemsToArray(Ref, abNoEquipped, abNoFavorited, abNoQuestItem) for LE
 Function RemoveAllItems(ObjectReference Ref, ObjectReference otherContainer = none, bool abSilent = true, float delay = 0.01, \
                         bool abNoEquipped = false, bool abNoFavorited = false, bool abNoQuestItem = true) Global
@@ -376,7 +376,7 @@ Function RemoveAllItems(ObjectReference Ref, ObjectReference otherContainer = no
 EndFunction
 
 ;Drop all items from ref, Ref must be a container or actor.
-;If dropIndividual is true, drops multiple of the same item time individually so they don't stack. If false, items are dropped stacked. 
+;If dropIndividual is true, drops multiple of the same item time individually so they don't stack. If false, items are dropped stacked.
 ;Requires SKSE
 Function DropAllItems(ObjectReference Ref, bool dropIndividual = false, float delay = 0.01) Global
     Guard()
@@ -388,24 +388,24 @@ EndFunction
 ;Function DropAllItems_P03(ObjectReference Ref, bool noEquipped = true, bool noFavourited = false, bool noQuestItem = false, bool dropIndividual = false, float delay = 0.01) Global
 ;    Form[] Items = PO3_SKSEFunctions.AddAllItemsToArray(Ref, noEquipped, noFavourited, noQuestItem) ;for SE
 ;    Form[] Items = PO3_SKSEFunctions.AddAllInventoryItemsToArray(Ref, noEquipped, noFavourited, noQuestItem) ;for LE
-;    Int i = Items.length 
-;    
-;    If !dropIndividual 
-;        While i > 0 
+;    Int i = Items.length
+;
+;    If !dropIndividual
+;        While i > 0
 ;            i -= 1
 ;            Form akForm = Items[i]
-;            If akForm 
+;            If akForm
 ;                Ref.DropObject(akForm, ref.GetItemCount(akForm))
 ;                Utility.WaitMenuMode(delay)
-;            Endif 
+;            Endif
 ;        EndWhile
-;    Else 
-;         While i > 0 
+;    Else
+;         While i > 0
 ;            i -= 1
 ;            Form akForm = Items[i]
-;            If akForm 
+;            If akForm
 ;                DropIndividualItems(Ref, akForm, 0, delay)
-;            Endif 
+;            Endif
 ;         EndWhile
 ;    Endif
 ;EndFunction
@@ -418,7 +418,7 @@ Function DropIndividualItems(ObjectReference Ref, Form Item, int NumOfItems = 0,
 EndFunction
 
 Function MovePlayerTo(ObjectReference Ref)
-    
+
 EndFunction
 
 ;add shout to player if necessary and unlock all words of power.
@@ -432,7 +432,7 @@ Function UnlockEquippedShout() Global
     Guard()
 EndFunction
 
-;check if location or any of it's parents has the keyword 
+;check if location or any of it's parents has the keyword
 ;Requires Papyrus Extender && SKSE
 Bool Function LocationOrParentsHasKeyword(Location akLocation, Keyword akKeyword) global
     Guard()
@@ -460,29 +460,29 @@ Bool Function akFormHasKeywordString(Form akForm, String akString)  global
     Guard()
 EndFunction
 
-;If AllKeywords == false (default) returns true if the akForm has any keyword in the akList formlist. 
-;If allKeywords == true, only returns true if the akForm has all keywords in the akList. 
+;If AllKeywords == false (default) returns true if the akForm has any keyword in the akList formlist.
+;If allKeywords == true, only returns true if the akForm has all keywords in the akList.
 ;No requirements
-Bool Function FormHasKeywordInFormList(Form akForm, Formlist akList, Bool AllKeywords = False) Global 
+Bool Function FormHasKeywordInFormList(Form akForm, Formlist akList, Bool AllKeywords = False) Global
     Guard()
 EndFunction
 
-;If AllKeywords == false (default) returns true if the akForm has any keyword in the akList array. 
-;If allKeywords == true, only returns true if the akForm has all keywords in the akList. 
+;If AllKeywords == false (default) returns true if the akForm has any keyword in the akList array.
+;If allKeywords == true, only returns true if the akForm has all keywords in the akList.
 ;No requirements
 Bool Function FormHasKeywordInArray(Form akForm, Keyword[] akList, Bool AllKeywords = False) Global
     Guard()
 EndFunction
 
-;If AllKeywords == false (default) returns true if the akForm has any keyword in the StorageUtil Form list. 
-;If allKeywords == true, only returns true if the akForm has all keywords in the List. 
+;If AllKeywords == false (default) returns true if the akForm has any keyword in the StorageUtil Form list.
+;If allKeywords == true, only returns true if the akForm has all keywords in the List.
 ;Requires skse and PapyrusUtil
 Bool Function FormHasKeywordInStorageUtilList(Form akForm, Form ObjKey, String ListKeyName, Bool AllKeywords = False) Global
     Guard()
 EndFunction
 
-;If AllKeywords == false (default) returns true if the akForm has any keyword in the JsonUtil Form list. 
-;If allKeywords == true, only returns true if the akForm has all keywords in the List. 
+;If AllKeywords == false (default) returns true if the akForm has any keyword in the JsonUtil Form list.
+;If allKeywords == true, only returns true if the akForm has all keywords in the List.
 ;Requires skse and PapyrusUtil
 Bool Function FormHasKeywordInJsonUtilList(Form akForm, String JsonFilePath, String ListKeyName, Bool AllKeywords = False) Global
     Guard()
@@ -491,11 +491,11 @@ EndFunction
 ;Requires SKSE
 Bool Function IsNumber(String akString, Bool AllowForDecimals = True, Bool AllowNegativeNumbers = True) global
     Guard()
-EndFunction     
+EndFunction
 
 Int Function ClampInt(Int i, Int Min, Int Max) Global
     Guard()
-EndFunction 
+EndFunction
 
 Float Function ClampFloat(Float f, Float Min, Float Max) Global
     Guard()
@@ -505,12 +505,12 @@ Bool Function IsIntInRange(Int I, Int Min, Int Max) Global
     Guard()
 EndFunction
 
-Bool Function IsFloatInRange(Float f, Float Min, Float Max) Global 
+Bool Function IsFloatInRange(Float f, Float Min, Float Max) Global
     Guard()
 EndFunction
 
 ;is the index in string s between the StartKey and EndKey.
-;Example: 
+;Example:
 ;String s = "() (Some String)"
 ;Bool b = DbMiscFunctions.IsStringIndexBetween(s, 4, "(", ")") ;true
 ;Bool bb = DbMiscFunctions.IsStringIndexBetween(s, 2, "(", ")") ;false
@@ -529,17 +529,17 @@ String function ConvertIntToHex(int i, int minDigits = 8) Global
 EndFunction
 
 ;requires skse
-;If TreatAsNegative == true, returns hex as negative number. 
-;Example: 
-;ConvertHexToInt("FD4", true) returns -44 
-;ConvertHexToInt("FD4", false) returns 4052 
-;Note that if the hex is 8 digits in length (such as form IDs) and starts with "F" it is always treated as negative natively by papyrus. 
+;If TreatAsNegative == true, returns hex as negative number.
+;Example:
+;ConvertHexToInt("FD4", true) returns -44
+;ConvertHexToInt("FD4", false) returns 4052
+;Note that if the hex is 8 digits in length (such as form IDs) and starts with "F" it is always treated as negative natively by papyrus.
 Int function ConvertHexToInt(string hex, Bool TreatAsNegative = false) global
     Guard()
 Endfunction
 
 ;For convenience. Returns the akForm ID as a hex string.
-;requires SKSE. 
+;requires SKSE.
 String Function GetFormIDHex(Form akForm) Global
     Guard()
 EndFunction
@@ -551,12 +551,12 @@ Int Function IntPow(Int x, Int y) Global
 EndFunction
 
 ;returns floor of the square root of i.
-Int Function IntSqrt(Int i) Global 
+Int Function IntSqrt(Int i) Global
     Guard()
 EndFunction
 
 ;returns absolute value of i.
-Int Function IntAbs(Int i) Global 
+Int Function IntAbs(Int i) Global
     Guard()
 EndFunction
 
@@ -575,25 +575,25 @@ float function RoundAsFloat(Float f) Global
 Endfunction
 
 ;rounds the float down to the specified decimal places
-;Example: 
-;RoundDownToDec(1.2345, 2) returns 1.23 
+;Example:
+;RoundDownToDec(1.2345, 2) returns 1.23
 ;RoundDownToDec(4.5678, 3) return 4.567
-;not 100% accurate, limited by string as float conversion. 
+;not 100% accurate, limited by string as float conversion.
 ;Example: RoundDownToDec(100.78945, 2) returns 100.779999999
-Float Function RoundDownToDec(Float f, Int DecimalPlaces = 0) Global 
+Float Function RoundDownToDec(Float f, Int DecimalPlaces = 0) Global
     Guard()
-Endfunction 
+Endfunction
 
 ;Same as RoundDownToDec but returns string instead of float. In this case RoundDownToDecString(100.78945, 2) returns "100.78"
-String Function RoundDownToDecString(Float f, Int DecimalPlaces = 0) Global 
+String Function RoundDownToDecString(Float f, Int DecimalPlaces = 0) Global
     Guard()
-Endfunction 
+Endfunction
 
 ;requires skse
 Int Function CountDecimalPlaces(Float f) Global
     Guard()
 EndFunction
-    
+
 ;requires SKSE. Splits string by divider and returns as float array.
 Float[] Function SplitAsFloat(String s, int Max = -1, String Divider = "||") Global
     Guard()
@@ -606,7 +606,7 @@ EndFunction
 
 ;Sort========================================================================================
 ;if Direct == true, sorts the passed in akArray directly
-;if Direct == false, Passed in array is unaffected and returns new array (that is akArray sorted). 
+;if Direct == false, Passed in array is unaffected and returns new array (that is akArray sorted).
 ;if Direct == false requires skse to create the new array.
 String[] Function SortStringArray(String[] akArray, Bool Ascending = true, Bool Direct = true) Global
     Guard()
@@ -633,36 +633,36 @@ String Function JoinIntArray(Int[] akArray, String Divider = "||", Bool IgnoreDu
     Guard()
 EndFunction
 
-;These print functions are for convenience 
+;These print functions are for convenience
 ;Allows to trace / messagebox / notification / write to file multiple strings (up to 20) seperated by the divider
 ;Normally you would have to write, for instance:
 ;Debug.MessageBox("Player stats: " + PlayerRef.GetAv("OneHanded") + " " + PlayerRef.GetAv("OneHanded") + " " + PlayerRef.GetAv("Marksman")) ;ect...
-;With PrintM you can write 
+;With PrintM you can write
 ;DbMiscFunctions.PrintM("Player stats:", PlayerRef.GetAv("OneHanded"), PlayerRef.GetAv("OneHanded"), PlayerRef.GetAv("Marksman")) ;ect...
 
 ;Trace
-;No requirements. 
+;No requirements.
 Function PrintT(String s1 = "", String s2 = "", String s3 = "", String s4 = "", String s5 = "", String s6 = "", String s7 = "", String s8 = "", String s9 = "", String s10 = "", \
 String s11 = "", String s12 = "", String s13 = "", String s14 = "", String s15 = "", String s16 = "", String s17 = "", String s18 = "", String s19 = "", String s20 = "", String Divider = " ", int aiSeverity = 0) Global
     Guard()
 Endfunction
 
 ;TraceUser
-;No requirements. 
+;No requirements.
 Function PrintTU(string asUserLog = "", String s1 = "", String s2 = "", String s3 = "", String s4 = "", String s5 = "", String s6 = "", String s7 = "", String s8 = "", String s9 = "", String s10 = "", \
 String s11 = "", String s12 = "", String s13 = "", String s14 = "", String s15 = "", String s16 = "", String s17 = "", String s18 = "", String s19 = "", String s20 = "", String Divider = " ", int aiSeverity = 0) Global
     Guard()
 Endfunction
 
 ;Notification
-;No requirements. 
+;No requirements.
 Function PrintN(String s1 = "", String s2 = "", String s3 = "", String s4 = "", String s5 = "", String s6 = "", String s7 = "", String s8 = "", String s9 = "", String s10 = "", \
 String s11 = "", String s12 = "", String s13 = "", String s14 = "", String s15 = "", String s16 = "", String s17 = "", String s18 = "", String s19 = "", String s20 = "", String Divider = " ") Global
     Guard()
 Endfunction
 
 ;MessageBox
-;No requirements. 
+;No requirements.
 Function PrintM(String s1 = "", String s2 = "", String s3 = "", String s4 = "", String s5 = "", String s6 = "", String s7 = "", String s8 = "", String s9 = "", String s10 = "", \
 String s11 = "", String s12 = "", String s13 = "", String s14 = "", String s15 = "", String s16 = "", String s17 = "", String s18 = "", String s19 = "", String s20 = "", String Divider = " ") Global
     Guard()
@@ -683,7 +683,7 @@ String s11 = "", String s12 = "", String s13 = "", String s14 = "", String s15 =
 Endfunction
 
 ;Join up to 20 strings into a single string seperated by the Divider
-;Stops joining at the first empty "" string it finds. 
+;Stops joining at the first empty "" string it finds.
 ;no requirements
 String Function JoinStrings(String s1 = "", String s2 = "", String s3 = "", String s4 = "", String s5 = "", String s6 = "", String s7 = "", String s8 = "", String s9 = "", String s10 = "", \
 String s11 = "", String s12 = "", String s13 = "", String s14 = "", String s15 = "", String s16 = "", String s17 = "", String s18 = "", String s19 = "", String s20 = "", String Divider = " ") Global
@@ -697,7 +697,7 @@ String s11 = "", String s12 = "", String s13 = "", String s14 = "", String s15 =
     Guard()
 EndFunction
 
-;get the current screen resolution. 
+;get the current screen resolution.
 ;[0] = X or width
 ;[1] = Y or height
 ;requires skse
@@ -719,69 +719,69 @@ EndFunction
 
 ;Get the actor soul size. 0 = petty, 1 = lesser, 2 = Common, 3 = Greater, 4 = Grand, 5 = Black (for NPCs)
 ;No requirements
-Int Function GetActorSoulSize(Actor akActor) Global 
+Int Function GetActorSoulSize(Actor akActor) Global
     Guard()
-EndFunction 
+EndFunction
 
 ;Get actor soul size as string.
 ;no requirements
 String Function GetActorSoulSizeString(Actor akActor, String sBlackSize = "Black") Global
     Guard()
-EndFunction 
+EndFunction
 
 ;the IsEquipped function doesn't work for spells, hence the need for this function.
 ;no requirements
-Bool Function ActorHasFormEquiped(Actor akActor, Form akForm) global 
+Bool Function ActorHasFormEquiped(Actor akActor, Form akForm) global
     Guard()
 EndFunction
 
 ;requires skse and DbSkseFunctions.psc version 6.7 or greater
-Bool function CanInteractWith(ObjectReference ref, bool checkAshPile = true) global 
+Bool function CanInteractWith(ObjectReference ref, bool checkAshPile = true) global
     Guard()
 EndFunction
 
-;Is the akActor an NPC? 
+;Is the akActor an NPC?
 ;no requirements
 Bool Function IsActorNPC(Actor akActor) Global
     Guard()
 EndFunction
 
-;Returns true if akActor is moving. 
+;Returns true if akActor is moving.
 ;I've only tested on NPC humanoid actors. Not sure if it works for other types.
 ;No requirements
-Bool Function IsActorMoving(Actor akActor) Global 
+Bool Function IsActorMoving(Actor akActor) Global
     Guard()
 EndFunction
 
 
 
-;Get random form from Ref's inventory.  
+;Get random form from Ref's inventory.
 ;If TypeArrayFilter != none, filters for form types in TypeArrayFilter. If TypeFilterHasType == true (default) only allows for types in the TypeArrayFilter. If false, only allows for types NOT in the TypeArrayFilter.
-;If ListFilter != none, filters for base forms in the ListFilter formlist. If akListHasForm == true (default) only allows for forms in the ListFilter formlist. If false, only allows for forms NOT in the formlist. 
+;If ListFilter != none, filters for base forms in the ListFilter formlist. If akListHasForm == true (default) only allows for forms in the ListFilter formlist. If false, only allows for forms NOT in the formlist.
 ;Requires SKSE
 Form Function GetRandomFormFromRef(ObjectReference Ref, Int[] TypeArrayFilter = None, Formlist ListFilter = None, Bool TypeFilterHasType = true, Bool akListHasForm = true) Global
     Guard()
 EndFunction
 
-;Get random form from Ref's inventory.  
+;Get random form from Ref's inventory.
 ;If TypeArrayFilter != none, filters for form types in TypeArrayFilter. If TypeFilterHasType == true (default) only allows for types in the TypeArrayFilter. If false, only allows for types NOT in the TypeArrayFilter.
-;If ListFilter != none, filters for base forms in the ListFilter form array. If akListHasForm == true (default) only allows for forms in the ListFilter form array. If false, only allows for forms NOT in the form array. 
+;If ListFilter != none, filters for base forms in the ListFilter form array. If akListHasForm == true (default) only allows for forms in the ListFilter form array. If false, only allows for forms NOT in the form array.
 ;Requires SKSE
 Form Function GetRandomFormFromRefA(ObjectReference Ref, Int[] TypeArrayFilter = None, Form[] ListFilter = None, Bool TypeFilterHasType = true, Bool akListHasForm = true) Global
     Guard()
-EndFunction 
+EndFunction
 
-;Get random form from Ref's inventory.  
+;Get random form from Ref's inventory.
 ;If TypeArrayFilter != none, filters for form types in TypeArrayFilter. If TypeFilterHasType == true (default) only allows for types in the TypeArrayFilter. If false, only allows for types NOT in the TypeArrayFilter.
-;If ListKeyName != none, filters for base forms in the StorageUtil Formlist defined by the ObjKey and ListKeyName. If akListHasForm == true (default) only allows for forms in the StorageUtil Formlist. If false, only allows for forms NOT in the StorageUtil Formlist. 
+;If ListKeyName != none, filters for base forms in the StorageUtil Formlist defined by the ObjKey and ListKeyName. If akListHasForm == true (default) only allows for forms in the StorageUtil Formlist. If false, only allows for forms NOT in the StorageUtil Formlist.
 ;Requires SKSE and PapyrusUtil
 Form Function GetRandomFormFromRefS(ObjectReference Ref, Int[] TypeArrayFilter = None, Form ObjKey = None, String ListKeyName = "", Bool TypeFilterHasType = true, Bool akListHasForm = true) Global
     Guard()
 EndFunction
 
-;Get random form from Ref's inventory.  
+;Get random form from Ref's inventory.
 ;If TypeArrayFilter != none, filters for form types in TypeArrayFilter. If TypeFilterHasType == true (default) only allows for types in the TypeArrayFilter. If false, only allows for types NOT in the TypeArrayFilter.
-;If JsonFilePath != none && ListKeyName != none, filters for base forms in the JsonUtil Formlist defined by the JsonFilePath and ListKeyName. If akListHasForm == true (default) only allows for forms in the JsonUtil Formlist. If false, only allows for forms NOT in the JsonUtil Formlist. 
+;If JsonFilePath != none && ListKeyName != none, filters for base forms in the JsonUtil Formlist defined by the JsonFilePath and ListKeyName. If akListHasForm == true (default) only allows for forms in the JsonUtil Formlist. If false, only allows for forms NOT in the JsonUtil Formlist.
 ;Requires SKSE and PapyrusUtil.
 Form Function GetRandomFormFromRefJ(ObjectReference Ref, Int[] TypeArrayFilter = None, String JsonFilePath = "", String ListKeyName = "", Bool TypeFilterHasType = true, Bool akListHasForm = true) Global
     Guard()
@@ -795,52 +795,52 @@ EndFunction
 ;requires skse. Sort ObjectReferences in akArray by their display name.
 Function SortObjectRefArrayByName(ObjectReference[] akArray, Bool Ascending = true) Global
     Guard()
-EndFunction 
+EndFunction
 
 ;requires skse. Sort Forms in akArray by their name.
 Function SortFormArrayByName(Form[] akArray, Bool Ascending = true) Global
     Guard()
-EndFunction 
+EndFunction
 
 ;requires skse, put all actor names of actors in akArray to a string array and return.
 String[] Function GetActorNames(Actor[] akArray) Global
     Guard()
-EndFunction 
+EndFunction
 
 ;requires skse, put all ObjectReference names of ObjectReferences in akArray to a string array and return.
 String[] Function GetObjectRefNames(ObjectReference[] akArray) Global
     Guard()
-EndFunction 
+EndFunction
 
 ;requires skse, put all Form names of Forms in akArray to a string array and return.
 String[] Function GetFormNames(Form[] akArray) Global
     Guard()
-EndFunction 
+EndFunction
 
 ;requires skse, put all Form names of Forms in akList to a string array and return.
 String[] Function GetFormNamesFromList(Formlist akList) Global
     Guard()
-EndFunction 
+EndFunction
 
 ;requires skse, put all Form names of Forms in akList to a single string seperated by divider. Default new line.
 String Function FormNamesInFormListToString(Formlist akList, string divider = "\n", string nullName = "null") Global
     Guard()
-EndFunction 
+EndFunction
 
 ;Requires skse. Add all forms in akList to new form array.
-Form[] Function FormlistToArray(Formlist akList) Global 
+Form[] Function FormlistToArray(Formlist akList) Global
     Guard()
 EndFunction
 
 ;Add all forms in akArray to akList
 Function AddFormArrayFormsToList(Form[] akArray, Formlist akList) Global
     Guard()
-EndFunction 
+EndFunction
 
 ;no requirements
 float function SecondsToMinutes(float seconds) Global
     Guard()
-EndFunction 
+EndFunction
 
 ;no requirements
 float function SecondsToHours(float seconds) Global
@@ -850,7 +850,7 @@ EndFunction
 ;no requirements
 float function MinutesToSeconds(float minutes) Global
     Guard()
-EndFunction 
+EndFunction
 
 ;no requirements
 float function MinutesToHours(float minutes) Global
@@ -875,19 +875,19 @@ float function GetRealMinutesPassed() Global
     Guard()
 EndFunction
 
-;wait while the keyCode is pressed. 
-;If the key is released before the secondsToWait time has elapsed, returns false. 
-;If the secondsToWait time elapses and the keyCode is still pressed, returns true. 
+;wait while the keyCode is pressed.
+;If the key is released before the secondsToWait time has elapsed, returns false.
+;If the secondsToWait time elapses and the keyCode is still pressed, returns true.
 ;Requires skse
 Bool Function WaitWhileKeyIsPressed(int keyCode, float secondsToWait) Global
     Guard()
-EndFunction 
+EndFunction
 
 ;Like WaitWhileKeyIsPressed but this is an interval wait version.
 ;Wait while the keyCode is pressed.
-;Returns true if the entire waitCount finishes. 
-;Returns false if the key was released before the waitCount is finished. 
-;The wait interval should be a small value (default is 0.01) for this function to be accurate. 
+;Returns true if the entire waitCount finishes.
+;Returns false if the key was released before the waitCount is finished.
+;The wait interval should be a small value (default is 0.01) for this function to be accurate.
 ;Requires skse
 Bool Function WaitWhileKeyIsPressed_interval(int keyCode, int waitCount, float waitInterval = 0.01) Global
     Guard()
@@ -896,30 +896,30 @@ Endfunction
 ;requires skse, register for all keys between min and max. Default is 1 to 281, or all keys.
 Function RegisterFormForKeys(Form akForm, Int min = 1, Int Max = 281) Global
     Guard()
-EndFunction 
+EndFunction
 
 Function RegisterAliasForKeys(Alias akAlias, Int min = 1, Int Max = 281) Global
     Guard()
-EndFunction 
+EndFunction
 
 Function RegisterActiveMagicEffectForKeys(ActiveMagicEffect akActiveMagicEffect, Int min = 1, Int Max = 281) Global
     Guard()
-EndFunction     
+EndFunction
 
 ;requires skse
 int[] function GetAllKeysPressed() Global
     Guard()
 EndFunction
 
-;Are all the hotkeys pressed? 
+;Are all the hotkeys pressed?
 ;If onlyTheseKeys is true, (default), returns true only if all the hotkeys are pressed and no other keys are pressed.
 ;requires skse.
 Bool Function HotkeysPressed(int[] hotkeys, bool onlyTheseKeys = true) Global
     Guard()
 EndFunction
 
-;Swap============================================================================== 
-;Swap the element at IndexA with the element at IndexB in the akArray 
+;Swap==============================================================================
+;Swap the element at IndexA with the element at IndexB in the akArray
 ;The V functions (V for validate) will first clamp the indexes between 0 and the last available index in the akArray first before swapping.
 ;If you know for sure that the indexes are in bounds, use Swap as it's faster. If you don't know for sure, use SwapV or you might get none entries.
 Function SwapStrings(String[] akArray, Int IndexA, Int IndexB) Global
@@ -976,8 +976,8 @@ EndFunction
 
 Function SwapFormsV(Form[] akArray, Int IndexA, Int IndexB) Global ;validate indexes first.
     Guard()
-EndFunction 
-;============================================================================================ 
+EndFunction
+;============================================================================================
 
 ;================================================================================================
 ;JsonUtil functions, included in StorageUtil but missing from JsonUtil. Requires PapyrusUtil
@@ -992,21 +992,21 @@ EndFunction
    [optional] default: if unable to remove element from the json list, return this value instead.
 /;
 
-int function JsonIntListPluck(string FileName, string KeyName, int index, int default = 0) global 
+int function JsonIntListPluck(string FileName, string KeyName, int index, int default = 0) global
     Guard()
-EndFunction 
+EndFunction
 
-Float function JsonFloatListPluck(string FileName, string KeyName, int index, Float default = 0.0) global 
+Float function JsonFloatListPluck(string FileName, string KeyName, int index, Float default = 0.0) global
     Guard()
-EndFunction 
+EndFunction
 
-string function JsonStringListPluck(string FileName, string KeyName, int index, string default = "") global 
+string function JsonStringListPluck(string FileName, string KeyName, int index, string default = "") global
     Guard()
-EndFunction 
+EndFunction
 
-Form function JsonFormListPluck(String FileName, String KeyName, int index, Form default = none) global 
+Form function JsonFormListPluck(String FileName, String KeyName, int index, Form default = none) global
     Guard()
-EndFunction 
+EndFunction
 
 ;/ Gets the value of the very first element in a list, and subsequently removes the index afterward.
 
@@ -1015,21 +1015,21 @@ EndFunction
    [optional] default: if unable to remove element from the json list, return this value instead.
 /;
 
-int function JsonintListShift(string FileName, string KeyName, int default = 0) global 
+int function JsonintListShift(string FileName, string KeyName, int default = 0) global
     Guard()
-EndFunction 
+EndFunction
 
-Float function JsonFloatListShift(string FileName, string KeyName, Float default = 0.0) global 
+Float function JsonFloatListShift(string FileName, string KeyName, Float default = 0.0) global
     Guard()
-EndFunction 
+EndFunction
 
-String function JsonStringListShift(string FileName, string KeyName, String default = "") global 
+String function JsonStringListShift(string FileName, string KeyName, String default = "") global
     Guard()
-EndFunction 
+EndFunction
 
-Form function JsonFormListShift(string FileName, string KeyName, Form default = none) global 
+Form function JsonFormListShift(string FileName, string KeyName, Form default = none) global
     Guard()
-EndFunction 
+EndFunction
 
 ;/ Gets the value of the very last element in a list, and subsequently removes the index afterward.
 
@@ -1038,24 +1038,24 @@ EndFunction
    [optional] default: if unable to remove element from the json list, return this value instead.
 /;
 
-Int function JsonIntListPop(string FileName, string KeyName, Int default = 0) global 
+Int function JsonIntListPop(string FileName, string KeyName, Int default = 0) global
     Guard()
-EndFunction  
+EndFunction
 
-Float function JsonFloatListPop(string FileName, string KeyName, Float default = 0.0) global 
+Float function JsonFloatListPop(string FileName, string KeyName, Float default = 0.0) global
     Guard()
-EndFunction  
+EndFunction
 
-String function JsonStringListPop(string FileName, string KeyName, String default = "") global 
+String function JsonStringListPop(string FileName, string KeyName, String default = "") global
     Guard()
-EndFunction  
+EndFunction
 
-Form function JsonFormListPop(string FileName, string KeyName, Form default = none) global 
+Form function JsonFormListPop(string FileName, string KeyName, Form default = none) global
     Guard()
-EndFunction  
+EndFunction
 
 ;remove all duplicates in Json int / float / string / form lists, leaving only 1 of each element in the list.
-;If asceding == true (default) removes duplicate entries from the start of the list first, 
+;If asceding == true (default) removes duplicate entries from the start of the list first,
 ;Else removes duplicates from end of list first. ======================================================================================
 Function JsonIntListRemoveAllDuplicates(string FileName, string KeyName, Bool Acending = True) Global
     Guard()
@@ -1073,7 +1073,7 @@ Function JsonFormListRemoveAllDuplicates(String FileName, String KeyName, Bool A
     Guard()
 EndFunction
 
-;Opposite of String.Split() 
+;Opposite of String.Split()
 ;Join all elements in Json Int List to a single string seperated by divider. =================================================================================
 String Function JsonJoinIntList(string FileName, string KeyName, string Divider = "||") Global
     Guard()
@@ -1091,20 +1091,20 @@ EndFunction
 
 ;============================================================================================================
 
-;requires skse and papyrusUtil. Get the string for a form type int. 
+;requires skse and papyrusUtil. Get the string for a form type int.
 ;Exampe: FormTypeToString(SomeMiscObj.GetType()) returns "Misc"
 ;can specify another file other than "Data/interface/DbFormTypeStrings.txt" if desired
 String Function GetFormTypeString(Int Type, String sFilePath = "Data/interface/DbMiscFunctions/DbFormTypeStrings.txt") Global
     Guard()
 EndFunction
 
-;requires skse and papyrusUtil. 
+;requires skse and papyrusUtil.
 ;Get form type strings within a range.
 String[] Function GetFormTypeStrings(String sFilePath = "Data/interface/DbMiscFunctions/DbFormTypeStrings.txt", int startIndex = 0, int endIndex = 134)
     Guard()
 EndFunction
 
-;requires skse and papyrusUtil. Get the string for keycode. 
+;requires skse and papyrusUtil. Get the string for keycode.
 ;Exampe: GetKeyCodeString(28) returns "Enter"
 ;can specify another file other than "Data/interface/DbKeyCodeStrings.txt" if desired
 String Function GetKeyCodeString(Int keyCode, String sFilePath = "Data/interface/DbMiscFunctions/DbKeyCodeStrings.txt") Global
@@ -1114,7 +1114,7 @@ EndFunction
 ;requires skse
 String Function GetKeyCodeStrings(int[] keys, string startBracket = "[", string endBracket = "]", string divider = "\n", bool includeInts = true) Global
     Guard()
-EndFunction 
+EndFunction
 
 ;requires skse
 String[] Function GetKeyCodeStringsInRange(int minKey = 1, int maxKey = 281, string startBracket = "[", string endBracket = "]", bool includeInts = true) Global
@@ -1144,7 +1144,7 @@ EndFunction
 
 int Function GetAudioFormType(Form F) Global
     Guard()
-EndFunction 
+EndFunction
 
 int Function GetCharacterFormType(Form F) Global
     Guard()
@@ -1164,36 +1164,36 @@ EndFunction
 
 int Function GetSpecialEffectFormType(Form F) Global
     Guard()
-EndFunction 
+EndFunction
 
 int Function GetWorldDataFormType(Form F) Global
     Guard()
-EndFunction 
+EndFunction
 
 int Function GetWorldObjectFormType(Form F) Global
     Guard()
-EndFunction 
+EndFunction
 
 ;for base item types in player inventory
 int Function GetInventoryItemFormType(Form F) Global
     Guard()
-EndFunction 
+EndFunction
 
 
 ;includes all of the above form types
 Int Function GetFormTypeAll(Form F) Global
     Guard()
-EndFunction 
+EndFunction
 
 ;Same as above but returns strings instead of ints==============================================================================
-;If TypeStrings == none, returns the ScriptName of type. Can pass in string array to return different strings for translations. 
+;If TypeStrings == none, returns the ScriptName of type. Can pass in string array to return different strings for translations.
 String Function GetActorFormTypeString(Form F, String[] TypeStrings = none) Global
     Guard()
 EndFunction
 
 String Function GetAudioFormTypeString(Form F, String[] TypeStrings = none) Global
     Guard()
-EndFunction 
+EndFunction
 
 String Function GetCharacterFormTypeString(Form F, String[] TypeStrings = none) Global
     Guard()
@@ -1213,73 +1213,73 @@ EndFunction
 
 String Function GetSpecialEffectFormTypeString(Form F, String[] TypeStrings = none) Global
     Guard()
-EndFunction 
+EndFunction
 
 String Function GetWorldDataFormTypeString(Form F, String[] TypeStrings = none) Global
     Guard()
-EndFunction 
+EndFunction
 
 String Function GetWorldObjectFormTypeString(Form F, String[] TypeStrings = none) Global
     Guard()
-EndFunction 
+EndFunction
 
 ;for base item types in player inventory
 string Function GetInventoryItemFormTypeString(Form F, String[] TypeStrings = none) Global
     Guard()
-EndFunction 
+EndFunction
 
 ;includes all of the above types.
 string Function GetFormTypeStringAll(Form F, String[] TypeStrings = none) Global
     Guard()
-EndFunction 
+EndFunction
 ;=====================================================================
 
-;Useful for force closing the inventory menu, or forcing the player to sheathe their weapon. 
+;Useful for force closing the inventory menu, or forcing the player to sheathe their weapon.
 ;No requirements
 Function DisableThenEnablePlayerControls(Float Delay = 1.0) Global
     Guard()
 EndFunction
 
-;add and remove akForm from actor silently. 
+;add and remove akForm from actor silently.
 ;This is useful for instance after changing an actors speed via akActor.SetAv("SpeedMult", 110)
-;Or after changing armor model paths, or on the player after changing item names if in the inventory or container menu, will display visually the name change. 
+;Or after changing armor model paths, or on the player after changing item names if in the inventory or container menu, will display visually the name change.
 ;No requirements
 Function UpdateActor(Actor akActor, Form akForm) Global
     Guard()
-EndFunction 
+EndFunction
 
-;used to update menus while they are open. 
+;used to update menus while they are open.
 ;Example, changing a map marker property (name, icon or visibility) while the map menu is open
 function refreshMenus() Global
     Guard()
 EndFunction
 
-;requires SKSE and Papyrus Extender 
+;requires SKSE and Papyrus Extender
 ;swap all worn equipment between actor A and B.
 Function SwapEquipment(Actor A, Actor B) Global
     Guard()
 EndFunction
 
-;Set all ActorValues to Values on akActor 
+;Set all ActorValues to Values on akActor
 ;no requirements
 Function SetActorValues(Actor akActor, String[] ActorValues, Float[] Values) Global
     Guard()
 EndFunction
 
-;Mod all ActorValues with Values on akActor 
+;Mod all ActorValues with Values on akActor
 ;no requirements
 Function ModActorValues(Actor akActor, String[] ActorValues, Float[] Values) Global
     Guard()
 EndFunction
 
-;return all actor values in ActorValueStrings to float array. 
+;return all actor values in ActorValueStrings to float array.
 ;if DArrays == none, requires skse. Can pass in DynamicArrays form to not use skse.
 Float[] Function GetActorValues(Actor akActor, String[] ActorValues, DynamicArrays DArrays = none) Global
     Guard()
 EndFunction
 
 ;same as GetActorValues but returns for instance "Health = 100.0" in string array instead of float values
-;if ActorValueStrings == none, uses ActorValues for strings. 
+;if ActorValueStrings == none, uses ActorValues for strings.
 ;can specify ActorValueStrings for translations. Indexes in ActorValues and ActorValuesStrings should match.
 ;if DArrays == none, requires skse. Can pass in DynamicArrays form to not use skse.
 String[] Function GetActorValueStrings(Actor akActor, String[] ActorValues, String[] ActorValueStrings = none, DynamicArrays DArrays = none) Global
@@ -1287,21 +1287,21 @@ String[] Function GetActorValueStrings(Actor akActor, String[] ActorValues, Stri
 EndFunction
 
 ;same as GetActorValueStrings but puts all values in a single string divided by Divider.
-;if ActorValueStrings == none, uses ActorValues for strings. 
+;if ActorValueStrings == none, uses ActorValues for strings.
 ;can specify ActorValueStrings for translations. Indexes in ActorValues and ActorValuesStrings should match.
 ;no requirements
 String Function sGetActorValueStrings(Actor akActor, String[] ActorValues, String[] ActorValueStrings = none, String Divider = "||") Global
     Guard()
 EndFunction
 
-;return all Base actor values in ActorValueStrings to float array. 
+;return all Base actor values in ActorValueStrings to float array.
 ;if DArrays == none, requires skse. Can pass in DynamicArrays form to not use skse.
 Float[] Function GetBaseActorValues(Actor akActor, String[] ActorValues, DynamicArrays DArrays = none) Global
     Guard()
 EndFunction
 
 ;same as GetBaseActorValues but returns for instance "Health = 100.0" in string array instead of float values
-;if ActorValueStrings == none, uses ActorValues for strings. 
+;if ActorValueStrings == none, uses ActorValues for strings.
 ;can specify ActorValueStrings for translations. Indexes in ActorValues and ActorValuesStrings should match.
 ;if DArrays == none, requires skse. Can pass in DynamicArrays form to not use skse.
 String[] Function GetBaseActorValueStrings(Actor akActor, String[] ActorValues, String[] ActorValueStrings = none, DynamicArrays DArrays = none) Global
@@ -1309,56 +1309,56 @@ String[] Function GetBaseActorValueStrings(Actor akActor, String[] ActorValues, 
 EndFunction
 
 ;same as GetBaseActorValueStrings but puts all values in a single string divided by Divider.
-;if ActorValueStrings == none, uses ActorValues for strings. 
+;if ActorValueStrings == none, uses ActorValues for strings.
 ;can specify ActorValueStrings for translations. Indexes in ActorValues and ActorValuesStrings should match.
 ;no requirements
 String Function sGetBaseActorValueStrings(Actor akActor, String[] ActorValues, String[] ActorValueStrings = none, String Divider = "||") Global
     Guard()
 EndFunction
 
-;return actor values of akActor from actor values in file to float array. 
+;return actor values of akActor from actor values in file to float array.
 ;can specify your own file path. Look at the structure of DbActorValues.txt to make another file.
 ;requires skse and papyrusUtil.
 Float[] Function GetActorValuesFromFile(Actor akActor, String filePath = "Data/interface/DbMiscFunctions/DbActorValues.txt") Global
     Guard()
-EndFunction 
+EndFunction
 
 ;same as GetActorValuesFromFile but returns for instance "Health = 100.0" in string array instead of float values
 ;can specify your own file path. Look at the structure of DbActorValues.txt to make another file.
 ;requires skse and papyrusUtil.
 String[] Function GetActorValueStringsFromFile(Actor akActor, String filePath = "Data/interface/DbMiscFunctions/DbActorValues.txt") Global
     Guard()
-EndFunction 
+EndFunction
 
 ;same as GetActorValueStringsFromFile but puts all the values in a single string seperated by Divider
 ;can specify your own file path. Look at the structure of DbActorValues.txt to make another file.
 ;requires skse and papyrusUtil.
 String Function sGetActorValueStringsFromFile(Actor akActor, String Divider = "||", String filePath = "Data/interface/DbMiscFunctions/DbActorValues.txt") Global
     Guard()
-EndFunction  
+EndFunction
 
-;return all Base actor values in file to float array. 
+;return all Base actor values in file to float array.
 ;can specify your own file path. Look at the structure of DbActorValues.txt to make another file.
 ;requires skse and papyrusUtil.
 Float[] Function GetBaseActorValuesFromFile(Actor akActor, String filePath = "Data/interface/DbMiscFunctions/DbActorValues.txt") Global
     Guard()
-EndFunction 
+EndFunction
 
 ;same as GetBaseActorValuesFromFile but returns for instance "Health = 100.0" in string array instead of float values
 ;can specify your own file path. Look at the structure of DbActorValues.txt to make another file.
 ;requires skse and papyrusUtil.
 String[] Function GetBaseActorValueStringsFromFile(Actor akActor, String filePath = "Data/interface/DbMiscFunctions/DbActorValues.txt") Global
     Guard()
-EndFunction 
+EndFunction
 
 ;same as GetBaseActorValueStringsFromFile but puts all the values in a single string seperated by Divider
 ;can specify your own file path. Look at the structure of DbActorValues.txt to make another file.
 ;requires skse and papyrusUtil.
 String Function sGetBaseActorValueStringsFromFile(Actor akActor, String Divider = "||", String filePath = "Data/interface/DbMiscFunctions/DbActorValues.txt") Global
     Guard()
-EndFunction   
+EndFunction
 
-;Attach the akScript to the Ref. 
+;Attach the akScript to the Ref.
 ;Mostly for LE as on SE you can use the No Esp mod instead
 ;if ref == none, attachs akScript to the player
 ;requires skse and consoleUtil or DbSkseFunctions.
@@ -1367,11 +1367,11 @@ Function AttachPapyrusScript(String akScript, ObjectReference Ref) Global
     Guard()
 EndFunction
 
-;menuName must match a valid menu name in UI.psc 
+;menuName must match a valid menu name in UI.psc
 ;requires skse
 Function OpenMenu(string menuName) Global
     Guard()
-EndFunction 
+EndFunction
 
 Function CloseMenu(string menuName) Global
     Guard()
@@ -1389,14 +1389,14 @@ string function GetStringBetweenOuterCharacters(String s, int startIndex = 0, St
 EndFunction
 
 ;find the index of the nth instance of string toFind in string s
-;if nthInstance == -1 (default), finds the last instance in string s 
+;if nthInstance == -1 (default), finds the last instance in string s
 ;requires skse
 int Function findNthInstanceInString(String s, String toFind, int nthInstance = -1, int startIndex = 0) Global
     Guard()
 EndFunction
 
 ;Finds the last index of String ToFind in string s
-;Example: FindLastStringIndex("The dog is the coolest dog in the world", "The") returns 30, the last instance of "the" 
+;Example: FindLastStringIndex("The dog is the coolest dog in the world", "The") returns 30, the last instance of "the"
 ;Requires skse.
 Int Function FindLastStringIndex(String s, String ToFind) Global
     Guard()
@@ -1404,7 +1404,7 @@ EndFunction
 
 ; returns the index of the first character of toFind inside string s
 ; returns -1 if toFind is not part of the string or if startIndex is invalid or if the characters preceding and following ToFind in s are not whitespace
-; Example 
+; Example
 ;FindWholeWordString("TestString", "String") returns -1
 ;FindWholeWordString("Test String", "String") returns 5
 Int Function FindWholeWordString(String s, String ToFind, Int StartIndex = 0) Global
@@ -1423,14 +1423,14 @@ EndFunction
 ;String B = FindNextWordInString("This is some text ", 12)  ;B = "text"
 ;String C = FindNextWordInString("This is some text ", 9)   ;C = "ome"
 ;requires skse
-String Function FindNextWordInString(String s, int startIndex = 0) global 
+String Function FindNextWordInString(String s, int startIndex = 0) global
     Guard()
 EndFunction
 
 ;same as above but in reverse
 ;if startIndex is -1, startIndex is string length
 ;requires skse
-String Function RFindNextWordInString(String s, int startIndex = -1) global 
+String Function RFindNextWordInString(String s, int startIndex = -1) global
     Guard()
 EndFunction
 
@@ -1491,11 +1491,11 @@ String Function RemoveWhiteSpaces(String s, Bool IncludeSpaces = True, Bool Incl
 EndFunction
 
 ;Requires skse
-Int Function CountWhiteSpaces(String s, Bool IncludeSpaces = True, Bool IncludeTabs = true, Bool IncludeNewLines = true) Global 
+Int Function CountWhiteSpaces(String s, Bool IncludeSpaces = True, Bool IncludeTabs = true, Bool IncludeNewLines = true) Global
     Guard()
 Endfunction
 
-;Count the number of String ToFind that occures in String s. 
+;Count the number of String ToFind that occures in String s.
 ;If WholeWordsOnly == true, only counts where the string ToFind occures is surrounded by whiteSpace.
 ;requires skse
 Int Function CountStringsInString(String s, String ToFind, Bool WholeWordsOnly = false) Global
@@ -1525,11 +1525,11 @@ String[] Function GetRandomWordsFromStringA(String s, int numOfWords, String Div
     Guard()
 EndFunction
 
-String Function GetLoremipsumNoPunctuation() Global 
+String Function GetLoremipsumNoPunctuation() Global
     Guard()
 EndFunction
 
-String Function GetLoremipsum() Global 
+String Function GetLoremipsum() Global
     Guard()
 EndFunction
 
@@ -1539,17 +1539,17 @@ String Function RemoveDuplicateStrings(String TargetStr, String SearchStr) Globa
     Guard()
 EndFunction
 
-;Remove All Duplicate strings separated by Divider. Example: 
+;Remove All Duplicate strings separated by Divider. Example:
 ;RemoveAllDuplicateStrings("TestString||TestString||Hmmm||TestString|| Test String ||Hmm||TestString") returns "TestString||Hmmm|| Test String ||"
 ;RemoveAllDuplicateStrings("TestString||TestString||Hmmm||TestString|| Test String ||Hmm||TestString", IncludeDividersInResult = false) returns "TestStringHmmm Test String "
 ;requires skse
-String Function RemoveAllDuplicateStrings(String TargetStr, String Divider = "||", Bool IncludeDividersInResult = true) Global 
+String Function RemoveAllDuplicateStrings(String TargetStr, String Divider = "||", Bool IncludeDividersInResult = true) Global
     Guard()
 EndFunction
 
 ;Replace instances of the SearchStr with the ReplaceStr in the TargetStr
 ;Default count = 0 which means replace all instances. Otherwise only replace the Count number.
-;Example: 
+;Example:
 ;String MyString = "A Yes, B Yes, C Yes"
 ;String MyStringB = StringReplace(MyString, "Yes", "No")
 ;String MyStringC = StringReplace(MyString, "Yes", "No", 2)
@@ -1560,32 +1560,32 @@ String Function StringReplace(String TargetStr, String SearchStr, String Replace
     Guard()
 EndFunction
 
-;insert the InsertStr to the TargetStr at the CharPosition and return new string. 
+;insert the InsertStr to the TargetStr at the CharPosition and return new string.
 ;if CharPosition == -1, appends the InsertStr to the end of TargetStr
 String Function StringInsert(String TargetStr, String InsertStr, Int CharPosition = -1) Global
     Guard()
 EndFunction
 
-;Remove a single character in String s at Index 
+;Remove a single character in String s at Index
 ;Requires skse
 String Function StringRemoveCharAt(String s, Int Index) Global
     Guard()
 EndFunction
 
-;Remove Non printable characters from string 
+;Remove Non printable characters from string
 ;Requires skse.
 String Function StringRemoveNonPrintableCharacters(String s) Global
     Guard()
 EndFunction
 
-;Remove Non printable characters from string 
+;Remove Non printable characters from string
 ;Requires skse.
 String Function StringRemovePrintableCharacters(String s) Global
     Guard()
 EndFunction
 
-;Add prefix to string s and return new string 
-;If OnlyIfNotPresent == true (default) only adds the prefix if it's not already present. 
+;Add prefix to string s and return new string
+;If OnlyIfNotPresent == true (default) only adds the prefix if it's not already present.
 ;Requires skse
 String Function AddPrefixToString(String s, String Prefix, Bool OnlyIfNotPresent = true) Global
     Guard()
@@ -1609,8 +1609,8 @@ String[] Function RemovePrefixFromStrings(String[] s, String Prefix) Global
     Guard()
 EndFunction
 
-;Add suffix to string s and return new string 
-;If OnlyIfNotPresent == true (default) only adds the suffix if it's not already present. 
+;Add suffix to string s and return new string
+;If OnlyIfNotPresent == true (default) only adds the suffix if it's not already present.
 ;Requires skse
 String Function AddSuffixToString(String s, String Suffix, Bool OnlyIfNotPresent = true) Global
     Guard()
@@ -1635,13 +1635,13 @@ String[] Function RemoveSuffixFromStrings(String[] s, String Suffix) Global
 EndFunction
 
 ;Add prefix to akForm's name
-;If OnlyIfNotPresent == true (default) only adds the prefix if it's not already present. 
+;If OnlyIfNotPresent == true (default) only adds the prefix if it's not already present.
 ;Requires skse
 Function AddPrefixToFormName(Form akForm, String Prefix, Bool OnlyIfNotPresent = true) Global
     Guard()
 EndFunction
 
-;Same as above but adds to all form names in array 
+;Same as above but adds to all form names in array
 ;Requires skse
 Function AddPrefixToFormNames(Form[] akForms, String Prefix, Bool OnlyIfNotPresent = true) Global
     Guard()
@@ -1653,20 +1653,20 @@ Function RemovePrefixFromFormName(Form akForm, String Prefix) Global
     Guard()
 EndFunction
 
-;Same as above but removes from all form names in array 
+;Same as above but removes from all form names in array
 ;Requires skse
 Function RemovePrefixFromFormNames(Form[] akForms, String Prefix, Bool OnlyIfNotPresent = true) Global
     Guard()
 EndFunction
 
 ;Add Suffix to akForm's name
-;If OnlyIfNotPresent == true (default) only adds the Suffix if it's not already present. 
+;If OnlyIfNotPresent == true (default) only adds the Suffix if it's not already present.
 ;Requires skse
 Function AddSuffixToFormName(Form akForm, String Suffix, Bool OnlyIfNotPresent = true) Global
     Guard()
 EndFunction
 
-;Same as above but adds to all form names in array 
+;Same as above but adds to all form names in array
 ;Requires skse
 Function AddSuffixToFormNames(Form[] akForms, String Suffix, Bool OnlyIfNotPresent = true) Global
     Guard()
@@ -1678,7 +1678,7 @@ Function RemoveSuffixFromFormName(Form akForm, String Suffix) Global
     Guard()
 EndFunction
 
-;Same as above but removes from all form names in array 
+;Same as above but removes from all form names in array
 ;Requires skse
 Function RemoveSuffixFromFormNames(Form[] akForms, String Suffix, Bool OnlyIfNotPresent = true) Global
     Guard()
@@ -1692,33 +1692,33 @@ EndFunction
 
 ;Does the string have the Suffix?
 ;Requires skse
-Bool Function StringHasSuffix(String s, String Suffix) Global 
+Bool Function StringHasSuffix(String s, String Suffix) Global
     Guard()
 EndFunction
 
 ; GetStringFromFile get custom string from external file or string
 ; finds first string between Startkey and EndKey after StringKey.
 ; similar to localization but no need to worry about nesting strings in a translation file this way.
-; Example: Let's say you have a file Data/interface/MyStrings.txt that contains: 
-; MyStringA = [My String A] 
-; MyStringB = [My String B] 
+; Example: Let's say you have a file Data/interface/MyStrings.txt that contains:
+; MyStringA = [My String A]
+; MyStringB = [My String B]
 ;
 ; String MyStringB = GetStringFromFile("MyStringB", FilePath = "Data/interface/MyStrings.txt") ;Returns "My String B"
 ;
-; To search a string instead of a file path, you can do this: 
-; String MyStrings 
-; MyStrings = MiscUtil.ReadFromFile("Data/interface/MyStrings.txt") 
+; To search a string instead of a file path, you can do this:
+; String MyStrings
+; MyStrings = MiscUtil.ReadFromFile("Data/interface/MyStrings.txt")
 ; String MyStringB = GetStringFromFile("MyStringB", MyStrings) ;Returns "My String B"
-; Note, if using the function this way, don't store MyStrings in the script, outside of events or functions. Storing large strings can cause CTD on game load. 
+; Note, if using the function this way, don't store MyStrings in the script, outside of events or functions. Storing large strings can cause CTD on game load.
 ; If storing this way, be sure to clear the string by doing: MyStrings = "" after it's finished being used.
 ;
-; This method will be better for performance if you need to get a lot of strings from your file, as it won't use MiscUtil.ReadFromFile everytime you use the function. 
+; This method will be better for performance if you need to get a lot of strings from your file, as it won't use MiscUtil.ReadFromFile everytime you use the function.
 ;
 ; StringKeys contained in the file must be unique.
 ;
-; If the stringkey wasn't found and the Default is "", it returns the stringKey 
-; Let's say you have: 
-; Some Custom Message = [Some Custome Message] 
+; If the stringkey wasn't found and the Default is "", it returns the stringKey
+; Let's say you have:
+; Some Custom Message = [Some Custome Message]
 ; in the "Data/interface/MyStrings.txt file"
 ;
 ; You can do:
@@ -1727,43 +1727,43 @@ EndFunction
 ; You can specify a default if you want something else to return if the stringKey wasn't found.
 ;
 ; Requires PapyrusUtil && SKSE
-String Function GetStringFromFile(String StringKey, String FileContents = "", String FilePath = "", String StartKey = "[", String EndKey = "]", String Default = "", int StartIndex = 0) global 
+String Function GetStringFromFile(String StringKey, String FileContents = "", String FilePath = "", String StartKey = "[", String EndKey = "]", String Default = "", int StartIndex = 0) global
     Guard()
 EndFunction
 
 ;same as GetStringFromFile but returns value as int.
-int Function GetIntFromFile(String StringKey, String FileContents = "", String FilePath = "", String StartKey = "[", String EndKey = "]", int Default = -1, int StartIndex = 0) global 
+int Function GetIntFromFile(String StringKey, String FileContents = "", String FilePath = "", String StartKey = "[", String EndKey = "]", int Default = -1, int StartIndex = 0) global
     Guard()
 EndFunction
 
 ;same as GetStringFromFile but returns value as float.
-Float Function GetFloatFromFile(String StringKey, String FileContents = "", String FilePath = "", String StartKey = "[", String EndKey = "]", Float Default = -1.0, int StartIndex = 0) global 
+Float Function GetFloatFromFile(String StringKey, String FileContents = "", String FilePath = "", String StartKey = "[", String EndKey = "]", Float Default = -1.0, int StartIndex = 0) global
     Guard()
 EndFunction
 
 
-;Save All strings in the StartKey and Endkey brackets, between the RangeStart and RangeEnd strings from the FileContents or FilePath to a string array. 
-;Example: you have a file Data/interface/MyStrings.txt that contains: 
-;MyStringA = [My String A] 
-;MyStringB = [My String B] 
+;Save All strings in the StartKey and Endkey brackets, between the RangeStart and RangeEnd strings from the FileContents or FilePath to a string array.
+;Example: you have a file Data/interface/MyStrings.txt that contains:
+;MyStringA = [My String A]
+;MyStringB = [My String B]
 ;
-;String[] MyStrings = GetAllStringsFromFile("Data/interface/MyStrings.txt")  
+;String[] MyStrings = GetAllStringsFromFile("Data/interface/MyStrings.txt")
 ;MyStrings[0] will equal "My String A" and MyStrings[1] will equal "My String B"
 ;
-;to specify a range to search you can do this: 
+;to specify a range to search you can do this:
 ;
-;File contains: 
+;File contains:
 ;
 ;StringsA
-;MyStringA = [My String A] 
-;MyStringB = [My String B] 
-;StringsAEnd 
-;MyStringC = [My String C] 
+;MyStringA = [My String A]
+;MyStringB = [My String B]
+;StringsAEnd
+;MyStringC = [My String C]
 ;
 ;Using String[] MyStrings = GetAllStringsFromFile(FilePath = "Data/interface/MyStrings.txt", "StringsA", "StringsAEnd")
 ;Only My String A and My String B are saved to the array.
 ;
-;If RangeStart is "", starts search at the beginning of the file. If RangeEnd is "", stops searching at the end of the file. 
+;If RangeStart is "", starts search at the beginning of the file. If RangeEnd is "", stops searching at the end of the file.
 ;
 ;requires SKSE and PapyrusUtil
 String[] Function GetAllStringsFromFile(String FileContents = "", String FilePath = "", String RangeStart = "", String RangeEnd = "", String StartKey = "[", String EndKey = "]", String[] Default = None) global
@@ -1784,22 +1784,22 @@ EndFunction
 
 
 ;PrintStringKeysToFile Finds and Prints all GetString / int / floatFromString StringKeys, from FilePathToSearch to FilePathToPrintTo
-;To speed up the process of making your StringKeys.txt file. 
-;You can write GetStringFromFile() functions in your .psc file, and when you're finished with your script, have this function print the string keys to another .txt file. 
+;To speed up the process of making your StringKeys.txt file.
+;You can write GetStringFromFile() functions in your .psc file, and when you're finished with your script, have this function print the string keys to another .txt file.
 ;
-;Example, if in MyScript.psc you have: 
-;Debug.Notification(GetStringFromFile("My Message A")) 
-;Debug.Notification(GetStringFromFile("My Message B")) 
-;Use the function: 
+;Example, if in MyScript.psc you have:
+;Debug.Notification(GetStringFromFile("My Message A"))
+;Debug.Notification(GetStringFromFile("My Message B"))
+;Use the function:
 ;
-;PrintStringKeysToFile("Data/Scripts/Source/MyScript.psc", "Data/interface/MyStrings.txt") 
+;PrintStringKeysToFile("Data/Scripts/Source/MyScript.psc", "Data/interface/MyStrings.txt")
 ;
-;In the MyStrings.txt file it will write: 
+;In the MyStrings.txt file it will write:
 ;
 ;"My Message A" = ["My Message A"]
 ;"My Message B" = ["My Message B"]
 ;
-;note that the quotes are included. You'll want to get rid of them by pressing ctrl H in your text editor and replace all " with nothing so it looks like: 
+;note that the quotes are included. You'll want to get rid of them by pressing ctrl H in your text editor and replace all " with nothing so it looks like:
 ;
 ;My Message A = [My Message A]
 ;My Message B = [My Message B]
@@ -1812,7 +1812,7 @@ Bool Function PrintStringKeysToFile(String FilePathToSearch, String FilePathToPr
 EndFunction
 
 
-;Print all items in a container to the FilePath with the mod they come from included. 
+;Print all items in a container to the FilePath with the mod they come from included.
 ;Requires SKSE
 Function PrintContainerItemsToFile(ObjectReference akContainer, String FilePath, String ConfirmMessage = "") global
     Guard()
@@ -1832,15 +1832,15 @@ EndFunction
 
 ;Write form ID's of forms in storageutil formlist to file. If ReplaceIdStartWith0x == true (default), replaces first two characters of ID with 0x.
 ;Requires skse and PapyrusUtil
-Function WriteIDsInStorageUtilListToFile(Form ObjKey, String ListKeyName, String FilePath, Bool IncludeNames = False, Bool ReplaceIdStartWith0x = true) Global 
+Function WriteIDsInStorageUtilListToFile(Form ObjKey, String ListKeyName, String FilePath, Bool IncludeNames = False, Bool ReplaceIdStartWith0x = true) Global
     Guard()
 EndFunction
 
 ;Write form ID's of forms in JsonUtil formlist to file. If ReplaceIdStartWith0x == true (default), replaces first two characters of ID with 0x.
 ;Requires skse and PapyrusUtil
-Function WriteIDsInJsonUtilListToFile(String JsonFilePath, String ListKeyName, String FilePath, Bool IncludeNames = False, Bool ReplaceIdStartWith0x = true) Global 
+Function WriteIDsInJsonUtilListToFile(String JsonFilePath, String ListKeyName, String FilePath, Bool IncludeNames = False, Bool ReplaceIdStartWith0x = true) Global
     Guard()
-EndFunction 
+EndFunction
 
 ;Write bool animation variables of akRef found in DbAnimationVariableBools.txt to OutputFilePath.
 ;Can specify a different VariablesSourceFilePath if desired.
@@ -1871,41 +1871,41 @@ Function WriteAllAnimationVariablesToFile(ObjectReference akRef, String OutputFi
                                                                                 String IntVariablesSourceFilePath = "Data/interface/DbMiscFunctions/DbAnimationVariableInts.txt", \
                                                                                 String FloatVariablesSourceFilePath = "Data/interface/DbMiscFunctions/DbAnimationVariableFloats.txt") Global
     Guard()
-EndFunction 
+EndFunction
 
-;register the akForm to recieve all AnimationEvents from the akSender  
+;register the akForm to recieve all AnimationEvents from the akSender
 ;no requirements
 Function RegisterFormForAnimationEvents(Form akForm, ObjectReference akSender, String[] AnimationEvents) Global
     Guard()
 EndFunction
 
-;register the akAlias to recieve all AnimationEvents from the akSender  
+;register the akAlias to recieve all AnimationEvents from the akSender
 ;no requirements
 Function RegisterAliasForAnimationEvents(Alias akAlias, ObjectReference akSender, String[] AnimationEvents) Global
     Guard()
 EndFunction
 
-;register the akActiveMagicEffect to recieve all AnimationEvents from the akSender  
+;register the akActiveMagicEffect to recieve all AnimationEvents from the akSender
 ;no requirements
 Function RegisterActiveMagicEffectForAnimationEvents(ActiveMagicEffect akActiveMagicEffect, ObjectReference akSender, String[] AnimationEvents) Global
     Guard()
 EndFunction
 
-;Register the akForm to recieve all Animation Events from akSender found in File specified by FilePath. 
+;Register the akForm to recieve all Animation Events from akSender found in File specified by FilePath.
 ;Events in the file should be separated by new line.
 ;Requires SKSE and PapyrusUtil
 Function RegisterFormForAnimationEventsFromFile(Form akForm, ObjectReference akSender, String FilePath = "Data/interface/DbMiscFunctions/DbAnimationEvents.txt") Global
     Guard()
 EndFunction
 
-;Register the akAlias to recieve all Animation Events from akSender found in File specified by FilePath. 
+;Register the akAlias to recieve all Animation Events from akSender found in File specified by FilePath.
 ;Events in the file should be separated by new line.
 ;Requires SKSE and PapyrusUtil
 Function RegisterAliasForAnimationEventsFromFile(Alias akAlias, ObjectReference akSender, String FilePath = "Data/interface/DbMiscFunctions/DbAnimationEvents.txt") Global
     Guard()
 EndFunction
 
-;Register the akActiveMagicEffect to recieve all Animation Events from akSender found in File specified by FilePath. 
+;Register the akActiveMagicEffect to recieve all Animation Events from akSender found in File specified by FilePath.
 ;Events in the file should be separated by new line.
 ;Requires SKSE and PapyrusUtil
 Function RegisterActiveMagicEffectForAnimationEventsFromFile(ActiveMagicEffect akActiveMagicEffect, ObjectReference akSender, String FilePath = "Data/interface/DbMiscFunctions/DbAnimationEvents.txt") Global
@@ -1930,21 +1930,21 @@ Function RegisterActiveMagicEffectForMenus(ActiveMagicEffect akActiveMagicEffect
     Guard()
 EndFunction
 
-;Register the akForm for all menus found in File specified by FilePath. 
+;Register the akForm for all menus found in File specified by FilePath.
 ;Events in the file should be separated by new line.
 ;Requires SKSE and PapyrusUtil
 Function RegisterFormForMenusFromFile(Form akForm, String FilePath = "Data/interface/DbMiscFunctions/DbMenus.txt") Global
     Guard()
 EndFunction
 
-;Register the akAlias for all menus found in File specified by FilePath. 
+;Register the akAlias for all menus found in File specified by FilePath.
 ;Events in the file should be separated by new line.
 ;Requires SKSE and PapyrusUtil
 Function RegisterAliasForMenusFromFile(Alias akAlias, String FilePath = "Data/interface/DbMiscFunctions/DbMenus.txt") Global
     Guard()
 EndFunction
 
-;Register the ActiveMagicEffect for all menus found in File specified by FilePath. 
+;Register the ActiveMagicEffect for all menus found in File specified by FilePath.
 ;Events in the file should be separated by new line.
 ;Requires SKSE and PapyrusUtil
 Function RegisterActiveMagicEffectForMenusFromFile(ActiveMagicEffect akActiveMagicEffect, String FilePath = "Data/interface/DbMiscFunctions/DbMenus.txt") Global
@@ -1953,9 +1953,9 @@ EndFunction
 
 ;Write all data info to TargetFilePath from all .psc files in SearchFolderPath. Writes ScriptNames, Function Names, Event Names, Function Definitions and Event Definitions.
 ;requires skse and papyrus util.
-function WriteAllPscDataInFolderToFile(String SearchFolderPath, String TargetFilePath, String Divider = "\n", String DoneMessage = "Done Writing") Global    
+function WriteAllPscDataInFolderToFile(String SearchFolderPath, String TargetFilePath, String Divider = "\n", String DoneMessage = "Done Writing") Global
     Guard()
-EndFunction 
+EndFunction
 
 String Function GetPscEventNamesFromFile(String SourceFilePath, String Divider = "\n", int StartIndex = 0) Global
     Guard()
@@ -1967,32 +1967,32 @@ EndFunction
 
 String Function GetPscDataNamesFromFile(String SourceFilePath, String NameType, String Divider = "\n", int StartIndex = 0) Global
     Guard()
-EndFunction 
+EndFunction
 
 
-;/Get all Event or Function Definitions from source file.  
+;/Get all Event or Function Definitions from source file.
 ignores commented out functions
-example if the psc file has: 
+example if the psc file has:
 
 Int Function AddInts(int A, int B)
     return A + B
 Endfunction
 
 Float Function AddFloats(Float A, Float B)
-    return A + B 
+    return A + B
 EndFunction
 
-GetPscFunctionDefinitionsFromFile returns: 
+GetPscFunctionDefinitionsFromFile returns:
 
 "Int Function AddInts(int A, int B)
 Float Function AddFloats(Float A, Float B)"
 /;
 
-String Function GetPscEventDefinitionsFromFile(String SourceFilePath, String Divider = "\n", int StartIndex = 0) Global 
+String Function GetPscEventDefinitionsFromFile(String SourceFilePath, String Divider = "\n", int StartIndex = 0) Global
     Guard()
 EndFunction
 
-String Function GetPscFunctionDefinitionsFromFile(String SourceFilePath, String Divider = "\n", int StartIndex = 0) Global 
+String Function GetPscFunctionDefinitionsFromFile(String SourceFilePath, String Divider = "\n", int StartIndex = 0) Global
     Guard()
 EndFunction
 
@@ -2000,14 +2000,14 @@ EndFunction
 ;requires skse
 bool function IsIndexInBlockComment(string s, int index, string blockCommentStart = ";/", string blockCommentEnd = "/;") Global
     Guard()
-EndFunction 
+EndFunction
 
 String Function GetPscDataDefinitionsFromFile(String SourceFilePath, String NameType, String Divider = "\n", int StartIndex = 0) Global
     Guard()
-Endfunction 
+Endfunction
 
-;Search the SournceFilePath for String / Int / Float / Global variables, if their toggles are enabled, (outside of any events or functions) 
-;and write Json Save and Load functions to DestinationFilePath for said variables. 
+;Search the SournceFilePath for String / Int / Float / Global variables, if their toggles are enabled, (outside of any events or functions)
+;and write Json Save and Load functions to DestinationFilePath for said variables.
 ;If DestinationFilePath == "" it will write the functions to the SourceFilePath.
 ;Set Messages int to 0 to display ConfirmMessage notification when finished, set to 1 to display messagebox.
 ;requires skse and PapyrusUtil
@@ -2017,14 +2017,13 @@ Function WriteJsonSaveAndLoadFunctionsToFile(String SourceFilePath, String Desti
     int Messages = 0, String ConfirmMessage = "Done Writing Json Functions", Bool UsePropertiesAsDefaults = True) global
     Guard()
     MiscUtil.WriteToFile(f, "\t" + "EndFunction" + "\n\n")
-    
+
     MiscUtil.WriteToFile(f, "\t" + "Bool[] Function GetBoolArray()" + "\n")
     Guard()
-EndFunction 
+EndFunction
 
 
 
 Function Guard()
-    Debug.MessageBox("DbMiscFunctions: Dom't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
+    Debug.MessageBox("DbMiscFunctions: Don't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
 EndFunction
-

@@ -1,9 +1,9 @@
-scriptname DbBigActorArray extends ObjectReference 
-{Actor array with max size of 16384 (128 * 128). 
+scriptname DbBigActorArray extends ObjectReference
+{Actor array with max size of 16384 (128 * 128).
 Can be used as a big array or multidimensional array without skse.
-Attach this script and the DynamicActorArrays script to a new form in the creation kit. I recommend a misc object. 
+Attach this script and the DynamicActorArrays script to a new form in the creation kit. I recommend a misc object.
 To create big arrays of different types, duplicate this script and replace all "Actor" with "newType".
-Also do the same thing with the DynamicActorArrays script. 
+Also do the same thing with the DynamicActorArrays script.
 Example, you would have DbBigObjectReferenceArray.psc and DynmaicObjectReferenceArrays.psc scripts attached to the same form}
 
 Actor[] property Array0 Auto Hidden
@@ -152,10 +152,10 @@ Actor[] CurrentSizeSubArray
 int CurrentSizeSubArrayIndex = -1
 Int CurrentSizeArrayIndex = -1
 
-bool busy = false 
+bool busy = false
 bool property iterating = false auto
 
-DynamicActorArrays property ActorArrays auto 
+DynamicActorArrays property ActorArrays auto
 
 Event OnInit()
     Guard()
@@ -179,7 +179,7 @@ EndFunction
 
 function waitForState(Actor akState, float waitInterval = 0.1)
     Guard()
-EndFunction 
+EndFunction
 
 ;set the current index (between -1 and size)
 ;for use with getNext, SetNext, GetPrevious, SetPrevious functions
@@ -211,7 +211,7 @@ EndFunction
 ;used for getNext, SetNext, GetPrevious, SetPrevious functions
 Actor[] function GetCurrentSubArray()
     Guard()
-EndFunction 
+EndFunction
 
 int function GetSize()
     Guard()
@@ -239,7 +239,7 @@ EndFunction
 ;this script and the DynamicActorArrays script should be attached to the BigArrayForm
 DbBigActorArray function Create(Form BigArrayForm, int akSize = 0, Actor fillElement = None, bool persistent = true, bool abInitiallyDisabled = true) Global
     Guard()
-EndFunction 
+EndFunction
 
 bool function resize(int newSize, Actor fillElement = None)
     Guard()
@@ -273,7 +273,7 @@ EndFunction
 ;if the current index is at the first element (0), goes to the last valid index in the array (size - 1).
 Actor Function GetPrevious()
     Guard()
-Endfunction 
+Endfunction
 
 ;Set the previous element in the big array. Subtract 1 to currentIndex and set the element
 ;if the current index is at the first element (0), goes to the last valid index in the array (size - 1).
@@ -301,7 +301,7 @@ Actor function Pop()
     Guard()
 EndFunction
 
-;remove the Actor at the index, reducing the size by 1 and moving each element after the index back by 1. 
+;remove the Actor at the index, reducing the size by 1 and moving each element after the index back by 1.
 ;returns the Actor that's currently at the index
 Actor function RemoveAt(int index)
     Guard()
@@ -327,7 +327,7 @@ EndFunction
 
 Actor[] Function GetArray(int akSize = 0)
     Guard()
-EndFunction 
+EndFunction
 
 State A1
     Actor[] Function GetArray(int akSize = 0)
@@ -1477,7 +1477,7 @@ EndState
 ;     int i = startIndex
 ;     while i < maxState
 ;         Actor arrayActor = ("Array" + i)
-        
+
 ;         MiscUtil.WriteToFile(filePath, "\n")
 ;         MiscUtil.WriteToFile(filePath, "\nState A" + i)
 ;         MiscUtil.WriteToFile(filePath, "\n    Actor[] Function GetArray(int akSize = 0)")
@@ -1487,12 +1487,11 @@ EndState
 ;         MiscUtil.WriteToFile(filePath, "\n        return " + arrayActor)
 ;         MiscUtil.WriteToFile(filePath, "\n    EndFunction")
 ;         MiscUtil.WriteToFile(filePath, "\nEndState")
-        
+
 ;         i += 1
 ;     EndWhile
 ; EndFunction
 
 Function Guard()
-    Debug.MessageBox("DbBigActorArray: Dom't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
+    Debug.MessageBox("DbBigActorArray: Don't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
 EndFunction
-

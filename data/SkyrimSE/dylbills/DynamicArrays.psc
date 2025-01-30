@@ -1,14 +1,14 @@
 Scriptname DynamicArrays Extends Form
 ;This allows to create arrays of dynamic length. Like Utility.CreateStringArray(i) ect except doesn't require skse.
-;attach this script and the DynamicArrays_B script to a new form in the CK that you won't use for anything else. 
+;attach this script and the DynamicArrays_B script to a new form in the CK that you won't use for anything else.
 ;I'd recommend a new MiscObject, but can be any type of form.
-;Both scripts should be attached to the same form. 
+;Both scripts should be attached to the same form.
 ;I had to split them up because either scripts can only have a max number of states or only be a certain length.
 ;Putting them all on the same script didn't work.
 
 ;How to use:
 ;Let's say you attach these scripts to a MiscObject called DynamicArraysMisc
-;Then in another script you can do: 
+;Then in another script you can do:
 ;DynamicArrays DArrays = (DynamicArraysMisc as form) as DynamicArrays
 ;String[] MyStringArray = DArrays.CreateStringArray(50)
 
@@ -25,12 +25,12 @@ EndFunction
 
 Int[] Function CreateIntArray(int L)
     Guard()
-EndFunction   
-    
+EndFunction
+
 Float[] Function CreateFloatArray(int L)
     Guard()
 EndFunction
-      
+
 ObjectReference[] Function CreateObjectReferenceArray(int L)
     Guard()
 EndFunction
@@ -38,21 +38,21 @@ EndFunction
 Actor[] Function CreateActorArray(int L)
     Guard()
 EndFunction
-    
+
 Form[] Function CreateFormArray(int L)
     Guard()
 EndFunction
 
 
-;Array Utility functions. Similar to PapyrusUtil, but doesn't require skse. 
-;Note that these functions involve creating new arrays and cycling through the passed in arrays to get return arrays. 
-;As such, use sparingly and don't populate arrays with the Push functions. 
+;Array Utility functions. Similar to PapyrusUtil, but doesn't require skse.
+;Note that these functions involve creating new arrays and cycling through the passed in arrays to get return arrays.
+;As such, use sparingly and don't populate arrays with the Push functions.
 
-;Functions include: 
+;Functions include:
 
 ;Sort ================================================================================================================
-;Sort the array from smallest to largest or vice versa. 
-;Note that if Direct == true (default) this affects the passed in akArray directly. 
+;Sort the array from smallest to largest or vice versa.
+;Note that if Direct == true (default) this affects the passed in akArray directly.
 ;So no need to do MyIntArray[] = SortIntArray(MyIntArray)
 ;Can just do: SortIntArray(MyIntArray)
 ;If Direct == false, it first copy's the array, sorts the copied array and returns the copied array so the passed in akArray is unaffected.
@@ -64,9 +64,9 @@ EndFunction
 
 
 ;Resize ===========================================================================================================================================
-;Resize akArray to NewSize and return New Array. 
-;If NewSize is less than current size, removes elements after NewSize in akArray. 
-;If NewSize is greater than current size, the Fill element to the end of the akArray. 
+;Resize akArray to NewSize and return New Array.
+;If NewSize is less than current size, removes elements after NewSize in akArray.
+;If NewSize is greater than current size, the Fill element to the end of the akArray.
 
 ;String[] Function ResizeStringArray(String[] akArray, int NewSize, String Fill = "")
 ;Bool[] Function ResizeBoolArray(Bool[] akArray, int NewSize, Bool Fill = false)
@@ -77,7 +77,7 @@ EndFunction
 ;Form[] Function ResizeFormArray(Form[] akArray, int NewSize, Form Fill = None)
 
 ;Join =======================================================================================================================
-;Join a_Array with b_Array and return new array. 
+;Join a_Array with b_Array and return new array.
 ;The added lengths of the arrays must be less than or equil to 128 elements.
 ;If greater than, the tail end of b_array is clipped off where it exceeds 128.
 
@@ -91,7 +91,7 @@ EndFunction
 
 
 ;Push =====================================================================================================================
-;Add an element to the end of the array and return new array. 
+;Add an element to the end of the array and return new array.
 ;The passed in akArray must be less than 128 elements in length.
 
 ;String[] Function PushString(String[] akArray, String ToPush)
@@ -104,7 +104,7 @@ EndFunction
 
 
 ;InsertAt ================================================================================================================
-;Insert the ToInsert element to the akArray at Index and return new array. 
+;Insert the ToInsert element to the akArray at Index and return new array.
 ;Passed in akArray must be less than 128 elements in length.
 
 ;String[] Function InsertStringAt(String[] akArray, String ToInsert, Int Index)
@@ -117,7 +117,7 @@ EndFunction
 
 
 ;InsertArrayAt =======================================================================================================
-;Insert the ToInsert array into the akArray at Index and return new combined array. 
+;Insert the ToInsert array into the akArray at Index and return new combined array.
 ;Only adds elements up to 128.
 
 ;String[] Function InsertStringArrayAt(String[] akArray, String[] ToInsert, Int Index)
@@ -128,7 +128,7 @@ EndFunction
 ;ObjectReference[] Function InsertObjectReferenceArrayAt(ObjectReference[] akArray, ObjectReference[] ToInsert, Int Index)
 ;Form[] Function InsertFormArrayAt(Form[] akArray, Form[] ToInsert, Int Index)
 
-;shift ===================================================================================================================== 
+;shift =====================================================================================================================
 ;Remove either the first or last element from the array and return new shortened array
 ;Passed in array must be less than or equal to 129 elements in length.
 
@@ -142,7 +142,7 @@ EndFunction
 
 
 ;RemoveAt ==================================================================================================================
-;Remove the element at the Index of the akArray and return new array. 
+;Remove the element at the Index of the akArray and return new array.
 ;Passed in array must be less than or equal to 129 elements in length.
 
 ;String[] Function RemoveStringAt(String[] akArray, Int Index)
@@ -155,8 +155,8 @@ EndFunction
 
 
 ;Remove ==================================================================================================================
-;Find the ToRemove element in the akArray and remove it, returning the shortened array. 
-;If First == true (default) finds first instance of ToRemove, otherwise finds last instance of ToRemove (rFind) 
+;Find the ToRemove element in the akArray and remove it, returning the shortened array.
+;If First == true (default) finds first instance of ToRemove, otherwise finds last instance of ToRemove (rFind)
 
 ;String[] Function RemoveString(String[] akArray, String ToRemove, Bool First = true)
 ;Bool[] Function RemoveBool(Bool[] akArray, Bool ToRemove, Bool First = true)
@@ -180,7 +180,7 @@ EndFunction
 
 
 ;Clear =======================================================================================================
-;Remove all of the ToClear elements from the akArray and return new array. 
+;Remove all of the ToClear elements from the akArray and return new array.
 ;The length of the new array must be 128 or less, otherwise returns the akArray unedited.
 
 ;String[] Function ClearStrings(String[] akArray, String ToClear)
@@ -193,9 +193,9 @@ EndFunction
 
 
 ;Copy =================================================================================================
-;Copy all the elements from akArray to NewArray and return NewArray. 
-;Only copy's up to 128 elements. 
-;different than doing ArrayA = ArrayB. 
+;Copy all the elements from akArray to NewArray and return NewArray.
+;Only copy's up to 128 elements.
+;different than doing ArrayA = ArrayB.
 ;When doing that, altering ArrayB will also alter ArrayA. Not so with these copy functions.
 
 ;String[] Function CopyStringArray(String[] akArray)
@@ -231,7 +231,7 @@ Float[] Function SortFloatArray(Float[] akArray, Bool Ascending = true,  Bool Di
     Guard()
 EndFunction
 
-;Resize =========================================================================== 
+;Resize ===========================================================================
 String[] Function ResizeStringArray(String[] akArray, int NewSize, String Fill = "")
     Guard()
 EndFunction
@@ -435,7 +435,7 @@ Form[] Function RemoveFormAt(Form[] akArray, Int Index)
     Guard()
 EndFunction
 
-;Remove ============================================================================= 
+;Remove =============================================================================
 String[] Function RemoveString(String[] akArray, String ToRemove, Bool First = true)
     Guard()
 EndFunction
@@ -464,7 +464,7 @@ Form[] Function RemoveForm(Form[] akArray, Form ToRemove, Bool First = true)
     Guard()
 EndFunction
 
-;Sub arrays ============================================================================= 
+;Sub arrays =============================================================================
 String[] Function SubStringArray(String[] akArray, Int StartIndex, Int EndIndex)
     Guard()
 EndFunction
@@ -522,7 +522,7 @@ Form[] Function ClearForms(Form[] akArray, Form ToClear)
     Guard()
 EndFunction
 
-;Copy========================================================== 
+;Copy==========================================================
 String[] Function CopyStringArray(String[] akArray)
     Guard()
 EndFunction
@@ -583,58 +583,58 @@ EndFunction
 
 ;For the create array functions.
 ;functions must also be defined in the empty state.
-String[] Function GetStringArray() 
+String[] Function GetStringArray()
 EndFunction
 
-Bool[] Function GetBoolArray() 
+Bool[] Function GetBoolArray()
 EndFunction
 
-Int[] Function GetIntArray() 
+Int[] Function GetIntArray()
 EndFunction
 
-Float[] Function GetFloatArray() 
+Float[] Function GetFloatArray()
 EndFunction
 
-Actor[] Function GetActorArray() 
+Actor[] Function GetActorArray()
 EndFunction
 
-ObjectReference[] Function GetObjectReferenceArray() 
+ObjectReference[] Function GetObjectReferenceArray()
 EndFunction
 
-Form[] Function GetFormArray() 
+Form[] Function GetFormArray()
 EndFunction
-    
+
 State A1
     String[] Function GetStringArray()
         String[] A = New String[1]
         Return A
     EndFunction
-    
+
     Bool[] Function GetBoolArray()
         Bool[] A = New Bool[1]
         Return A
     EndFunction
-    
+
     Int[] Function GetIntArray()
         Int[] A = New Int[1]
         Return A
     EndFunction
-    
+
     Float[] Function GetFloatArray()
         Float[] A = New Float[1]
         Return A
     EndFunction
-    
+
     ObjectReference[] Function GetObjectReferenceArray()
         ObjectReference[] A = New ObjectReference[1]
         Return A
     EndFunction
-    
+
     Actor[] Function GetActorArray()
         Actor[] A = New Actor[1]
         Return A
     EndFunction
-    
+
     Form[] Function GetFormArray()
         Form[] A = New Form[1]
         Return A
@@ -646,32 +646,32 @@ State A2
         String[] A = New String[2]
         Return A
     EndFunction
-    
+
     Bool[] Function GetBoolArray()
         Bool[] A = New Bool[2]
         Return A
     EndFunction
-    
+
     Int[] Function GetIntArray()
         Int[] A = New Int[2]
         Return A
     EndFunction
-    
+
     Float[] Function GetFloatArray()
         Float[] A = New Float[2]
         Return A
     EndFunction
-    
+
     ObjectReference[] Function GetObjectReferenceArray()
         ObjectReference[] A = New ObjectReference[2]
         Return A
     EndFunction
-    
+
     Actor[] Function GetActorArray()
         Actor[] A = New Actor[2]
         Return A
     EndFunction
-    
+
     Form[] Function GetFormArray()
         Form[] A = New Form[2]
         Return A
@@ -683,32 +683,32 @@ State A3
         String[] A = New String[3]
         Return A
     EndFunction
-    
+
     Bool[] Function GetBoolArray()
         Bool[] A = New Bool[3]
         Return A
     EndFunction
-    
+
     Int[] Function GetIntArray()
         Int[] A = New Int[3]
         Return A
     EndFunction
-    
+
     Float[] Function GetFloatArray()
         Float[] A = New Float[3]
         Return A
     EndFunction
-    
+
     ObjectReference[] Function GetObjectReferenceArray()
         ObjectReference[] A = New ObjectReference[3]
         Return A
     EndFunction
-    
+
     Actor[] Function GetActorArray()
         Actor[] A = New Actor[3]
         Return A
     EndFunction
-    
+
     Form[] Function GetFormArray()
         Form[] A = New Form[3]
         Return A
@@ -2970,9 +2970,8 @@ State A64
         Form[] A = New Form[64]
         Return A
     EndFunction
-EndState 
+EndState
 
 Function Guard()
-    Debug.MessageBox("DynamicArrays: Dom't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
+    Debug.MessageBox("DynamicArrays: Don't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
 EndFunction
-

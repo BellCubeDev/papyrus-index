@@ -1,5 +1,5 @@
 Scriptname DynamicStringArrays Extends Form
-;This is exactly like the DynamicArrays script but only includes string type arrays. 
+;This is exactly like the DynamicArrays script but only includes string type arrays.
 ;Create string arrays of varying lengths (up to 128 in size) and manipulate them without skse.
 
 ;I split it up so that it would be easy to use this as a template for different types.
@@ -7,7 +7,7 @@ Scriptname DynamicStringArrays Extends Form
 
 ;How to use:
 ;Let's say you attach these scripts to a MiscObject called DynamicStringArraysMisc
-;Then in another script you can do: 
+;Then in another script you can do:
 ;DynamicStringArrays stringArrays = (DynamicStringArraysMisc as form) as DynamicStringArrays
 ;String[] MyStringArray = stringArrays.CreateArray(50)
 
@@ -18,12 +18,12 @@ String[] Function CreateArray(int size)
     Guard()
 EndFunction
 
-;Array Utility functions. Similar to PapyrusUtil, but doesn't require skse. 
-;Note that these functions involve creating new arrays and cycling through the passed in arrays to get return arrays. 
-;As such, use sparingly and don't populate arrays with the Push functions. 
+;Array Utility functions. Similar to PapyrusUtil, but doesn't require skse.
+;Note that these functions involve creating new arrays and cycling through the passed in arrays to get return arrays.
+;As such, use sparingly and don't populate arrays with the Push functions.
 
-;Sort the array from smallest to largest or vice versa. 
-;Note that if Direct == true (default) this affects the passed in akArray directly. 
+;Sort the array from smallest to largest or vice versa.
+;Note that if Direct == true (default) this affects the passed in akArray directly.
 ;So no need to do MyIntArray[] = SortIntArray(MyIntArray)
 ;Can just do: SortIntArray(MyIntArray)
 ;If Direct == false, it first copy's the array, sorts the copied array and returns the copied array so the passed in akArray is unaffected.
@@ -32,33 +32,33 @@ String[] Function Sort(String[] akArray, Bool Ascending = true, Bool Direct = tr
     Guard()
 EndFunction
 
-;Resize akArray to NewSize and return New Array. 
-;If NewSize is less than current size, removes elements after NewSize in akArray. 
-;If NewSize is greater than current size, the Fill element to the end of the akArray. 
+;Resize akArray to NewSize and return New Array.
+;If NewSize is less than current size, removes elements after NewSize in akArray.
+;If NewSize is greater than current size, the Fill element to the end of the akArray.
 String[] Function Resize(String[] akArray, int NewSize, String Fill = "")
     Guard()
 EndFunction
 
-;Join a_Array with b_Array and return new array. 
+;Join a_Array with b_Array and return new array.
 ;The added lengths of the arrays must be less than or equil to 128 elements.
 ;If greater than, the tail end of b_array is clipped off where it exceeds 128.
 String[] Function Join(String[] a_Array, String[] b_Array)
     Guard()
 EndFunction
 
-;Add an element to the end of the array and return new array. 
+;Add an element to the end of the array and return new array.
 ;The passed in akArray must be less than 128 elements in length.
 String[] Function Push(String[] akArray, String ToPush)
     Guard()
 EndFunction
 
-;insert the ToInsert string into the array, increasing the size by one and 
+;insert the ToInsert string into the array, increasing the size by one and
 ;moving each string after index back by one, returning the new array.
 String[] Function InsertAt(String[] akArray, String ToInsert, Int Index)
     Guard()
 EndFunction
 
-;Insert the ToInsert array to the akArray at Index and return new array. 
+;Insert the ToInsert array to the akArray at Index and return new array.
 ;Passed in akArray must be less than 128 elements in length.
 String[] Function InsertArrayAt(String[] akArray, String[] ToInsert, Int Index)
     Guard()
@@ -70,14 +70,14 @@ String[] Function Shift(String[] akArray, Bool First = true)
     Guard()
 EndFunction
 
-;Remove the element at the Index of the akArray and return new array. 
+;Remove the element at the Index of the akArray and return new array.
 ;Passed in array must be less than or equal to 129 elements in length.
 String[] Function RemoveAt(String[] akArray, Int Index)
     Guard()
 EndFunction
 
-;Find the ToRemove element in the akArray and remove it, returning the shortened array. 
-;If First == true (default) finds first instance of ToRemove, otherwise finds last instance of ToRemove (rFind) 
+;Find the ToRemove element in the akArray and remove it, returning the shortened array.
+;If First == true (default) finds first instance of ToRemove, otherwise finds last instance of ToRemove (rFind)
 String[] Function Remove(String[] akArray, String ToRemove, Bool First = true)
     Guard()
 EndFunction
@@ -87,15 +87,15 @@ String[] Function SubArray(String[] akArray, Int StartIndex, Int EndIndex)
     Guard()
 EndFunction
 
-;Remove all of the ToClear elements from the akArray and return new array. 
+;Remove all of the ToClear elements from the akArray and return new array.
 ;The length of the new array must be 128 or less, otherwise returns the akArray unedited.
 String[] Function Clear(String[] akArray, String ToClear)
     Guard()
 EndFunction
 
-;Copy all the elements from akArray to NewArray and return NewArray. 
-;Only copy's up to 128 elements. 
-;different than doing ArrayA = ArrayB. 
+;Copy all the elements from akArray to NewArray and return NewArray.
+;Only copy's up to 128 elements.
+;different than doing ArrayA = ArrayB.
 ;When doing that, altering ArrayB will also alter ArrayA. Not so with these copy functions.
 String[] Function Duplicate(String[] akArray)
     Guard()
@@ -107,7 +107,7 @@ Int Function Count(String[] akArray, String ToCount)
 EndFunction
 
 ;For the create array functions.
-String[] Function GetArray() 
+String[] Function GetArray()
     Guard()
 EndFunction
 
@@ -1002,8 +1002,8 @@ EndState
 
 ;used to write the array states in this script
 ; Function WriteArrayStates(int min, int max, String filePath) Global
-;     int i = min 
-;     while i < max 
+;     int i = min
+;     while i < max
 ;         MiscUtil.WriteToFile(filePath, "\n")
 ;         MiscUtil.WriteToFile(filePath, "\nState A" + i)
 ;         MiscUtil.WriteToFile(filePath, "\n    String[] Function GetArray()")
@@ -1011,12 +1011,11 @@ EndState
 ;         MiscUtil.WriteToFile(filePath, "\n        Return newArray")
 ;         MiscUtil.WriteToFile(filePath, "\n    EndFunction")
 ;         MiscUtil.WriteToFile(filePath, "\nEndState")
-;         i += 1 
+;         i += 1
 ;     Endwhile
-; Endfunction 
+; Endfunction
 
 
 Function Guard()
-    Debug.MessageBox("DynamicStringArrays: Dom't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
+    Debug.MessageBox("DynamicStringArrays: Don't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
 EndFunction
-

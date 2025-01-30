@@ -1,7 +1,7 @@
 scriptName SkyMessage hidden
 {Display custom Messages with any number of buttons!}
 
-; VS Code has a bug where the documentation of the first function isn't shown. 
+; VS Code has a bug where the documentation of the first function isn't shown.
 ; This is that function:
 function Delete(int messageBoxId) global native
 
@@ -148,7 +148,7 @@ int function ShowArray_NonBlocking(string bodyText, string[] buttons) global nat
 
 ; Returns the result text from a message box created using `Show_NonBlocking()` or `ShowArray_NonBlocking()`
 ;
-; If `IsMessageResultAvailable` is `false` or the messageBoxId is invalid, this returns `""`  
+; If `IsMessageResultAvailable` is `false` or the messageBoxId is invalid, this returns `""`
 ; else it returns the name of the button which was selected.
 ;
 ; Note: calling this function cleans up the stored messageBox and it will no longer be available
@@ -157,7 +157,7 @@ string function GetResultText(int messageBoxId, bool deleteResultOnAccess = true
 
 ; Returns the result index from a message box created using `Show_NonBlocking()` or `ShowArray_NonBlocking()`
 ;
-; If `IsMessageResultAvailable` is `false` or the messageBoxId is invalid, this returns `-1`  
+; If `IsMessageResultAvailable` is `false` or the messageBoxId is invalid, this returns `-1`
 ; else it returns the `int` index of the button which was selected.
 ;
 ; Note: calling this function cleans up the stored messageBox and it will no longer be available
@@ -170,6 +170,5 @@ bool function IsMessageResultAvailable(int messageBoxId) global native
 
 
 Function Guard()
-    Debug.MessageBox("SkyMessage: Dom't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
+    Debug.MessageBox("SkyMessage: Don't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
 EndFunction
-

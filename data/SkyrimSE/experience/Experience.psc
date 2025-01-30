@@ -6,7 +6,7 @@ int Function GetScriptVersion() global
     Guard()
 endFunction
 
-; Verion format: Major.Minor.Patch.Build 
+; Verion format: Major.Minor.Patch.Build
 string Function GetVersion() native global
 
 ; Adds specified amount of experience points, optionally shows meter
@@ -35,6 +35,5 @@ Function SaveSettings() global native
 
 
 Function Guard()
-    Debug.MessageBox("Experience: Dom't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
+    Debug.MessageBox("Experience: Don't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
 EndFunction
-

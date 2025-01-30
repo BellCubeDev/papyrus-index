@@ -10,21 +10,21 @@ Int Function GetAndrealphusExtenderVersion() Global Native
 }
 
 Function CastEnchantment(Actor akSource, Enchantment akEnchantment, Actor akTarget) global native
-{ 
+{
 - akSource: The Actor from which to cast the Enchantment.
 - akEnchantment: Enchantment to cast.
 - akTarget: Actor at which to aim the Enchantment.
 }
 
 Function CastPotion(Actor akSource, Potion akPotion, Actor akTarget) global native
-{ 
+{
 - akSource: The Actor from which to cast the Potion.
 - akPotion: Potion to cast.
 - akTarget: Actor at which to aim the Potion.
 }
 
 Function CastIngredient(Actor akSource, Ingredient akIngedient, Actor akTarget) global native
-{ 
+{
 - akSource: The Actor from which to cast the Ingredient.
 - akIngedient: Ingredient to cast.
 - akTarget: Actor at which to aim the Ingredient.
@@ -68,11 +68,11 @@ ActiveMagicEffect Function GetActiveMagicEffectFromActor(Actor akActor, MagicEff
 Function SetRefAsNoAIAcquire(ObjectReference akObject, Bool SetNoAIAquire) global native
 {
 - akObject: the objectreference
-- SetNoAIAquire: to disable or enable SetNoAIAquire field. 
+- SetNoAIAquire: to disable or enable SetNoAIAquire field.
 }
 
 Function CastSpellFromRef(Actor akSource, Spell akSpell, ObjectReference akTarget, ObjectReference akOriginRef) global native
-{ 
+{
 - akSource: The caster of the spell.
 - akSpell: Spell to cast.
 - akTarget: An ObjectReference at which to aim the spell.
@@ -123,34 +123,34 @@ EndFunction
 ;{
 ;- akObject: the objectreference
 ;- FlagInt: the Int representing the flag.
-	;0	kIsGroundPiece 
+	;0	kIsGroundPiece
 	;1	kCollisionsDisabled -> unknown?
-	;2	kDeleted 
+	;2	kDeleted
 	;3	kHiddenFromLocalMap -> only for statics!
-	;4	kTurnOffFire 
+	;4	kTurnOffFire
 	;5	kInaccessible -> only for doors!
 	;6	kLODRespectsEnableState  -> only for statics!
 	;7	kStartsDead  -> only for actors!
-	;8	kDoesntLightWater 
+	;8	kDoesntLightWater
 	;9	kMotionBlur  -> only for statics!
-	;10	kPersistent 
-	;11	kInitiallyDisabled 
-	;12	kIgnored 
+	;10	kPersistent
+	;11	kInitiallyDisabled
+	;12	kIgnored
 	;13	kStartUnconscious  -> only for actors!
-	;14	kSkyMarker 
+	;14	kSkyMarker
 	;15	kHarvested   -> only for trees!
 	;16	kIsFullLOD   -> only for actors!
 	;17	kNeverFades   -> only for lights!
-	;18	kDoesntLightLandscape 
+	;18	kDoesntLightLandscape
 	;19	kIgnoreFriendlyHits   -> only for actors!
-	;20	kNoAIAcquire 
-	;21	kCollisionGeometry_Filter 
-	;22	kCollisionGeometry_BoundingBox 
-	;23	kReflectedByAutoWater 
-	;24	kDontHavokSettle 
-	;25	kGround 
-	;26	kRespawns 
-	;27	kMultibound 
+	;20	kNoAIAcquire
+	;21	kCollisionGeometry_Filter
+	;22	kCollisionGeometry_BoundingBox
+	;23	kReflectedByAutoWater
+	;24	kDontHavokSettle
+	;25	kGround
+	;26	kRespawns
+	;27	kMultibound
 ; - TurnOn: To turn the flag on or off.
 ;}
 
@@ -169,6 +169,5 @@ EndFunction
 
 
 Function Guard()
-    Debug.MessageBox("ANDR_PapyrusFunctions: Dom't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
+    Debug.MessageBox("ANDR_PapyrusFunctions: Don't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
 EndFunction
-

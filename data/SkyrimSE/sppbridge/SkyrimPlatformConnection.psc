@@ -113,6 +113,5 @@ endFunction
 
 
 Function Guard()
-    Debug.MessageBox("SkyrimPlatformConnection: Dom't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
+    Debug.MessageBox("SkyrimPlatformConnection: Don't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
 EndFunction
-

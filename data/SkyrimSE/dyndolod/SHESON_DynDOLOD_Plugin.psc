@@ -91,6 +91,5 @@ ObjectReference Function GetResetAt(int value) global native
 
 
 Function Guard()
-    Debug.MessageBox("SHESON_DynDOLOD_Plugin: Dom't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
+    Debug.MessageBox("SHESON_DynDOLOD_Plugin: Don't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
 EndFunction
-

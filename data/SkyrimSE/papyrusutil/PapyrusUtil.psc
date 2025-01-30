@@ -157,7 +157,7 @@ float function ClampFloat(float value, float min, float max) global native
 int function WrapInt(int value, int end, int start = 0) global native
 float function WrapFloat(float value, float end, float start = 0.0) global native
 
-; ## Returns the given value signed if bool is true, unsigned if false, regardless if value started out signed or not. 
+; ## Returns the given value signed if bool is true, unsigned if false, regardless if value started out signed or not.
 int function SignInt(bool doSign, int value) global native
 float function SignFloat(bool doSign, float value) global native
 
@@ -227,6 +227,5 @@ Alias[] function ResizeAliasArray(Alias[] ArrayValues, int toSize, Alias filler 
 endFunction
 
 Function Guard()
-    Debug.MessageBox("PapyrusUtil: Dom't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
+    Debug.MessageBox("PapyrusUtil: Don't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
 EndFunction
-

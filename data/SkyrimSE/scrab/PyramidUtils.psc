@@ -1,4 +1,4 @@
-Scriptname PyramidUtils Hidden 
+Scriptname PyramidUtils Hidden
 {
   Legacy Script for compatibility. All functions here have been moved into corresponding SPE_ scripts
 }
@@ -107,7 +107,7 @@ float Function GetAbsPosZ(ObjectReference akRef) global
     Guard()
 EndFunction
 
-; misc 
+; misc
 GlobalVariable Function GetGlobal(String asEditorID) global
     Guard()
 EndFunction
@@ -129,6 +129,5 @@ EndFunction
 
 
 Function Guard()
-    Debug.MessageBox("PyramidUtils: Dom't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
+    Debug.MessageBox("PyramidUtils: Don't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
 EndFunction
-

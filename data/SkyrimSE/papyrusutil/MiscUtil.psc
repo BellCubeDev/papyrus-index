@@ -5,14 +5,14 @@ scriptname MiscUtil Hidden
 /;
 
 ; Scans the current cell of the given CenterOn for an object of the given form type ID within radius and returns an array for all that
-; and (optionally) also has the given keyword if changed from default none. Setting radius higher than 0.0 will restrict the 
+; and (optionally) also has the given keyword if changed from default none. Setting radius higher than 0.0 will restrict the
 ; search distance from around CenterOn, 0.0 will search entire cell the object is in.
 ; NOTE: Keyword searches seem a little unpredictable so be sure to test if your usage of it works before using the results.
 ObjectReference[] function ScanCellObjects(int formType, ObjectReference CenterOn, float radius = 0.0, Keyword HasKeyword = none) global native
 
 
 ; Scans the current cell of the given CenterOn for an actor within the given radius and returns an array for all actors that are
-; currently alive and (optionally) has the given keyword if changed from default none. Setting radius higher than 0.0 will restrict the 
+; currently alive and (optionally) has the given keyword if changed from default none. Setting radius higher than 0.0 will restrict the
 ; search distance from around CenterOn, 0.0 will search entire cell the object is in.
 ; NOTE: Keyword searches seem a little unpredictable so be sure to test if your usage of it works before using the results.
 Actor[] function ScanCellNPCs(ObjectReference CenterOn, float radius = 0.0, Keyword HasKeyword = none, bool IgnoreDead = true) global native
@@ -101,6 +101,5 @@ endFunction
 
 
 Function Guard()
-    Debug.MessageBox("MiscUtil: Dom't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
+    Debug.MessageBox("MiscUtil: Don't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
 EndFunction
-

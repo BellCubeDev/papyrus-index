@@ -38,6 +38,5 @@ endfunction
 
 
 Function Guard()
-    Debug.MessageBox("JContainers: Dom't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
+    Debug.MessageBox("JContainers: Don't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
 EndFunction
-

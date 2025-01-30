@@ -533,7 +533,7 @@ Form function debug_GetIntListObject(int index) global native
 Form function debug_GetFloatListObject(int index) global native
 Form function debug_GetStringListObject(int index) global native
 Form function debug_GetFormListObject(int index) global native
-   
+
 int function debug_GetIntKeysCount(Form ObjKey) global native
 int function debug_GetFloatKeysCount(Form ObjKey) global native
 int function debug_GetStringKeysCount(Form ObjKey) global native
@@ -870,6 +870,5 @@ endFunction
 
 
 Function Guard()
-    Debug.MessageBox("StorageUtil: Dom't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
+    Debug.MessageBox("StorageUtil: Don't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
 EndFunction
-

@@ -1445,7 +1445,7 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
             this.document.sourceCode += `
 
 Function Guard()
-    Debug.MessageBox("${scriptFullName}: Dom't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
+    Debug.MessageBox("${scriptFullName}: Don't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
 EndFunction
 
 `;

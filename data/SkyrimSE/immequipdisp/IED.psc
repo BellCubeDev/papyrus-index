@@ -213,6 +213,5 @@ Form Function GetLastEquippedForm(Actor akActor, int aiBipedSlot, bool abTracked
 
 
 Function Guard()
-    Debug.MessageBox("IED: Dom't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
+    Debug.MessageBox("IED: Don't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
 EndFunction
-
