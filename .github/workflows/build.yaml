@@ -58,9 +58,9 @@ jobs:
 
       - name: Generate Build Markdown
         run: |
-          date=node -e "console.log(new Date().toLocaleDateString('en-US', { dateStyle: 'full' }))"
+          date=$(node -e "console.log(new Date().toLocaleDateString('en-US', { dateStyle: 'full' }))")
           actionsRunUrl='${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
-          echo "NEXT_PUBLIC_BUILD_SOURCE_MD=Last built on $date via [GitHub Actions - Build Next.js Site #${{ github.run_number }}]($actionsRunUrl)" >> $GITHUB_ENV
+          echo "NEXT_PUBLIC_BUILD_SOURCE_MD=Last built on $date via [GitHub Actions - ${{github.workflow}} #${{ github.run_number }}]($actionsRunUrl)" >> $GITHUB_ENV
 
       - name: Run Build Script
         run: pnpm run build
