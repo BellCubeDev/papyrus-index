@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - prod
+      - production
   schedule: # every sunday at midnight (so we always have Function of the Day up to date and our wiki data is reasonably fresh)
     - cron: '0 0 * * 0'
 
