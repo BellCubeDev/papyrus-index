@@ -9,6 +9,8 @@ import { Roboto } from 'next/font/google';
 import { SourceCodePro } from './SourceCodePro';
 //import { ApolloWrapper } from '@/nexus-api/GraphQLClientClient';
 import { ProgressBar } from './ProgressBar';
+import { WikiMarkdown } from './components/wiki-markdown/WikiMarkdown';
+import Markdown from 'react-markdown';
 const roboto = Roboto({
     display: 'block',
     weight: ['400', '500', '700'],
@@ -151,9 +153,24 @@ export default function RootLayout({ children }: { readonly children: React.Reac
         </head>
         <body className={`${roboto.className} ${roboto.variable} ${SourceCodePro.variable}`} suppressHydrationWarning>
             <ProgressBar />
-            <main>
-                {children}
-            </main>
+            <div>
+                <main>
+                    {children}
+                </main>
+            </div>
+            <div>
+                <footer>
+
+                    <p>
+                        © {new Date().getUTCFullYear()} BellCube. Source code <a href="https://github.com/BellCubeDev/papyrus-index">available on GitHub</a>.
+                    </p>
+                    <p>
+                        Website code <a href="https://github.com/BellCubeDev/papyrus-index/blob/development/LICENSE.md">available for free under the MIT license</a>.
+                        Papyrus source files are not covered by this license. Wiki&nbsp;data is covered by the respective licenses of the wikis, disclosed on individual pages where such data is used.
+                    </p>
+                    <Markdown skipHtml>{process.env.NEXT_PUBLIC_BUILD_SOURCE_MD}</Markdown>
+                </footer>
+            </div>
         </body>
     </html>;
 }

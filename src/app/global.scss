@@ -25,6 +25,12 @@ html, body {
     font-size: 18px;
 }
 
+body > div {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
 * {
     max-width: 100%;
 }
@@ -51,7 +57,7 @@ p {
     margin: .6em 0;
 }
 
-main, article {
+main, article, footer {
     > :first-child {
         &h1, &h2, &h3, &h4, &h5, &h6 {
             margin-top: 0;
@@ -142,12 +148,25 @@ pre {
     --tooltipBG: #111;
 }
 
-main {
+main, footer {
     padding: css-min(2vw, 32px) css-min(3vw, 48px) css-min(10vw, 64px);
     max-width: css-clamp(10in, calc(90vw - css-min(3vw, 48px)), 100%);
 }
 
-article {
+article, footer {
     max-width: css-min(10in, 100%);
     text-wrap: pretty;
+}
+
+div:has(> footer) {
+    // ensure footer is always at the bottom of the page, even if the content
+    // is very short, while still keeping it below the fold if the content is too long
+    position: sticky;
+    top: 100%;
+}
+
+footer {
+    width: 100%;
+    text-align: center;
+    align-self: center;
 }

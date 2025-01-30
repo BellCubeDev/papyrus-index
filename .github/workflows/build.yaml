@@ -56,11 +56,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
 
+      - name: Generate Build Markdown
+        run: |
+          date=node -e "console.log(new Date().toLocaleDateString('en-US', { dateStyle: 'full' }))"
+          actionsRunUrl='${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+          echo "NEXT_PUBLIC_BUILD_SOURCE_MD=Last built on $date via [GitHub Actions - Build Next.js Site #${{ github.run_number }}]($actionsRunUrl)" >> $GITHUB_ENV
+
       - name: Run Build Script
         run: pnpm run build
-
-      - name: Create .nojekyll File
-        run: touch out/.nojekyll
 
       - name: Save Custom Caches
         id: cache-save-custom
