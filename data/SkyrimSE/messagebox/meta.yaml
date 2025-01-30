@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Standalone Extender)
+nameProper: Papyrus MessageBox
+nameShort: MessageBox
+indexedVersion: "1.0.0"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/83578
+gitRepo: https://github.com/SkyrimScripting/MessageBox
+nexusIndexedFileId: 541531

@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Standalone Extender)
+nameProper: PAPER
+nameShort: PAPER
+indexedVersion: "2.2.4"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/73849
+gitRepo: https://github.com/DennisSoemers/PAPER
+nexusIndexedFileId: 408512

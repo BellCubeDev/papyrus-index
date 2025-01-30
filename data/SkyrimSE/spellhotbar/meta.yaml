@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: Standalone
+nameProper: Spell Hotbar
+nameShort: Spell Hotbar
+indexedVersion: "0.1.2"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/110763
+gitRepo: https://github.com/pWn3d1337/Skyrim_SpellHotbar
+nexusIndexedFileId: 470215

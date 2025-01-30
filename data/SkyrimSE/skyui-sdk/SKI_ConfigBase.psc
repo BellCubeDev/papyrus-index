@@ -51,166 +51,166 @@ endProperty
 
 event OnConfigInit()
 	{Called when this config menu is initialized}
-	Guard()
+    Guard()
 endEvent
 
 event OnConfigRegister()
 	{Called when this config menu registered at the control panel}
-	Guard()
+    Guard()
 endEvent
 
 event OnConfigOpen()
 	{Called when this config menu is opened}
-	Guard()
+    Guard()
 endEvent
 
 event OnConfigClose()
 	{Called when this config menu is closed}
-	Guard()
+    Guard()
 endEvent
 
 event OnVersionUpdate(int aVersion)
 	{Called when aVersion update of this script has been detected}
-	Guard()
+    Guard()
 endEvent
 
 event OnPageReset(string a_page)
 	{Called when a new page is selected, including the initial empty page}
-	Guard()
+    Guard()
 endEvent
 
 event OnOptionHighlight(int a_option)
 	{Called when highlighting an option}
-	Guard()
+    Guard()
 endEvent
 
 event OnOptionSelect(int a_option)
 	{Called when a non-interactive option has been selected}
-	Guard()
+    Guard()
 endEvent
 
 event OnOptionDefault(int a_option)
 	{Called when resetting an option to its default value}
-	Guard()
+    Guard()
 endEvent
 
 event OnOptionSliderOpen(int a_option)
 	{Called when a slider option has been selected}
-	Guard()
+    Guard()
 endEvent
 
 event OnOptionSliderAccept(int a_option, float a_value)
 	{Called when a new slider value has been accepted}
-	Guard()
+    Guard()
 endEvent
 
 event OnOptionMenuOpen(int a_option)
 	{Called when a menu option has been selected}
-	Guard()
+    Guard()
 endEvent
 
 event OnOptionMenuAccept(int a_option, int a_index)
 	{Called when a menu entry has been accepted}
-	Guard()
+    Guard()
 endEvent
 
 event OnOptionColorOpen(int a_option)
 	{Called when a color option has been selected}
-	Guard()
+    Guard()
 endEvent
 
 event OnOptionColorAccept(int a_option, int a_color)
 	{Called when a new color has been accepted}
-	Guard()
+    Guard()
 endEvent
 
 event OnOptionKeyMapChange(int a_option, int a_keyCode, string a_conflictControl, string a_conflictName)
 	{Called when a key has been remapped}
-	Guard()
+    Guard()
 endEvent
 
 ; @since 4
 event OnOptionInputOpen(int a_option)
 	{Called when a text input option has been selected}
-	Guard()
+    Guard()
 endEvent
 
 ; @since 4
 event OnOptionInputAccept(int a_option, string a_input)
 	{Called when a new text input has been accepted}
-	Guard()
+    Guard()
 endEvent
 
 ; @since 2
 event OnHighlightST()
 	{Called when highlighting a state option}
-	Guard()
+    Guard()
 endEvent
 
 ; @since 2
 event OnSelectST()
 	{Called when a non-interactive state option has been selected}
-	Guard()
+    Guard()
 endEvent
 
 ; @since 2
 event OnDefaultST()
 	{Called when resetting a state option to its default value}
-	Guard()
+    Guard()
 endEvent
 
 ; @since 2
 event OnSliderOpenST()
 	{Called when a slider state option has been selected}
-	Guard()
+    Guard()
 endEvent
 
 ; @since 2
 event OnSliderAcceptST(float a_value)
 	{Called when a new slider state value has been accepted}
-	Guard()
+    Guard()
 endEvent
 
 ; @since 2
 event OnMenuOpenST()
 	{Called when a menu state option has been selected}
-	Guard()
+    Guard()
 endEvent
 
 ; @since 2
 event OnMenuAcceptST(int a_index)
 	{Called when a menu entry has been accepted for this state option}
-	Guard()
+    Guard()
 endEvent
 
 ; @since 2
 event OnColorOpenST()
 	{Called when a color state option has been selected}
-	Guard()
+    Guard()
 endEvent
 
 ; @since 2
 event OnColorAcceptST(int a_color)
 	{Called when a new color has been accepted for this state option}
-	Guard()
+    Guard()
 endEvent
 
 ; @since 2
 event OnKeyMapChangeST(int a_keyCode, string a_conflictControl, string a_conflictName)
 	{Called when a key has been remapped for this state option}
-	Guard()
+    Guard()
 endEvent
 
 ; @since 4
 event OnInputOpenST()
 	{Called when a text input state option has been selected}
-	Guard()
+    Guard()
 endEvent
 
 ; @since 4
 event OnInputAcceptST(string a_input)
 	{Called when a new text input has been accepted for this state option}
-	Guard()
+    Guard()
 endEvent
 
 
@@ -218,280 +218,280 @@ endEvent
 
 int function GetVersion()
 	{Returns version of this script. Override if necessary}
-	Guard()
+    Guard()
 endFunction
 
 string function GetCustomControl(int a_keyCode)
 	{Returns the name of a custom control mapped to given keyCode, or "" if the key is not in use by this config. Override if necessary}
-	Guard()
+    Guard()
 endFunction
 
 function ForcePageReset()
 	{Forces a full reset of the current page}
-	Guard()
+    Guard()
 endFunction
 
 function SetTitleText(string a_text)
 	{Sets the title text of the control panel}
-	Guard()
+    Guard()
 endFunction
 
 function SetInfoText(string a_text)
 	{Sets the text for the info text field below the option panel}
-	Guard()
+    Guard()
 endFunction
 
 function SetCursorPosition(int a_position)
 	{Sets the position of the cursor used for the option setters}
-	Guard()
+    Guard()
 endFunction
 
 function SetCursorFillMode(int a_fillMode)
 	{Sets the fill direction of the cursor used for the option setters}
-	Guard()
+    Guard()
 endFunction
 
 int function AddEmptyOption()
 	{Adds an empty option, which can be used for padding instead of manually re-positioning the cursor}
-	Guard()
+    Guard()
 endFunction
 
 int function AddHeaderOption(string a_text, int a_flags = 0)
 	{Adds a header option to group several options together}
-	Guard()
+    Guard()
 endFunction
 
 int function AddTextOption(string a_text, string a_value, int a_flags = 0)
 	{Adds a generic text/value option}
-	Guard()
+    Guard()
 endFunction
 
 int function AddToggleOption(string a_text, bool a_checked, int a_flags = 0)
 	{Adds a check box option that can be toggled on and off}
-	Guard()
+    Guard()
 endfunction
 
 int function AddSliderOption(string a_text, float a_value, string a_formatString = "{0}", int a_flags = 0)
 	{Adds an option that opens a slider dialog when selected}
-	Guard()
+    Guard()
 endFunction
 
 int function AddMenuOption(string a_text, string a_value, int a_flags = 0)
 	{Adds an option that opens a menu dialog when selected}
-	Guard()
+    Guard()
 endFunction
 
 int function AddColorOption(string a_text, int a_color, int a_flags = 0)
 	{Adds an option that opens a color swatch dialog when selected}
-	Guard()
+    Guard()
 endFunction
 
 int function AddKeyMapOption(string a_text, int a_keyCode, int a_flags = 0)
 	{Adds a key mapping option}
-	Guard()
+    Guard()
 endFunction
 
 ; @since 4
 int function AddInputOption(string a_text, string a_value, int a_flags = 0)
 	{Adds a text input option}
-	Guard()
+    Guard()
 endFunction
 
 ; @since 2
 function AddTextOptionST(string a_stateName, string a_text, string a_value, int a_flags = 0)
 	{Adds a generic text/value state option}
-	Guard()
+    Guard()
 endFunction
 
 ; @since 2
 function AddToggleOptionST(string a_stateName, string a_text, bool a_checked, int a_flags = 0)
 	{Adds a check box state option that can be toggled on and off}
-	Guard()
+    Guard()
 endfunction
 
 ; @since 2
 function AddSliderOptionST(string a_stateName, string a_text, float a_value, string a_formatString = "{0}", int a_flags = 0)
 	{Adds a state option that opens a slider dialog when selected}
-	Guard()
+    Guard()
 endFunction
 
 ; @since 2
 function AddMenuOptionST(string a_stateName, string a_text, string a_value, int a_flags = 0)
 	{Adds a state option that opens a menu dialog when selected}
-	Guard()
+    Guard()
 endFunction
 
 ; @since 2
 function AddColorOptionST(string a_stateName, string a_text, int a_color, int a_flags = 0)
 	{Adds a state option that opens a color swatch dialog when selected}
-	Guard()
+    Guard()
 endFunction
 
 ; @since 2
 function AddKeyMapOptionST(string a_stateName, string a_text, int a_keyCode, int a_flags = 0)
 	{Adds a key mapping state option}
-	Guard()
+    Guard()
 endFunction
 
 ; @since 4
 function AddInputOptionST(string a_stateName, string a_text, string a_value, int a_flags = 0)
 	{Adds a state option that opens a text input dialog when selected}
-	Guard()
+    Guard()
 endFunction
 
 function LoadCustomContent(string a_source, float a_x = 0.0, float a_y = 0.0)
 	{Loads an external file into the option panel}
-	Guard()
+    Guard()
 endFunction
 
 function UnloadCustomContent()
 	{Clears any custom content and re-enables the original option list}
-	Guard()
+    Guard()
 endFunction
 
 function SetOptionFlags(int a_option, int a_flags, bool a_noUpdate = false)
 	{Sets the option flags}
-	Guard()
+    Guard()
 endFunction
 
 function SetTextOptionValue(int a_option, string a_value, bool a_noUpdate = false)
 	{Sets the value(s) of an existing option}
-	Guard()
+    Guard()
 endFunction
 
 function SetToggleOptionValue(int a_option, bool a_checked, bool a_noUpdate = false)
 	{Sets the value(s) of an existing option}
-	Guard()
+    Guard()
 endfunction
 
 function SetSliderOptionValue(int a_option, float a_value, string a_formatString = "{0}", bool a_noUpdate = false)
 	{Sets the value(s) of an existing option}
-	Guard()
+    Guard()
 endFunction
 
 function SetMenuOptionValue(int a_option, string a_value, bool a_noUpdate = false)
 	{Sets the value(s) of an existing option}
-	Guard()
+    Guard()
 endFunction
 
 function SetColorOptionValue(int a_option, int a_color, bool a_noUpdate = false)
 	{Sets the value(s) of an existing option}
-	Guard()
+    Guard()
 endFunction
 
 function SetKeyMapOptionValue(int a_option, int a_keyCode, bool a_noUpdate = false)
 	{Sets the value(s) of an existing option}
-	Guard()
+    Guard()
 endFunction
 
 ; @since 4
 function SetInputOptionValue(int a_option, string a_value, bool a_noUpdate = false)
 	{Sets the value(s) of an existing option}
-	Guard()
+    Guard()
 endFunction
 
 ; @since 2
 function SetOptionFlagsST(int a_flags, bool a_noUpdate = false, string a_stateName = "")
 	{Sets the state option flags}
-	Guard()
+    Guard()
 endFunction
 
 ; @since 2
 function SetTextOptionValueST(string a_value, bool a_noUpdate = false, string a_stateName = "")
 	{Sets the value(s) of an existing state option}
-	Guard()
+    Guard()
 endFunction
 
 ; @since 2
 function SetToggleOptionValueST(bool a_checked, bool a_noUpdate = false, string a_stateName = "")
 	{Sets the value(s) of an existing state option}
-	Guard()
+    Guard()
 endFunction
 
 ; @since 2
 function SetSliderOptionValueST(float a_value, string a_formatString = "{0}", bool a_noUpdate = false, string a_stateName = "")
 	{Sets the value(s) of an existing state option}
-	Guard()
+    Guard()
 endFunction
 
 ; @since 2
 function SetMenuOptionValueST(string a_value, bool a_noUpdate = false, string a_stateName = "")
 	{Sets the value(s) of an existing state option}
-	Guard()
+    Guard()
 endFunction
 
 ; @since 2
 function SetColorOptionValueST(int a_color, bool a_noUpdate = false, string a_stateName = "")
 	{Sets the value(s) of an existing state option}
-	Guard()
+    Guard()
 endFunction
 
 ; @since 2
 function SetKeyMapOptionValueST(int a_keyCode, bool a_noUpdate = false, string a_stateName = "")
 	{Sets the value(s) of an existing state option}
-	Guard()
+    Guard()
 endFunction
 
 ; @since 4
 function SetInputOptionValueST(string a_value, bool a_noUpdate = false, string a_stateName = "")
 	{Sets the value(s) of an existing state option}
-	Guard()
+    Guard()
 endFunction
 
 function SetSliderDialogStartValue(float a_value)
 	{Sets slider dialog parameter(s)}
-	Guard()
+    Guard()
 endFunction
 
 function SetSliderDialogDefaultValue(float a_value)
 	{Sets slider dialog parameter(s)}
-	Guard()
+    Guard()
 endFunction
 
 function SetSliderDialogRange(float a_minValue, float a_maxValue)
 	{Sets slider dialog parameter(s)}
-	Guard()
+    Guard()
 endFunction
 
 function SetSliderDialogInterval(float a_value)
 	{Sets slider dialog parameter(s)}
-	Guard()
+    Guard()
 endFunction
 
 function SetMenuDialogStartIndex(int a_value)
 	{Sets menu dialog parameter(s)}
-	Guard()
+    Guard()
 endFunction
 
 function SetMenuDialogDefaultIndex(int a_value)
 	{Sets menu dialog parameter(s)}
-	Guard()
+    Guard()
 endFunction
 
 function SetMenuDialogOptions(string[] a_options)
 	{Sets menu dialog parameter(s)}
-	Guard()
+    Guard()
 endFunction
 
 function SetColorDialogStartColor(int a_color)
 	{Sets color dialog parameter(s)}
-	Guard()
+    Guard()
 endFunction
 
 function SetColorDialogDefaultColor(int a_color)
 	{Sets color dialog parameter(s)}
-	Guard()
+    Guard()
 endFunction
 
 ; @since 4
 function SetInputDialogStartText(string a_text)
 	{Sets text input dialog parameter(s)}
-	Guard()
+    Guard()
 endFunction
 
 bool function ShowMessage(string a_message, bool a_withCancel = true, string a_acceptLabel = "$Accept", string a_cancelLabel = "$Cancel")
 	{Shows a message dialog and waits until the user has closed it}
-	Guard()
+    Guard()
 endFunction
 
 ; -------------------------------------------------------------------------------------------------

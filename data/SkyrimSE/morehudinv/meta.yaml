@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: Standalone
+nameProper: moreHUD Inventory Edition
+nameShort: moreHUD IE
+indexedVersion: "2.1.3.0"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/18619
+nexusIndexedFileId: 476424
+gitRepo: https://github.com/ahzaab/moreHUDInventory # Does not contain Papyrus scripts, but does contain SKSE plugin source code

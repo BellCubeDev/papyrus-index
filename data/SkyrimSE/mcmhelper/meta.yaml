@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: Standalone
+nameProper: MCM Helper
+nameShort: MCM Helper
+indexedVersion: "1.3.0"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/53000
+nexusIndexedFileId: 223749
+gitRepo: https://github.com/Exit-9B/MCM-Helper

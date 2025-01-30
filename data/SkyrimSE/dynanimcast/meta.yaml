@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Standalone Extender)
+nameProper: Dynamic Animation Casting
+nameShort: DAC
+indexedVersion: "3.2.4"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/73293
+gitRepo: https://github.com/ArcEarth/DynamicAnimationCasting
+nexusIndexedFileId: 398206

@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Incidental Extender)
+nameProper: RaceMenu
+nameShort: RaceMenu
+indexedVersion: "0.4.19.16"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/19080
+nexusIndexedFileId: 465102
+gitRepo: null

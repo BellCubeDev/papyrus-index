@@ -1,0 +1,22 @@
+NEXUS MODS PERMISSION CHECKBOXES:
+
+Other user's assets
+All the assets in this file belong to the author, or are from free-to-use modder's resources
+
+Upload permission
+You are not allowed to upload this file to other sites under any circumstances
+
+Modification permission
+You are not allowed to modify my files, including creating bug fixes or improving on features under any circumstances
+
+Conversion permission
+You are not allowed to convert this file to work on other games under any circumstances
+
+Asset use permission
+You are not allowed to use assets from this file under any circumstances
+
+Asset use permission in mods/files that are being sold
+You are not allowed to use assets from this file in any mods/files that are being sold, for money, on Steam Workshop or other platforms
+
+Asset use permission in mods/files that earn donation points
+You are not allowed to earn Donation Points for your mods if they use my assets

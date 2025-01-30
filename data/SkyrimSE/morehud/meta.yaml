@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: Standalone
+nameProper: moreHUD
+nameShort: moreHUD
+indexedVersion: "5.2.2.0"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/12688
+nexusIndexedFileId: 336376
+gitRepo: https://github.com/ahzaab/moreHUDSE # Does not contain Papyrus scripts, but does contain SKSE plugin source code
