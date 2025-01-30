@@ -4,7 +4,16 @@ on:
   push:
     branches:
       - production
-  schedule: # every sunday at midnight (so we always have Function of the Day up to date and our wiki data is reasonably fresh)
+    paths:
+      - .github/workflows/build.yaml
+      - src/**
+      - data/**
+      - public/**
+      - pnpm-lock.yaml
+      - '*.js' # only applied to top-level files, don't worry
+      - '*.ts'
+      - '*.json'
+  schedule: # every Sunday at midnight (so we always have Function of the Day up to date and our wiki data is reasonably fresh)
     - cron: '0 0 * * 0'
 
 jobs:
