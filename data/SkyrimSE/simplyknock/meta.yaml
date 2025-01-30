@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Incidental Extender)
+nameProper: Simply Knock
+nameShort: Knock
+indexedVersion: "5.9.0"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/14098
+gitRepo: https://github.com/bitnimble/SimplyKnock
+nexusIndexedFileId: 50365

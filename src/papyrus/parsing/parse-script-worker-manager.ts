@@ -4,14 +4,29 @@ import type { PapyrusGame } from "../data-structures/pure/game";
 import type { PapyrusScriptDiscoveredDocument } from "./parse-all-for-game";
 import path from "node:path";
 import url from "node:url";
-import { parseScriptSync } from "./parse-script";
+import { parseScriptSync, replaceFunctionImplementationWithGuard } from "./parse-script";
+import fs from "node:fs/promises";
+import { PapyrusSourceType, type PapyrusScriptSourceMetadata } from "../data-structures/pure/scriptSource";
 
 const filePath = url.fileURLToPath(import.meta.url);
 const fileExt = path.extname(filePath);
 
-// eslint-disable-next-line require-await -- wait this is FASTER? If it gets too slow, try with a queue-based multithreading approach
-export async function parseScriptAsync<TGame extends PapyrusGame>(game: TGame, document: PapyrusScriptDiscoveredDocument): Promise<PapyrusScript<TGame>> {
-    return parseScriptSync(game, document);
+const GUARD_LOGIC = process.env.DO_GUARD_LOGIC === 'true';
+
+// No workers is FASTER? If it gets too slow, try with a queue-based multithreading approach instead
+export async function parseScriptAsync<TGame extends PapyrusGame>(game: TGame, document: PapyrusScriptDiscoveredDocument, metadataPromise: Promise<PapyrusScriptSourceMetadata<PapyrusGame> | null>): Promise<PapyrusScript<TGame>> {
+
+    if (GUARD_LOGIC) {
+        const [newDocument, parsedScript] = replaceFunctionImplementationWithGuard(game, document);
+        if (newDocument.isModified) {
+            const meta = await metadataPromise;
+            if (meta && meta.type !== PapyrusSourceType.Vanilla && meta.type !== PapyrusSourceType.xSE)
+                await fs.writeFile(newDocument.absolutePath, newDocument.sourceCode, 'utf8');
+        }
+        return parsedScript;
+    } else {
+        return parseScriptSync(game, document);
+    }
 
     //return await new Promise<PapyrusScript<TGame>>((resolve, reject) => {
     //

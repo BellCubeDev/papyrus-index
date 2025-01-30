@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Standalone Extender)
+nameProper: Andrealphus' Papyrus Functions
+nameShort: ANDR
+indexedVersion: "1.4.3"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/85252
+nexusIndexedFileId: 404788
+gitRepo: https://github.com/Sacralletius/ANDR_SKSEFunctions/

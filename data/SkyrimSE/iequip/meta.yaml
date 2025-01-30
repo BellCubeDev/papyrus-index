@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Standalone Extender)
+nameProper: iEquip
+nameShort: iEquip
+indexedVersion: "1.6.4"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/27008
+nexusIndexedFileId: 253312
+gitRepo: null
+allowedScripts:
+  - iEquip_ActorExt
+  - iEquip_AmmoExt
+  - iEquip_FormExt
+  - iEquip_InventoryExt
+  - iEquip_LightExt
+  - iEquip_MagicEffectExt
+  - iEquip_ObjectReferenceExt
+  - iEquip_SoulSeeker
+  - iEquip_SpellExt

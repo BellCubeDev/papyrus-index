@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Incidental Extender)
+nameProper: Immersive Equipment Displays
+nameShort: IED
+indexedVersion: "1.7.4"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/62001
+gitRepo: https://github.com/SlavicPotato/ied-dev
+nexusIndexedFileId: 450465

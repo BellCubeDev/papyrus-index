@@ -8,12 +8,13 @@ import { getGameName } from "../../../../utils/getGameName";
 import { SourceName } from "../../../components/papyrus/SourceName";
 import { getGameAndSourceFromParams, type SourceRouteParams } from "./getGameAndSourceFromParams";
 import { AllScripts } from "../../../../papyrus/parsing/parse-or-load-all";
+import { toLowerCase } from "../../../../utils/toLowerCase";
 
 export function generateStaticParams(): SourceRouteParams[] {
     const params = [];
     for (const [game, gameData] of Object.entries(AllScripts)) {
         for (const source of Object.values(gameData.scriptSources))
-            params.push({game, source: source.sourceIdentifier});
+            params.push({game: toLowerCase(game), source: source.sourceIdentifier});
     }
     return params;
 }

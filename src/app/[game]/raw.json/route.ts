@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { PapyrusGame } from "../../../papyrus/data-structures/pure/game";
 import { AllScripts } from "../../../papyrus/parsing/parse-or-load-all";
+import { toLowerCase } from "../../../utils/toLowerCase";
 
 const PapyrusGamesCaseMapped = new Map<string, PapyrusGame>(Object.values(PapyrusGame).map(game => [game.toLowerCase(), game]));
 
@@ -13,5 +14,5 @@ export async function GET(_request: NextRequest, opts : { params: Promise<{ game
 }
 
 export function generateStaticParams() {
-    return Object.values(PapyrusGame).map(game => ({ game: game.toLowerCase() }));
+    return Object.values(PapyrusGame).map(game => ({ game: toLowerCase(game) }));
 }

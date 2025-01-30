@@ -7,7 +7,7 @@ import { parse as parseYaml } from 'yaml';
 import Ajv from 'ajv';
 import { UnreachableError } from "../../../UnreachableError";
 import { nexusModsREST60sMemo, nexusModsRESTRefetch } from "../../../nexus-api/RESTApi";
-import { createWriteStream, ReadStream, type Dirent } from 'node:fs';
+import { ReadStream, type Dirent } from 'node:fs';
 import type { ReadableStream } from 'node:stream/web';
 import unzip from 'unzip-stream';
 import { bsArch } from "./BSArch";
@@ -18,11 +18,15 @@ if (typeof window !== 'undefined') throw new Error('This module is not meant to 
 const thisFile = url.fileURLToPath(import.meta.url);
 const thisDir = path.dirname(thisFile);
 const tempDownloadDir = path.join(thisDir, 'tmp');
+const createTempDownloadDirPromise = fs.mkdir(tempDownloadDir, {recursive: true});
 
 const papyrusDir = path.join(thisDir, '../../');
 if (path.basename(papyrusDir) !== 'papyrus') throw new Error('Expected papyrusDir to be the `papyrus` directory, but got a different name!');
 
-const scriptsDir = path.join(papyrusDir, 'scripts');
+const srcDir = path.join(papyrusDir, '../');
+if (path.basename(srcDir) !== 'src') throw new Error('Expected srcDir to be the `src` directory, but got a different name!');
+
+const scriptsDir = path.join(srcDir, '../data');
 function getGameDir(game: PapyrusGame) {
     return path.join(scriptsDir, game);
 }
@@ -46,14 +50,14 @@ async function maybeDownloadMod(folder: string) {
         return; // no marker, no meta; no download
     }
 
-    const downloadFolder = path.join(folder, 'download');
+    const destinationFolder = path.join(folder, 'download');
     try {
-        await fs.access(downloadFolder, fs.constants.W_OK);
-        return; // already downloaded
+        await fs.access(destinationFolder, fs.constants.W_OK);
+        return console.debug(`Not downloading mod ${path.basename(folder)} - already downloaded!`);
     } catch (err) {
         if (!(err instanceof Error) || !('code' in err) || err.code !== 'ENOENT') throw err;
-        await fs.mkdir(downloadFolder, {recursive: true, });
-        console.debug(`We know ${downloadFolder} should now exist...`);
+        await fs.mkdir(destinationFolder, {recursive: true, });
+        console.debug(`We know ${destinationFolder} should now exist...`);
     }
 
     const metadataRaw = await fs.readFile(metadataPath, 'utf8');
@@ -64,13 +68,13 @@ async function maybeDownloadMod(folder: string) {
         if (!validate(metadata)) throw new Error(`Metadata for ${folder} is invalid!`);
         hasError = false;
     } finally {
-        if (hasError) await fs.rmdir(downloadFolder, {recursive: false});
+        if (hasError) await fs.rmdir(destinationFolder, {recursive: false});
     }
 
     const sourceType = metadata.type;
     switch (sourceType) {
         case PapyrusSourceType.Vanilla:
-            throw new Error(`Vanilla source should not have a download marker!`);
+            throw new Error(`Vanilla source should not have a .download marker!`);
         case PapyrusSourceType.xSE:
         case PapyrusSourceType.xSePluginExtender:
         case PapyrusSourceType.PapyrusLib:
@@ -80,7 +84,7 @@ async function maybeDownloadMod(folder: string) {
             hasError = true;
             try {
                 if (!metadata.nexusIndexedFileId) throw new Error(`Mod ${path.basename(folder)} is marked for download, but has no nexusIndexedFileId specified in its meta.yaml file! Folder: ${folder}`);
-                await definitelyDownloadMod(metadata.nexusPage, metadata.nexusIndexedFileId, downloadFolder);
+                await definitelyDownloadMod(metadata.nexusPage, metadata.nexusIndexedFileId, destinationFolder);
                 hasError = false;
             } finally {
                 if (hasError) console.error(`Error downloading mod ${path.basename(folder)}!`);
@@ -102,10 +106,9 @@ async function definitelyDownloadMod(nexusLink: string, fileId: number, destinat
         if (Number.isNaN(modId)) throw new Error(`Invalid modId "${modIdRaw}" in nexusLink: ${nexusLink}`);
 
         if (!(await nexusModsREST60sMemo.getValidationResult()).is_premium) {
-            console.log(`Your Nexus Mods account is not premium. Cannot download mods automatically.
+            return console.log(`Your Nexus Mods account is not premium. Cannot download mods automatically.
 Please download the file at https://www.nexusmods.com/Core/Libs/Common/Widgets/DownloadPopUp?id=${fileId}&nmm=0&game_id=${(await nexusModsREST60sMemo.getGameInfo(gameDomain)).id} manually and place it in ${destinationFolder}
 `);
-            return;
         }
 
         const [firstDownloadLinkRaw] = await nexusModsRESTRefetch.getDownloadURLs(modId, fileId, undefined, undefined, gameDomain);
@@ -137,14 +140,32 @@ Please download the file at https://www.nexusmods.com/Core/Libs/Common/Widgets/D
                     .on('error', reject);
             });
         } else {
-            const archiveFile = createWriteStream(path.join(tempDownloadDir, tempFileName));
-            await new Promise<void>((resolve, reject) => {
-                ReadStream.fromWeb(download.body as ReadableStream<any>).pipe(archiveFile)
-                    .on('close', resolve)
-                    .on('error', reject);
-            });
-            await new Promise<void>((resolve, reject) => unpackWith7z(path.join(tempDownloadDir, tempFileName), destinationFolder, err => err ? reject(err) : resolve()));
-            cleanupPromise = fs.rm(path.join(tempDownloadDir, tempFileName), {recursive: true});
+            const tmpFilePath = path.join(tempDownloadDir, tempFileName);
+            let hasErrorWithTempDownloadFile = true;
+            await createTempDownloadDirPromise;
+            try {
+                console.log(`Downloading mod ${nexusLink} to ${tmpFilePath}...`);
+                const archiveFile = await fs.open(tmpFilePath, 'w+');
+                const archiveFileStream = archiveFile.createWriteStream();
+                console.log(`Created download stream for ${tempFileName}...`);
+                await new Promise<void>((resolve, reject) => {
+                    ReadStream.fromWeb(download.body as ReadableStream<any>).pipe(archiveFileStream)
+                        .on('close', ()=> { archiveFileStream.close((err) => err ? reject(err) : resolve()) })
+                        .on('error', reject);
+                });
+                console.log(`Extracting ${tempFileName} to ${destinationFolder}...`);
+                await new Promise<void>((resolve, reject) => unpackWith7z(tmpFilePath, destinationFolder, err => err ? reject(err) : resolve()));
+                cleanupPromise = fs.rm(tmpFilePath);
+                console.log(`Extracted ${tempFileName} to ${destinationFolder}`);
+                hasErrorWithTempDownloadFile = false;
+            } finally {
+                if (hasErrorWithTempDownloadFile) {
+                    await Promise.all([
+                        fs.readdir(destinationFolder).then(children=> children.length===0 ? fs.rmdir(destinationFolder) : Promise.resolve() ),
+                        fs.rm(tmpFilePath),
+                    ]);
+                }
+            }
         }
 
         const extractedFiles = await fs.readdir(destinationFolder, {withFileTypes: true, recursive: true});
@@ -154,7 +175,7 @@ Please download the file at https://www.nexusmods.com/Core/Libs/Common/Widgets/D
         hasError = false;
     } finally {
         if (hasError) {
-            console.error(`Error downloading mod ${nexusLink}!${startedDownload ? 'Removing download folder...' : ''}`);
+            console.error(`Error downloading mod ${nexusLink} - ${startedDownload ? 'removing extracted folder...' : ''}`);
             await fs.rm(destinationFolder, {recursive: true});
         }
     }

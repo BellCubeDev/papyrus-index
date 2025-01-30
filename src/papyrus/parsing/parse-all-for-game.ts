@@ -115,7 +115,7 @@ export async function parseAllScriptsForGame<TGame extends PapyrusGame>(game: TG
                     if (await isScriptIgnored(ignoreScriptsPromise, dirent.name)) throw new Error(`Script ${dirent.name} is ignored for game ${game}.`);
                     const absolutePath = path.resolve(path.join(dirent.path, dirent.name));
                     const sourceCode = (await fs.readFile(absolutePath, 'utf8')).replace(/\r\n?/gu, '\n');
-                    const parsed = await parseScriptAsync(game, {sourceCode, absolutePath});
+                    const parsed = await parseScriptAsync(game, {sourceCode, absolutePath}, metaPromise);
                     return [toLowerCase(parsed.name), parsed];
                 }).map(p => p.catch(err => err instanceof PapyrusParserError ? Promise.reject(err) : null)) // TODO: This catch is dangerous and can miss genuine IO errors!
             )).then(async (entriesUnfiltered) => {

@@ -10,13 +10,14 @@ import { PapyrusFunctionSignatureVariants } from "../../../../../../components/p
 import { SourceName } from "../../../../../../components/papyrus/SourceName";
 import { getGameAndScriptAndFunctionFromParams, type FunctionRouteParams } from "./getGameAndScriptAndFunctionFromParams";
 import { Suspense } from "react";
+import { toLowerCase } from "../../../../../../../utils/toLowerCase";
 
 export function generateStaticParams(): FunctionRouteParams[] {
     const params: FunctionRouteParams[] = [];
     for (const [game, gameData] of Object.entries(AllScriptsIndexed)) {
         for (const [scriptNameLowercase, scriptData] of Object.entries(gameData.scripts)) {
             for (const funcName of Object.keys(scriptData[AllSourcesCombined].functions))
-                params.push({game: game as any, scriptNameNoExt: scriptNameLowercase as any, functionName: funcName});
+                params.push({game: toLowerCase(game), scriptNameNoExt: scriptNameLowercase, functionName: funcName});
         }
     }
 

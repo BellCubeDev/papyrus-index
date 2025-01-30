@@ -1,3 +1,4 @@
+/* eslint-disable prefer-template */
 /* eslint-disable max-depth */
 /* eslint-disable max-lines */
 /* eslint-disable complexity */
@@ -140,23 +141,28 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
 
 
     // eslint-disable-next-line no-empty-function
-    constructor(public readonly game: TGame) {}
+    private constructor(public readonly game: TGame) {}
 
     /** The original text of the source code. Used to get the names of identifiers. */
-    private sourceCode!: string;
+    private sourceCodeCased!: string;
     /** The lowercase text of the source code. Used to identify case-insensitive keywords. */
     private sourceCodeLowercase!: Lowercase<string>;
     private index_!: number;
+    private originalIndex_!: number;
+    private get originalIndex(): number {
+        return this.originalIndex_ ?? this.index;
+    }
     private get index(): number {
         return this.index_;
     }
     private set index(value: number) {
-        if (value < 0) throw new PapyrusParserError('Parser managed to find itself at a negative index! This indicates an error with the parser.', value, this.document);
+        //if (value < 0) throw new PapyrusParserError('Parser managed to find itself at a negative index! This indicates an error with the parser.', value, this.document);
         //if (value > this.sourceCode.length) throw new PapyrusSyntaxError('Parser managed to find itself at an index beyond the end of the source code! This indicates an error with the parser.', value, this.document);
-        if (value < this.index_) throw new PapyrusParserError('Parser managed to find itself at a lower index than it was before! This indicates an error with the parser.', value, this.document);
+        if (!this.isReplacingLogicWithGuard && value < this.index_) throw new PapyrusParserError('Parser managed to find itself at a lower index than it was before! This indicates an error with the parser.', value, this.document);
+        else this.originalIndex_ = this.index_;
         this.index_ = value;
     }
-    private document!:PapyrusScriptDiscoveredDocument;
+    private document!:PapyrusScriptDiscoveredDocument & {isModified: boolean};
 
     /** Keep track of the current comment so we can use it as documentation for the next documentable thing.
      *
@@ -169,6 +175,9 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
      * ⚠️ ⚠️ ⚠️ USE `PapyrusScriptParser.normalizeDocumentationWhitespace` TO NORMALIZE THE WHITESPACE OF THIS STRING ⚠️ ⚠️ ⚠️
      */
     private currentCommentRaw: string | null = null;
+
+    /** Whether to replace implementation logic with Guard() calls */
+    private isReplacingLogicWithGuard = false;
 
     generateEmptyPapyrusScript(): PapyrusScriptUnderConstruction<TGame> {
         return {
@@ -212,10 +221,10 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
      */
     private getNextToken<TIsCaseSensitive extends boolean>(caseSensitive: boolean): readonly [index: number, token: (TIsCaseSensitive extends true ? string : never) | (TIsCaseSensitive extends false ? Lowercase<string> : never) | typeof EOF] {
         this.currentCommentRaw = null;
-        if (this.index >= this.sourceCode.length) return [this.sourceCode.length, EOF];
+        if (this.index >= this.sourceCodeCased.length) return [this.sourceCodeCased.length, EOF];
 
         this.tokenIterations++;
-        if (this.tokenIterations > MAX_ITERATIONS) throw new PapyrusParserError('Infinite loop detected', this.index, this.document);
+        if (this.tokenIterations > MAX_ITERATIONS) throw new PapyrusParserError('Infinite loop detected', this.originalIndex, this.document);
 
         let lastCommentWasMultiLine = false;
         let clearCommentOnNextEncounteredNewline = false;
@@ -260,11 +269,11 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
             }
         }
 
-        const sourceToGrabFrom = caseSensitive ? this.sourceCode : this.sourceCodeLowercase;
+        const sourceToGrabFrom = caseSensitive ? this.sourceCodeCased : this.sourceCodeLowercase;
 
         let str = sourceToGrabFrom.slice(tokenIndex, this.index);
         if (str === '') {
-            if (this.index < this.sourceCode.length) {
+            if (this.index < this.sourceCodeCased.length) {
                 str = sourceToGrabFrom[this.index]!;
                 tokenIndex = this.index;
                 this.index++;
@@ -276,6 +285,7 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
 
         //console.debug('Discovered new token', {token: str, tokenIndex, newIndex: this.index});
 
+        //console.log({tokenIndex, str});
         return [tokenIndex, str as any];
     }
 
@@ -303,11 +313,11 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
         const oldIndex = this.index;
         ////console.debug('Parsing single-line comment from', {index: this.index});
 
-        const newIndexBeforeSubtraction = this.sourceCode.indexOf('\n', oldIndex);
-        if (newIndexBeforeSubtraction === -1) this.index = this.sourceCode.length;
+        const newIndexBeforeSubtraction = this.sourceCodeCased.indexOf('\n', oldIndex);
+        if (newIndexBeforeSubtraction === -1) this.index = this.sourceCodeCased.length;
         else this.index = newIndexBeforeSubtraction;
 
-        const comment = this.sourceCode.slice(oldIndex, this.index);
+        const comment = this.sourceCodeCased.slice(oldIndex, this.index);
         if (this.currentCommentRaw === null) this.currentCommentRaw = comment;
         else this.currentCommentRaw += `\n${comment}`;
     }
@@ -315,11 +325,11 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
     private parseMultiLineComment(): void {
         const oldIndex = this.index;
 
-        const newIndexBeforeAddition = this.sourceCode.indexOf('/;', oldIndex + 1);
+        const newIndexBeforeAddition = this.sourceCodeCased.indexOf('/;', oldIndex + 1);
         if (newIndexBeforeAddition === -1) throw new PapyrusParserError('Multi-line comment never ended!', oldIndex, this.document);
         this.index = newIndexBeforeAddition + 1;
 
-        this.currentCommentRaw = this.sourceCode.slice(oldIndex, this.index);
+        this.currentCommentRaw = this.sourceCodeCased.slice(oldIndex, this.index);
     }
 
     /**
@@ -331,12 +341,12 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
      */
     private getCommentBeforeNextTokenOrLineBreak(): null | string | typeof EOF {
         this.currentCommentRaw = null;
-        if (this.index >= this.sourceCode.length) return EOF;
+        if (this.index >= this.sourceCodeCased.length) return EOF;
 
-        if (this.sourceCode[this.index] === '\n') return null;
+        if (this.sourceCodeCased[this.index] === '\n') return null;
 
         this.tokenIterations++;
-        if (this.tokenIterations > MAX_ITERATIONS) throw new PapyrusParserError('Infinite loop detected', this.index, this.document);
+        if (this.tokenIterations > MAX_ITERATIONS) throw new PapyrusParserError('Infinite loop detected', this.originalIndex, this.document);
 
         for (; this.index < this.sourceCodeLowercase.length; this.index++) {
             if (this.sourceCodeLowercase[this.index] === ';') {
@@ -402,7 +412,7 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
             nextTokenLowercase = toLowerCase(nextToken);
         }
 
-        loop: while (this.index < this.sourceCode.length) {
+        loop: while (this.index < this.sourceCodeCased.length) {
             switch (nextTokenLowercase) {
                 case PapyrusKeyword.Conditional:
                     this.result.isConditional = true;
@@ -445,11 +455,11 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
     /** Parses the documentation string and returns a whitespace-normalized string */
     private parseDocumentationString(_index: number, willBeUsed = true): string {
         const oldIndex = this.index;
-        const newIndexBeforeAddition = this.sourceCode.indexOf('}', oldIndex+1);
+        const newIndexBeforeAddition = this.sourceCodeCased.indexOf('}', oldIndex+1);
         if (newIndexBeforeAddition === -1) throw new PapyrusParserError('Documentation string never ended!', oldIndex, this.document);
         this.index = newIndexBeforeAddition + 1;
 
-        return willBeUsed ? PapyrusScriptParser.normalizeDocumentationWhitespace(this.sourceCode.slice(oldIndex, this.index - 1)) : '';
+        return willBeUsed ? PapyrusScriptParser.normalizeDocumentationWhitespace(this.sourceCodeCased.slice(oldIndex, this.index - 1)) : '';
     }
 
     private parseNextToken(): void {
@@ -542,7 +552,7 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
         const collapsed: PapyrusCollapsedSpecifier = PapyrusCollapsedSpecifier.Never;
 
         let [nextTokenIndex, nextTokenCased] = this.getNextToken(true);
-        if (nextTokenCased === EOF) throw new PapyrusParserError('Expected group body, but got the end of the file (EOF)!', this.index, this.document);
+        if (nextTokenCased === EOF) throw new PapyrusParserError('Expected group body, but got the end of the file (EOF)!', this.originalIndex, this.document);
         let nextTokenLowercase: Lowercase<string> = toLowerCase(nextTokenCased);
 
         const maybeDocumentationComment = this.getCommentBeforeNextTokenOrLineBreak();
@@ -552,7 +562,7 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
         if (nextTokenLowercase === '{') {
             documentationStringForGroup = this.parseDocumentationString(nextTokenIndex);
             const [nextTokenIndex_, nextToken_] = this.getNextToken(true);
-            if (nextToken_ === EOF) throw new PapyrusParserError('Expected group body, but got the end of the file (EOF)!', this.index, this.document);
+            if (nextToken_ === EOF) throw new PapyrusParserError('Expected group body, but got the end of the file (EOF)!', this.originalIndex, this.document);
             nextTokenIndex = nextTokenIndex_;
             nextTokenCased = nextToken_;
             nextTokenLowercase = toLowerCase(nextTokenCased);
@@ -595,7 +605,7 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
 
         const members: PapyrusScriptStructMember<Exclude<TGame, PapyrusGame.SkyrimSE>>[] = [];
         let [nextTokenIndex, nextTokenCased] = this.getNextToken(true);
-        if (nextTokenCased === EOF) throw new PapyrusParserError('Expected struct body, but got the end of the file (EOF)!', this.index, this.document);
+        if (nextTokenCased === EOF) throw new PapyrusParserError('Expected struct body, but got the end of the file (EOF)!', this.originalIndex, this.document);
         let nextTokenLowercase = toLowerCase(nextTokenCased);
         let foundEnd = false;
 
@@ -603,14 +613,14 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
         if (nextTokenLowercase === '{') {
             documentationStringForStruct = this.parseDocumentationString(nextTokenIndex);
             const [nextTokenIndex_, nextToken_] = this.getNextToken(true);
-            if (nextToken_ === EOF) throw new PapyrusParserError('Expected struct body, but got the end of the file (EOF)!', this.index, this.document);
+            if (nextToken_ === EOF) throw new PapyrusParserError('Expected struct body, but got the end of the file (EOF)!', this.originalIndex, this.document);
             nextTokenIndex = nextTokenIndex_;
             nextTokenCased = nextToken_;
             nextTokenLowercase = toLowerCase(nextTokenCased);
         }
 
         if (nextTokenLowercase !== PapyrusKeyword.StructEnd) {
-            structLoop: while (this.index < this.sourceCode.length) {
+            structLoop: while (this.index < this.sourceCodeCased.length) {
                 let documentationCommentForMember = PapyrusScriptParser.normalizeDocumentationWhitespace(this.currentCommentRaw);
                 const typeIndex = nextTokenIndex;
                 const type = nextTokenCased;
@@ -627,7 +637,7 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
                 let defaultValue: readonly [number, string|null] | null = null;
 
                 let documentationStringForMember: string | null = null;
-                memberLoop: while (this.index < this.sourceCode.length) {
+                memberLoop: while (this.index < this.sourceCodeCased.length) {
                     const [tokenIndex, tokenCased] = this.getNextToken(true);
                     if (tokenCased === EOF) throw new PapyrusParserError('Expected to see the end of the struct member, but got the end of the file (EOF)!', tokenIndex, this.document);
                     const tokenLowercase = toLowerCase(tokenCased);
@@ -733,7 +743,7 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
 
     private parseProperty(propertyBegin: number, type: readonly [ begin: number, str: string], groupName: Lowercase<string>): undefined | [index: number, cased: string, lowercase: Lowercase<string>] {
         const group = this.result.propertyGroups[groupName];
-        if (!group) throw new PapyrusParserError(`Property group "${groupName}" does not exist, but we just tried to parse a property for that group!`, this.index, this.document);
+        if (!group) throw new PapyrusParserError(`Property group "${groupName}" does not exist, but we just tried to parse a property for that group!`, this.originalIndex, this.document);
 
         let documentationComment = PapyrusScriptParser.normalizeDocumentationWhitespace(this.currentCommentRaw);
 
@@ -758,7 +768,7 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
         let defaultValue: readonly [number, string|null] | null = null;
 
         let documentationString: string | null = null;
-        loop: while (this.index < this.sourceCode.length) {
+        loop: while (this.index < this.sourceCodeCased.length) {
             const [tokenIndex, tokenCased] = this.getNextToken(true);
             if (tokenCased === EOF) {
                 if (auto) break loop;
@@ -944,7 +954,7 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
                 }
             }
         }
-        if (nextShouldBeDefaultValue) throw new PapyrusParserError('Expected default value for parameter', this.index, this.document);
+        if (nextShouldBeDefaultValue) throw new PapyrusParserError('Expected default value for parameter', this.originalIndex, this.document);
         return parameters;
     }
 
@@ -967,7 +977,8 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
         let nextTokenIndex = -1;
         let nextTokenCased : string | null = null;
         let nextTokenLowercase: Lowercase<string> | null = null;
-        loop: while (this.index < this.sourceCode.length) {
+        let lastIndex = this.index;
+        loop: while (this.index < this.sourceCodeCased.length) {
             const [tokenIndex, tokenCased] = this.getNextToken(true);
             if (tokenCased === EOF) {
                 if (isNative) break loop;
@@ -1010,6 +1021,7 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
                 } case '{':
                     //console.debug('Found function documentation string');
                     documentationString = this.parseDocumentationString(tokenIndex);
+                    lastIndex = this.index;
                     break loop;
                 default:
                     if (isNative) {
@@ -1022,11 +1034,30 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
                     }
                     break loop;
             }
+            lastIndex = this.index;
         }
 
-        if (!foundEnd && !isNative) this.skipToKeyword(this.index, PapyrusKeyword.FunctionEnd);
+        if (!foundEnd && !isNative) {
+            if (!this.isReplacingLogicWithGuard || functionNameLowercase === 'guard') {
+                this.skipToKeyword(this.index, PapyrusKeyword.FunctionEnd);
+            } else {
+                const functionBodyStartIndex = this.sourceCodeLowercase.indexOf('\n', lastIndex) + 1;
+                this.skipToKeyword(this.index, PapyrusKeyword.FunctionEnd);
+                const functionBodyEndIndex = this.sourceCodeLowercase.slice(0, this.index).lastIndexOf('\n');
+                this.sourceCodeCased = this.sourceCodeCased.slice(0, functionBodyStartIndex) + '    Guard()' + this.sourceCodeCased.slice(functionBodyEndIndex);
+                this.sourceCodeLowercase = this.sourceCodeLowercase.slice(0, functionBodyStartIndex) as Lowercase<string> + '    guard()' + this.sourceCodeLowercase.slice(functionBodyEndIndex) as Lowercase<string>;
+                this.document.sourceCode = this.sourceCodeCased;
+                this.document.isModified = true;
+                //console.log('=============================\n'.repeat(5) + this.sourceCodeCased + '\n============================='.repeat(5));
+                this.index -= functionBodyEndIndex - (functionBodyStartIndex + 11);
+            }
+        }
 
-        if (functionNameLowercase !== 'guard') { // SDKs for Papyrus-only libraries use Guard() to show a message box when you accidentally compile the SDK script
+        // SDKs for Papyrus-only libraries use Guard() to show a message box when you accidentally compile the SDK script
+        // We also use it to avoid just outright including the code for Papyrus-only functions and libraries.
+        //
+        // If we're not actively Guard()ing, don't include the Guard() function in the parsed script.
+        if (functionNameLowercase !== 'guard' || this.isReplacingLogicWithGuard) {
             this.result.functions[functionNameLowercase] = {
                 name: functionName,
                 isGlobal,
@@ -1066,8 +1097,8 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
         let nextTokenIndex = -1;
         let nextTokenCased : string | null = null;
         let nextTokenLowercase: Lowercase<string> | null = null;
-
-        loop: while (this.index < this.sourceCode.length) {
+        let lastIndex = this.index;
+        loop: while (this.index < this.sourceCodeCased.length) {
             const [tokenIndex, tokenCased] = this.getNextToken(false);
             if (tokenCased === EOF) {
                 if (isNative) break loop;
@@ -1093,6 +1124,7 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
                 case '{':
                     //console.debug('Found event documentation string');
                     documentationString = this.parseDocumentationString(tokenIndex);
+                    lastIndex = this.index;
                     break loop;
                 default:
                     if (isNative) {
@@ -1105,9 +1137,24 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
                     }
                     break loop;
             }
+            lastIndex = this.index;
         }
 
-        if (!foundEnd && !isNative) this.skipToKeyword(this.index, PapyrusKeyword.EventEnd);
+        if (!foundEnd && !isNative) {
+            if (!this.isReplacingLogicWithGuard) {
+                this.skipToKeyword(this.index, PapyrusKeyword.EventEnd);
+            } else {
+                const functionBodyStartIndex = this.sourceCodeLowercase.indexOf('\n', lastIndex) + 1;
+                this.skipToKeyword(this.index, PapyrusKeyword.EventEnd);
+                const functionBodyEndIndex = this.sourceCodeLowercase.slice(0, this.index).lastIndexOf('\n');
+                this.sourceCodeCased = this.sourceCodeCased.slice(0, functionBodyStartIndex) + '    Guard()' + this.sourceCodeCased.slice(functionBodyEndIndex);
+                this.sourceCodeLowercase = this.sourceCodeLowercase.slice(0, functionBodyStartIndex) as Lowercase<string> + '    guard()' + this.sourceCodeLowercase.slice(functionBodyEndIndex) as Lowercase<string>;
+                this.document.sourceCode = this.sourceCodeCased;
+                this.document.isModified = true;
+                //console.log('=============================\n'.repeat(5) + this.sourceCodeCased + '\n============================='.repeat(5));
+                this.index -= functionBodyEndIndex - (functionBodyStartIndex + 11);
+            }
+        }
 
         this.result.events[eventNameLowercase] = {
             name: eventName,
@@ -1134,14 +1181,14 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
             const endStringMatch = this.sourceCodeLowercase.slice(oldIndex).match(/(?:[^\\']|\\.)?'/u);
             if (!endStringMatch) throw new PapyrusParserError('String literal never ended (expected unescaped single quote)!', tokenIndex, this.document);
             this.index = oldIndex + endStringMatch.index! + endStringMatch[0].length;
-            return this.sourceCode.slice(oldIndex, this.index);
+            return this.sourceCodeCased.slice(oldIndex, this.index);
         } else if (token === '"') {
             //console.debug('Found double-quoted string; completing...');
             const oldIndex = this.index;
             const endStringMatch = this.sourceCodeLowercase.slice(oldIndex).match(/(?:[^\\"]|\\.)?"/u);
             if (!endStringMatch) throw new PapyrusParserError('String literal never ended (expected unescaped double quote)!', tokenIndex, this.document);
             this.index = oldIndex + endStringMatch.index! + endStringMatch[0].length;
-            return this.sourceCode.slice(oldIndex, this.index);
+            return this.sourceCodeCased.slice(oldIndex, this.index);
         } else if (lowercaseToken === 'none') {
             //console.debug('Found "none" literal. No completion needed.');
             return null;
@@ -1152,14 +1199,14 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
             //console.debug('Found positive integer or float. No completion needed.');
             return lowercaseToken;
         } else if (token === '-') {
-            const nextCharacter = this.sourceCode[this.index];
-            if (!nextCharacter) throw new PapyrusParserError('Expected a number after a negative sign, but got the end of the file (EOF)!', this.index, this.document);
+            const nextCharacter = this.sourceCodeCased[this.index];
+            if (!nextCharacter) throw new PapyrusParserError('Expected a number after a negative sign, but got the end of the file (EOF)!', this.originalIndex, this.document);
             if (WhitespaceTokens.has(nextCharacter)) {
                 //console.debug('Found standalone subtraction sign. No completion needed.');
                 return token;
             }
             if (!nextCharacter.match(/[0-9]/u)) {
-                if (expectLiteral) throw new PapyrusParserError('Expected a number after a negative sign, but got something else!', this.index, this.document);
+                if (expectLiteral) throw new PapyrusParserError('Expected a number after a negative sign, but got something else!', this.originalIndex, this.document);
                 else return token;
             }
             //console.debug('Found negative integer or float. Completing...');
@@ -1167,7 +1214,7 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
             const endNumberMatch = this.sourceCodeLowercase.slice(oldIndex).match(/^(?:0x[0-9a-f]|[0-9.]+)/u);
             if (!endNumberMatch) throw new PapyrusParserError('Number literal never ended!', oldIndex, this.document);
             this.index = oldIndex + endNumberMatch[0].length;
-            return this.sourceCode.slice(oldIndex - 1, this.index);
+            return this.sourceCodeCased.slice(oldIndex - 1, this.index);
         } else {
             //console.debug('Found non-literal token. No completion needed.');
             if (expectLiteral) throw new PapyrusParserError('Expected a literal value, but got something else!', tokenIndex, this.document);
@@ -1350,13 +1397,13 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
 
 
     parseScript(document: PapyrusScriptDiscoveredDocument): PapyrusScript<TGame> {
-        this.document = document;
-        this.sourceCode = document.sourceCode;
+        this.document = {...document, isModified: false};
+        this.sourceCodeCased = document.sourceCode;
         this.sourceCodeLowercase = toLowerCase(document.sourceCode);
         this.index = 0;
         this.result = this.generateEmptyPapyrusScript();
 
-        while (this.index < this.sourceCode.length)
+        while (this.index < this.sourceCodeCased.length)
             this.parseNextToken();
 
         if (Object.keys(this.result.propertyGroups['']!.properties).length === 0) delete this.result.propertyGroups[''];
@@ -1381,9 +1428,42 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
             functions: this.result.functions,
         };
     }
+
+    // eslint-disable-next-line no-shadow
+    static parseScript<TGame extends PapyrusGame>(game: TGame, document: PapyrusScriptDiscoveredDocument): PapyrusScript<TGame> {
+        const parser = new PapyrusScriptParser(game);
+        return parser.parseScript(document);
+    }
+
+    replaceFunctionImplementationWithGuard(script: PapyrusScriptDiscoveredDocument){
+        const originalSourceCode = script.sourceCode;
+        this.isReplacingLogicWithGuard = true;
+        const result = this.parseScript(script);
+        this.document.isModified = this.document.sourceCode.toLowerCase() !== originalSourceCode.toLowerCase();
+        if (this.document.isModified && !result.functions.guard) {
+            const scriptFullName = result.namespace ? `${result.namespace}:${result.name}` : result.name;
+            this.document.sourceCode += `
+
+Function Guard()
+    Debug.MessageBox("${scriptFullName}: Don't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
+EndFunction
+
+`;
+        }
+        return [this.document, result] as const;
+    }
+
+    // eslint-disable-next-line no-shadow
+    static replaceFunctionImplementationWithGuard<TGame extends PapyrusGame>(game: TGame, script: PapyrusScriptDiscoveredDocument) {
+        const parser = new PapyrusScriptParser(game);
+        return parser.replaceFunctionImplementationWithGuard(script);
+    }
 }
 
 export function parseScriptSync<TGame extends PapyrusGame>(game: TGame, script: PapyrusScriptDiscoveredDocument): PapyrusScript<TGame> {
-    const parser = new PapyrusScriptParser(game);
-    return parser.parseScript(script);
+    return PapyrusScriptParser.parseScript(game, script);
+}
+
+export function replaceFunctionImplementationWithGuard<TGame extends PapyrusGame>(game: TGame, script: PapyrusScriptDiscoveredDocument) {
+    return PapyrusScriptParser.replaceFunctionImplementationWithGuard(game, script);
 }

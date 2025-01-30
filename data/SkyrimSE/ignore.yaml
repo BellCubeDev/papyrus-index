@@ -1,0 +1,3 @@
+# yaml-language-server: $schema=../IgnoreYaml.schema.json
+ignoreScripts:
+  - caco_harvestperkscript.psc

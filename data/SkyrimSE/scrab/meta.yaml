@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Standalone Extender)
+nameProper: Scrab's Papyrus Extender
+nameShort: Scrab
+indexedVersion: "2.1.3"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/115164
+gitRepo: https://github.com/Scrabx3/ScrabsPapyrusExtender
+nexusIndexedFileId: 567325

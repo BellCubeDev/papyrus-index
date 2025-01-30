@@ -22,6 +22,6 @@ SOFTWARE.
 
 This license does not apply to any files contained in the `data`
 folder. These files are owned by their respective authors and are included under
-their respective licenses and/or fair use. See the README.md file in that folder
+their respective licenses and/or fair use. See [the README.md file in that folder](./data/README.md)
 for more information. Wherever possible, the original license for each source
 is included in the respective subfolder.

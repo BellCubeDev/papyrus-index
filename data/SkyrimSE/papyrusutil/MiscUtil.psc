@@ -5,14 +5,14 @@ scriptname MiscUtil Hidden
 /;
 
 ; Scans the current cell of the given CenterOn for an object of the given form type ID within radius and returns an array for all that
-; and (optionally) also has the given keyword if changed from default none. Setting radius higher than 0.0 will restrict the 
+; and (optionally) also has the given keyword if changed from default none. Setting radius higher than 0.0 will restrict the
 ; search distance from around CenterOn, 0.0 will search entire cell the object is in.
 ; NOTE: Keyword searches seem a little unpredictable so be sure to test if your usage of it works before using the results.
 ObjectReference[] function ScanCellObjects(int formType, ObjectReference CenterOn, float radius = 0.0, Keyword HasKeyword = none) global native
 
 
 ; Scans the current cell of the given CenterOn for an actor within the given radius and returns an array for all actors that are
-; currently alive and (optionally) has the given keyword if changed from default none. Setting radius higher than 0.0 will restrict the 
+; currently alive and (optionally) has the given keyword if changed from default none. Setting radius higher than 0.0 will restrict the
 ; search distance from around CenterOn, 0.0 will search entire cell the object is in.
 ; NOTE: Keyword searches seem a little unpredictable so be sure to test if your usage of it works before using the results.
 Actor[] function ScanCellNPCs(ObjectReference CenterOn, float radius = 0.0, Keyword HasKeyword = none, bool IgnoreDead = true) global native
@@ -83,19 +83,23 @@ function SetMenus(bool enabled) global native
 ; REMOVED v2.9: Useless, only does a part of the job.
 ; float function GetNodeRotation(ObjectReference obj, string nodeName, bool firstPerson, int rotationIndex) global native
 float function GetNodeRotation(ObjectReference obj, string nodeName, bool firstPerson, int rotationIndex) global
-	Debug.TraceStack("MiscUtil.GetNodeRotation("+obj+", "+nodeName+") - REMOVED FUNCTION")
-	return 0.0
+    Guard()
 endFunction
 ; Bat console command.
 ; REMOVED v2.9: Unused.
 ; function ExecuteBat(string fileName) global native
 function ExecuteBat(string fileName) global
-	Debug.TraceStack("MiscUtil.ExecuteBat("+fileName+") - REMOVED FUNCTION")
+    Guard()
 endFunction
 
 ; LEGACY v3.3 - Added Ignoredead parameter to function, aliased for backwards compatability with v3.2.
 Actor[] function ScanCellActors(ObjectReference CenterOn, float radius = 5000.0, Keyword HasKeyword = none) global
-	return ScanCellNPCs(CenterOn, radius, HasKeyword, true)
+    Guard()
 endFunction
 
 
+
+
+Function Guard()
+    Debug.MessageBox("MiscUtil: Don't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
+EndFunction

@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: Papyrus-Only Library
+nameProper: cLib-Papyrus Function Library
+nameShort: cLib
+indexedVersion: "0.9028"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/58011
+gitRepo: https://github.com/cecell/cLib
+nexusIndexedFileId: 246142

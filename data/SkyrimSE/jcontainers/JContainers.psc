@@ -32,6 +32,11 @@ String function userDirectory() global native
 
 ; Returns true if JContainers plugin installed properly
 bool function isInstalled() global
-    return __isInstalled() && 4 == APIVersion() && 2 == featureVersion()
+    Guard()
 endfunction
 
+
+
+Function Guard()
+    Debug.MessageBox("JContainers: Don't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
+EndFunction

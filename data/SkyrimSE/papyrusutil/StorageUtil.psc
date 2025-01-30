@@ -412,9 +412,7 @@ Form function FormListRandom(Form ObjKey, string KeyName) global native
 Form[] function FormListFilterByTypes(Form ObjKey, string KeyName, int[] FormTypeIDs, bool ReturnMatching = true) global native
 ; Convenience version of FormListFilterByTypes() for when only getting a single type.
 Form[] function FormListFilterByType(Form ObjKey, string KeyName, int FormTypeID, bool ReturnMatching = true) global
-   int[] FormTypeIDs = new int[1]
-   FormTypeIDs[0] = FormTypeID
-   return FormListFilterByTypes(ObjKey, KeyName, FormTypeIDs, ReturnMatching)
+    Guard()
 endFunction
 
 ;/ Counts each type of of any KeyName that starts with a given string prefix on all objects.
@@ -535,7 +533,7 @@ Form function debug_GetIntListObject(int index) global native
 Form function debug_GetFloatListObject(int index) global native
 Form function debug_GetStringListObject(int index) global native
 Form function debug_GetFormListObject(int index) global native
-   
+
 int function debug_GetIntKeysCount(Form ObjKey) global native
 int function debug_GetFloatKeysCount(Form ObjKey) global native
 int function debug_GetStringKeysCount(Form ObjKey) global native
@@ -566,243 +564,243 @@ string function debug_GetFormListKey(Form ObjKey, int index) global native
 /;
 
 int function FileSetIntValue(string KeyName, int value) global
-   return JsonUtil.SetIntValue("../StorageUtil.json", KeyName, value)
+    Guard()
 endFunction
 float function FileSetFloatValue(string KeyName, float value) global
-   return JsonUtil.SetFloatValue("../StorageUtil.json", KeyName, value)
+    Guard()
 endFunction
 string function FileSetStringValue(string KeyName, string value) global
-   return JsonUtil.SetStringValue("../StorageUtil.json", KeyName, value)
+    Guard()
 endFunction
 form function FileSetFormValue(string KeyName, Form value) global
-   return JsonUtil.SetFormValue("../StorageUtil.json", KeyName, value)
+    Guard()
 endFunction
 
 int function FileAdjustIntValue(string KeyName, int amount) global
-   return JsonUtil.AdjustIntValue("../StorageUtil.json", KeyName, amount)
+    Guard()
 endFunction
 float function FileAdjustFloatValue(string KeyName, float amount) global
-   return JsonUtil.AdjustFloatValue("../StorageUtil.json", KeyName, amount)
+    Guard()
 endFunction
 
 bool function FileUnsetIntValue(string KeyName) global
-   return JsonUtil.UnsetIntValue("../StorageUtil.json", KeyName)
+    Guard()
 endFunction
 bool function FileUnsetFloatValue(string KeyName) global
-   return JsonUtil.UnsetFloatValue("../StorageUtil.json", KeyName)
+    Guard()
 endFunction
 bool function FileUnsetStringValue(string KeyName) global
-   return JsonUtil.UnsetStringValue("../StorageUtil.json", KeyName)
+    Guard()
 endFunction
 bool function FileUnsetFormValue(string KeyName) global
-   return JsonUtil.UnsetFormValue("../StorageUtil.json", KeyName)
+    Guard()
 endFunction
 
 bool function FileHasIntValue(string KeyName) global
-   return JsonUtil.HasIntValue("../StorageUtil.json", KeyName)
+    Guard()
 endFunction
 bool function FileHasFloatValue(string KeyName) global
-   return JsonUtil.HasFloatValue("../StorageUtil.json", KeyName)
+    Guard()
 endFunction
 bool function FileHasStringValue(string KeyName) global
-   return JsonUtil.HasStringValue("../StorageUtil.json", KeyName)
+    Guard()
 endFunction
 bool function FileHasFormValue(string KeyName) global
-   return JsonUtil.HasFormValue("../StorageUtil.json", KeyName)
+    Guard()
 endFunction
 
 int function FileGetIntValue(string KeyName, int missing = 0) global
-   return JsonUtil.GetIntValue("../StorageUtil.json", KeyName, missing)
+    Guard()
 endFunction
 float function FileGetFloatValue(string KeyName, float missing = 0.0) global
-   return JsonUtil.GetFloatValue("../StorageUtil.json", KeyName, missing)
+    Guard()
 endFunction
 string function FileGetStringValue(string KeyName, string missing = "") global
-   return JsonUtil.GetStringValue("../StorageUtil.json", KeyName, missing)
+    Guard()
 endFunction
 Form function FileGetFormValue(string KeyName, Form missing = none) global
-   return JsonUtil.GetFormValue("../StorageUtil.json", KeyName, missing)
+    Guard()
 endFunction
 
 int function FileIntListAdd(string KeyName, int value, bool allowDuplicate = true) global
-   return JsonUtil.IntListAdd("../StorageUtil.json", KeyName, value, allowDuplicate)
+    Guard()
 endFunction
 int function FileFloatListAdd(string KeyName, float value, bool allowDuplicate = true) global
-   return JsonUtil.FloatListAdd("../StorageUtil.json", KeyName, value, allowDuplicate)
+    Guard()
 endFunction
 int function FileStringListAdd(string KeyName, string value, bool allowDuplicate = true) global
-   return JsonUtil.StringListAdd("../StorageUtil.json", KeyName, value, allowDuplicate)
+    Guard()
 endFunction
 int function FileFormListAdd(string KeyName, Form value, bool allowDuplicate = true) global
-   return JsonUtil.FormListAdd("../StorageUtil.json", KeyName, value, allowDuplicate)
+    Guard()
 endFunction
 
 int function FileIntListAdjust(string KeyName, int index, int amount) global
-   return JsonUtil.IntListAdjust("../StorageUtil.json", KeyName, index, amount)
+    Guard()
 endFunction
 float function FileFloatListAdjust(string KeyName, int index, float amount) global
-   return JsonUtil.FloatListAdjust("../StorageUtil.json", KeyName, index, amount)
+    Guard()
 endFunction
 
 int function FileIntListRemove(string KeyName, int value, bool allInstances = false) global
-   return JsonUtil.IntListRemove("../StorageUtil.json", KeyName, value, allInstances)
+    Guard()
 endFunction
 int function FileFloatListRemove(string KeyName, float value, bool allInstances = false) global
-   return JsonUtil.FloatListRemove("../StorageUtil.json", KeyName, value, allInstances)
+    Guard()
 endFunction
 int function FileStringListRemove(string KeyName, string value, bool allInstances = false) global
-   return JsonUtil.StringListRemove("../StorageUtil.json", KeyName, value, allInstances)
+    Guard()
 endFunction
 int function FileFormListRemove(string KeyName, Form value, bool allInstances = false) global
-   return JsonUtil.FormListRemove("../StorageUtil.json", KeyName, value, allInstances)
+    Guard()
 endFunction
 
 int function FileIntListGet(string KeyName, int index) global
-   return JsonUtil.IntListGet("../StorageUtil.json", KeyName, index)
+    Guard()
 endFunction
 float function FileFloatListGet(string KeyName, int index) global
-   return JsonUtil.FloatListGet("../StorageUtil.json", KeyName, index)
+    Guard()
 endFunction
 string function FileStringListGet(string KeyName, int index) global
-   return JsonUtil.StringListGet("../StorageUtil.json", KeyName, index)
+    Guard()
 endFunction
 Form function FileFormListGet(string KeyName, int index) global
-   return JsonUtil.FormListGet("../StorageUtil.json", KeyName, index)
+    Guard()
 endFunction
 
 int function FileIntListSet(string KeyName, int index, int value) global
-   return JsonUtil.IntListSet("../StorageUtil.json", KeyName, index, value)
+    Guard()
 endFunction
 float function FileFloatListSet(string KeyName, int index, float value) global
-   return JsonUtil.FloatListSet("../StorageUtil.json", KeyName, index, value)
+    Guard()
 endFunction
 string function FileStringListSet(string KeyName, int index, string value) global
-   return JsonUtil.StringListSet("../StorageUtil.json", KeyName, index, value)
+    Guard()
 endFunction
 Form function FileFormListSet(string KeyName, int index, Form value) global
-   return JsonUtil.FormListSet("../StorageUtil.json", KeyName, index, value)
+    Guard()
 endFunction
 
 int function FileIntListClear(string KeyName) global
-   return JsonUtil.IntListClear("../StorageUtil.json", KeyName)
+    Guard()
 endFunction
 int function FileFloatListClear(string KeyName) global
-   return JsonUtil.FloatListClear("../StorageUtil.json", KeyName)
+    Guard()
 endFunction
 int function FileStringListClear(string KeyName) global
-   return JsonUtil.StringListClear("../StorageUtil.json", KeyName)
+    Guard()
 endFunction
 int function FileFormListClear(string KeyName) global
-   return JsonUtil.FormListClear("../StorageUtil.json", KeyName)
+    Guard()
 endFunction
 
 bool function FileIntListRemoveAt(string KeyName, int index) global
-   return JsonUtil.IntListRemoveAt("../StorageUtil.json", KeyName, index)
+    Guard()
 endFunction
 bool function FileFloatListRemoveAt(string KeyName, int index) global
-   return JsonUtil.FloatListRemoveAt("../StorageUtil.json", KeyName, index)
+    Guard()
 endFunction
 bool function FileStringListRemoveAt(string KeyName, int index) global
-   return JsonUtil.StringListRemoveAt("../StorageUtil.json", KeyName, index)
+    Guard()
 endFunction
 bool function FileFormListRemoveAt(string KeyName, int index) global
-   return JsonUtil.FormListRemoveAt("../StorageUtil.json", KeyName, index)
+    Guard()
 endFunction
 
 bool function FileIntListInsert(string KeyName, int index, int value) global
-   return JsonUtil.IntListInsertAt("../StorageUtil.json", KeyName, index, value)
+    Guard()
 endFunction
 bool function FileFloatListInsert(string KeyName, int index, float value) global
-   return JsonUtil.FloatListInsertAt("../StorageUtil.json", KeyName, index, value)
+    Guard()
 endFunction
 bool function FileStringListInsert(string KeyName, int index, string value) global
-   return JsonUtil.StringListInsertAt("../StorageUtil.json", KeyName, index, value)
+    Guard()
 endFunction
 bool function FileFormListInsert(string KeyName, int index, Form value) global
-   return JsonUtil.FormListInsertAt("../StorageUtil.json", KeyName, index, value)
+    Guard()
 endFunction
 
 int function FileIntListCount(string KeyName) global
-   return JsonUtil.IntListCount("../StorageUtil.json", KeyName)
+    Guard()
 endFunction
 int function FileFloatListCount(string KeyName) global
-   return JsonUtil.FloatListCount("../StorageUtil.json", KeyName)
+    Guard()
 endFunction
 int function FileStringListCount(string KeyName) global
-   return JsonUtil.StringListCount("../StorageUtil.json", KeyName)
+    Guard()
 endFunction
 int function FileFormListCount(string KeyName) global
-   return JsonUtil.FormListCount("../StorageUtil.json", KeyName)
+    Guard()
 endFunction
 
 int function FileIntListFind(string KeyName, int value) global
-   return JsonUtil.IntListFind("../StorageUtil.json", KeyName, value)
+    Guard()
 endFunction
 int function FileFloatListFind(string KeyName, float value) global
-   return JsonUtil.FloatListFind("../StorageUtil.json", KeyName, value)
+    Guard()
 endFunction
 int function FileStringListFind(string KeyName, string value) global
-   return JsonUtil.StringListFind("../StorageUtil.json", KeyName, value)
+    Guard()
 endFunction
 int function FileFormListFind(string KeyName, Form value) global
-   return JsonUtil.FormListFind("../StorageUtil.json", KeyName, value)
+    Guard()
 endFunction
 
 bool function FileIntListHas(string KeyName, int value) global
-   return JsonUtil.IntListHas("../StorageUtil.json", KeyName, value)
+    Guard()
 endFunction
 bool function FileFloatListHas(string KeyName, float value) global
-   return JsonUtil.FloatListHas("../StorageUtil.json", KeyName, value)
+    Guard()
 endFunction
 bool function FileStringListHas(string KeyName, string value) global
-   return JsonUtil.StringListHas("../StorageUtil.json", KeyName, value)
+    Guard()
 endFunction
 bool function FileFormListHas(string KeyName, Form value) global
-   return JsonUtil.FormListHas("../StorageUtil.json", KeyName, value)
+    Guard()
 endFunction
 
 function FileIntListSlice(string KeyName, int[] slice, int startIndex = 0) global
-   return JsonUtil.IntListSlice("../StorageUtil.json", KeyName, slice, startIndex)
+    Guard()
 endFunction
 function FileFloatListSlice(string KeyName, float[] slice, int startIndex = 0) global
-   return JsonUtil.FloatListSlice("../StorageUtil.json", KeyName, slice, startIndex)
+    Guard()
 endFunction
 function FileStringListSlice(string KeyName, string[] slice, int startIndex = 0) global
-   return JsonUtil.StringListSlice("../StorageUtil.json", KeyName, slice, startIndex)
+    Guard()
 endFunction
 function FileFormListSlice(string KeyName, Form[] slice, int startIndex = 0) global
-   return JsonUtil.FormListSlice("../StorageUtil.json", KeyName, slice, startIndex)
+    Guard()
 endFunction
 
 int function FileIntListResize(string KeyName, int toLength, int filler = 0) global
-   return JsonUtil.IntListResize("../StorageUtil.json", KeyName, toLength, filler)
+    Guard()
 endFunction
 int function FileFloatListResize(string KeyName, int toLength, float filler = 0.0) global
-   return JsonUtil.FloatListResize("../StorageUtil.json", KeyName, toLength, filler)
+    Guard()
 endFunction
 int function FileStringListResize(string KeyName, int toLength, string filler = "") global
-   return JsonUtil.StringListResize("../StorageUtil.json", KeyName, toLength, filler)
+    Guard()
 endFunction
 int function FileFormListResize(string KeyName, int toLength, Form filler = none) global
-   return JsonUtil.FormListResize("../StorageUtil.json", KeyName, toLength, filler)
+    Guard()
 endFunction
 
 
 bool function FileIntListCopy(string KeyName, int[] copy) global
-   return JsonUtil.IntListCopy("../StorageUtil.json", KeyName, copy)
+    Guard()
 endFunction
 bool function FileFloatListCopy(string KeyName, float[] copy) global
-   return JsonUtil.FloatListCopy("../StorageUtil.json", KeyName, copy)
+    Guard()
 endFunction
 bool function FileStringListCopy(string KeyName, string[] copy) global
-   return JsonUtil.StringListCopy("../StorageUtil.json", KeyName, copy)
+    Guard()
 endFunction
 bool function FileFormListCopy(string KeyName, Form[] copy) global
-   return JsonUtil.FormListCopy("../StorageUtil.json", KeyName, copy)
+    Guard()
 endFunction
 
 function debug_SaveFile() global
-   JsonUtil.Save("../StorageUtil.json")
+    Guard()
 endFunction
 
 
@@ -810,51 +808,51 @@ endFunction
    Currently no longer implemented, unknown if/when they will return.
 /;
 int function debug_FileGetIntKeysCount() global
-   return 0
+    Guard()
 endFunction
 
 int function debug_FileGetFloatKeysCount() global
-   return 0
+    Guard()
 endFunction
 
 int function debug_FileGetStringKeysCount() global
-   return 0
+    Guard()
 endFunction
 
 int function debug_FileGetIntListKeysCount() global
-   return 0
+    Guard()
 endFunction
 
 int function debug_FileGetFloatListKeysCount() global
-   return 0
+    Guard()
 endFunction
 
 int function debug_FileGetStringListKeysCount() global
-   return 0
+    Guard()
 endFunction
 
 string function debug_FileGetIntKey(int index) global
-   return ""
+    Guard()
 endFunction
 
 string function debug_FileGetFloatKey(int index) global
-   return ""
+    Guard()
 endFunction
 
 string function debug_FileGetStringKey(int index) global
-   return ""
+    Guard()
 endFunction
 
 string function debug_FileGetIntListKey(int index) global
-   return ""
+    Guard()
 endFunction
 
 string function debug_FileGetFloatListKey(int index) global
-   return ""
+    Guard()
 endFunction
 
 string function debug_FileGetStringListKey(int index) global
-   return ""
+    Guard()
 endFunction
 
 function debug_FileDeleteAllValues() global
@@ -864,8 +862,13 @@ function debug_SetDebugMode(bool enabled) global
 endFunction
 
 bool function ImportFile(string fileName, string restrictKey = "", int restrictType = -1, Form restrictForm = none, bool restrictGlobal = false, bool keyContains = false) global
-   return false
+    Guard()
 endFunction
 bool function ExportFile(string fileName, string restrictKey = "", int restrictType = -1, Form restrictForm = none, bool restrictGlobal = false, bool keyContains = false, bool append = true) global
-   return false
+    Guard()
 endFunction
+
+
+Function Guard()
+    Debug.MessageBox("StorageUtil: Don't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
+EndFunction

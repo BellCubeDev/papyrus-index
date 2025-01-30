@@ -5,7 +5,7 @@ int Function GetVersion() global native
 
 ; Get version of papyrus scripts
 int Function GetScriptVersion() global
-	return 307
+    Guard()
 EndFunction
 
 ; Get required version of SKSE
@@ -88,3 +88,8 @@ int Function GetResetsCount() global native
 
 ; Get reference to reset at index
 ObjectReference Function GetResetAt(int value) global native
+
+
+Function Guard()
+    Debug.MessageBox("SHESON_DynDOLOD_Plugin: Don't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
+EndFunction

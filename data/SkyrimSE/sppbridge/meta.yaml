@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Standalone Extender)
+nameProper: Skyrim Platform Papyrus Bridge
+nameShort: SPPBridge
+indexedVersion: "1.1"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/59468
+gitRepo: https://github.com/skyrim-platform/papyrus-bridge
+nexusIndexedFileId: 248959

@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Incidental Extender)
+nameProper: Experience
+nameShort: EXP
+indexedVersion: "3.5.0"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/17751
+nexusIndexedFileId: 556096
+gitRepo: null

@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Standalone Extender)
+nameProper: LibMathf
+nameShort: Mathf
+indexedVersion: "1.0.1.1"
+nexusPage: null
+gitRepo: https://github.com/fireundubh/LibMathf
+nexusIndexedFileId: null
+preferredModPage: https://letsplaywithfire.com/releases/file/libmathf/

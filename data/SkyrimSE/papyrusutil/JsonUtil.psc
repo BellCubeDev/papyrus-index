@@ -44,12 +44,7 @@ string function GetErrors(string FileName) global native
 string[] function JsonInFolder(string folderPath) global native
 ; Check if a json file exists or not
 bool function JsonExists(string FileName) global
-	if !FileName
-		return false
-	elseIf StringUtil.Find(FileName, ".json") == -1
-		FileName += ".json"
-	endIf
-	return MiscUtil.FileExists("data/skse/plugins/StorageUtilData/"+FileName)
+    Guard()
 endFunction
 
 ; See StorageUtil.psc for equivalent function usage instructions
@@ -192,7 +187,7 @@ float function GetPathFloatValue(string FileName, string Path, float missing = 0
 string function GetPathStringValue(string FileName, string Path, string missing = "") global native
 form function GetPathFormValue(string FileName, string Path, form missing = none) global native
 bool function GetPathBoolValue(string FileName, string Path, bool missing = false) global
-	return GetPathIntValue(FileName, Path, (missing as int)) != 0
+    Guard()
 endFunction
 
 int[] function PathIntElements(string FileName, string Path, int invalidType = 0) global native
@@ -226,3 +221,8 @@ function ClearPathIndex(string FileName, string Path, int Index) global native
 
 ; Debug use
 function ClearAll(string FileName) global native
+
+
+Function Guard()
+    Debug.MessageBox("JsonUtil: Don't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
+EndFunction
