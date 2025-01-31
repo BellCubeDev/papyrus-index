@@ -7,7 +7,7 @@ import { parse as parseYaml } from 'yaml';
 import Ajv from 'ajv';
 import { UnreachableError } from "../../../UnreachableError";
 import { nexusModsREST60sMemo, nexusModsRESTRefetch } from "../../../nexus-api/RESTApi";
-import { ReadStream, type Dirent } from 'node:fs';
+import { readFile, ReadStream, type Dirent } from 'node:fs';
 import type { ReadableStream } from 'node:stream/web';
 import unzip from 'unzip-stream';
 import { bsArch } from "./BSArch";
@@ -51,9 +51,10 @@ async function maybeDownloadMod(folder: string) {
     }
 
     const destinationFolder = path.join(folder, 'download');
+    let downloadedFileId = null;
     try {
         await fs.access(destinationFolder, fs.constants.W_OK);
-        return console.debug(`Not downloading mod ${path.basename(folder)} - already downloaded!`);
+        downloadedFileId = parseInt(await fs.readFile(path.join(destinationFolder, '.nexusFileId'), 'utf8'), 10);
     } catch (err) {
         if (!(err instanceof Error) || !('code' in err) || err.code !== 'ENOENT') throw err;
         await fs.mkdir(destinationFolder, {recursive: true, });
@@ -84,6 +85,16 @@ async function maybeDownloadMod(folder: string) {
             hasError = true;
             try {
                 if (!metadata.nexusIndexedFileId) throw new Error(`Mod ${path.basename(folder)} is marked for download, but has no nexusIndexedFileId specified in its meta.yaml file! Folder: ${folder}`);
+                if (metadata.nexusIndexedFileId !== null) {
+                    if (metadata.nexusIndexedFileId === downloadedFileId) {
+                        console.log(`Mod ${path.basename(folder)} is already up-to-date!`);
+                        hasError = false;
+                        return;
+                    } else {
+                        await fs.rm(destinationFolder, {recursive: true});
+                        await fs.mkdir(destinationFolder, {recursive: true});
+                    }
+                }
                 await definitelyDownloadMod(metadata.nexusPage, metadata.nexusIndexedFileId, destinationFolder);
                 hasError = false;
             } finally {
@@ -171,6 +182,7 @@ Please download the file at https://www.nexusmods.com/Core/Libs/Common/Widgets/D
         const extractedFiles = await fs.readdir(destinationFolder, {withFileTypes: true, recursive: true});
         const bsaFiles = extractedFiles.filter(file => file.isFile() && (file.name.endsWith('.bsa') || file.name.endsWith('.ba2')));
         await Promise.all(bsaFiles.map(bsaFile => bsArch.extractArchive(path.join(bsaFile.path, bsaFile.name), bsaFile.path)));
+        await fs.writeFile(path.join(destinationFolder, '.nexusFileId'), fileId.toString(10), 'utf8');
         await cleanupPromise;
         hasError = false;
     } finally {

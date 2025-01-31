@@ -4,7 +4,16 @@ on:
   push:
     branches:
       - production
-  schedule: # every sunday at midnight (so we always have Function of the Day up to date and our wiki data is reasonably fresh)
+    paths:
+      - .github/workflows/build.yaml
+      - src/**
+      - data/**
+      - public/**
+      - pnpm-lock.yaml
+      - '*.js' # only applied to top-level files, don't worry
+      - '*.ts'
+      - '*.json'
+  schedule: # every Sunday at midnight (so we always have Function of the Day up to date and our wiki data is reasonably fresh)
     - cron: '0 0 * * 0'
 
 jobs:
@@ -69,8 +78,11 @@ jobs:
         id: cache-save-custom
         uses: actions/cache/save@v4
         with:
-          path: cache
-          key: custom-cache-${{ hashFiles('cache/**/index.json') }} # only need to save a new version of the cache if something updated
+          path: |
+            cache
+            src/papyrus/scraping/download/BSArch.exe
+            data/*/*/download
+          key: custom-cache-${{ hashFiles('cache/**/index.json', 'src/papyrus/scraping/download/BSArch.exe', 'data/*/*/download/.nexusFileId') }} # only need to save a new version of the cache if something updated
 
       - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
