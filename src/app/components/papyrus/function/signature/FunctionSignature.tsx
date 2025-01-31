@@ -10,11 +10,11 @@ import { WikiMarkdown } from "../../../wiki-markdown/WikiMarkdown";
 import { AllScriptsIndexed } from "../../../../../papyrus/indexing/index-all";
 import { Link } from "../../../Link";
 import { toLowerCase } from "../../../../../utils/toLowerCase";
+import { FunctionDocumentationStringAll, FunctionDocumentationStringBest } from "./DocumentationString";
+import { Suspense } from "react";
 
 
-export async function PapyrusFunctionSignature<TGame extends PapyrusGame>({game, func, scriptName, inTooltip}: {readonly game: TGame, readonly func: PapyrusScriptFunctionIndexed<TGame>, readonly scriptName: string, readonly inTooltip?: boolean}) {
-
-    const wikiData = await getWikiDataFunctionPage(game, func, scriptName);
+export function PapyrusFunctionSignature<TGame extends PapyrusGame>({game, func, scriptName, inTooltip, longerDescription}: {readonly game: TGame, readonly func: PapyrusScriptFunctionIndexed<TGame>, readonly scriptName: string, readonly inTooltip?: boolean, readonly longerDescription?: boolean}): JSX.Element {
 
     return <div className={styles.functionSignatureWithShortDescription}>
         <div className={styles.functionSignature}>
@@ -47,9 +47,13 @@ export async function PapyrusFunctionSignature<TGame extends PapyrusGame>({game,
                 {func.isBetaOnly ? <PapyrusFunctionSignatureFlagBetaOnly inTooltip={inTooltip} /> : null}
             </span>
         </div>
-        <div className={styles.shortDescription}>
-            {wikiData ? <WikiMarkdown gameData={AllScriptsIndexed[game]} md={wikiData.shortDescriptionMarkdown} inTooltip={inTooltip} /> : null}
-        </div>
+        {longerDescription
+            ? <div className={styles.longDescription}><Suspense fallback={<p>[DEV SERVER] Loading description...</p>}>
+                <FunctionDocumentationStringAll game={game} func={func} scriptName={scriptName} inTooltip={inTooltip} />
+            </Suspense></div>
+            : <div className={styles.shortDescription}><Suspense fallback={<p>[DEV SERVER] Loading description...</p>}>
+                <FunctionDocumentationStringBest game={game} func={func} scriptName={scriptName} inTooltip={inTooltip} />
+            </Suspense></div>}
     </div>;
 }
 
