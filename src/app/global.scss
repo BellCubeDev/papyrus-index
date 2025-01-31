@@ -79,7 +79,13 @@ main, article, footer {
     --link-udl-color-current-hover: hsla(275deg, 100%, 70%, 90%);
 }
 
-a {
+a[data-no-link-style] {
+    color: inherit;
+    -webkit-text-decoration: inherit;
+    text-decoration: inherit;
+}
+
+a:not([data-no-link-style]) {
     &, * {
         transition-property: color, text-decoration-color;
         transition-duration: 0.25s;
@@ -151,12 +157,16 @@ pre {
 
 main, footer {
     padding: css-min(2vw, 32px) css-min(3vw, 48px) css-min(10vw, 64px);
-    max-width: css-clamp(10in, calc(90vw - css-min(3vw, 48px)), 100%);
+    width: 100%;
+    box-sizing: border-box;
 }
 
 article, footer {
-    max-width: css-min(10in, 100%);
     text-wrap: pretty;
+}
+
+article, footer > :nth-child(2) {
+    max-width: min(55em, calc(90vw - min(3vw, 48px)))
 }
 
 div:has(> footer) {
@@ -164,10 +174,33 @@ div:has(> footer) {
     // is very short, while still keeping it below the fold if the content is too long
     position: sticky;
     top: 100%;
+    background-color: #000;
 }
 
 footer {
-    width: 100%;
     text-align: center;
     align-self: center;
+    padding-bottom: css-min(2vw, 32px);
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+
+    > :first-child {
+        font-size: 0.65em;
+        flex: 1;
+        display:flex;
+        justify-content: center;
+    }
+
+    > :nth-child(2) {
+        min-width: 10em;
+    }
+
+    > :last-child {
+        padding: 0.5em;
+        flex: 1;
+        min-width: 96px;
+        box-sizing: border-box;
+    }
 }

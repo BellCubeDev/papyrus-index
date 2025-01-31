@@ -25,7 +25,8 @@
                 z-index: 4;
                 color: #fff;
             }
-            > :not(:first-child) {
+            > [hidden] {
+                display: inline !important;
                 user-select: none;
                 pointer-events: none;
                 position: absolute;

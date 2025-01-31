@@ -11,6 +11,11 @@ import { SourceCodePro } from './SourceCodePro';
 import { ProgressBar } from './ProgressBar';
 import { WikiMarkdown } from './components/wiki-markdown/WikiMarkdown';
 import Markdown from 'react-markdown';
+import { ThePapyrusIndexLogo } from './components/logo/ThePapyrusIndexLogo';
+import Image from 'next/image';
+import { Link } from './components/Link';
+
+
 const roboto = Roboto({
     display: 'block',
     weight: ['400', '500', '700'],
@@ -160,15 +165,30 @@ export default function RootLayout({ children }: { readonly children: React.Reac
             </div>
             <div>
                 <footer>
-
-                    <p>
-                        © {new Date().getUTCFullYear()} BellCube. Source code <a href="https://github.com/BellCubeDev/papyrus-index">available on GitHub</a>.
-                    </p>
-                    <p>
-                        Website code <a href="https://github.com/BellCubeDev/papyrus-index/blob/development/LICENSE.md">available for free under the MIT license</a>.
-                        Papyrus source files are not covered by this license. Wiki&nbsp;data is covered by the respective licenses of the wikis, disclosed on individual pages where such data is used.
-                    </p>
-                    <Markdown skipHtml>{process.env.NEXT_PUBLIC_BUILD_SOURCE_MD}</Markdown>
+                    <div>
+                        <Link href='/' data-no-link-style>
+                            <ThePapyrusIndexLogo />
+                        </Link>
+                    </div>
+                    <div>
+                        <p>
+                            &copy; {new Date().getUTCFullYear()} BellCube. Source code <a href="https://github.com/BellCubeDev/papyrus-index">available on GitHub</a>.
+                        </p>
+                        <p>
+                            Website code <a href="https://github.com/BellCubeDev/papyrus-index/blob/development/LICENSE.md">available for free under the MIT license</a>.
+                            Papyrus source files are not covered by this license. Wiki&nbsp;data is covered by the respective licenses of the wikis, disclosed on individual pages where such data is used.
+                        </p>
+                        <Markdown skipHtml>{process.env.NEXT_PUBLIC_BUILD_SOURCE_MD}</Markdown>
+                    </div>
+                    <div>
+                        <a href='https://bellcube.dev' data-no-link-style target="_blank" rel="noopener noreferrer">
+                            <Image alt='BellCube Logo'
+                                src='/logo/logo.webp'
+                                width={96} height={96}
+                                loading='lazy'
+                            />
+                        </a>
+                    </div>
                 </footer>
             </div>
         </body>
