@@ -9,12 +9,12 @@ export async function WikiAttribution(wiki: PapyrusWiki): Promise<JSX.Element> {
 
     if (!licenseData) {
         return <div className={styles.attributionBox}>
-            Data provided by{wiki.wikiDeterminer ? ` ${wiki.wikiDeterminer}` : ''} <a href={wiki.wikiBaseUrl}>{wiki.wikiName}</a> may not be available under a free license. Please visit the wiki for accurate licensing information.
+            Some data provided by{wiki.wikiDeterminer ? ` ${wiki.wikiDeterminer}` : ''} <a href={wiki.wikiBaseUrl}>{wiki.wikiName}</a> may not be available under a free license. Please visit the wiki for accurate licensing information.
         </div>;
     }
 
     return <div className={styles.attributionBox}>
-        Data provided by{wiki.wikiDeterminer ? ` ${wiki.wikiDeterminer}` : ''} <a href={wiki.wikiBaseUrl}>{wiki.wikiName}</a>. Licensed under the {
+        Some data provided by{wiki.wikiDeterminer ? ` ${wiki.wikiDeterminer}` : ''} <a href={wiki.wikiBaseUrl}>{wiki.wikiName}</a>. Licensed under the {
             licenseData.rightsInfoUrl
                 ? <a href={licenseData.rightsInfoUrl}>{licenseData.rightsText}</a>
                 : licenseData.rightsText
