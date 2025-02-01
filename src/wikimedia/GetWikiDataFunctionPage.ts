@@ -12,6 +12,9 @@ export interface WikiDataFunctionPage extends PapyrusWiki {
     /** Whether this function is marked as "latent" by the wiki. Will have the "Latent Functions" category. */
     isMarkedLatent: boolean;
 
+    /** Whether this function is marked as "non-delayed" by the wiki. Will have the "Non-delayed Native Function" category */
+    isMarkedNonDelayed: boolean;
+
     /** HTML elements representing the wiki's short description of this element. */
     shortDescriptionMarkdown: string;
 
@@ -56,6 +59,7 @@ export async function getWikiDataFunctionPage<TGame extends PapyrusGame, TFunc e
         .filter(a => typeof a === 'string');
 
     const isMarkedLatent = categories.includes('Category:Latent Functions');
+    const isMarkedNonDelayed = categories.includes('Category:Non-delayed Native Function');
 
     const shortDescriptionElements = Array.from(document.querySelectorAll<HTMLElement>('section[data-mw-section-id="0"] > :not(link, p:first-of-type)'));
     const shortDescriptionMarkdown = await parsoidElementsToMarkdown(shortDescriptionElements, document.location.href);
@@ -108,6 +112,7 @@ Skipping...`);
     return {
         ...wiki,
         isMarkedLatent,
+        isMarkedNonDelayed,
         returnValueDescriptionMarkdown,
         shortDescriptionMarkdown,
         examplesData,
