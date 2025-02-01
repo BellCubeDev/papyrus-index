@@ -5,6 +5,7 @@ import type { GameWithWiki, PapyrusWiki } from './getWiki';
 import { wikiFetchGet } from './wikiFetch';
 import { getWikiPageHTMLStringRaw } from './getWikiPageStringRaw';
 import lockfileUtil from 'proper-lockfile';
+import { memoizeDevServerConst } from '../utils/memoizeDevServerConst';
 
 export interface WikiStorageIndex {
     /** ISO timestamp of the latest change indexed */
@@ -66,6 +67,7 @@ async function ingestLatestChanges(wiki: PapyrusWiki, storageIndex: WikiStorageI
 
     do { // eslint-disable-next-line no-await-in-loop
         changeList = await wikiFetchGet(wiki, `/w/api.php?action=query&format=json&prop=&list=recentchanges&rcstart=${encodeURIComponent(storageIndex.lastKnownChange)}&rcdir=newer&rcprop=title%7Ctimestamp&rclimit=2&rctype=edit%7Cnew&rctoponly=1`);
+        console.log(`Got a change list from the ${wiki.wikiTrueGame} wiki!`, {changeList});
         if (!changeList) throw new Error('Fetching the change list failed!');
 
         if (!('query' in changeList) || !changeList.query || typeof changeList.query !== 'object') throw new Error('The returned change list from the MediaWiki API is missing the "query" results object!');
@@ -78,6 +80,7 @@ async function ingestLatestChanges(wiki: PapyrusWiki, storageIndex: WikiStorageI
         let latestChangeDate: Date|null = null;
         for (const change of recentChanges) {
             const changeDate = new Date(change.timestamp);
+            if (changeDate.toISOString() === storageIndex.lastKnownChange) continue; // Skip the last known change, as it's already indexed.
             if (!latestChangeDate || changeDate > latestChangeDate) latestChangeDate = changeDate;
 
             const page = storageIndex.pages[change.title];
@@ -92,7 +95,7 @@ async function ingestLatestChanges(wiki: PapyrusWiki, storageIndex: WikiStorageI
             }
         }
 
-        storageIndex.lastKnownChange = latestChangeDate!.toISOString();
+        storageIndex.lastKnownChange = latestChangeDate?.toISOString() ?? storageIndex.lastKnownChange;
 
     } while ('continue' in changeList);
 
@@ -102,8 +105,17 @@ async function ingestLatestChanges(wiki: PapyrusWiki, storageIndex: WikiStorageI
     await fs.writeFile(storageIndexPath, JSON.stringify(storageIndex));
 }
 
-const storageIndexCache = new Map<GameWithWiki, [data: WikiStorageIndex, mtime: number]>();
-async function getStorageIndex(wiki: PapyrusWiki): Promise<WikiStorageIndex> {
+const storageIndexCache = memoizeDevServerConst('storageIndexCache', ()=>new Map<GameWithWiki, [data: WikiStorageIndex, mtime: number]>());
+const activeGetStorageIndexPromises = new Map<GameWithWiki, ReturnType<typeof getStorageIndex_>>();
+export function getStorageIndex(wiki: PapyrusWiki): ReturnType<typeof getStorageIndex_> {
+    const activePromise = activeGetStorageIndexPromises.get(wiki.wikiTrueGame);
+    if (activePromise) return activePromise;
+
+    const newPromise = getStorageIndex_(wiki).finally(()=>activeGetStorageIndexPromises.delete(wiki.wikiTrueGame));
+    activeGetStorageIndexPromises.set(wiki.wikiTrueGame, newPromise);
+    return newPromise;
+}
+async function getStorageIndex_(wiki: PapyrusWiki): Promise<WikiStorageIndex> {
     const cached = storageIndexCache.get(wiki.wikiTrueGame);
     if (cached) {
         const [data, storedMTime] = cached;
@@ -111,12 +123,13 @@ async function getStorageIndex(wiki: PapyrusWiki): Promise<WikiStorageIndex> {
         if (stats.mtimeMs > storedMTime) return data;
     }
 
-    const data = await getStorageIndexRaw(wiki, cached !== undefined);
+    console.log(`Getting the storage index for the ${wiki.wikiTrueGame} wiki! Should we ingest the latest changes?`, cached === undefined);
+    const data = await getStorageIndexRaw(wiki, cached === undefined);
     storageIndexCache.set(wiki.wikiTrueGame, [data, Date.now()]);
     return data;
 }
 
-async function getStorageIndexRaw(wiki: PapyrusWiki, hasRunBefore: boolean): Promise<WikiStorageIndex> {
+async function getStorageIndexRaw(wiki: PapyrusWiki, shouldIngestLatestChanges: boolean): Promise<WikiStorageIndex> {
     const storageDir = getWikiStorageDirPath(wiki);
     const storageIndexPath = getWikiIndexPath(wiki);
 
@@ -142,7 +155,7 @@ async function getStorageIndexRaw(wiki: PapyrusWiki, hasRunBefore: boolean): Pro
         await getLock(storageIndexPath);
         const indexContents = await fs.readFile(storageIndexPath, 'utf8');
         data = JSON.parse(indexContents);
-        if (!hasRunBefore) await ingestLatestChanges(wiki, data);
+        if (shouldIngestLatestChanges) await ingestLatestChanges(wiki, data);
         await lockfileUtil.unlock(storageIndexPath);
     }
 
