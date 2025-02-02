@@ -3,56 +3,12 @@ import { PapyrusGame } from "../../../papyrus/data-structures/pure/game";
 import { AllScripts } from "../../../papyrus/parsing/parse-or-load-all";
 import { toLowerCase } from "../../../utils/toLowerCase";
 import fuzzysort from 'fuzzysort';
-import { getWikiDataFunctionPage, type WikiDataFunctionPage } from "../../../wikimedia/GetWikiDataFunctionPage";
-import type { PapyrusScriptFunction } from "../../../papyrus/data-structures/pure/function";
+import { getWikiDataFunctionPage } from "../../../wikimedia/GetWikiDataFunctionPage";
 import { getGameFromParams, type GameRouteParams } from "../getGameFromParams";
 import { PapyrusScriptTypeArchetype, type PapyrusScriptType } from "../../../papyrus/data-structures/pure/type";
 import { UnreachableError } from "../../../UnreachableError";
 import { stripMD } from "../../../utils/stripMD";
-
-export type PreparedItem<T> = {
-    [K in keyof T]: T[K] extends string ? Fuzzysort.Prepared : T[K];
-}
-
-export enum SearchIndexEntityType {
-    Script,
-    Function,
-}
-
-export interface SearchIndexEntityBase {
-    type: SearchIndexEntityType;
-    url: Lowercase<`/${string}`>;
-    sourceIdentifier: Fuzzysort.Prepared;
-}
-
-export interface SearchIndexEntityScript extends SearchIndexEntityBase {
-    type: SearchIndexEntityType.Script;
-    isHidden: boolean;
-    isConditional: boolean;
-    extends: null | Fuzzysort.Prepared;
-    isConst: boolean;
-    isNative: boolean;
-    default: boolean;
-    structs: unknown;
-    scriptNamespaceName: Fuzzysort.Prepared;
-    imports: Fuzzysort.Prepared[];
-}
-
-export interface SearchIndexEntityFunction extends SearchIndexEntityBase {
-    type: SearchIndexEntityType.Function;
-    wikiShortDescription: null | Fuzzysort.Prepared;
-    wikiNotes: null | Fuzzysort.Prepared;
-    wikiParameterData: null | PreparedItem<Omit<WikiDataFunctionPage['parameters'][number], 'nameMarkdown'>>[];
-    name: Fuzzysort.Prepared;
-    isGlobal: boolean;
-    isNative: boolean;
-    returnType: Fuzzysort.Prepared;
-    parameters: Fuzzysort.Prepared[];
-    fromPapyrus: PapyrusScriptFunction<PapyrusGame>;
-    scriptNamespaceName: Fuzzysort.Prepared;
-}
-
-export type SearchIndexEntity = SearchIndexEntityScript | SearchIndexEntityFunction;
+import { SearchIndexEntityType, type SearchIndexEntity } from "./SearchIndexEntity";
 
 function papyrusTypeToString(type: PapyrusScriptType<boolean, true>): string {
     const arrString = type.isArray ? '[]' : '';

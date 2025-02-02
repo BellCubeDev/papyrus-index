@@ -54,7 +54,7 @@ export const functionOfTheDayOptions: FunctionOfTheDayOption[] = new Array(9).fi
     return Object.assign(allFunctions[index]!, {dayNum});
 });
 
-export const FunctionOfTheDayOptionsWithRendered = functionOfTheDayOptions.map(FunctionOfTheDay) as [number, JSX.Element][];
+export const FunctionOfTheDayOptionsWithRendered = functionOfTheDayOptions.map(FunctionOfTheDay) as [number, React.ReactElement][];
 
 function FunctionOfTheDay({dayNum, game, scriptNameLowercase, scriptNameVariants, namespaceVariants, functionNameLowercase, functionVariants}: FunctionOfTheDayOption) {
     const namespaceNamePart = namespaceVariants[0]![1] === null ? '' : `${getBestNameVariant(namespaceVariants as [Lowercase<string>[], string][])[1]}:`;

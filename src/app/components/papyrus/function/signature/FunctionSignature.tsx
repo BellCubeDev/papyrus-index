@@ -14,7 +14,7 @@ import { FunctionDocumentationStringAll, FunctionDocumentationStringBest } from 
 import { Suspense } from "react";
 
 
-export function PapyrusFunctionSignature<TGame extends PapyrusGame>({game, func, scriptName, inTooltip, longerDescription}: {readonly game: TGame, readonly func: PapyrusScriptFunctionIndexed<TGame>, readonly scriptName: string, readonly inTooltip?: boolean, readonly longerDescription?: boolean}): JSX.Element {
+export function PapyrusFunctionSignature<TGame extends PapyrusGame>({game, func, scriptName, inTooltip, longerDescription}: {readonly game: TGame, readonly func: PapyrusScriptFunctionIndexed<TGame>, readonly scriptName: string, readonly inTooltip?: boolean, readonly longerDescription?: boolean}): React.ReactElement {
 
     return <div className={styles.functionSignatureWithShortDescription}>
         <div className={styles.functionSignature}>
@@ -29,7 +29,7 @@ export function PapyrusFunctionSignature<TGame extends PapyrusGame>({game, func,
                 <span className={styles.functionParametersStart}>(</span>
                 <PapyrusFunctionSignatureParamSeparator isInWrapper={false} />
                 {joinJSXWithElementByWrapping(PapyrusFunctionSignatureParamWrapper, func.parameters.map((param) => {
-                    let el: JSX.Element;
+                    let el: React.ReactElement;
                     if (param.isRequired) el = <PapyrusTypeNamed game={game} name={param.name} type={param.value} inTooltip={inTooltip} />;
                     else el = <PapyrusTypeWithValue game={game} type={param.value} name={param.name} inTooltip={inTooltip} />;
 

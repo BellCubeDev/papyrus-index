@@ -39,7 +39,7 @@ export async function FunctionDocumentationStringRaw<TGame extends PapyrusGame>(
  * If the function has wiki data, use their description.
  * Otherwise, use some form of heuristics to determine which of the in-script documentation strings/comments to use.
  */
-export async function FunctionDocumentationStringBest<TGame extends PapyrusGame>({game, func, scriptName, inTooltip}: {readonly game: TGame, readonly func: PapyrusScriptFunctionIndexed<TGame>, readonly scriptName: string, readonly inTooltip?: boolean}): Promise<null|JSX.Element> {
+export async function FunctionDocumentationStringBest<TGame extends PapyrusGame>({game, func, scriptName, inTooltip}: {readonly game: TGame, readonly func: PapyrusScriptFunctionIndexed<TGame>, readonly scriptName: string, readonly inTooltip?: boolean}): Promise<null|React.ReactElement> {
     const wikiData = await getWikiDataFunctionPage(game, func, scriptName);
     if (wikiData !== null)
         return <WikiMarkdown gameData={AllScriptsIndexed[game]} md={wikiData.shortDescriptionMarkdown} inTooltip={inTooltip} />;
@@ -67,7 +67,7 @@ export async function FunctionDocumentationStringBest<TGame extends PapyrusGame>
  * A component that displays all forms of a function's documentation strings
  * in an intuitive manner.
  */
-export async function FunctionDocumentationStringAll<TGame extends PapyrusGame>({game, func, scriptName, inTooltip}: {readonly game: TGame, readonly func: PapyrusScriptFunctionIndexed<TGame>, readonly scriptName: string, readonly inTooltip?: boolean}): Promise<null|JSX.Element> {
+export async function FunctionDocumentationStringAll<TGame extends PapyrusGame>({game, func, scriptName, inTooltip}: {readonly game: TGame, readonly func: PapyrusScriptFunctionIndexed<TGame>, readonly scriptName: string, readonly inTooltip?: boolean}): Promise<null|React.ReactElement> {
     const elements = [];
 
     if (func.documentationString !== null) {

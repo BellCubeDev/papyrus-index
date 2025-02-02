@@ -1,7 +1,7 @@
 import fuzzysort from "fuzzysort";
 import type { PapyrusGame } from "../../papyrus/data-structures/pure/game";
 import { toLowerCase } from "../../utils/toLowerCase";
-import type { SearchIndexEntity } from "../[game]/search-index.json/route";
+import type { SearchIndexEntity } from "../[game]/search-index.json/SearchIndexEntity";
 import { UnreachableError } from "../../UnreachableError";
 
 export interface WorkerMessageBase {
