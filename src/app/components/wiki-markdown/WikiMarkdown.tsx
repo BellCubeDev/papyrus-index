@@ -6,7 +6,7 @@ import type { ComponentProps } from "react";
 import { PapyrusScriptReference } from "../papyrus/script/PapyrusScriptReference";
 import { PapyrusScriptFunctionReference } from "../papyrus/function/reference/PapyrusScriptFunctionReference";
 
-function WikiMarkdownLink(gameData: PapyrusGameDataIndexed<PapyrusGame>, inTooltip: boolean|undefined, {href, children}: ComponentProps<'a'> & ExtraProps): JSX.Element {
+function WikiMarkdownLink(gameData: PapyrusGameDataIndexed<PapyrusGame>, inTooltip: boolean|undefined, {href, children}: ComponentProps<'a'> & ExtraProps): React.ReactElement {
     if (!href) return <>{children}</>;
     const wikiPageMatch = href.match(/\/wiki\/(?<page>[^?#/]+)/ui);
     if (!wikiPageMatch) return <a href={href}>{children}</a>;
@@ -51,7 +51,7 @@ function WikiMarkdownLink(gameData: PapyrusGameDataIndexed<PapyrusGame>, inToolt
     return <a href={href}>{children}</a>;
 }
 
-export function WikiMarkdown({md, gameData, inTooltip}: {readonly md: string, readonly gameData: PapyrusGameDataIndexed<PapyrusGame>, readonly inTooltip?: boolean}): JSX.Element {
+export function WikiMarkdown({md, gameData, inTooltip}: {readonly md: string, readonly gameData: PapyrusGameDataIndexed<PapyrusGame>, readonly inTooltip?: boolean}): React.ReactElement {
     return <Markdown skipHtml components={{a: WikiMarkdownLink.bind(null, gameData, inTooltip)}}>
         {md}
     </Markdown>;

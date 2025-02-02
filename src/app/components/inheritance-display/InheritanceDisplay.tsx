@@ -6,7 +6,7 @@ import { PapyrusScriptReference } from "../papyrus/script/PapyrusScriptReference
 import styles from './InheritanceDisplay.module.scss';
 
 /** Recursive, subdividing grid to display script inheritance. */
-export function InheritanceDisplay<TGame extends PapyrusGame>({game, data, isSubTable}: {readonly game: TGame, readonly data: Record<Lowercase<string>, PapyrusPossibleScripts<TGame>>, readonly isSubTable?: true}): JSX.Element {
+export function InheritanceDisplay<TGame extends PapyrusGame>({game, data, isSubTable}: {readonly game: TGame, readonly data: Record<Lowercase<string>, PapyrusPossibleScripts<TGame>>, readonly isSubTable?: true}): React.ReactElement {
 
     const entries = Object.keys(data).map((name) => [name, AllScriptsIndexed[game].scripts[name]![AllSourcesCombined]] as const)
         .sort(([aName, a], [bName, b])=> {

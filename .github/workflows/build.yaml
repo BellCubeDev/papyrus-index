@@ -26,6 +26,8 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'schedule' && 'production' || github.ref }}
 
       # credit to https://github.com/JosephM101/Wine-Install-Scripts/blob/main/install-wine.sh
       #

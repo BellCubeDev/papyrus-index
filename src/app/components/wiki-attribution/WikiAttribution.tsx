@@ -4,7 +4,7 @@ import styles from './WikiAttribution.module.scss';
 
 const licenseWordRegex = /\blicense\b/iu;
 
-export async function WikiAttribution(wiki: PapyrusWiki): Promise<JSX.Element> {
+export async function WikiAttribution(wiki: PapyrusWiki): Promise<React.ReactElement> {
     const licenseData = await getWikiLicense(wiki);
 
     if (!licenseData) {

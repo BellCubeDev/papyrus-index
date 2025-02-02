@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-export function FunctionOfTheDayClient({options}:{readonly options: [number, JSX.Element][] }): React.ReactNode {
+export function FunctionOfTheDayClient({options}:{readonly options: [number, React.ReactElement][] }): React.ReactNode {
 
     const [todaySinceEpoch, setTodaySinceEpoch] = useState<number|null>(null);
 
