@@ -1,1 +1,15 @@
-data/** linguist-vendored
+*       	text=auto
+
+# PSC files are typically used on Windows
+*.psc   	text eol=crlf
+
+*.png       -text
+*.jpg       -text
+*.jpeg      -text
+*.webp      -text
+*.avif      -text
+*.ico       -text
+*.ttf       -text
+public/**   -text
+
+data/**     linguist-vendored
