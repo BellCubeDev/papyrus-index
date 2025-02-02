@@ -123,7 +123,7 @@ async function getStorageIndex_(wiki: PapyrusWiki): Promise<WikiStorageIndex> {
         if (stats.mtimeMs > storedMTime) return data;
     }
 
-    console.log(`Getting the storage index for the ${wiki.wikiTrueGame} wiki! Should we ingest the latest changes?`, cached === undefined);
+    //console.log(`Getting the storage index for the ${wiki.wikiTrueGame} wiki! Should we ingest the latest changes?`, cached === undefined);
     const data = await getStorageIndexRaw(wiki, cached === undefined);
     storageIndexCache.set(wiki.wikiTrueGame, [data, Date.now()]);
     return data;

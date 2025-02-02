@@ -1,11 +1,12 @@
 import type { NextConfig } from 'next';
+import { cpus } from 'node:os';
 
-if (process.env.NODE_ENV === 'production') {
-    process.env.DEBUG = '*';
-    process.env.DEBUG_HIDE_DATE = 'true';
-    process.env.DEBUG_DEPTH = '3';
-    process.env.DEBUG_SHOW_HIDDEN = 'true';
-}
+//if (process.env.NODE_ENV === 'production') {
+//    process.env.DEBUG = '*';
+//    process.env.DEBUG_HIDE_DATE = 'true';
+//    process.env.DEBUG_DEPTH = '3';
+//    process.env.DEBUG_SHOW_HIDDEN = 'true';
+//}
 
 const nextConfig = {
     poweredByHeader: true,
