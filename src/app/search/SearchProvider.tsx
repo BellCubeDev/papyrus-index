@@ -31,16 +31,18 @@ export function useSearchContext(advanced?: boolean): SearchContext | null {
 }
 
 export function SearchProvider({children, game}: {readonly children: React.ReactNode, readonly game: PapyrusGame}) {
-    const worker = React.useMemo(() => generateWorker(game), [game]);
+    const typeofWorker = typeof Worker;
+    const worker = React.useMemo(() => typeofWorker === 'undefined' ? null : generateWorker(game), [game, typeofWorker]);
 
     React.useEffect(() => {
         const previousWorker = worker;
-        return () => previousWorker.terminate();
+        return () => previousWorker?.terminate();
     }, [worker]);
 
     const searchIdRef = React.useRef(0);
 
     const search = React.useCallback(async function search(query: string) {
+        if (!worker) throw new Error('Cannot call search() from the server! Must be called on the client, with Web Workers enabled.');
         const start = performance.now();
         const searchId = ++searchIdRef.current;
         const resultPromise = new Promise<Fuzzysort.KeysResults<SearchIndexEntity>>(resolve => {
@@ -57,10 +59,10 @@ export function SearchProvider({children, game}: {readonly children: React.React
         return res;
     }, [worker]);
 
-    const value = React.useMemo(() => ({
+    const value = React.useMemo(() => worker ? ({
         worker,
         search,
-    }), [worker, search]);
+    }) : null, [worker, search]);
 
     return <searchContext.Provider value={value}>
         {children}

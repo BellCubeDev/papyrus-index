@@ -54,7 +54,20 @@ interface MediaWikiRecentChange {
 }
 
 function getLock(filePath: string): Promise<() => Promise<void>> {
-    return lockfileUtil.lock(filePath, {retries: {forever: true, factor: 1.1, minTimeout: 300, maxTimeout: 3000}, realpath: false});
+    return lockfileUtil.lock(filePath, {
+        retries: {
+            forever: true,
+            factor: 1.1,
+            minTimeout: 300,
+            maxTimeout: 3000
+        },
+        onCompromised(err) {
+            console.error('The lockfile for', filePath, 'was compromised! See the proper-lockfile docs for more info on what this means', err);
+        },
+        stale: 30_000,
+        update: 5_000,
+        realpath: false,
+    });
 }
 
 /**
@@ -123,7 +136,7 @@ async function getStorageIndex_(wiki: PapyrusWiki): Promise<WikiStorageIndex> {
         if (stats.mtimeMs > storedMTime) return data;
     }
 
-    console.log(`Getting the storage index for the ${wiki.wikiTrueGame} wiki! Should we ingest the latest changes?`, cached === undefined);
+    //console.log(`Getting the storage index for the ${wiki.wikiTrueGame} wiki! Should we ingest the latest changes?`, cached === undefined);
     const data = await getStorageIndexRaw(wiki, cached === undefined);
     storageIndexCache.set(wiki.wikiTrueGame, [data, Date.now()]);
     return data;
