@@ -23,7 +23,7 @@ const nextConfig = {
     },
 
     experimental: {
-        cpus: 8,
+        cpus: cpus().length - 2,
         staleTimes: {
             static: 24*60*60,
         },
