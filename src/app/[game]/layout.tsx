@@ -5,6 +5,7 @@ import { getWiki } from "../../wikimedia/getWiki";
 import { Link } from "../components/Link";
 import { WikiAttribution } from "../components/wiki-attribution/WikiAttribution";
 import { getGameFromParams, type GameRouteParams } from "./getGameFromParams";
+import { SearchProvider } from "../search/SearchProvider";
 
 export async function generateMetadata({params}: {readonly params: Promise<GameRouteParams>}): Promise<Metadata> {
     const { game } = getGameFromParams(await params);
@@ -21,9 +22,9 @@ export async function generateMetadata({params}: {readonly params: Promise<GameR
 export default async function GameLayout({children, params}: {readonly children: React.ReactNode, readonly params: Promise<GameRouteParams>}) {
     const {game} = getGameFromParams(await params);
 
-    return <div>
+    return <SearchProvider game={game}>
         <h1>From the game: <Link href={`/${toLowerCase(game)}` as const}>{getGameName(game)}</Link></h1>
         {children}
         <WikiAttribution {...getWiki(game)}  />
-    </div>;
+    </SearchProvider>;
 }
