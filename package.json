@@ -65,6 +65,7 @@
     "react-dom": "~19.0.0",
     "react-fontawesome": "^1.7.1",
     "react-markdown": "^9.0.3",
+    "remark-breaks": "^4.0.0",
     "remove-markdown": "^0.6.0",
     "sass": "^1.83.4",
     "server-only": "^0.0.1",

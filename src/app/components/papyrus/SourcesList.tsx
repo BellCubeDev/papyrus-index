@@ -28,7 +28,7 @@ export function SourcesList({sourceIDs, game}: {readonly sourceIDs: Lowercase<st
     const sourceObjects = sourceIDs.map(sourceID => AllScriptsIndexed[game].scriptSources[sourceID]!).sort((a, b) => getSourcePriority(b) - getSourcePriority(a));
     return <ul className={styles.sourcesList}>
         {sourceObjects.map(source =><li key={source.sourceIdentifier}>
-            <Link href={`/${toLowerCase(game)}/${toLowerCase(source.sourceIdentifier)}` as const}>
+            <Link href={`/${toLowerCase(game)}/source/${toLowerCase(source.sourceIdentifier)}` as const}>
                 <SourceIcon sourceType={source.type} />
                 <SourceName source={source} />
             </Link>

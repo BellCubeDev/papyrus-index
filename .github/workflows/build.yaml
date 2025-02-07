@@ -79,6 +79,7 @@ jobs:
       - name: Save Custom Caches
         id: cache-save-custom
         uses: actions/cache/save@v4
+        if: always()
         with:
           path: |
             cache
