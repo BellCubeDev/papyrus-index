@@ -327,9 +327,8 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
 
         const newIndexBeforeAddition = this.sourceCodeCased.indexOf('/;', oldIndex + 1);
         if (newIndexBeforeAddition === -1) throw new PapyrusParserError('Multi-line comment never ended!', oldIndex, this.document);
+        this.currentCommentRaw = this.sourceCodeCased.slice(oldIndex, newIndexBeforeAddition);
         this.index = newIndexBeforeAddition + 1;
-
-        this.currentCommentRaw = this.sourceCodeCased.slice(oldIndex, this.index);
     }
 
     /**
