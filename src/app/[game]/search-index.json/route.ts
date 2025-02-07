@@ -9,38 +9,8 @@ import { PapyrusScriptTypeArchetype, type PapyrusScriptType } from "../../../pap
 import { UnreachableError } from "../../../UnreachableError";
 import { stripMD } from "../../../utils/stripMD";
 import { SearchIndexEntityType, type SearchIndexEntity } from "./SearchIndexEntity";
+import { papyrusTypeToString } from "../../components/papyrus/type/PapyrusType";
 
-function papyrusTypeToString(type: PapyrusScriptType<boolean, true>): string {
-    const arrString = type.isArray ? '[]' : '';
-    switch (type.type) {
-        case PapyrusScriptTypeArchetype.Bool:
-            return `bool${arrString}`;
-        case PapyrusScriptTypeArchetype.Float:
-            return `float${arrString}`;
-        case PapyrusScriptTypeArchetype.Int:
-            return `int${arrString}`;
-        case PapyrusScriptTypeArchetype.None:
-            return `none${arrString}`;
-        case PapyrusScriptTypeArchetype.ScriptInstance:
-            return `scriptinstance${arrString}`;
-        case PapyrusScriptTypeArchetype.String:
-            return `string${arrString}`;
-        case PapyrusScriptTypeArchetype.Struct:
-            return `${type.scriptName}:${type.structName}${arrString}`;
-        case PapyrusScriptTypeArchetype.ScriptInstanceOrStruct:
-            return `${type.ambiguousName}${arrString}`;
-        case PapyrusScriptTypeArchetype.Var:
-            return `var${arrString}`;
-        case PapyrusScriptTypeArchetype.CustomEventName:
-            return `CustomEventName${arrString} (string[])`;
-        case PapyrusScriptTypeArchetype.ScriptEventName:
-            return `ScriptEventName${arrString} (string[])`;
-        case PapyrusScriptTypeArchetype.StructVarName:
-            return `StructVarName${arrString} (string[])`;
-        default:
-            throw new UnreachableError(type, 'Encountered an unknown PapyrusScriptTypeArchetype while preparing the sorting index in papyrusTypeToPrepared()');
-    }
-}
 
 const InMemoryResultCache = new Map<PapyrusGame, Awaitable<SearchIndexEntity>[]>();
 
