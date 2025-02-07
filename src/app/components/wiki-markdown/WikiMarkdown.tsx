@@ -1,4 +1,5 @@
 import Markdown, { type ExtraProps } from "react-markdown";
+import remarkBreaks from "remark-breaks";
 import type { PapyrusGame } from "../../../papyrus/data-structures/pure/game";
 import { AllSourcesCombined, PapyrusGameDataIndexed } from "../../../papyrus/data-structures/indexing/game";
 import { toLowerCase } from "../../../utils/toLowerCase";
@@ -52,7 +53,7 @@ function WikiMarkdownLink(gameData: PapyrusGameDataIndexed<PapyrusGame>, inToolt
 }
 
 export function WikiMarkdown({md, gameData, inTooltip}: {readonly md: string, readonly gameData: PapyrusGameDataIndexed<PapyrusGame>, readonly inTooltip?: boolean}): React.ReactElement {
-    return <Markdown skipHtml components={{a: WikiMarkdownLink.bind(null, gameData, inTooltip)}}>
+    return <Markdown skipHtml remarkPlugins={[remarkBreaks]} components={{a: WikiMarkdownLink.bind(null, gameData, inTooltip)}}>
         {md}
     </Markdown>;
 }
