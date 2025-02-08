@@ -1,5 +1,6 @@
 import type { PapyrusScriptFunction } from "../../../papyrus/data-structures/pure/function";
 import type { PapyrusGame } from "../../../papyrus/data-structures/pure/game";
+import type { PapyrusSourceType } from "../../../papyrus/data-structures/pure/scriptSource";
 import type { WikiDataFunctionPage } from "../../../wikimedia/GetWikiDataFunctionPage";
 
 export type PreparedItem<T> = {
@@ -15,6 +16,7 @@ export interface SearchIndexEntityBase {
     type: SearchIndexEntityType;
     url: Lowercase<`/${string}`>;
     sourceIdentifier: Fuzzysort.Prepared;
+    sourceType: PapyrusSourceType;
 }
 
 export interface SearchIndexEntityScript extends SearchIndexEntityBase {

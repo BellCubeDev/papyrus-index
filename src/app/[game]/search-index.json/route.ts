@@ -40,6 +40,7 @@ export async function GET(_request: NextRequest, opts : { params: Promise<GameRo
                 structs: script.structs,
                 scriptNamespaceName: namespaceName,
                 sourceIdentifier,
+                sourceType: source.type,
             });
             for (const func of Object.values(script.functions)) {
                 const name = fuzzysort.prepare(func.name);
@@ -57,6 +58,7 @@ export async function GET(_request: NextRequest, opts : { params: Promise<GameRo
                     wikiParameterData: wikiData ? wikiData.parameters.map(p => ({ name: fuzzysort.prepare(p.name), descriptionMarkdown: fuzzysort.prepare(stripMD(stripMD(p.descriptionMarkdown))) })) : null,
                     wikiShortDescription: wikiData ? fuzzysort.prepare(stripMD(wikiData.shortDescriptionMarkdown)) : null,
                     sourceIdentifier,
+                    sourceType: source.type
                 })));
             }
         }
