@@ -45,7 +45,7 @@ export async function GET(_request: NextRequest, opts : { params: Promise<GameRo
                 const name = fuzzysort.prepare(func.name);
                 searchIndexEntityPromises.push(getWikiDataFunctionPage(game, func, namespaceNameStr).then(wikiData => ({
                     type: SearchIndexEntityType.Function,
-                    url: `/${toLowerCase(game)}/function/${toLowerCase(namespaceNameStr)}/${toLowerCase(func.name)}?sources=${source.sourceIdentifier}` as const,
+                    url: `/${toLowerCase(game)}/script/${toLowerCase(namespaceNameStr)}/function/${toLowerCase(func.name)}?sources=${source.sourceIdentifier}` as const,
                     fromPapyrus: func,
                     isGlobal: func.isGlobal,
                     isNative: func.isNative,
