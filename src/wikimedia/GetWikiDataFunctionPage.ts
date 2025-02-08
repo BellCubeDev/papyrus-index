@@ -66,8 +66,17 @@ export async function getWikiDataFunctionPage<TGame extends PapyrusGame, TFunc e
     const isMarkedNonDelayed = categories.includes('Category:Non-delayed Native Function');
 
     const shortDescriptionElements = Array.from(document.querySelectorAll<HTMLElement>('section[data-mw-section-id="0"] > :not(link, meta)'));
-    while (shortDescriptionElements[0] && (!shortDescriptionElements[0].textContent || shortDescriptionElements[0].textContent.trim().startsWith('Source:') || shortDescriptionElements[0].textContent.trim().startsWith('Member of:')))
+    while (true) {
+        if (!shortDescriptionElements[0]) break;
+        const trimmedTextContent = shortDescriptionElements[0].textContent?.trim().toLocaleLowerCase() as Omit<Lowercase<string>, 'startsWith'> & {startsWith: (s: Lowercase<string>) => boolean};
+        if (trimmedTextContent !== undefined) {
+            if (!trimmedTextContent.startsWith('source:')
+                && !trimmedTextContent.startsWith('member of:')
+                && !trimmedTextContent.startsWith('skse member of:'))
+                break;
+        }
         shortDescriptionElements.shift();
+    }
     const shortDescriptionMarkdown = await parsoidElementsToMarkdown(shortDescriptionElements, document.location.href);
 
     const exampleCodeElements = Array.from(document.querySelectorAll('section:has(#Examples) pre'));
