@@ -67,3 +67,18 @@ export async function generateSearchIndex(game: PapyrusGame) {
 
     return await Promise.all(searchIndexEntityPromises);
 }
+
+const InMemoryHashCache = new Map<PapyrusGame, Promise<string>>();
+
+export async function generateSearchIndexHash(game: PapyrusGame): Promise<string> {
+    if (InMemoryHashCache.has(game)) return await InMemoryHashCache.get(game)!;
+
+    const str = JSON.stringify(game);
+    const promise = crypto.subtle.digest('SHA-256', new TextEncoder().encode(str)).then(hashBuffer => {
+        const hashArray = Array.from(new Uint32Array(hashBuffer));
+        return hashArray.map(b => b.toString(32)).join('');
+    });
+
+    InMemoryHashCache.set(game, promise);
+    return await promise;
+}

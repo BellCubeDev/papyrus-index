@@ -2,13 +2,13 @@
 
 import React from 'react';
 import type { PapyrusGame } from '../../papyrus/data-structures/pure/game';
-import type { WorkerMessageInput, WorkerMessageInputGame, WorkerMessageOutput } from './SEARCH.worker';
+import type { WorkerMessageInput, WorkerMessageInputGame as WorkerMessageInputInit, WorkerMessageOutput } from './SEARCH.worker';
 import type { SearchIndexEntity } from '../[game]/search-index.json/SearchIndexEntity';
 
-function generateWorker(game: PapyrusGame) {
+function generateWorker(game: PapyrusGame, searchIndexHash: string) {
     console.log('Creating search worker...');
     const newWorker = new Worker(new URL('./SEARCH.worker.ts', import.meta.url));
-    newWorker.postMessage({type: 'GAME', game});
+    newWorker.postMessage({type: 'INIT', game, searchIndexHash} satisfies WorkerMessageInputInit);
     return newWorker as Omit<typeof newWorker, 'postMessage'> & {
         postMessage(message: Exclude<WorkerMessageInput, WorkerMessageInputGame>): void;
         addEventListener(type: 'message', listener: (this: Worker, ev: MessageEvent<WorkerMessageOutput>) => any, options?: boolean | AddEventListenerOptions): void;
