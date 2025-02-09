@@ -92,7 +92,7 @@ async function wikiFetchGetInternalWithParseJsonAndHandleErrors(wiki: PapyrusWik
     return json;
 }
 
-async function wikiFetchGetInternalFetch(originalUrl: URL, retriesSoFar: number): Promise<[retries: number, Response|null]> {
+async function wikiFetchGetInternalFetch(originalUrl: URL, retriesSoFar: number): Promise<[retries: number, res: Response|null]> {
     let response;
 
     const noCacheUrl = new URL(originalUrl.href);
