@@ -95,11 +95,14 @@ export function PapyrusTypeValueTokenNone() {
 }
 
 export function PapyrusTypeValueToken<TGame extends PapyrusGame>({game: _game, type}: {readonly game: TGame, readonly type: PapyrusScriptValueIndexed<boolean, true, TGame>}) {
+
+    // We can just handle all null values here! Brilliant!
+    if (type.value === null) return <PapyrusTypeValueTokenNone />;
+
     switch (type.type) {
         case PapyrusScriptTypeArchetype.Bool:
             return <span className={`${styles['value--bool']}`}>{type.value ? 'true' : 'false'}</span>;
         case PapyrusScriptTypeArchetype.Int:
-            if (type.value === null) return <PapyrusTypeValueTokenNone />;
             switch (type.baseSystem) {
                 case 10:
                     return <span className={`${styles['value--int']}`}>{type.value}</span>;
@@ -109,7 +112,7 @@ export function PapyrusTypeValueToken<TGame extends PapyrusGame>({game: _game, t
                     throw new UnreachableError(type.baseSystem, 'Unknown base system for integer literal!');
             }
         case PapyrusScriptTypeArchetype.Float:
-            return <span className={`${styles['value--float']}`}>{type.value}</span>;
+            return <span className={`${styles['value--float']}`}>{type.value.toString().replace(/^\d+$/u, ($0)=>`${$0}.0`)}</span>;
         case PapyrusScriptTypeArchetype.Var:
             return <span className={`${styles['value--var']}`}>{type.value}</span>;
         case PapyrusScriptTypeArchetype.String:
@@ -117,12 +120,6 @@ export function PapyrusTypeValueToken<TGame extends PapyrusGame>({game: _game, t
         case PapyrusScriptTypeArchetype.ScriptEventName:
         case PapyrusScriptTypeArchetype.StructVarName:
             return <span className={`${styles['value--string']}`}>&quot;{type.value}&quot;</span>;
-        case PapyrusScriptTypeArchetype.ScriptInstance:
-            if (type.value !== null) throw new UnreachableError(type, 'Script and struct instance values must be None!');
-            return <PapyrusTypeValueTokenNone />;
-        case PapyrusScriptTypeArchetype.Struct:
-            if (type.value !== null) throw new UnreachableError(type, 'Struct value must be None!');
-            return <PapyrusTypeValueTokenNone />;
         default:
             throw new UnreachableError(type, 'Unknown Papyrus type archetype!');
     }
