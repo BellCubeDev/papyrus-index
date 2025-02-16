@@ -3,7 +3,24 @@ import nextConfig from "../../next.config";
 import { memoizeDevServerConst } from "../utils/memoizeDevServerConst";
 import type { PapyrusWiki } from "./getWiki";
 
-const wikiFetchPromisesByURL = memoizeDevServerConst('wikiFetchCache', ()=>new Map<string, Promise<{}|null>>());
+const wikiFetchPromisesByURL = memoizeDevServerConst('wikiFetchCache', ()=>{
+    const map = new Map<string, Promise<{}|null>>();
+    const originalMapSet = map.set.bind(map);
+    map.set = function set(key, value) {
+        const memoryUsageData = process.memoryUsage();
+        const memoryUsage = memoryUsageData.heapUsed / memoryUsageData.heapTotal;
+
+        if (memoryUsage > 0.6 && !map.has(key)) {
+            const nextKey = map.keys().next().value;
+            if (!nextKey) console.warn('wikiFetchGet: Memory usage is over 60%, but no keys found in the wikiFetchPromisesByURL map! Memory usage data: ', memoryUsageData);
+            else map.delete(nextKey);
+        }
+
+        console.log(`Current memory usage: ${memoryUsage.toFixed(2)}%`);
+        return originalMapSet(key, value);
+    };
+    return map;
+});
 
 // MediaWiki API instances can be... finnicky. We don't want to overload the server with requests, so we'll queue them up.
 // This isn't fast, but it's safe.
