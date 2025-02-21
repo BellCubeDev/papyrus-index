@@ -154,7 +154,7 @@ function mergeScriptAggregate<TGame extends PapyrusGame>(possibleScripts: Papyru
 
             return defaultParamsDiff > 0 ? a : b;
         }),
-        structs: aggregateRecordValue(scriptEntries.map(([,script])=>script.structs).filter((v):v is Exclude<typeof v, null>=>Boolean(v)), scriptEntries, ([[sourceIdentifier, _script], struct]) => {
+        structs: aggregateRecordValue(scriptEntries.map(([,script])=>script.structs as Record<Lowercase<string>, PapyrusScriptStructIndexed<Exclude<PapyrusGame, PapyrusGame.SkyrimSE>>>).filter((v):v is Exclude<typeof v, null>=>Boolean(v)), scriptEntries, ([[sourceIdentifier, _script], struct]) => {
             if (struct === undefined) return DoNotIncludeInAggregate;
             const serialized = Object.entries(struct.members).map(([memberName, member]) => `${memberName}: ${serializePapyrusType(member.value)}`).join(', ');
             return [sourceIdentifier, serialized, struct as (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? PapyrusScriptStructIndexed<TGame> : never)] as const;
@@ -262,10 +262,13 @@ function indexScript<TGame extends PapyrusGame>(source: Lowercase<string>, scrip
     ).map(([structName, struct]) => [
         structName,
         Object.assign(struct, {
+            script: script as any as PapyrusScriptIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>,
             members: Object.fromEntries(Object.entries(struct.members).map(([memberName, member]) => [
                 memberName,
                 Object.assign(member, {
                     value: indexTypeValue(member.value, script, blacklistedSources, objectsThatMayNeedFutureBlacklistedSourcesRemoved, scriptsByNameThenSource),
+                    script: script as any as PapyrusScriptIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>,
+                    struct: struct as any as PapyrusScriptStructIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>,
                 } satisfies Partial<PapyrusScriptStructMemberIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>>),
             ] as const)),
         } satisfies Partial<PapyrusScriptStructIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>>),
@@ -274,11 +277,13 @@ function indexScript<TGame extends PapyrusGame>(source: Lowercase<string>, scrip
     const res: PapyrusScriptIndexed<TGame> = Object.assign(script, {
         functions: Object.fromEntries(Object.entries(script.functions).map(([funcNameLowercase, func]) => [funcNameLowercase, Object.assign(func, {
             returnType: indexType(func.returnType, script, blacklistedSources, objectsThatMayNeedFutureBlacklistedSourcesRemoved, scriptsByNameThenSource),
+            script: script as any as PapyrusScriptIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>,
             parameters: func.parameters.map(param => Object.assign(param, {
                 value: indexTypeValue(param.value, script, blacklistedSources, objectsThatMayNeedFutureBlacklistedSourcesRemoved, scriptsByNameThenSource),
             } satisfies Partial<PapyrusScriptFunctionParameterIndexed<TGame>>)),
         } satisfies Partial<PapyrusScriptFunctionIndexed<TGame>>)])),
         events: Object.fromEntries(Object.entries(script.events).map(([eventNameLowercase, event]) => [eventNameLowercase, Object.assign(event, {
+            script: script as any as PapyrusScriptIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>,
             parameters: event.parameters.map(param => Object.assign(param, {
                 value: indexTypeValue(param.value, script, blacklistedSources, objectsThatMayNeedFutureBlacklistedSourcesRemoved, scriptsByNameThenSource),
             } satisfies Partial<PapyrusScriptFunctionParameterIndexed<TGame>>)),
@@ -290,9 +295,12 @@ function indexScript<TGame extends PapyrusGame>(source: Lowercase<string>, scrip
         propertyGroups: Object.fromEntries(Object.entries(script.propertyGroups).map(([groupName, group]) => [
             groupName,
             Object.assign(group, {
+                script: script as any as PapyrusScriptIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>,
                 properties: Object.fromEntries(Object.entries(group.properties).map(([propertyName, property]) => [
                     propertyName,
                     Object.assign(property, {
+                        script: script as any as PapyrusScriptIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>,
+                        group: group as any as PapyrusScriptPropertyGroupIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>,
                         value: indexTypeValue(property.value, script, blacklistedSources, objectsThatMayNeedFutureBlacklistedSourcesRemoved, scriptsByNameThenSource),
                     } satisfies Partial<PapyrusScriptPropertyIndexed<TGame>>),
                 ] as const)),

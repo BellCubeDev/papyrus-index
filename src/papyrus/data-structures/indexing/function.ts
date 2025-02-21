@@ -1,6 +1,7 @@
 import type { PapyrusCompilerOptional } from "../pure/compilerOptional";
 import type { PapyrusScriptDocumentable, PapyrusScriptDocumentableOnlyByComment } from "../pure/documentable";
 import type { PapyrusGame } from "../pure/game";
+import type { PapyrusScriptIndexed } from "./script";
 import type { PapyrusScriptTypeIndexed, PapyrusScriptValueIndexed } from "./type";
 
 export interface PapyrusScriptEventOrBaseFunctionIndexed<TGame extends PapyrusGame> extends PapyrusScriptDocumentable, PapyrusCompilerOptional<TGame> {
@@ -9,6 +10,9 @@ export interface PapyrusScriptEventOrBaseFunctionIndexed<TGame extends PapyrusGa
 
     /** Parameters of the event, in the order they appear in */
     parameters: PapyrusScriptFunctionParameterIndexed<TGame>[];
+
+    /** The script this function originates from */
+    script: PapyrusScriptIndexed<TGame>;
 }
 
 export interface PapyrusScriptFunctionIndexed<TGame extends PapyrusGame> extends PapyrusScriptEventOrBaseFunctionIndexed<TGame> {
