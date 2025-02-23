@@ -1451,6 +1451,8 @@ Function Guard()
 EndFunction
 
 `;
+
+this.document.sourceCode = this.document.sourceCode.trimEnd() + '\n';
         }
         return [this.document, result] as const;
     }
