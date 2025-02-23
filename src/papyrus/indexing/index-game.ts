@@ -425,14 +425,15 @@ function indexType<TGame extends PapyrusGame, TIsArray extends boolean, TIsParam
         case PapyrusScriptTypeArchetype.Struct: {
             if ('struct' in type) return type;
             const scriptNameLowercase = toLowerCase(type.scriptName);
-            const foundScriptAggregate = scriptsByNameThenSource_[scriptNameLowercase] as Record<Lowercase<string>, PapyrusScriptIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>> | undefined;
-            if (!foundScriptAggregate) {
+            const foundScriptAggregateRaw = scriptsByNameThenSource_[scriptNameLowercase] as Record<Lowercase<string>, PapyrusScriptIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>> | undefined;
+            if (!foundScriptAggregateRaw) {
                 return Object.assign(type, {
                     script: UnknownPapyrusScript,
                     struct: UnknownPapyrusScriptStruct,
                     scriptWithStruct: UnknownPapyrusScript,
                 } as const);
             }
+            const foundScriptAggregate = {...foundScriptAggregateRaw};
             const structNameLowercase = toLowerCase(type.structName);
             const applicableScripts = Object.entries(foundScriptAggregate).filter((scriptEntry): scriptEntry is [typeof scriptEntry[0], typeof scriptEntry[1] & {structs: NonNullable<typeof scriptEntry[1]['structs']>}] => {
                 const hasStruct = scriptEntry[1].structs?.[structNameLowercase] !== undefined;
@@ -486,7 +487,7 @@ function indexType<TGame extends PapyrusGame, TIsArray extends boolean, TIsParam
 
             if (scriptsWithTargetStruct.length !== 0) {
                 if (scriptsWithTargetStruct.length > 1) console.warn('Multiple scripts with struct found for ScriptInstanceOrStruct type', thisScript, type, scriptsWithTargetStruct.map(Object.keys));
-                const firstScriptAggregate = scriptsWithTargetStruct[0]! as PapyrusPossibleScripts<Exclude<TGame, PapyrusGame.SkyrimSE>>;
+                const firstScriptAggregate = {...scriptsWithTargetStruct[0]! as PapyrusPossibleScripts<Exclude<TGame, PapyrusGame.SkyrimSE>>};
                 const res = Object.assign(type, {
                     type: PapyrusScriptTypeArchetype.Struct,
                     script: firstScriptAggregate,
@@ -506,8 +507,8 @@ function indexType<TGame extends PapyrusGame, TIsArray extends boolean, TIsParam
                 objectsThatMayNeedFutureBlacklistedSourcesRemoved.add(Object.assign(res.scriptWithStruct, {[ON_EMPTIED]: onEmptied}));
                 return res;
             } else {
-                const foundScript = scriptsByNameThenSource[ambiguousNameLowercase];
-                if (!foundScript) {
+                const foundScriptRaw = scriptsByNameThenSource[ambiguousNameLowercase];
+                if (!foundScriptRaw) {
                     return Object.assign(type, {
                         type: PapyrusScriptTypeArchetype.ScriptInstance,
                         scriptName: type.ambiguousName,
@@ -515,12 +516,14 @@ function indexType<TGame extends PapyrusGame, TIsArray extends boolean, TIsParam
                     } as const);
                 }
 
+                const foundScript = {...foundScriptRaw, [ON_EMPTIED]: ()=>{(res.script as any) = UnknownPapyrusScript}};
+
                 const res = Object.assign(type, {
                     type: PapyrusScriptTypeArchetype.ScriptInstance,
                     scriptName: type.ambiguousName,
                     script: foundScript,
                 }) satisfies PapyrusScriptTypeScriptInstanceIndexed<TIsArray, TIsParameter, TGame>;
-                objectsThatMayNeedFutureBlacklistedSourcesRemoved.add(Object.assign(res.script, {[ON_EMPTIED]: ()=>{(res.script as any) = UnknownPapyrusScript}}));
+                objectsThatMayNeedFutureBlacklistedSourcesRemoved.add(res.script);
                 return res;
             }
         }
