@@ -49,8 +49,7 @@ export async function generateMetadata({params}: {readonly params: Promise<Funct
 export default async function FunctionPage({params}: {readonly params: Promise<FunctionRouteParams>}) {
     const {game, scriptBySources, func} = getGameAndScriptAndFunctionFromParams(await params);
 
-    const namespaceNamePart = scriptBySources[AllSourcesCombined].namespace[0]![1] === null ? '' : `${getBestNameVariant(scriptBySources[AllSourcesCombined].namespace as [Lowercase<string>[], string][])[1]}:`;
-    const scriptNamespaceName = namespaceNamePart + getBestNameVariant(scriptBySources[AllSourcesCombined].namespaceName)[1];
+    const scriptNamespaceName = getBestNameVariant(scriptBySources[AllSourcesCombined].namespaceName)[1];
 
     const wikiDataPromise = getWikiDataFunctionPage(game, func[0]![1], scriptNamespaceName);
 
