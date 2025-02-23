@@ -46,7 +46,7 @@ const allFunctions: FunctionOfTheDayFunction[] = Object.entries(AllScriptsIndexe
 const todaySinceEpoch = Math.floor(Date.now() / (24 * 60 * 60 * 1000));
 export  type FunctionOfTheDayOption = FunctionOfTheDayFunction & {dayNum: number};
 /** Options for the function of the day so we can adjust to the user's local timezone. */
-export const functionOfTheDayOptions: FunctionOfTheDayOption[] = new Array(9).fill(null).map((_, i) => {
+export const functionOfTheDayOptions: FunctionOfTheDayOption[] = new Array(7).fill(null).map((_, i) => {
     const dayNum = todaySinceEpoch+i-1;
     const index = dayNum % allFunctions.length;
     return Object.assign(allFunctions[index]!, {dayNum});

@@ -7,7 +7,15 @@
 
 The Papyrus Index is a project to provide indexing, useful searching, and documentation for all developer-oriented Papyrus functions, properties, and events&mdash;for all Papyrus-using games.
 
+> [!TIP]
+> If you're looking to track development, check out the [`development` branch](https://github.com/BellCubeDev/papyrus-index/tree/development). The default branch is `production`.
+
 Site deployed at https://papyrus.bellcube.dev/ from the [`production` branch](https://github.com/BellCubeDev/papyrus-index/tree/production)
+
+[![Deployed at https://papyrus.bellcube.dev](https://img.shields.io/badge/Deployed%20At-papyrus.bellcube.dev-blue?style=for-the-badge)](https://papyrus.bellcube.dev/)
+[![Image depicting GitHub Workflow status](https://img.shields.io/github/actions/workflow/status/BellCubeDev/papyrus-index/build.yaml?branch=production&style=for-the-badge)](https://papyrus.bellcube.dev/)
+
+
 
 ## Why Does This Exist?
 The Papyrus Index was born largely out of frustration (as many great projects are). Searching for a Papyrus extender that enabled the features you want to use in your script can be&hellip; annoying, to say the least. Aside from this project, there's not even a centralized list of Papyrus extenders, let alone a searchable one. Even finding the correct function to use in the vanilla Papyrus language can be a pain, honestly.
