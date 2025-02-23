@@ -18,7 +18,7 @@ export function getScriptNameFromProps(propsObj: ComponentProps<typeof PapyrusSc
     } else if (scriptAggregate) {
         return getBestNameVariant(scriptAggregate.namespaceName)[1];
     } else if (possibleScripts) {
-        if (possibleScripts === UnknownPapyrusScript) return missingName ? `<UNKNOWN_SCRIPT: {missingName}>` : `<UNKNOWN_SCRIPT>`;
+        if (possibleScripts === UnknownPapyrusScript) return missingName ? `<UNKNOWN_SCRIPT: ${missingName}>` : `<UNKNOWN_SCRIPT>`;
         else return getBestName(Object.values(possibleScripts).map(s=>s.namespaceName))!;
     } else {
         throw new UnreachableError(propsObj, 'Unknown Papyrus script reference type passed to <PapyrusScriptReference> component!');
@@ -51,7 +51,7 @@ export function PapyrusScriptReference<TGame extends PapyrusGame>(propsObj: Comp
         </Tooltip>;
     } else if (possibleScripts) {
         if (possibleScripts === UnknownPapyrusScript) {
-            const nameToUse = missingName ? `<UNKNOWN_SCRIPT: {missingName}>` : `<UNKNOWN_SCRIPT>`;
+            const nameToUse = missingName ? `<UNKNOWN_SCRIPT: ${missingName}>` : `<UNKNOWN_SCRIPT>`;
             if (propsObj.inTooltip) return <span className={styles['reference--unknown']}>{nameToUse}</span>;
             return <Tooltip role='tooltip' wrapperClassName={styles['reference--unknown']} tooltipContents={<PapyrusScriptReferenceTooltip possibleScripts={possibleScripts} missingName={missingName} />}>
                 {nameToUse}
