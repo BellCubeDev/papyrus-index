@@ -14,7 +14,7 @@ export interface PapyrusScriptTypeScriptInstanceIndexed<TIsArray extends boolean
 export interface PapyrusScriptTypeStructIndexed<TIsArray extends boolean, TIsParameter extends boolean, TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE>> extends PapyrusScriptTypeStruct<TIsArray, TIsParameter> {
     script: PapyrusPossibleScripts<TGame> | typeof UnknownPapyrusScript;
     struct: Record<Lowercase<string>, PapyrusScriptStructIndexed<TGame>> | typeof UnknownPapyrusScriptStruct;
-    scriptWithStruct: Record<Lowercase<string>, [PapyrusScriptIndexed<TGame>, PapyrusScriptStructIndexed<TGame>]> | typeof UnknownPapyrusScript | typeof UnknownPapyrusScriptStruct;
+    scriptWithStruct: Record<Lowercase<string>, readonly [PapyrusScriptIndexed<TGame>, PapyrusScriptStructIndexed<TGame>]> | typeof UnknownPapyrusScript | typeof UnknownPapyrusScriptStruct;
 }
 
 export type PapyrusScriptTypeIndexed<TIsArray extends boolean, TIsParameter extends boolean, TGame extends PapyrusGame> = PapyrusScriptTypeLiteral<TIsArray, TIsParameter> | PapyrusScriptTypeScriptInstanceIndexed<TIsArray, TIsParameter, TGame> | PapyrusScriptTypeStructIndexed<TIsArray, TIsParameter, Exclude<TGame, PapyrusGame.SkyrimSE>> | PapyrusScriptTypeVar<TIsArray, TIsParameter>;

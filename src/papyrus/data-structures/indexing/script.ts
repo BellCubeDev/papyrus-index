@@ -6,7 +6,8 @@ import type { UnknownPapyrusScript } from "./type";
 import type { PapyrusScriptOnlyProps } from "../pure/script";
 
 export interface PapyrusScriptIndexed<TGame extends PapyrusGame> extends PapyrusScriptOnlyProps<TGame> {
-    name: string;
+    nameWithoutNamespace: string;
+    namespaceName: string;
     isHidden: boolean;
     isConditional: boolean;
 

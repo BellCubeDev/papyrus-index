@@ -9,7 +9,7 @@ import { PapyrusStructReferenceTooltip } from "./PapyrusScriptReferenceTooltip";
 import styles from './PapyrusStructReference.module.scss';
 
 export function PapyrusStructReference<TGame extends PapyrusGame>(propsObj: {inTooltip?: boolean} & (
-    | {readonly struct: PapyrusScriptIndexed<TGame>, readonly possibleStructs?: undefined}
+    | {readonly struct: PapyrusScriptStructIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>, readonly possibleStructs?: undefined}
     | {readonly possibleStructs: typeof UnknownPapyrusScriptStruct | Record<Lowercase<string>, PapyrusScriptStructIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>>, readonly struct?: undefined})) {
     const {inTooltip, struct, possibleStructs} = propsObj;
     if (struct) {

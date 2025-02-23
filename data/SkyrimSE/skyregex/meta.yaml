@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Standalone Extender)
+nameProper: SkyRegEx - Skyrim Regular Expressions SKSE
+nameShort: SkyRegEx
+indexedVersion: "1.2"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/94776
+gitRepo: https://github.com/schlangster/skyui
+nexusIndexedFileId: 449745

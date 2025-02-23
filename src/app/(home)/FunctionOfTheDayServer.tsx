@@ -21,20 +21,18 @@ function calculateFunctionNamePseudoRandom(value: string) {
 
 export type FunctionOfTheDayFunction = {
     readonly game: PapyrusGame;
-    readonly scriptNameLowercase: Lowercase<string>;
-    readonly scriptNameVariants: [Lowercase<string>[], string][];
+    readonly scriptNamespaceNameLowercase: Lowercase<string>;
+    readonly scriptNamespaceNameVariants: [Lowercase<string>[], string][];
     readonly functionNameLowercase: Lowercase<string>;
-    readonly namespaceVariants: [Lowercase<string>[], string|null][];
     readonly functionVariants: [Lowercase<string>[], PapyrusScriptFunctionIndexed<PapyrusGame>][];
 }
 
 const allFunctions: FunctionOfTheDayFunction[] = Object.entries(AllScriptsIndexed).flatMap(([game, gameData]) =>
-    Object.entries(gameData.scripts).flatMap(([scriptNameLowercase, bySources]) =>
+    Object.entries(gameData.scripts).flatMap(([scriptNamespaceNameLowercase, bySources]) =>
         Object.entries(bySources[AllSourcesCombined].functions).flatMap(([functionNameLowercase, functionVariants]) => ({
             game,
-            scriptNameLowercase,
-            scriptNameVariants: bySources[AllSourcesCombined].name,
-            namespaceVariants: bySources[AllSourcesCombined].namespace,
+            scriptNamespaceNameLowercase,
+            scriptNamespaceNameVariants: bySources[AllSourcesCombined].namespaceName,
             functionNameLowercase,
             functionVariants,
         }))
@@ -48,7 +46,7 @@ const allFunctions: FunctionOfTheDayFunction[] = Object.entries(AllScriptsIndexe
 const todaySinceEpoch = Math.floor(Date.now() / (24 * 60 * 60 * 1000));
 export  type FunctionOfTheDayOption = FunctionOfTheDayFunction & {dayNum: number};
 /** Options for the function of the day so we can adjust to the user's local timezone. */
-export const functionOfTheDayOptions: FunctionOfTheDayOption[] = new Array(9).fill(null).map((_, i) => {
+export const functionOfTheDayOptions: FunctionOfTheDayOption[] = new Array(7).fill(null).map((_, i) => {
     const dayNum = todaySinceEpoch+i-1;
     const index = dayNum % allFunctions.length;
     return Object.assign(allFunctions[index]!, {dayNum});
@@ -56,14 +54,12 @@ export const functionOfTheDayOptions: FunctionOfTheDayOption[] = new Array(9).fi
 
 export const FunctionOfTheDayOptionsWithRendered = functionOfTheDayOptions.map(FunctionOfTheDay) as [number, React.ReactElement][];
 
-function FunctionOfTheDay({dayNum, game, scriptNameLowercase, scriptNameVariants, namespaceVariants, functionNameLowercase, functionVariants}: FunctionOfTheDayOption) {
-    const namespaceNamePart = namespaceVariants[0]![1] === null ? '' : `${getBestNameVariant(namespaceVariants as [Lowercase<string>[], string][])[1]}:`;
-    const scriptName = namespaceNamePart + getBestNameVariant(scriptNameVariants)[1];
-
-    const script = AllScriptsIndexed[game].scripts[scriptNameLowercase];
+function FunctionOfTheDay({dayNum, game, scriptNamespaceNameLowercase, scriptNamespaceNameVariants, functionNameLowercase, functionVariants}: FunctionOfTheDayOption) {
+    const script = AllScriptsIndexed[game].scripts[scriptNamespaceNameLowercase]!;
+    const scriptName = getBestNameVariant(script[AllSourcesCombined].namespaceName)[1];
     if (!script) throw new Error(`Script ${scriptName} not found in game ${game} for Function of the Day! This should not be possible!`);
 
-    return [dayNum, <Fragment key={`${game}/${scriptNameLowercase}/${functionNameLowercase}`}>
+    return [dayNum, <Fragment key={`${game}/${scriptNamespaceNameLowercase}/${functionNameLowercase}`}>
         <h2>
             {getGameName(game)}:{' '}
             <PapyrusScriptFunctionReference game={game} possibleFunctions={functionVariants} possibleScripts={script} missingName={scriptName} /> </h2>

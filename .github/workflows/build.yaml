@@ -13,8 +13,8 @@ on:
       - '*.js' # only applied to top-level files, don't worry
       - '*.ts'
       - '*.json'
-  schedule: # every Sunday at midnight (so we always have Function of the Day up to date and our wiki data is reasonably fresh)
-    - cron: '0 0 * * 0'
+  schedule: # every Sunday and Wednesday at midnight (so we always have Function of the Day up to date, our wiki data is reasonably fresh, and GitHub doesn't yeet our caches)
+    - cron: '0 0 * * 0,3'
 
 jobs:
   build:

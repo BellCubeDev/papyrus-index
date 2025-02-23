@@ -1,5 +1,7 @@
 import type { PapyrusScriptDocumentable } from "../pure/documentable";
 import type { PapyrusGame } from "../pure/game";
+import type { PapyrusScriptPropertyGroupIndexed } from "./propertyGroup";
+import type { PapyrusScriptIndexed } from "./script";
 import type { PapyrusScriptValueIndexed } from "./type";
 
 export interface PapyrusScriptPropertyIndexed<TGame extends PapyrusGame> extends PapyrusScriptDocumentable {
@@ -15,6 +17,11 @@ export interface PapyrusScriptPropertyIndexed<TGame extends PapyrusGame> extends
     hidden: boolean;
 
     value: PapyrusScriptValueIndexed<boolean, false, TGame>;
+
+    /** The group this property belongs to */
+    group: PapyrusScriptPropertyGroupIndexed<TGame>;
+    /** The script this property originates from */
+    script: PapyrusScriptIndexed<TGame>;
 
     // Post-Skyrim additions:
 

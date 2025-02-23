@@ -8,9 +8,10 @@ export interface WorkerMessageBase {
     type: string;
 }
 
-export interface WorkerMessageInputGame extends WorkerMessageBase {
-    type: 'GAME';
+export interface WorkerMessageInputInit extends WorkerMessageBase {
+    type: 'INIT';
     game: PapyrusGame;
+    searchIndexHash: string;
 }
 
 export interface WorkerMessageInputSearch extends WorkerMessageBase {
@@ -19,7 +20,7 @@ export interface WorkerMessageInputSearch extends WorkerMessageBase {
     id: number;
 }
 
-export type WorkerMessageInput = WorkerMessageInputGame | WorkerMessageInputSearch;
+export type WorkerMessageInput = WorkerMessageInputInit | WorkerMessageInputSearch;
 
 export interface WorkerMessageOutputSearchResult extends WorkerMessageBase {
     type: 'SEARCH_RESULT';
@@ -29,10 +30,10 @@ export interface WorkerMessageOutputSearchResult extends WorkerMessageBase {
 
 export type WorkerMessageOutput = WorkerMessageOutputSearchResult;
 
-const game: PapyrusGame = await new Promise(resolve => {
+const {game, searchIndexHash} = await new Promise<WorkerMessageInputInit>(resolve => {
     self.onmessage = (e: MessageEvent<WorkerMessageInput>) => {
-        if (e.data.type !== 'GAME') throw new Error('[SEARCH WORKER] First message sent to search worker must be of type "GAME"');
-        resolve(e.data.game);
+        if (e.data.type !== 'INIT') throw new Error('[SEARCH WORKER] First message sent to search worker must be of type "INIT"');
+        resolve(e.data);
         self.onmessage = null;
     };
 });
@@ -40,10 +41,19 @@ const game: PapyrusGame = await new Promise(resolve => {
 console.log('[SEARCH WORKER] Waiting for search index for game:', game);
 
 // TODO: Request the un-prepared version (about 1/3 the download size), prep it in the worker, and store the prepared version in IndexedDB
-// TODO: Come up with some method of cache invalidation. Ideally, the layout component would calculate the hash of the search index and pass it to the client
-const searchIndexPromise: Promise<SearchIndexEntity[]> = fetch(new URL(`/${toLowerCase(game)}/search-index.json`, self.location.href), {
+const searchIndexPromise: Promise<SearchIndexEntity[]> = fetch(new URL(`/${toLowerCase(game)}/search-index.json?hash=${searchIndexHash}`, self.location.href), {
     cache: 'force-cache',
-}).then(res => res.json());
+}).then(async res => {
+    if (!res.ok) {
+        try {
+            console.error('[SEARCH WORKER] Failed to fetch search index:', res.status, res.statusText, 'with result:', await res.text());
+        } finally {
+            // eslint-disable-next-line no-unsafe-finally
+            throw new Error(`[SEARCH WORKER] Failed to fetch search index: ${res.status} ${res.statusText}`);
+        }
+    }
+    return res.json();
+});
 
 console.log('[SEARCH WORKER] Got search index:', searchIndexPromise);
 
@@ -51,8 +61,8 @@ self.addEventListener('message', async function searchWorkerMessageHandler(e: Me
     const message = e.data;
     console.log('[SEARCH WORKER] Received message:', message);
     switch (message.type) {
-        case 'GAME':
-            throw new Error('[SEARCH WORKER] "GAME" message type should not be sent to worker more than once!');
+        case 'INIT':
+            throw new Error('[SEARCH WORKER] "INIT" message type should not be sent to worker more than once!');
         case 'SEARCH': {
             const results = fuzzysort.go(message.query, await searchIndexPromise, {
                 keys: ['name', 'wikiShortDescription', 'wikiNotes', 'wikiParameterData.descriptionMarkdown', 'wikiParameterData.name'],

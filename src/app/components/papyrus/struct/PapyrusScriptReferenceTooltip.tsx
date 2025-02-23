@@ -4,7 +4,7 @@ import { UnknownPapyrusScriptStruct } from "../../../../papyrus/data-structures/
 import type { PapyrusGame } from "../../../../papyrus/data-structures/pure/game";
 import styles from './PapyrusStructReference.module.scss';
 
-export function PapyrusStructReferenceTooltip<TGame extends PapyrusGame>(propsObj: {readonly struct: PapyrusScriptIndexed<TGame>, readonly possibleStructs?: undefined} | {readonly possibleStructs: typeof UnknownPapyrusScriptStruct | Record<Lowercase<string>, PapyrusScriptStructIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>>, readonly struct?: undefined}) {
+export function PapyrusStructReferenceTooltip<TGame extends PapyrusGame>(propsObj: {readonly struct: PapyrusScriptStructIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>, readonly possibleStructs?: undefined} | {readonly possibleStructs: typeof UnknownPapyrusScriptStruct | Record<Lowercase<string>, PapyrusScriptStructIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>>, readonly struct?: undefined}) {
     const {struct, possibleStructs} = propsObj;
     if (struct) {
         return <div className={styles.tooltip}>

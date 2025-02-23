@@ -2,15 +2,15 @@
 
 import React from 'react';
 import type { PapyrusGame } from '../../papyrus/data-structures/pure/game';
-import type { WorkerMessageInput, WorkerMessageInputGame, WorkerMessageOutput } from './SEARCH.worker';
+import type { WorkerMessageInput, WorkerMessageInputInit, WorkerMessageOutput } from './SEARCH.worker';
 import type { SearchIndexEntity } from '../[game]/search-index.json/SearchIndexEntity';
 
-function generateWorker(game: PapyrusGame) {
+function generateWorker(game: PapyrusGame, searchIndexHash: string) {
     console.log('Creating search worker...');
     const newWorker = new Worker(new URL('./SEARCH.worker.ts', import.meta.url));
-    newWorker.postMessage({type: 'GAME', game});
+    newWorker.postMessage({type: 'INIT', game, searchIndexHash} satisfies WorkerMessageInputInit);
     return newWorker as Omit<typeof newWorker, 'postMessage'> & {
-        postMessage(message: Exclude<WorkerMessageInput, WorkerMessageInputGame>): void;
+        postMessage(message: Exclude<WorkerMessageInput, WorkerMessageInputInit>): void;
         addEventListener(type: 'message', listener: (this: Worker, ev: MessageEvent<WorkerMessageOutput>) => any, options?: boolean | AddEventListenerOptions): void;
     };
 }
@@ -26,13 +26,16 @@ export function useSearchContext(advanced?: false): SearchContext;
 export function useSearchContext(advanced: boolean): SearchContext | null;
 export function useSearchContext(advanced?: boolean): SearchContext | null {
     const res = React.useContext(searchContext);
-    if (!res && !advanced) throw new Error('useSearchContext() was called without a <SearchProvider> ancestor!');
+    if (!res && !advanced) {
+        if (typeof window !== 'undefined') throw new Error('useSearchContext() was called without a <SearchProvider> ancestor!');
+        else return null as never;
+    }
     return res;
 }
 
-export function SearchProvider({children, game}: {readonly children: React.ReactNode, readonly game: PapyrusGame}) {
+export function SearchProvider({children, game, searchIndexHash}: {readonly children: React.ReactNode, readonly game: PapyrusGame, readonly searchIndexHash: string}) {
     const typeofWorker = typeof Worker;
-    const worker = React.useMemo(() => typeofWorker === 'undefined' ? null : generateWorker(game), [game, typeofWorker]);
+    const worker = React.useMemo(() => typeofWorker === 'undefined' ? null : generateWorker(game, searchIndexHash), [game, searchIndexHash, typeofWorker]);
 
     React.useEffect(() => {
         const previousWorker = worker;

@@ -1,7 +1,7 @@
-scriptname DbBigStringArrayExample extends quest
+scriptname DbBigStringArrayExample extends quest 
 {examples of how to use DbBigStringArray as either one big array or as multidimensional arrays.}
 
-MiscObject Property DbBigStringArrayMisc Auto
+MiscObject Property DbBigStringArrayMisc Auto 
 {this misc object has the DbBigStringArray and DynamicStringsArrays scripts attached}
 
 DbBigStringArray myBigStringArray
@@ -60,7 +60,7 @@ DbBigStringArray[] bigMultiArray3X3
 
 function bigMultiArray3X3_Example()
     Guard()
-EndFunction
+EndFunction 
 
 DbBigStringArray[] multiArray2X2X2
 
