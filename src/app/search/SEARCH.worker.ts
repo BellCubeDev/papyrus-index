@@ -43,7 +43,17 @@ console.log('[SEARCH WORKER] Waiting for search index for game:', game);
 // TODO: Request the un-prepared version (about 1/3 the download size), prep it in the worker, and store the prepared version in IndexedDB
 const searchIndexPromise: Promise<SearchIndexEntity[]> = fetch(new URL(`/${toLowerCase(game)}/search-index.json?hash=${searchIndexHash}`, self.location.href), {
     cache: 'force-cache',
-}).then(res => res.json());
+}).then(async res => {
+    if (!res.ok) {
+        try {
+            console.error('[SEARCH WORKER] Failed to fetch search index:', res.status, res.statusText, 'with result:', await res.text());
+        } finally {
+            // eslint-disable-next-line no-unsafe-finally
+            throw new Error(`[SEARCH WORKER] Failed to fetch search index: ${res.status} ${res.statusText}`);
+        }
+    }
+    return res.json();
+});
 
 console.log('[SEARCH WORKER] Got search index:', searchIndexPromise);
 
