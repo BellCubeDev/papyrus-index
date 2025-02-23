@@ -18,18 +18,44 @@ on:
   schedule: # every Sunday and Wednesday at midnight (so we always have Function of the Day up to date, our wiki data is reasonably fresh, and GitHub doesn't yeet our caches)
     - cron: '0 0 * * 0,3'
 
+#
+# A WARNING TO ALL WHO ENTER HERE
+# TO UPDATE THE CUSTOM CACHE
+#
+# The custom cache's saved paths MUST match the paths in the restore step.
+# GitHub will NOT restore the cache if the paths don't match.
+#
+# Be warned, for this message is written in blood.
+#
+
+
 jobs:
   build:
     runs-on: ubuntu-latest
     name: Build
     env:
       NEXUS_API_KEY: ${{ secrets.NEXUS_API_KEY }}
+      NEXT_PUBLIC_BUILD_SOURCE_MD: '___ ERROR DURING BUILD ___'
     steps:
 
       - name: Checkout
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event_name == 'schedule' && 'production' || github.ref }}
+
+      - name: Restore Custom Caches
+        id: cache-restore-custom
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            cache
+            src/papyrus/scraping/download/BSArch.exe
+            data/*/*/download
+          key: custom-cache---does---not---exist---${{ github.run_id }}
+          # we don't need any specific info; we just store this data so we don't have to DOS the hosting server every time we build.
+          restore-keys: |
+            custom-cache-
+
 
       # credit to https://github.com/JosephM101/Wine-Install-Scripts/blob/main/install-wine.sh
       #
@@ -53,17 +79,8 @@ jobs:
       - name: Install NPM Dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Restore Custom Caches
-        id: cache-restore-custom
-        uses: actions/cache/restore@v4
-        with:
-          path: cache
-          key: does-not-exist-${{ github.run_id }}
-          # we don't need any specific info; we just store this data so we don't have to DOS the hosting server every time we build.
-          restore-keys: custom-cache-
-
       - name: Use Next.js Caching
-        uses: actions/cache@v4
+        uses: actions/cache@v4.1.2
         with:
           path: .next/cache
           key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('src/**/*.js', 'src/**/*.jsx', 'src/**/*.ts', 'src/**/*.tsx') }}
@@ -82,7 +99,7 @@ jobs:
       - name: Save Custom Caches
         id: cache-save-custom
         uses: actions/cache/save@v4
-        if: always()
+        if: always() && env.NEXT_PUBLIC_BUILD_SOURCE_MD != '___ ERROR DURING BUILD ___'
         with:
           path: |
             cache
