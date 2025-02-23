@@ -32,14 +32,14 @@ export async function generateMetadata({params}: {readonly params: Promise<Scrip
     const {game, scriptBySources} = getGameAndScriptFromParams(await params);
 
     const sourceIDs = Object.keys(scriptBySources);
-    const sourceNames = sourceIDs.map((sourceId)=>SourceName({source: AllScriptsIndexed[game].scriptSources[sourceId]!, long: true}));
+    const sourceNamespaceNames = sourceIDs.map((sourceId)=>SourceName({source: AllScriptsIndexed[game].scriptSources[sourceId]!, long: true}));
 
-    if (sourceNames.length === 0) throw new Error('A script should have at least one source! Makes no sense for it to not have a source! Something is VERY wrong here.');
-    const sourcesList = sourceNames.length === 1 ? sourceNames[0] : sourceNames.length === 2 ? sourceNames.join(' and ') : `${sourceNames.slice(0, -1).join(', ')}, and ${sourceNames.at(-1)}`;
+    if (sourceNamespaceNames.length === 0) throw new Error('A script should have at least one source! Makes no sense for it to not have a source! Something is VERY wrong here.');
+    const sourcesList = sourceNamespaceNames.length === 1 ? sourceNamespaceNames[0] : sourceNamespaceNames.length === 2 ? sourceNamespaceNames.join(' and ') : `${sourceNamespaceNames.slice(0, -1).join(', ')}, and ${sourceNamespaceNames.at(-1)}`;
 
     return {
-        title: getBestNameVariant(scriptBySources[AllSourcesCombined].name)[1],
-        description: `Reference page for the ${getBestNameVariant(scriptBySources[AllSourcesCombined].name)[1]} script in ${getGameName(game)}. This script is provided by ${sourcesList}.`,
+        title: getBestNameVariant(scriptBySources[AllSourcesCombined].namespaceName)[1],
+        description: `Reference page for the ${getBestNameVariant(scriptBySources[AllSourcesCombined].namespaceName)[1]} script in ${getGameName(game)}. This script is provided by ${sourcesList}.`,
     };
 }
 
@@ -48,12 +48,11 @@ export default async function ScriptPage({params}: {readonly params: Promise<Scr
 
     const _sourceIDs = Object.keys(scriptBySources);
 
-    const namespaceNamePart = scriptBySources[AllSourcesCombined].namespace[0]![1] === null ? '' : `${getBestNameVariant(scriptBySources[AllSourcesCombined].namespace as [Lowercase<string>[], string][])[1]}:`;
-    const scriptName = namespaceNamePart + getBestNameVariant(scriptBySources[AllSourcesCombined].name)[1];
+    const scriptNamespaceName = getBestNameVariant(scriptBySources[AllSourcesCombined].namespaceName)[1];
 
     return <>
         <div className={styles.scriptHeader}>
-            <h1>{scriptName}</h1>
+            <h1>{scriptNamespaceName}</h1>
             <div className={styles.extendsList}>
             </div>
         </div>
@@ -92,7 +91,7 @@ export default async function ScriptPage({params}: {readonly params: Promise<Scr
             <div className={styles.functions}>
                 <GuardEmptyList replacement={<p>No functions found.</p>}>
                     {Object.entries(scriptBySources[AllSourcesCombined].functions).map(([funcName, variants]) => <div key={funcName}>
-                        <PapyrusFunctionSignatureVariants game={game} variants={variants} scriptName={scriptName} />
+                        <PapyrusFunctionSignatureVariants game={game} variants={variants} scriptName={scriptNamespaceName} />
                     </div>)}
                 </GuardEmptyList>
             </div>

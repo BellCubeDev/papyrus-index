@@ -181,7 +181,8 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
 
     generateEmptyPapyrusScript(): PapyrusScriptUnderConstruction<TGame> {
         return {
-            name: undefined,
+            namespaceName: undefined,
+            nameWithoutNamespace: undefined,
             namespace: undefined,
             isBetaOnly: false,
             isDebugOnly: false,
@@ -376,14 +377,16 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
         this.result.documentationComment = PapyrusScriptParser.normalizeDocumentationWhitespace(this.currentCommentRaw);
         const [tokenIndex, token] = this.getNextToken(true);
         if (token === EOF) throw new PapyrusParserError('Expected script name, but got the end of the file (EOF)!', tokenIndex, this.document);
-        const [namespaceOrScriptName, scriptNameIfNoNamespace] = token.split(':');
-        if (namespaceOrScriptName === '') throw new PapyrusParserError('Expected script name, but got a colon (":")', tokenIndex, this.document);
-        if (scriptNameIfNoNamespace === undefined) {
-            this.result.name = namespaceOrScriptName;
+        this.result.namespaceName = token;
+        const [namespaceOrScriptName, scriptNameIfHasNamespace] = token.split(':');
+        if (namespaceOrScriptName === '' || namespaceOrScriptName === undefined) throw new PapyrusParserError('Expected script name, but got a colon (":")', tokenIndex, this.document);
+        if (scriptNameIfHasNamespace === undefined) {
+            this.result.namespace = null;
+            this.result.nameWithoutNamespace = namespaceOrScriptName;
         } else {
             if (this.game === PapyrusGame.SkyrimSE) throw new PapyrusParserError('Script namespaces are not supported by Skyrim\'s Papyrus compiler. Expected identifier, but got ":".', tokenIndex, this.document);
             this.result.namespace = namespaceOrScriptName;
-            this.result.name = scriptNameIfNoNamespace;
+            this.result.nameWithoutNamespace = scriptNameIfHasNamespace;
         }
 
 
@@ -1409,7 +1412,8 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
 
         return {
             namespace: (this.result.namespace as (TGame extends PapyrusGame.Fallout4 | PapyrusGame.Fallout76 | PapyrusGame.Starfield ? string : never) | null) ?? null,
-            name: this.result.name ?? (() => { throw new PapyrusParserError('Script has no name!', 0, document) })(),
+            namespaceName: this.result.namespaceName ?? (() => { throw new PapyrusParserError('Script has no name! (triggering prop: namespaceName)', 0, document) })(),
+            nameWithoutNamespace: this.result.nameWithoutNamespace ?? (() => { throw new PapyrusParserError('Script has no name! (triggering prop: nameWithoutNamespace)', 0, document) })(),
             isBetaOnly: this.result.isBetaOnly ?? false,
             isDebugOnly: this.result.isDebugOnly ?? false,
             isHidden: this.result.isHidden ?? false,
@@ -1440,11 +1444,10 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
         const result = this.parseScript(script);
         this.document.isModified = this.document.sourceCode.toLowerCase() !== originalSourceCode.toLowerCase();
         if (this.document.isModified && !result.functions.guard) {
-            const scriptFullName = result.namespace ? `${result.namespace}:${result.name}` : result.name;
             this.document.sourceCode += `
 
 Function Guard()
-    Debug.MessageBox("${scriptFullName}: Don't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
+    Debug.MessageBox("${result.namespaceName}: Don't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
 EndFunction
 
 `;

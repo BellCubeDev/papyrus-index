@@ -41,7 +41,7 @@ export function PapyrusScriptReferenceTooltip<TGame extends PapyrusGame>(propsOb
         </div>;
     } else if (scriptAggregate) {
         return <div className={styles.tooltip}>
-            {scriptAggregate.name.map(n=>n[1]).join(' | ')} (
+            {scriptAggregate.namespaceName.map(n=>n[1]).join(' | ')} (
             {
                 scriptAggregate.isNative.some(([, isNative]) => isNative === null)
                     ? scriptAggregate.extendsName.some(([, extendsName]) => extendsName)
@@ -62,7 +62,7 @@ export function PapyrusScriptReferenceTooltip<TGame extends PapyrusGame>(propsOb
             </div>;
         }
         return <div className={styles.tooltip}>
-            {Array.from(new Set(Object.values(possibleScripts).map(s=>s.name))).join(' | ')} (
+            {Array.from(new Set(Object.values(possibleScripts).map(s=>s.namespaceName))).join(' | ')} (
 
             )
         </div>;

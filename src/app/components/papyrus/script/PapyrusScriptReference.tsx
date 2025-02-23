@@ -14,13 +14,12 @@ export function getScriptNameFromProps(propsObj: ComponentProps<typeof PapyrusSc
     if (searchScript) {
         return searchScript.scriptNamespaceName.target;
     } else if (script) {
-        return (script.namespace ? `${script.namespace}:` : '') + script.name;
+        return script.namespaceName;
     } else if (scriptAggregate) {
-        const bestNamespaceVariant = getBestNameVariant(scriptAggregate.namespace.filter((ns): ns is [typeof ns[0], Exclude<typeof ns[1], null>] =>ns[1] !== null))[1];
-        return (bestNamespaceVariant ? `${bestNamespaceVariant}:` : '') + getBestNameVariant(scriptAggregate.name)[1];
+        return getBestNameVariant(scriptAggregate.namespaceName)[1];
     } else if (possibleScripts) {
         if (possibleScripts === UnknownPapyrusScript) return missingName ? `<UNKNOWN_SCRIPT: {missingName}>` : `<UNKNOWN_SCRIPT>`;
-        else return getBestName(Object.values(possibleScripts).map(s=>(s.namespace ? `${s.namespace}:` : '') + s.name))!;
+        else return getBestName(Object.values(possibleScripts).map(s=>s.namespaceName))!;
     } else {
         throw new UnreachableError(propsObj, 'Unknown Papyrus script reference type passed to <PapyrusScriptReference> component!');
     }

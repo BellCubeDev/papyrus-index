@@ -24,7 +24,7 @@ export async function generateSearchIndex(game: PapyrusGame) {
         const sourceIdentifierStr = source.sourceIdentifier;
         const sourceIdentifier = fuzzysort.prepare(sourceIdentifierStr);
         for (const script of Object.values(source.scripts)) {
-            const namespaceNameStr = script.namespace ? `${script.namespace}:${script.name}` : script.name;
+            const namespaceNameStr = script.namespaceName;
             const namespaceName = fuzzysort.prepare(namespaceNameStr);
             searchIndexEntityPromises.push({
                 type: SearchIndexEntityType.Script,

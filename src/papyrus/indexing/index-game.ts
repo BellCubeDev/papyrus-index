@@ -123,7 +123,8 @@ function mergeScriptAggregate<TGame extends PapyrusGame>(possibleScripts: Papyru
         isHidden: aggregateValue(scriptEntries, ([sourceIdentifier, script]) => [sourceIdentifier, script.isHidden, script.isHidden], null),
         imports: aggregateValue(scriptEntries, ([sourceIdentifier, script]) => [sourceIdentifier, script.importNames.join(','), script.imports], null),
         importNames: aggregateValue(scriptEntries, ([sourceIdentifier, script]) => [sourceIdentifier, script.importNames.join(','), script.importNames], null),
-        name: aggregateValue(scriptEntries, ([sourceIdentifier, script]) => [sourceIdentifier, script.name, script.name], null),
+        nameWithoutNamespace: aggregateValue(scriptEntries, ([sourceIdentifier, script]) => [sourceIdentifier, script.nameWithoutNamespace, script.nameWithoutNamespace], null),
+        namespaceName: aggregateValue(scriptEntries, ([sourceIdentifier, script]) => [sourceIdentifier, script.namespaceName, script.namespaceName], null),
         namespace: aggregateValue(scriptEntries, ([sourceIdentifier, script]) => [sourceIdentifier, script.namespace, script.namespace], null),
         isNative: aggregateValue(scriptEntries, ([sourceIdentifier, script]) => [sourceIdentifier, script.isNative, script.isNative], null),
         isBetaOnly: aggregateValue(scriptEntries, ([sourceIdentifier, script]) => [sourceIdentifier, script.isBetaOnly, script.isBetaOnly], null),
@@ -314,7 +315,7 @@ function indexScript<TGame extends PapyrusGame>(source: Lowercase<string>, scrip
         if (Object.keys(object).length === 0) object[ON_EMPTIED]();
     }
 
-    const scriptNameLowercase = toLowerCase(script.name);
+    const scriptNameLowercase = toLowerCase(script.namespaceName);
     if (res.extends && res.extends !== UnknownPapyrusScript) {
         for (const extendedScript of Object.values(res.extends)) {
             extendedScript.extendedBy[scriptNameLowercase] ??= {};
@@ -467,7 +468,7 @@ function indexType<TGame extends PapyrusGame, TIsArray extends boolean, TIsParam
             return res;
         }
         case PapyrusScriptTypeArchetype.ScriptInstanceOrStruct: {
-            const thisScriptNameLowercase = toLowerCase(thisScript.name);
+            const thisScriptNameLowercase = toLowerCase(thisScript.namespaceName);
             const foundScriptAggregates = [scriptsByNameThenSource[thisScriptNameLowercase] as Record<Lowercase<string>, PapyrusScriptIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>>, ...getAllDownstreamScripts(thisScript, scriptsByNameThenSource_)];
 
             const ambiguousNameLowercase = toLowerCase(type.ambiguousName);
@@ -489,7 +490,7 @@ function indexType<TGame extends PapyrusGame, TIsArray extends boolean, TIsParam
                 const res = Object.assign(type, {
                     type: PapyrusScriptTypeArchetype.Struct,
                     script: firstScriptAggregate,
-                    scriptName: Object.values(firstScriptAggregate)[0]!.name,
+                    scriptName: Object.values(firstScriptAggregate)[0]!.namespaceName,
                     struct: Object.fromEntries(Object.entries(firstScriptAggregate).map(([sourceIdentifier, script]) => [sourceIdentifier, script.structs![ambiguousNameLowercase] as PapyrusScriptStructIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>] as const)),
                     structName: type.ambiguousName,
                     scriptWithStruct: Object.fromEntries(Object.entries(firstScriptAggregate).map(([sourceIdentifier, script]) => [sourceIdentifier, [script, script.structs![ambiguousNameLowercase] as PapyrusScriptStructIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>] as const] as const))
