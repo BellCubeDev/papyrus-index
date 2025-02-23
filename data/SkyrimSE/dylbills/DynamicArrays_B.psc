@@ -1,4 +1,4 @@
-Scriptname DynamicArrays_B extends Form
+Scriptname DynamicArrays_B extends Form 
 ;Attach this script to the same form that the DynamicArrays script is attached to.
 
 String[] Function CreateStringArray(int L)
@@ -8,49 +8,49 @@ EndFunction
 Bool[] Function CreateBoolArray(int L)
     Guard()
 EndFunction
-
+    
 Int[] Function CreateIntArray(int L)
     Guard()
 EndFunction
-
+    
 Float[] Function CreateFloatArray(int L)
     Guard()
 EndFunction
-
+    
 ObjectReference[] Function CreateObjectReferenceArray(int L)
     Guard()
 EndFunction
-
+   
 Actor[] Function CreateActorArray(int L)
     Guard()
 EndFunction
-
+    
 Form[] Function CreateFormArray(int L)
     Guard()
 EndFunction
 
 ;functions must also be defined in the empty state
-String[] Function GetStringArray()
+String[] Function GetStringArray() 
 EndFunction
 
-Bool[] Function GetBoolArray()
+Bool[] Function GetBoolArray() 
 EndFunction
 
-Int[] Function GetIntArray()
+Int[] Function GetIntArray() 
 EndFunction
 
-Float[] Function GetFloatArray()
+Float[] Function GetFloatArray() 
 EndFunction
 
-ObjectReference[] Function GetObjectReferenceArray()
+ObjectReference[] Function GetObjectReferenceArray() 
 EndFunction
-
-Actor[] Function GetActorArray()
+     
+Actor[] Function GetActorArray() 
 EndFunction
-
-Form[] Function GetFormArray()
+    
+Form[] Function GetFormArray() 
 EndFunction
-
+   
 State A65
     String[] Function GetStringArray()
         String[] A = New String[65]

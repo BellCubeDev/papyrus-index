@@ -1,5 +1,5 @@
 Scriptname DynamicActorArrays Extends Form
-;This is exactly like the DynamicArrays script but only includes Actor type arrays.
+;This is exactly like the DynamicArrays script but only includes Actor type arrays. 
 ;Create Actor arrays of varying lengths (up to 128 in size) and manipulate them without skse.
 
 ;I split it up so that it would be easy to use this as a template for different types.
@@ -7,7 +7,7 @@ Scriptname DynamicActorArrays Extends Form
 
 ;How to use:
 ;Let's say you attach these scripts to a MiscObject called DynamicActorArraysMisc
-;Then in another script you can do:
+;Then in another script you can do: 
 ;DynamicActorArrays ActorArrays = (DynamicActorArraysMisc as form) as DynamicActorArrays
 ;Actor[] MyActorArray = ActorArrays.CreateArray(50)
 
@@ -18,37 +18,37 @@ Actor[] Function CreateArray(int size)
     Guard()
 EndFunction
 
-;Array Utility functions. Similar to PapyrusUtil, but doesn't require skse.
-;Note that these functions involve creating new arrays and cycling through the passed in arrays to get return arrays.
-;As such, use sparingly and don't populate arrays with the Push functions.
+;Array Utility functions. Similar to PapyrusUtil, but doesn't require skse. 
+;Note that these functions involve creating new arrays and cycling through the passed in arrays to get return arrays. 
+;As such, use sparingly and don't populate arrays with the Push functions. 
 
-;Resize akArray to NewSize and return New Array.
-;If NewSize is less than current size, removes elements after NewSize in akArray.
-;If NewSize is greater than current size, the Fill element to the end of the akArray.
+;Resize akArray to NewSize and return New Array. 
+;If NewSize is less than current size, removes elements after NewSize in akArray. 
+;If NewSize is greater than current size, the Fill element to the end of the akArray. 
 Actor[] Function Resize(Actor[] akArray, int NewSize, Actor Fill = none)
     Guard()
 EndFunction
 
-;Join a_Array with b_Array and return new array.
+;Join a_Array with b_Array and return new array. 
 ;The added lengths of the arrays must be less than or equil to 128 elements.
 ;If greater than, the tail end of b_array is clipped off where it exceeds 128.
 Actor[] Function Join(Actor[] a_Array, Actor[] b_Array)
     Guard()
 EndFunction
 
-;Add an element to the end of the array and return new array.
+;Add an element to the end of the array and return new array. 
 ;The passed in akArray must be less than 128 elements in length.
 Actor[] Function Push(Actor[] akArray, Actor ToPush)
     Guard()
 EndFunction
 
-;insert the ToInsert Actor into the array, increasing the size by one and
+;insert the ToInsert Actor into the array, increasing the size by one and 
 ;moving each Actor after index back by one, returning the new array.
 Actor[] Function InsertAt(Actor[] akArray, Actor ToInsert, Int Index)
     Guard()
 EndFunction
 
-;Insert the ToInsert array to the akArray at Index and return new array.
+;Insert the ToInsert array to the akArray at Index and return new array. 
 ;Passed in akArray must be less than 128 elements in length.
 Actor[] Function InsertArrayAt(Actor[] akArray, Actor[] ToInsert, Int Index)
     Guard()
@@ -60,14 +60,14 @@ Actor[] Function Shift(Actor[] akArray, Bool First = true)
     Guard()
 EndFunction
 
-;Remove the element at the Index of the akArray and return new array.
+;Remove the element at the Index of the akArray and return new array. 
 ;Passed in array must be less than or equal to 129 elements in length.
 Actor[] Function RemoveAt(Actor[] akArray, Int Index)
     Guard()
 EndFunction
 
-;Find the ToRemove element in the akArray and remove it, returning the shortened array.
-;If First == true (default) finds first instance of ToRemove, otherwise finds last instance of ToRemove (rFind)
+;Find the ToRemove element in the akArray and remove it, returning the shortened array. 
+;If First == true (default) finds first instance of ToRemove, otherwise finds last instance of ToRemove (rFind) 
 Actor[] Function Remove(Actor[] akArray, Actor ToRemove, Bool First = true)
     Guard()
 EndFunction
@@ -77,15 +77,15 @@ Actor[] Function SubArray(Actor[] akArray, Int StartIndex, Int EndIndex)
     Guard()
 EndFunction
 
-;Remove all of the ToClear elements from the akArray and return new array.
+;Remove all of the ToClear elements from the akArray and return new array. 
 ;The length of the new array must be 128 or less, otherwise returns the akArray unedited.
 Actor[] Function Clear(Actor[] akArray, Actor ToClear)
     Guard()
 EndFunction
 
-;Copy all the elements from akArray to NewArray and return NewArray.
-;Only copy's up to 128 elements.
-;different than doing ArrayA = ArrayB.
+;Copy all the elements from akArray to NewArray and return NewArray. 
+;Only copy's up to 128 elements. 
+;different than doing ArrayA = ArrayB. 
 ;When doing that, altering ArrayB will also alter ArrayA. Not so with these copy functions.
 Actor[] Function Duplicate(Actor[] akArray)
     Guard()
@@ -97,7 +97,7 @@ Int Function Count(Actor[] akArray, Actor ToCount)
 EndFunction
 
 ;For the create array functions.
-Actor[] Function GetArray()
+Actor[] Function GetArray() 
     Guard()
 EndFunction
 
