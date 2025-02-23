@@ -4,7 +4,7 @@ import { memoizeDevServerConst } from "../utils/memoizeDevServerConst";
 import type { PapyrusWiki } from "./getWiki";
 
 const wikiFetchPromisesByURL = memoizeDevServerConst('wikiFetchCache', ()=>{
-    const map = new Map<string, Promise<{}|null>>();
+    const map = new Map<string, Promise<{}|null|typeof WIKI_FETCH_403FORBIDDEN>>();
     const originalMapSet = map.set.bind(map);
     map.set = function set(key, value) {
         const memoryUsageData = process.memoryUsage();
@@ -24,7 +24,7 @@ const wikiFetchPromisesByURL = memoizeDevServerConst('wikiFetchCache', ()=>{
 
 // MediaWiki API instances can be... finnicky. We don't want to overload the server with requests, so we'll queue them up.
 // This isn't fast, but it's safe.
-const fetchQueuePromisesByHostname = new Map<string, Promise<{}|null>>();
+const fetchQueuePromisesByHostname = new Map<string, Promise<{}|null|typeof WIKI_FETCH_403FORBIDDEN>>();
 
 const MAX_RETRIES = 5;
 
@@ -38,7 +38,9 @@ if (process.env.NODE_ENV !== 'development') {
     }, 60000).unref();
 }
 
-export async function wikiFetchGet(wiki: PapyrusWiki, path: `/${string}`): Promise<{}|null> {
+export const WIKI_FETCH_403FORBIDDEN: unique symbol = memoizeDevServerConst('WIKI_FETCH_403FORBIDDEN', () => Symbol('WIKI_FETCH_403FORBIDDEN')) as any;
+
+export async function wikiFetchGet(wiki: PapyrusWiki, path: `/${string}`): Promise<{}|null|typeof WIKI_FETCH_403FORBIDDEN> {
     const url = new URL(path, wiki.wikiBaseUrl);
 
     const deduped = wikiFetchPromisesByURL.get(url.href);
@@ -84,10 +86,11 @@ export async function wikiFetchGet(wiki: PapyrusWiki, path: `/${string}`): Promi
     return await wikiFetchGetInternalCreatedPromise;
 }
 
-async function wikiFetchGetInternalWithParseJsonAndHandleErrors(wiki: PapyrusWiki, path: `/${string}`, retriesSoFar: number, url: URL): Promise<{}|null> {
+async function wikiFetchGetInternalWithParseJsonAndHandleErrors(wiki: PapyrusWiki, path: `/${string}`, retriesSoFar: number, url: URL): Promise<{}|null|typeof WIKI_FETCH_403FORBIDDEN> {
     const [retries, res] = await wikiFetchGetInternalFetch(url, retriesSoFar);
     retriesSoFar = retries;
     if (!res) return null;
+    if (res === WIKI_FETCH_403FORBIDDEN) return WIKI_FETCH_403FORBIDDEN;
     const json = await res.json() as {};
     if ('error' in json && json.error) {
         if (typeof json.error === 'object' && 'info' in json.error && typeof json.error.info === 'string') {
@@ -109,7 +112,7 @@ async function wikiFetchGetInternalWithParseJsonAndHandleErrors(wiki: PapyrusWik
     return json;
 }
 
-async function wikiFetchGetInternalFetch(originalUrl: URL, retriesSoFar: number): Promise<[retries: number, res: Response|null]> {
+async function wikiFetchGetInternalFetch(originalUrl: URL, retriesSoFar: number): Promise<[retries: number, res: Response|null|typeof WIKI_FETCH_403FORBIDDEN]> {
     let response;
 
     const noCacheUrl = new URL(originalUrl.href);
@@ -142,6 +145,9 @@ async function wikiFetchGetInternalFetch(originalUrl: URL, retriesSoFar: number)
     if (!response.ok) {
         if (response.status === 404) {
             return [retriesSoFar, null];
+        } else if (response.status === 403) {
+            for (let i = 0; i < 25; i++) console.error(`Failed to fetch ${noCacheUrl}; status is 403 (Forbidden)! (message spammed for visibility)`);
+            return [retriesSoFar, WIKI_FETCH_403FORBIDDEN];
         } else if (response.statusText === 'Service Unavailable') {
             if (retriesSoFar >= MAX_RETRIES) {
                 throw new Error(`Failed to fetch ${noCacheUrl} after ${retriesSoFar} retries due to a fetch error; giving up.`);

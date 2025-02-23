@@ -2,7 +2,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import url from 'url';
 import type { GameWithWiki, PapyrusWiki } from './getWiki';
-import { wikiFetchGet } from './wikiFetch';
+import { WIKI_FETCH_403FORBIDDEN, wikiFetchGet } from './wikiFetch';
 import { getWikiPageHTMLStringRaw } from './getWikiPageStringRaw';
 import lockfileUtil from 'proper-lockfile';
 import { memoizeDevServerConst } from '../utils/memoizeDevServerConst';
@@ -73,6 +73,7 @@ function getLock(filePath: string): Promise<() => Promise<void>> {
 /**
  * MUST BE CALLED WITH THE STORAGE INDEX LOCKED
  */
+// eslint-disable-next-line complexity
 async function ingestLatestChanges(wiki: PapyrusWiki, storageIndex: WikiStorageIndex): Promise<void> {
     let changeList;
 
@@ -80,8 +81,13 @@ async function ingestLatestChanges(wiki: PapyrusWiki, storageIndex: WikiStorageI
 
     do { // eslint-disable-next-line no-await-in-loop
         changeList = await wikiFetchGet(wiki, `/w/api.php?action=query&format=json&prop=&list=recentchanges&rcstart=${encodeURIComponent(storageIndex.lastKnownChange)}&rcdir=newer&rcprop=title%7Ctimestamp&rclimit=2&rctype=edit%7Cnew&rctoponly=1`);
-        console.log(`Got a change list from the ${wiki.wikiTrueGame} wiki!`, {changeList});
         if (!changeList) throw new Error('Fetching the change list failed!');
+        if (changeList === WIKI_FETCH_403FORBIDDEN) {
+            if (process.env.NODE_ENV === 'development') return;
+            throw new Error(`The ${wiki.wikiTrueGame} wiki returned a 403 Forbidden error when trying to fetch the change list. This is likely due to the wiki's rate limiting settings, and is not an error on our end.`);
+        }
+        
+        console.log(`Got a change list from the ${wiki.wikiTrueGame} wiki!`, {changeList});
 
         if (!('query' in changeList) || !changeList.query || typeof changeList.query !== 'object') throw new Error('The returned change list from the MediaWiki API is missing the "query" results object!');
         if (!('recentchanges' in changeList.query) || !changeList.query.recentchanges || !Array.isArray(changeList.query.recentchanges)) throw new Error('The returned change list from the MediaWiki API is missing the "recentchanges" array!');

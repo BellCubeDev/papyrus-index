@@ -1,5 +1,5 @@
 import type { PapyrusWiki } from "./getWiki";
-import { wikiFetchGet } from "./wikiFetch";
+import { WIKI_FETCH_403FORBIDDEN, wikiFetchGet } from "./wikiFetch";
 
 /** You probably did not mean to call this.
  *
@@ -9,6 +9,10 @@ export async function getWikiPageHTMLStringRaw(wiki: PapyrusWiki, pageTitle: str
 
     const json = await wikiFetchGet(wiki, `/w/api.php?action=visualeditor&format=json&page=${encodeURIComponent(pageTitle)}&paction=parse`);
     if (!json) return null;
+    if (json === WIKI_FETCH_403FORBIDDEN) {
+        if (process.env.NODE_ENV === 'development') return null;
+        throw new Error(`The ${wiki.wikiTrueGame} wiki returned a 403 Forbidden error when trying to fetch the page! This is likely due to the wiki's rate limiting settings, and is not an error on our end.`);
+    }
 
     if (!('visualeditor' in json)) throw new TypeError(`Failed to fetch page "${pageTitle}" from ${wiki.wikiTrueGame} Wiki; response does not contain the 'visualeditor' key!`, {cause: json});
     if (!json.visualeditor || typeof json.visualeditor !== 'object') throw new TypeError(`Failed to fetch page "${pageTitle}" from ${wiki.wikiTrueGame} Wiki; response's 'visualeditor' value is not an object!`, {cause: json});
