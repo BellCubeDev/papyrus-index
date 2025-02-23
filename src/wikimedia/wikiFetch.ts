@@ -16,7 +16,8 @@ const wikiFetchPromisesByURL = memoizeDevServerConst('wikiFetchCache', ()=>{
             else map.delete(nextKey);
         }
 
-        console.log(`Current memory usage: ${memoryUsage.toFixed(2)}%`);
+
+        //console.log(`Current memory usage: ${memoryUsage.toFixed(2)}%`);
         return originalMapSet(key, value);
     };
     return map;
