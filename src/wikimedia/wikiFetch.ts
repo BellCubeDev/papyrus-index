@@ -7,16 +7,22 @@ const wikiFetchPromisesByURL = memoizeDevServerConst('wikiFetchCache', ()=>{
     const map = new Map<string, Promise<{}|null|typeof WIKI_FETCH_403FORBIDDEN>>();
     const originalMapSet = map.set.bind(map);
     map.set = function set(key, value) {
-        const memoryUsageData = process.memoryUsage();
-        const memoryUsage = memoryUsageData.heapUsed / memoryUsageData.heapTotal;
+        let memoryUsageData = process.memoryUsage();
 
-        if (memoryUsage > 0.6 && !map.has(key)) {
-            const nextKey = map.keys().next().value;
-            if (!nextKey) console.warn('wikiFetchGet: Memory usage is over 60%, but no keys found in the wikiFetchPromisesByURL map! Memory usage data: ', memoryUsageData);
-            else map.delete(nextKey);
+        if (!map.has(key)) {
+            let i = 0;
+            while (memoryUsageData.heapUsed / memoryUsageData.heapTotal > 0.6 && i++ < 100) {
+                const nextKey = map.keys().next().value;
+                if (!nextKey) {
+                    console.warn('wikiFetchGet: Memory usage is over 60%, but no keys found in the wikiFetchPromisesByURL map! Memory usage data: ', memoryUsageData);
+                    break;
+                }
+                map.delete(nextKey);
+                memoryUsageData = process.memoryUsage();
+            }
         }
 
-        console.log(`Current memory usage: ${memoryUsage.toFixed(2)}%`);
+        //console.log(`Current memory usage: ${memoryUsage.toFixed(2)}%`);
         return originalMapSet(key, value);
     };
     return map;

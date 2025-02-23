@@ -10,7 +10,9 @@ on:
       - data/**
       - public/**
       - pnpm-lock.yaml
+      - .npmrc
       - '*.js' # only applied to top-level files, don't worry
+      - '*.mjs'
       - '*.ts'
       - '*.json'
   schedule: # every Sunday and Wednesday at midnight (so we always have Function of the Day up to date, our wiki data is reasonably fresh, and GitHub doesn't yeet our caches)
@@ -57,7 +59,8 @@ jobs:
         with:
           path: cache
           key: does-not-exist-${{ github.run_id }}
-          restore-keys: custom-cache- # we don't need any specific info; we just store this data so we don't have to DOS the hosting server every time we build.
+          # we don't need any specific info; we just store this data so we don't have to DOS the hosting server every time we build.
+          restore-keys: custom-cache-
 
       - name: Use Next.js Caching
         uses: actions/cache@v4
