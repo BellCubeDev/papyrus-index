@@ -47,7 +47,7 @@ export function PapyrusScriptReference<TGame extends PapyrusGame>(propsObj: Comp
         return <Tooltip role='tooltip' wrapperClassName={styles.reference} tooltipContents={<PapyrusScriptReferenceTooltip scriptAggregate={scriptAggregate} />}>
             <Link href={`/${toLowerCase(game)}/script/${toLowerCase(name)}` as const}>
                 {name}
-            </Link>;
+            </Link>
         </Tooltip>;
     } else if (possibleScripts) {
         if (possibleScripts === UnknownPapyrusScript) {
