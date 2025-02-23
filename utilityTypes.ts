@@ -19,6 +19,8 @@ interface ObjectConstructor {
 
     assign<T extends {}, U extends {}>(target: T, source: U): Omit<T, keyof U> & U;
     assign<T extends {}, U extends {}, V extends {}>(target: T, source1: U, source2: V): Omit<T, keyof U | keyof V> & Omit<U, keyof V> & V;
+
+    fromEntries<TKeyType extends string | number | symbol, TValueType>(entries: Iterable<readonly [TKeyType, TValueType]>): Record<TKeyType, TValueType>;
 }
 
 /** A type representing the properties that must be specified to transform type TFromType into type TIntoType */

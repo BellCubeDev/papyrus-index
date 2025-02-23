@@ -9,7 +9,7 @@ import { UnknownPapyrusScript, UnknownPapyrusScriptStruct, type PapyrusScriptTyp
 import type { PapyrusGame, PapyrusGameData } from "../data-structures/pure/game";
 import type { PapyrusScript } from "../data-structures/pure/script";
 import type { PapyrusScriptStruct } from "../data-structures/pure/struct";
-import { PapyrusScriptTypeArchetype, type PapyrusScriptType, type PapyrusScriptValue } from "../data-structures/pure/type";
+import { PapyrusScriptTypeArchetype, type PapyrusScriptType, type PapyrusScriptTypeStruct, type PapyrusScriptValue } from "../data-structures/pure/type";
 
 // TODO: Break this file up
 
@@ -455,13 +455,15 @@ function indexType<TGame extends PapyrusGame, TIsArray extends boolean, TIsParam
             }
 
 
-            const res = Object.assign(type, {
+            const res: PapyrusScriptTypeStructIndexed<TIsArray, TIsParameter, Exclude<TGame, PapyrusGame.SkyrimSE>> = Object.assign(type, {
                 script: finalScriptsAggregate,
-                struct: Object.fromEntries(applicableScripts.map(([sourceIdentifier, script]) => [sourceIdentifier, script.structs[structNameLowercase]!] as const)),
-                scriptWithStruct: Object.fromEntries(applicableScripts.map(([sourceIdentifier, script]) => [sourceIdentifier, [script, script.structs[structNameLowercase]!] as const] as const))
-            } as const) satisfies PapyrusScriptTypeStructIndexed<TIsArray, TIsParameter, Exclude<TGame, PapyrusGame.SkyrimSE>>;
+                struct: Object.fromEntries(applicableScripts.map(([sourceIdentifier, script]) => [sourceIdentifier, (script.structs as Record<Lowercase<string>, PapyrusScriptStructIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>>)[structNameLowercase]!] as const)),
+                scriptWithStruct: Object.fromEntries(applicableScripts.map(([sourceIdentifier, script]) => [sourceIdentifier, [script, (script.structs as Record<Lowercase<string>, PapyrusScriptStructIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>>)[structNameLowercase]!] as const] as const)),
+            } as const);
+
             objectsThatMayNeedFutureBlacklistedSourcesRemoved.add(Object.assign(res.struct, {[ON_EMPTIED]: onEmptied}));
             objectsThatMayNeedFutureBlacklistedSourcesRemoved.add(Object.assign(res.scriptWithStruct, {[ON_EMPTIED]: onEmptied}));
+
             return res;
         }
         case PapyrusScriptTypeArchetype.ScriptInstanceOrStruct: {
