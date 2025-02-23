@@ -8,7 +8,7 @@ export interface WorkerMessageBase {
     type: string;
 }
 
-export interface WorkerMessageInputGame extends WorkerMessageBase {
+export interface WorkerMessageInputInit extends WorkerMessageBase {
     type: 'INIT';
     game: PapyrusGame;
     searchIndexHash: string;
@@ -20,7 +20,7 @@ export interface WorkerMessageInputSearch extends WorkerMessageBase {
     id: number;
 }
 
-export type WorkerMessageInput = WorkerMessageInputGame | WorkerMessageInputSearch;
+export type WorkerMessageInput = WorkerMessageInputInit | WorkerMessageInputSearch;
 
 export interface WorkerMessageOutputSearchResult extends WorkerMessageBase {
     type: 'SEARCH_RESULT';
@@ -30,7 +30,7 @@ export interface WorkerMessageOutputSearchResult extends WorkerMessageBase {
 
 export type WorkerMessageOutput = WorkerMessageOutputSearchResult;
 
-const {game, searchIndexHash} = await new Promise<WorkerMessageInputGame>(resolve => {
+const {game, searchIndexHash} = await new Promise<WorkerMessageInputInit>(resolve => {
     self.onmessage = (e: MessageEvent<WorkerMessageInput>) => {
         if (e.data.type !== 'INIT') throw new Error('[SEARCH WORKER] First message sent to search worker must be of type "INIT"');
         resolve(e.data);
