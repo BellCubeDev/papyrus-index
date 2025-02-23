@@ -6,7 +6,7 @@ import { getWikiDataFunctionPage } from "../../../../../wikimedia/GetWikiDataFun
 import { GuardEmptyList } from "../../../GuardEmptyList";
 import { TextWithTooltip } from "../../../text-with-tooltip/TooltipText";
 import { WikiMarkdown } from "../../../wiki-markdown/WikiMarkdown";
-import React from "react";
+import React, { Fragment } from "react";
 
 /**
  * Returns the most raw form of the documentation strings for a function.
@@ -71,31 +71,31 @@ export async function FunctionDocumentationStringAll<TGame extends PapyrusGame>(
     const elements = [];
 
     if (func.documentationString !== null) {
-        elements.push(<>
+        elements.push(<Fragment key='docString'>
             <h3><TextWithTooltip tooltipContents={<DocumentationStringTooltipContents />}>
                 Documentation String
             </TextWithTooltip></h3>
             <WikiMarkdown gameData={AllScriptsIndexed[game]} md={func.documentationString} inTooltip={inTooltip} />
-        </>);
+        </Fragment>);
     }
 
     if (func.documentationComment !== null) {
-        elements.push(<>
+        elements.push(<Fragment key='docComment'>
             <h3>
                 <TextWithTooltip tooltipContents={<DocumentationCommentTooltipContents />}>
                     Documentation Comment
                 </TextWithTooltip>
             </h3>
             <WikiMarkdown gameData={AllScriptsIndexed[game]} md={func.documentationComment} inTooltip={inTooltip} />
-        </>);
+        </Fragment>);
     }
 
     const wikiData = await getWikiDataFunctionPage(game, func, scriptName);
     if (wikiData !== null) {
-        elements.push(<>
+        elements.push(<Fragment key='wiki'>
             <h3>Wiki Description</h3>
             <WikiMarkdown gameData={AllScriptsIndexed[game]} md={wikiData.shortDescriptionMarkdown} inTooltip={inTooltip} />
-        </>);
+        </Fragment>);
     }
 
     return <GuardEmptyList replacement={null} Wrapper={FunctionDocumentationStringWrapper}>
