@@ -18,6 +18,7 @@ on:
   schedule: # every Sunday and Wednesday at midnight (so we always have Function of the Day up to date, our wiki data is reasonably fresh, and GitHub doesn't yeet our caches)
     - cron: '0 0 * * 0,3'
 
+
 #
 # A WARNING TO ALL WHO ENTER HERE
 # TO UPDATE THE CUSTOM CACHE
@@ -26,6 +27,8 @@ on:
 # GitHub will NOT restore the cache if the paths don't match.
 #
 # Be warned, for this message is written in blood.
+#
+# The custom cache is ALSO used in the checks.yaml workflow, so be sure to update it there as well.
 #
 
 
@@ -40,8 +43,6 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event_name == 'schedule' && 'production' || github.ref }}
 
       - name: Restore Custom Caches
         id: cache-restore-custom
