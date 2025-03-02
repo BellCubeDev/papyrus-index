@@ -75,9 +75,6 @@ jobs:
     name: Type Check
     steps:
 
-      - name: Log Event Details
-        run: echo '${{ toJson(github) }}'
-
       - name: Checkout
         uses: actions/checkout@v4
 
