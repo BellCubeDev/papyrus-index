@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../SourceMetadata.schema.json
 
-type: Standalone
+type: Standalone Mod
 nameProper: MCM Helper
 nameShort: MCM Helper
 indexedVersion: "1.3.0"

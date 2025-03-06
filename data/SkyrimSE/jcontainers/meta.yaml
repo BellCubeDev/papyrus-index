@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../SourceMetadata.schema.json
 
-type: xSE Plugin (Standalone Extender)
+type: xSE Plugin (Only An Extender)
 nameProper: JContainers
 nameShort: JCont
 indexedVersion: "4.1.13"

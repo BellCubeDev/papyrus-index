@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../SourceMetadata.schema.json
 
-type: xSE Plugin (Standalone Extender)
+type: xSE Plugin (Only An Extender)
 nameProper: Lighthouse Papyrus Extender
 nameShort: LH
 indexedVersion: "1.13.0"

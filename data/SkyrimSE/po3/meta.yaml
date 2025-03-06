@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../SourceMetadata.schema.json
 
-type: xSE Plugin (Standalone Extender)
+type: xSE Plugin (Only An Extender)
 nameProper: powerofthree's Papyrus Extender
 nameShort: PO3
 indexedVersion: "5.9.0"

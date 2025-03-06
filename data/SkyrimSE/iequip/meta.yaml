@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../SourceMetadata.schema.json
 
-type: xSE Plugin (Standalone Extender)
+type: xSE Plugin (Incidentally An Extender)
 nameProper: iEquip
 nameShort: iEquip
 indexedVersion: "1.6.4"

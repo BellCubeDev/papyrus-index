@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../SourceMetadata.schema.json
 
-type: Standalone
+type: Standalone Mod
 nameProper: Yet Another Soul Trap Manager
 nameShort: YASTM
 indexedVersion: "3.0.0"

@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../SourceMetadata.schema.json
 
-type: xSE Plugin (Standalone Extender)
+type: xSE Plugin (Only An Extender)
 nameProper: Skyrim Platform Papyrus Bridge
 nameShort: SPPBridge
 indexedVersion: "1.1"

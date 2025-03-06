@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../SourceMetadata.schema.json
 
-type: Standalone
+type: Standalone Mod
 nameProper: Mod Configuration Menu
 nameShort: MCM
 indexedVersion: "1.39"

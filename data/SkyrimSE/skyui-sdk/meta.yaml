@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../SourceMetadata.schema.json
 
-type: Standalone
+type: Standalone Mod
 nameProper: SkyUI
 nameShort: SkyUI
 indexedVersion: "5.1"

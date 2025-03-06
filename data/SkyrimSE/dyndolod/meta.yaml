@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../SourceMetadata.schema.json
 
-type: xSE Plugin (Incidental Extender)
+type: xSE Plugin (Incidentally An Extender)
 nameProper: DynDOLOD DLL
 nameShort: DynDOLOD
 indexedVersion: "3.00 Alpha-33"

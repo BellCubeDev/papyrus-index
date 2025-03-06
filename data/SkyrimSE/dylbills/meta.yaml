@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../SourceMetadata.schema.json
 
-type: xSE Plugin (Standalone Extender)
+type: xSE Plugin (Only An Extender)
 nameProper: Dylbills Papyrus Functions
 nameShort: Dylbills
 indexedVersion: "8.5"

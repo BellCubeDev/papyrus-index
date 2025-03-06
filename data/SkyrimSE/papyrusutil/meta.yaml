@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../SourceMetadata.schema.json
 
-type: xSE Plugin (Standalone Extender)
+type: xSE Plugin (Only An Extender)
 nameProper: PapyrusUtil SE - Modders Scripting Utility Functions
 nameShort: PapU
 indexedVersion: "4.6"

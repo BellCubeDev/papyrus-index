@@ -69,7 +69,7 @@ async function maybeDownloadMod(folder: string) {
         if (!validate(metadata)) throw new Error(`Metadata for ${folder} is invalid!`);
         hasError = false;
     } finally {
-        if (hasError) await fs.rmdir(destinationFolder, {recursive: true});
+        if (hasError) await fs.rm(destinationFolder, {recursive: true});
     }
 
     const sourceType = metadata.type;
@@ -172,7 +172,7 @@ Please download the file at https://www.nexusmods.com/Core/Libs/Common/Widgets/D
             } finally {
                 if (hasErrorWithTempDownloadFile) {
                     await Promise.all([
-                        fs.readdir(destinationFolder, {recursive: true}).then(children=> children.length===0 ? fs.rmdir(destinationFolder) : Promise.resolve() ),
+                        fs.readdir(destinationFolder, {recursive: true}).then(children=> children.length===0 ? fs.rm(destinationFolder) : Promise.resolve() ),
                         fs.rm(tmpFilePath),
                     ]);
                 }

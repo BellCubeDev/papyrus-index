@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../SourceMetadata.schema.json
 
-type: xSE Plugin (Standalone Extender)
+type: xSE Plugin (Only An Extender)
 nameProper: SkyRegEx - Skyrim Regular Expressions SKSE
 nameShort: SkyRegEx
 indexedVersion: "1.2"

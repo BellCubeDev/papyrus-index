@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../SourceMetadata.schema.json
 
-type: Standalone
+type: Standalone Mod
 nameProper: Spell Hotbar
 nameShort: Spell Hotbar
 indexedVersion: "0.1.2"
