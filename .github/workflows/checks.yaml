@@ -24,7 +24,7 @@ jobs:
 
       # only run subsequent steps if one of the changes includes a data/**/*.psc file
       - name: Get List of Changed Files
-        uses: tj-actions/changed-files@v45.0.7
+        uses: tj-actions/changed-files@v45
         id: changed_files
         with:
           since_last_remote_commit: true
