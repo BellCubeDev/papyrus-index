@@ -18,7 +18,8 @@
     "guard-papyrus-logic": "$env:DO_GUARD_LOGIC='true'\npnpm run parse",
     "parse:and-index": "pnpm run parse && tsx ./src/papyrus/indexing/index-all.ts",
     "prebuild": "pnpm run download-mods && pnpm run parse",
-    "build": "next build"
+    "build": "next build",
+    "typecheck": "tsx ./typecheck.ts"
   },
   "engines": {
     "node": ">=22.0.0"
@@ -58,7 +59,7 @@
     "globals": "^15.14.0",
     "jsdom": "^26.0.0",
     "json-schema-to-typescript": "^15.0.4",
-    "next": "^15.1.6",
+    "next": "^15.2.0",
     "next-nprogress-bar": "^2.4.3",
     "node-fetch": "^3.3.2",
     "octokit": "^4.1.0",

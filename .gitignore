@@ -5,6 +5,8 @@ src/nexus-api/GraphQL.ts.unused
 .env
 tmp
 /test.*
+typecheck.log
+eslint_report.json
 
 # Don't store the raw data JSON file since it's just regenerated every time
 /public/raw.json

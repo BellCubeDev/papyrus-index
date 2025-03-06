@@ -6,7 +6,8 @@ export enum PapyrusSourceType {
     Vanilla = 'Vanilla',
     /** This source is the game's Script Extender */
     xSE = 'xSE',
-    /** This source is a Script Extender plugin whose entire goal is to add new Papyrus functions
+    /**
+     * This source is a Script Extender plugin whose entire goal is to add new Papyrus functions
      *
      * May include additional pure-Papyrus functions (e.g. Dylbills Papyrus Functions)
      *
@@ -15,8 +16,10 @@ export enum PapyrusSourceType {
      * * PapyrusUtil
      * * Dylbills Papyrus Functions
     */
-    xSePluginExtender = 'xSE Plugin (Standalone Extender)',
-    /** This source is a Script Extender plugin that functions as a standalone mod but nonetheless exposes enable new capabilities to Papyrus scripts.
+    xSePluginExtender = 'xSE Plugin (Only An Extender)',
+    /**
+     * This source is a Script Extender plugin that functions as a standalone mod---but
+     * nonetheless exposes enable new capabilities to Papyrus scripts.
      *
      * May include additional pure-Papyrus functions (e.g. CACO)
      *
@@ -25,15 +28,17 @@ export enum PapyrusSourceType {
      * * Simply Knock
      * * DynDOLOD
     */
-    xSePluginIncidental = 'xSE Plugin (Incidental Extender)',
-    /** A standalone third-party mod with an API to interact with it
-    *
-    * Examples:
-    * * Campfire
-    * * FO4's MCM
+    xSePluginIncidental = 'xSE Plugin (Incidentally An Extender)',
+    /**
+     * A standalone third-party mod with an API to interact with it
+     *
+     * Examples:
+     * * Campfire
+     * * FO4's MCM
     */
-    Standalone = 'Standalone',
-    /** A pure-Papyrus collection of utilities
+    Standalone = 'Standalone Mod',
+    /**
+     * A pure-Papyrus collection of utilities
      *
      * Examples:
      * * cLib

@@ -17,6 +17,16 @@
                 "run",
                 "dev"
             ],
+        },
+        {
+            "name": "Run Typecheck",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "pnpm",
+            "runtimeArgs": [
+                "run",
+                "typecheck"
+            ],
         }
     ]
 }

@@ -194,3 +194,10 @@ export default function RootLayout({ children }: { readonly children: React.Reac
         </body>
     </html>;
 }
+
+
+// test function to see if type checking reaaaaally works
+///* export */ function _alberto(): 'alberto' & { readonly alberto: 'alberto' } {
+//    console.log('you know I will return alberto');
+//    return 'alberto' as const;
+//}

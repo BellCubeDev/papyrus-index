@@ -1,5 +1,6 @@
 import type { NextConfig } from 'next';
 import { cpus } from 'node:os';
+import { isCI } from 'next/dist/server/ci-info';
 
 //if (process.env.NODE_ENV === 'production') {
 //    process.env.DEBUG = '*';
@@ -23,7 +24,7 @@ const nextConfig = {
     },
 
     experimental: {
-        cpus: cpus().length - 2,
+        cpus: isCI ? cpus().length : cpus().length - 2,
         staleTimes: {
             static: 24*60*60,
         },

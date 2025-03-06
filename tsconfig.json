@@ -47,8 +47,8 @@
     "**/*.ts",
     "**/*.tsx",
     "./src/**/*.d.ts",
-    ".next/types/**/*.ts"
-, "src/nexus-api/GraphQLClientClient.tsx.unused", "src/nexus-api/GraphQLApolloConfig.ts.unused"  ],
+    ".next/types/**/*.ts",
+  ],
   "exclude": [
     "node_modules"
   ],

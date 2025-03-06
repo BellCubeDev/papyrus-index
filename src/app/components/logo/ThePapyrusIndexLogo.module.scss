@@ -13,12 +13,12 @@
         text-align: center;
         > .papyrus {
             font-family: 'Papyrus', sans-serif;
-            font-size-adjust: 0.6;
+            font-size: 1.47em;
             position: relative;
             top: 0.15em;
             display: inline-block;
             margin-left: -.33em;
-            margin-bottom: .1em;
+            margin-bottom: -.075em;
             > * {
                 position: relative;
                 padding: 0 0.7em;
@@ -30,6 +30,7 @@
                 user-select: none;
                 pointer-events: none;
                 position: absolute;
+                top: 0;
                 left: 0;
                 filter: blur(.5em);
                 color: hsl($themehue, 100%, 70%, 85%);
