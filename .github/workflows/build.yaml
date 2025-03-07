@@ -51,7 +51,8 @@ jobs:
           path: |
             cache
             src/papyrus/scraping/download/BSArch.exe
-            data/*/*/download
+            data/*/*/download/**/*.psc
+            data/*/*/download/.nexusFileId
           key: custom-cache---does---not---exist---${{ github.run_id }}
           # we don't need any specific info; we just store this data so we don't have to DOS the hosting server every time we build.
           restore-keys: |
@@ -89,6 +90,7 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
 
       - name: Generate Build Markdown
+        id: build-source-md
         run: |
           date=$(node -e "console.log(new Date().toLocaleDateString('en-US', { dateStyle: 'full' }))")
           actionsRunUrl='${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
@@ -100,12 +102,13 @@ jobs:
       - name: Save Custom Caches
         id: cache-save-custom
         uses: actions/cache/save@v4
-        if: always() && env.NEXT_PUBLIC_BUILD_SOURCE_MD != '___ ERROR DURING BUILD ___'
+        if: always() && steps.build-source-md.outcome == 'success'
         with:
           path: |
             cache
             src/papyrus/scraping/download/BSArch.exe
-            data/*/*/download
+            data/*/*/download/**/*.psc
+            data/*/*/download/.nexusFileId
           key: custom-cache-${{ hashFiles('cache/**/index.json', 'src/papyrus/scraping/download/BSArch.exe', 'data/*/*/download/.nexusFileId') }} # only need to save a new version of the cache if something updated
 
       - name: Upload Pages Artifact
