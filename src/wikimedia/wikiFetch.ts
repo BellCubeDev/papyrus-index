@@ -3,6 +3,7 @@ import { inspect } from "node:util";
 import nextConfig from "../../next.config";
 import { memoizeDevServerConst } from "../utils/memoizeDevServerConst";
 import type { PapyrusWiki } from "./getWiki";
+import { isCI } from "next/dist/server/ci-info";
 
 const wikiFetchPromisesByURL = memoizeDevServerConst('wikiFetchCache', ()=>{
     const map = new Map<string, Promise<{}|null|typeof WIKI_FETCH_403FORBIDDEN>>();
@@ -16,6 +17,7 @@ const wikiFetchPromisesByURL = memoizeDevServerConst('wikiFetchCache', ()=>{
                 const nextKey = map.keys().next().value;
                 if (!nextKey) {
                     let logString = `wikiFetchGet: Memory usage is over 85%, but no keys found in the wikiFetchPromisesByURL map! Memory usage data: ${inspect(memoryUsageData)}`;
+                    if (isCI) logString = logString.split('\n').map(line => `::debug::${line}`).join('\n');
                     console.warn(logString);
                     break;
                 }
