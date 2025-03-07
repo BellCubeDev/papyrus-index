@@ -153,6 +153,16 @@ async function wikiFetchGetInternalFetch(originalUrl: URL, retriesSoFar: number)
             return [retriesSoFar, null];
         } else if (response.status === 403) {
             for (let i = 0; i < 25; i++) console.error(`Failed to fetch ${noCacheUrl}; status is 403 (Forbidden)! (message spammed for visibility)`);
+            console.log(`Failed to fetch ${noCacheUrl}; status is 403 (Forbidden)! Debug info:`, {
+                headers: Object.fromEntries(response.headers.entries()),
+                status: response.status,
+                statusText: response.statusText,
+                url: response.url,
+                type: response.type,
+                redirected: response.redirected,
+                ok: response.ok,
+                bodyText: await response.text(),
+            });
             return [retriesSoFar, WIKI_FETCH_403FORBIDDEN];
         } else if (response.statusText === 'Service Unavailable') {
             if (retriesSoFar >= MAX_RETRIES) {
