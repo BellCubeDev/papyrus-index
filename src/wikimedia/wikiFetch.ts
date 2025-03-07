@@ -1,4 +1,5 @@
 /* eslint-disable no-await-in-loop */
+import { inspect } from "node:util";
 import nextConfig from "../../next.config";
 import { memoizeDevServerConst } from "../utils/memoizeDevServerConst";
 import type { PapyrusWiki } from "./getWiki";
@@ -11,10 +12,11 @@ const wikiFetchPromisesByURL = memoizeDevServerConst('wikiFetchCache', ()=>{
 
         if (!map.has(key)) {
             let i = 0;
-            while (memoryUsageData.heapUsed / memoryUsageData.heapTotal > 0.6 && i++ < 100) {
+            while (memoryUsageData.heapUsed / memoryUsageData.heapTotal > 0.85 && i++ < 100) {
                 const nextKey = map.keys().next().value;
                 if (!nextKey) {
-                    console.warn('wikiFetchGet: Memory usage is over 60%, but no keys found in the wikiFetchPromisesByURL map! Memory usage data: ', memoryUsageData);
+                    let logString = `wikiFetchGet: Memory usage is over 85%, but no keys found in the wikiFetchPromisesByURL map! Memory usage data: ${inspect(memoryUsageData)}`;
+                    console.warn(logString);
                     break;
                 }
                 map.delete(nextKey);
