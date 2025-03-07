@@ -1,6 +1,7 @@
 import path from "node:path";
 import fs from "node:fs";
 import type { PapyrusScriptDiscoveredDocument } from "./parse-all-for-game";
+import { isCI } from 'next/dist/server/ci-info';
 
 export class PapyrusParserError extends Error /* not SyntaxError because it's not a JS syntax error */ {
     static computeLineAndColumn(script: PapyrusScriptDiscoveredDocument, index: number) {
@@ -35,5 +36,8 @@ export class PapyrusParserError extends Error /* not SyntaxError because it's no
         }
         this.line = line;
         this.column = column;
+
+        // For GitHub Actions, add an annotation - https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/workflow-commands-for-github-actions#setting-a-notice-message
+        if (isCI) console.error(`::error file=${document.absolutePath},line=${line},col=${column}::${message}`);
     }
 }
