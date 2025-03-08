@@ -31,7 +31,7 @@ export async function parseScriptAsync<TGame extends PapyrusGame>(game: TGame, d
     //return await new Promise<PapyrusScript<TGame>>((resolve, reject) => {
     //
     //    const scriptPath = url.fileURLToPath(new URL(`./parse-script-worker.js`, import.meta.url));
-    //    const worker = new Worker(fileExt === '.js' ? scriptPath : new URL(`./dev-worker-resolver-for-tsx.mjs`, import.meta.url), { workerData: {
+    //    const worker = new Worker(fileExt === '.js' ? scriptPath : new URL(`../../utils/dev-worker-resolver-for-tsx.mjs`, import.meta.url), { workerData: {
     //        scriptPath,
     //        document,
     //        game,

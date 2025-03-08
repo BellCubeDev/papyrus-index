@@ -5,6 +5,7 @@ import { getWiki, type PapyrusWiki } from "./getWiki";
 import { getWikiPageHTMLDocument } from "./GetWikiPageHTML";
 import { parsoidElementsToMarkdown, parsoidToMarkdown } from "./parsoidToMarkdown";
 import { toLowerCase } from "../utils/toLowerCase";
+import { appendToJobSummarySection } from "../utils/stepSummary";
 
 export type PotentialFunction<TGame extends PapyrusGame> = PapyrusScriptFunction<TGame> | PapyrusScriptFunctionIndexed<TGame>;
 
@@ -47,7 +48,8 @@ export interface WikiDataFunctionPage extends PapyrusWiki {
 export async function getWikiDataFunctionPage<TGame extends PapyrusGame, TFunc extends PotentialFunction<TGame>>(game: TGame, func: TFunc, scriptName: string): Promise<WikiDataFunctionPage | null> {
     const wiki = getWiki(game);
 
-    const document = await getWikiPageHTMLDocument(wiki, `${func.name} - ${scriptName}`);
+    const pageName = `${func.name} - ${scriptName}`;
+    const document = await getWikiPageHTMLDocument(wiki, pageName);
     if (!document) return null;
 
     const categories = Array.from(document.querySelectorAll('link[rel="mw:PageProp/Category"]'))
@@ -106,15 +108,26 @@ export async function getWikiDataFunctionPage<TGame extends PapyrusGame, TFunc e
             return false;
         });
         if (!param) {
+            const editSummary = `Correct Parameter Name (${name} --> CORRECT_NAME_HERE)`;
             console.warn(`[MediaWiki Scraping - getWikiDataFunctionPage()] Parameter ${name} not found in function ${scriptName}.${func.name}!
 
 Invalid parameter name: ${name}
 Valid parameter names are: ${func.parameters.map(p => p.name).join(' | ')}
 
-Edit Link: ${document.location.href}?action=edit
-Edit Message: Correct Parameter Name (${name} --> CORRECT_NAME_HERE)
+Edit Link: ${document.location.href}?action=edit&summary=${encodeURIComponent(editSummary)}
+Edit Message: ${editSummary}
 
 Skipping...`);
+            appendToJobSummarySection(`
+### Invalid Function Parameter Name
+- **Wiki**: [${wiki.wikiName}](${wiki.wikiBaseUrl}) (for ${wiki.wikiTrueGame})
+- **Wiki Page:** [${pageName}](${document.location.href})
+- **Function:** ${scriptName}.${func.name}
+- **INVALID Parameter Name:** \`${name}\`
+- **Valid Parameter Names:** ${func.parameters.map(p => `\`${p.name}\``).join(' | ')}
+- **Edit Link:** [${document.location.href}?action=edit&summary=${encodeURIComponent(editSummary)}](${document.location.href}?action=edit&summary=${encodeURIComponent(editSummary)})
+- **Edit Message:** ${editSummary}
+`.trim());
             return null;
         }
         name = param.name;

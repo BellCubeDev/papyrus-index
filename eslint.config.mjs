@@ -17,7 +17,7 @@ const gitignorePath = path.resolve(dirname, ".gitignore");
 /** @type {import("eslint").Linter.Config[]}*/
 export default [
   {
-    files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],
+    files: ["**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx}"],
   },
   {
     languageOptions: { globals: { ...globals.browser, ...globals.node } },
