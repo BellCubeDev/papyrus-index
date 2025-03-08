@@ -59,15 +59,8 @@ jobs:
             custom-cache-
 
 
-      # credit to https://github.com/JosephM101/Wine-Install-Scripts/blob/main/install-wine.sh
-      #
-      # Yes, installing Wine is legit faster than just running it on Windows.
-      # Don't know why the Windows runners are so slow.
-      #
-      - name: Install Wine
-        run: |
-          sudo bash ./.github/workflows/install-wine.sh
-          wine --version
+
+
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4 # uses version in package.json
@@ -98,6 +91,14 @@ jobs:
 
       - name: Run Build Script
         run: pnpm run build
+        # For the Wine install script, credit goes to to
+        # https://github.com/JosephM101/Wine-Install-Scripts/blob/main/install-wine.sh
+        #
+        # Yes, installing Wine is legit faster than just running it on Windows.
+        # Don't know why the Windows runners are so slow. Even faster now that we
+        # only install Wine when we actually need to run it!
+        env:
+          INSTALL_WINE_SCRIPT_PATH: ./.github/workflows/install-wine.sh
 
       - name: Save Custom Caches
         id: cache-save-custom

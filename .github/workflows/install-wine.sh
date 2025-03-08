@@ -86,3 +86,5 @@ install_wine () {
 }
 
 install_wine
+
+wine --version

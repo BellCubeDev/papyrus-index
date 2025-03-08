@@ -12,6 +12,11 @@ const thisFilePath = url.fileURLToPath(import.meta.url);
 const thisDirPath = path.dirname(thisFilePath);
 const bsArchEXEPath = path.resolve(thisDirPath, 'BSArch.exe');
 
+// The Wine installation script in the INSTALL_WINE_SCRIPT_PATH environment variable
+// will run every time this module is used and BSArch is needed.
+// It is meant for use in CI environments.
+let hasInstalledWine = false;
+
 /** Class to handle interacting with the command-line tool BSArch */
 class BSArch {
     private static instance: BSArch;
@@ -32,9 +37,24 @@ class BSArch {
 
         await fs.mkdir(outputPath, { recursive: true });
 
+        let execString = `"${bsArchEXEPath}" unpack "${archivePath}" "${outputPath}" -mt`;
+        if (os.platform() !== 'win32') {
+            execString = `wine ${execString}`;
+            if (process.env.INSTALL_WINE_SCRIPT_PATH && !hasInstalledWine) {
+                const stats = await fs.stat(process.env.INSTALL_WINE_SCRIPT_PATH);
+                // eslint-disable-next-line no-bitwise
+                if (!(stats.mode & 0o100)) await fs.chmod(process.env.INSTALL_WINE_SCRIPT_PATH, stats.mode | 0o100);
+                console.log('Installing Wine for BSArch...');
+                await new Promise<void>((resolve, reject) => {
+                    const child = spawn(`sudo ${process.env.INSTALL_WINE_SCRIPT_PATH!}`, { shell: true, stdio: 'inherit' });
+                    child.once('exit', (code) => {
+                        if (code === 0) resolve();
+                        else reject(new Error(`Wine installation exited with code ${code}`));
+                    });
+                });
+            }
+        }
         await new Promise<void>((resolve, reject) => {
-            let execString = `"${bsArchEXEPath}" unpack "${archivePath}" "${outputPath}" -mt`;
-            if (os.platform() !== 'win32') execString = `wine ${execString}`;
             const child = spawn(execString, { shell: true, stdio: 'inherit' });
             child.once('exit', (code) => {
                 if (code === 0) resolve();
