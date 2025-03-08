@@ -54,7 +54,7 @@ interface MediaWikiRecentChange {
 }
 
 function getLock(filePath: string): Promise<() => Promise<void>> {
-    return lockfileUtil.lock(filePath, {
+    const promise = lockfileUtil.lock(filePath, {
         retries: {
             forever: true,
             factor: 1.1,
@@ -67,6 +67,15 @@ function getLock(filePath: string): Promise<() => Promise<void>> {
         stale: 30_000,
         update: 5_000,
         realpath: false,
+    });
+
+    return promise.then(unlockF => async ()=> {
+        try {
+            return await unlockF();
+        } catch (err) {
+            console.log('Likely benign, but we failed to unlock the lockfile for', filePath, 'due to error:', err);
+            return Promise.resolve();
+        }
     });
 }
 
@@ -86,7 +95,7 @@ async function ingestLatestChanges(wiki: PapyrusWiki, storageIndex: WikiStorageI
             if (process.env.NODE_ENV === 'development') return;
             throw new Error(`The ${wiki.wikiTrueGame} wiki returned a 403 Forbidden error when trying to fetch the change list. This is likely due to the wiki's rate limiting settings, and is not an error on our end.`);
         }
-        
+
         console.log(`Got a change list from the ${wiki.wikiTrueGame} wiki!`, {changeList});
 
         if (!('query' in changeList) || !changeList.query || typeof changeList.query !== 'object') throw new Error('The returned change list from the MediaWiki API is missing the "query" results object!');
@@ -167,15 +176,15 @@ async function getStorageIndexRaw(wiki: PapyrusWiki, shouldIngestLatestChanges: 
             lastKnownChange: new Date().toISOString(),
             pages: {},
         };
-        await getLock(storageIndexPath);
+        const releaseIndexLock = await getLock(storageIndexPath);
         await fs.writeFile(storageIndexPath, JSON.stringify(data));
-        await lockfileUtil.unlock(storageIndexPath);
+        await releaseIndexLock();
     } else {
-        await getLock(storageIndexPath);
+        const releaseIndexLock = await getLock(storageIndexPath);
         const indexContents = await fs.readFile(storageIndexPath, 'utf8');
         data = JSON.parse(indexContents);
         if (shouldIngestLatestChanges) await ingestLatestChanges(wiki, data);
-        await lockfileUtil.unlock(storageIndexPath);
+        await releaseIndexLock();
     }
 
     return data;
@@ -186,13 +195,13 @@ const pendingChangesByWiki = new Map<GameWithWiki, [page: string, payload: WikiS
 async function applyIndexChangesRAW(wiki: PapyrusWiki, changes: [page: string, payload: WikiStorageEntry][]) {
     pendingChangesByWiki.set(wiki.wikiTrueGame, changes);
     const indexPath = getWikiIndexPath(wiki);
-    await getLock(indexPath);
+    const releaseIndexLock = await getLock(indexPath);
     const latestData = JSON.parse(await fs.readFile(indexPath, 'utf8'));
     for (const [page, payload] of changes) latestData.pages[page] = payload;
     pendingChangesByWiki.delete(wiki.wikiTrueGame);
     await fs.writeFile(indexPath, JSON.stringify(latestData));
     storageIndexCache.set(wiki.wikiTrueGame, [latestData, Date.now()]);
-    await lockfileUtil.unlock(indexPath);
+    await releaseIndexLock();
 }
 
 
@@ -217,7 +226,7 @@ export async function getWikiPageHTMLString(wiki: PapyrusWiki, pageTitle: string
     const page = storageIndex.pages[pageTitle];
     if (page && !page.needsRedownloaded) {
         if (!page.exists) return null;
-        await getLock(htmlFilePath);
+        const releaseHTMLFileLock = await getLock(htmlFilePath);
         try {
             const res = await fs.readFile(path.join(getWikiStorageDirPath(wiki), `${pageTitle}.html`), 'utf8');
             if (res.trim() === '') {
@@ -231,12 +240,12 @@ export async function getWikiPageHTMLString(wiki: PapyrusWiki, pageTitle: string
             }
             return res;
         } finally {
-            await lockfileUtil.unlock(htmlFilePath);
+            await releaseHTMLFileLock();
         }
     }
 
     const htmlFileHandle = await fs.open(htmlFilePath, 'w');
-    await getLock(htmlFilePath);
+    const releaseHTMLFileLock = await getLock(htmlFilePath);
     let pageContent: string | null;
     try {
         const startDateISO = new Date().toISOString();
@@ -261,7 +270,7 @@ export async function getWikiPageHTMLString(wiki: PapyrusWiki, pageTitle: string
         try {
             await htmlFileHandle.close();
         } finally {
-            await lockfileUtil.unlock(htmlFilePath);
+            await releaseHTMLFileLock();
         }
     }
 
