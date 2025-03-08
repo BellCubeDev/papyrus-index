@@ -106,16 +106,16 @@ async function wikiFetchGetInternalWithParseJsonAndHandleErrors(wiki: PapyrusWik
         if (typeof json.error === 'object' && 'info' in json.error && typeof json.error.info === 'string') {
             if (json.error.info.match(/\btimeout\b/iu)) {
                 if (retriesSoFar >= MAX_RETRIES) {
-                    throw new Error(`Failed to fetch ${url} after ${retriesSoFar} retries due to a timeout; giving up.`);
+                    throw new Error(`[wikiFetchGetInternalWithParseJsonAndHandleErrors - OUT_OF_RETRIES] Failed to fetch ${url} after ${retriesSoFar} retries due to a timeout; giving up.`);
                 } else {
                     console.log(`Timeout fetching ${url} (server-side parsoid timeout); retrying in 60s`);
                     await new Promise(resolve => setTimeout(resolve, 60000).unref());
                     return await wikiFetchGetInternalWithParseJsonAndHandleErrors(wiki, path, retriesSoFar + 1, url);
                 }
             }
-            throw new Error(`Failed to fetch ${url}: ${json.error.info}`);
+            throw new Error(`[wikiFetchGetInternalWithParseJsonAndHandleErrors - ERROR_IN_JSON] Failed to fetch ${url}: ${json.error.info}`);
         } else {
-            throw new Error(`Failed to fetch ${url}: ${JSON.stringify(json.error)}`);
+            throw new Error(`[wikiFetchGetInternalWithParseJsonAndHandleErrors - ERROR_IN_JSON] Failed to fetch ${url}: ${JSON.stringify(json.error)}`);
         }
     }
 
@@ -141,7 +141,7 @@ async function wikiFetchGetInternalFetch(originalUrl: URL, retriesSoFar: number)
         });
     } catch (e) {
         if (retriesSoFar >= MAX_RETRIES) {
-            throw new Error(`Failed to fetch ${noCacheUrl} after ${retriesSoFar} retries due to a fetch error; giving up.`);
+            throw new Error(`[wikiFetchGetInternalFetch - OUT_OF_RETRIES] Failed to fetch ${noCacheUrl} after ${retriesSoFar} retries due to a fetch error; giving up.`);
         } else {
             console.log(`Fetch error while fetching ${noCacheUrl} (fetch error); retrying in 60s`);
             await new Promise(resolve => setTimeout(resolve, 60000).unref());
@@ -156,8 +156,8 @@ async function wikiFetchGetInternalFetch(originalUrl: URL, retriesSoFar: number)
         if (response.status === 404) {
             return [retriesSoFar, null];
         } else if (response.status === 403) {
-            for (let i = 0; i < 25; i++) console.error(`Failed to fetch ${noCacheUrl}; status is 403 (Forbidden)! (message spammed for visibility)`);
-            console.log(`Failed to fetch ${noCacheUrl}; status is 403 (Forbidden)! Debug info:`, {
+            for (let i = 0; i < 25; i++) console.error(`[wikiFetchGetInternalFetch - STATUS_403] Failed to fetch ${noCacheUrl}; status is 403 (Forbidden)! (message spammed for visibility)`);
+            console.log(`[wikiFetchGetInternalFetch - STATUS_403] Failed to fetch ${noCacheUrl}; status is 403 (Forbidden)! Debug info:`, {
                 headers: Object.fromEntries(response.headers.entries()),
                 status: response.status,
                 statusText: response.statusText,
@@ -170,7 +170,7 @@ async function wikiFetchGetInternalFetch(originalUrl: URL, retriesSoFar: number)
             return [retriesSoFar, WIKI_FETCH_403FORBIDDEN];
         } else if (response.statusText === 'Service Unavailable') {
             if (retriesSoFar >= MAX_RETRIES) {
-                throw new Error(`Failed to fetch ${noCacheUrl} after ${retriesSoFar} retries due to a fetch error; giving up.`);
+                throw new Error(`[wikiFetchGetInternalFetch - OUT_OF_RETRIES] Failed to fetch ${noCacheUrl} after ${retriesSoFar} retries due to a fetch error; giving up.`);
             } else {
                 console.log(`Service appears to be temporarily down while fetching ${noCacheUrl}; retrying in 60s`);
                 await new Promise(resolve => setTimeout(resolve, 60000).unref());
@@ -178,7 +178,7 @@ async function wikiFetchGetInternalFetch(originalUrl: URL, retriesSoFar: number)
             }
         }
         else {
-            throw new Error(`Failed to fetch ${noCacheUrl}; status is not OK: ${response.status} (${response.statusText})`);
+            throw new Error(`[wikiFetchGetInternalFetch - STATUS_NOT_OK] Failed to fetch ${noCacheUrl}; status is not OK: ${response.status} (${response.statusText})`);
         }
     }
 
