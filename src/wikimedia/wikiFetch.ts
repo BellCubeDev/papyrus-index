@@ -113,7 +113,7 @@ async function wikiFetchGetInternalWithParseJsonAndHandleErrors(wiki: PapyrusWik
                     return await wikiFetchGetInternalWithParseJsonAndHandleErrors(wiki, path, retriesSoFar + 1, url);
                 }
             }
-            throw new Error(`[wikiFetchGetInternalWithParseJsonAndHandleErrors - ERROR_IN_JSON] Failed to fetch ${url}: ${json.error.info}`);
+            throw new Error(`[wikiFetchGetInternalWithParseJsonAndHandleErrors - ERROR_IN_JSON] Failed to fetch ${url}: ${json.error.info}\n${JSON.stringify(json.error)}`);
         } else {
             throw new Error(`[wikiFetchGetInternalWithParseJsonAndHandleErrors - ERROR_IN_JSON] Failed to fetch ${url}: ${JSON.stringify(json.error)}`);
         }
