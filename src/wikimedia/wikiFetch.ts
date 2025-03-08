@@ -48,7 +48,7 @@ if (process.env.NODE_ENV !== 'development') {
     }, 60000).unref();
 }
 
-export const WIKI_FETCH_403FORBIDDEN: unique symbol = memoizeDevServerConst('WIKI_FETCH_403FORBIDDEN', () => Symbol('WIKI_FETCH_403FORBIDDEN')) as any;
+export const WIKI_FETCH_403FORBIDDEN: unique symbol = memoizeDevServerConst('WIKI_FETCH_403FORBIDDEN', () => Symbol.for('PAPYRUS_INDEX_WIKI_FETCH_403FORBIDDEN')) as any;
 
 export async function wikiFetchGet(wiki: PapyrusWiki, path: `/${string}`): Promise<{}|null|typeof WIKI_FETCH_403FORBIDDEN> {
     const url = new URL(path, wiki.wikiBaseUrl);

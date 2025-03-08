@@ -3,7 +3,6 @@
 import React from 'react';
 import type { PapyrusGame } from '../../papyrus/data-structures/pure/game';
 import type { WorkerMessageInput, WorkerMessageInputInit, WorkerMessageOutput } from './SEARCH.worker';
-import type { SearchIndexEntity } from '../[game]/search-index.json/SearchIndexEntity';
 
 function generateWorker(game: PapyrusGame, searchIndexHash: string) {
     console.log('Creating search worker...');

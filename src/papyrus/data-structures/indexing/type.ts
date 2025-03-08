@@ -4,8 +4,8 @@ import type { PapyrusScriptTypeArchetype, PapyrusScriptTypeLiteral, PapyrusScrip
 import type { PapyrusPossibleScripts, PapyrusScriptIndexed } from "./script";
 import type { PapyrusScriptStructIndexed } from "./struct";
 
-export const UnknownPapyrusScript: unique symbol = memoizeDevServerConst('UnknownPapyrusScript', ()=>Symbol('UnknownPapyrusScript')) as any;
-export const UnknownPapyrusScriptStruct: unique symbol = memoizeDevServerConst('UnknownPapyrusScriptStruct', ()=>Symbol('UnknownPapyrusScriptStruct')) as any;
+export const UnknownPapyrusScript: unique symbol = memoizeDevServerConst('UnknownPapyrusScript', ()=>Symbol.for('PAPYRUS_INDEX_UnknownPapyrusScript')) as any;
+export const UnknownPapyrusScriptStruct: unique symbol = memoizeDevServerConst('UnknownPapyrusScriptStruct', ()=>Symbol.for('PAPYRUS_INDEX_UnknownPapyrusScriptStruct')) as any;
 
 export interface PapyrusScriptTypeScriptInstanceIndexed<TIsArray extends boolean, TIsParameter extends boolean, TGame extends PapyrusGame> extends PapyrusScriptTypeScriptInstance<TIsArray, TIsParameter> {
     script: PapyrusPossibleScripts<TGame> | typeof UnknownPapyrusScript;

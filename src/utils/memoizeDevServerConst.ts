@@ -15,7 +15,7 @@ declare global {
  * Return type is the return type of valueF, however this will not work for `unique symbol` types. You will need to explicitly set
  * the `unique symbol` type on your variable and cast this function's return value to `as any`. For example:
  * ```ts
- * export const UnknownPapyrusScript: unique symbol = memoizeDevServerConst('UnknownPapyrusScript', ()=>Symbol('UnknownPapyrusScript')) as any;
+ * export const UnknownPapyrusScript: unique symbol = memoizeDevServerConst('UnknownPapyrusScript', ()=>Symbol.for('PAPYRUS_INDEX_UnknownPapyrusScript')) as any;
  * ```
  *
  * ---
@@ -28,8 +28,11 @@ declare global {
  */
 export function memoizeDevServerConst<TValueType>(key: string, valueF: ()=>TValueType): TValueType {
     let memoConsts: Record<string, unknown>;
-    if (typeof window !== 'undefined') memoConsts = window.___MemoizedDevServerConsts ??= {};
-    else memoConsts = globalThis.___MemoizedDevServerConsts ??= {};
+    if (typeof self !== 'undefined') memoConsts = self.___MemoizedDevServerConsts ??= {};
+    else if (typeof window !== 'undefined') memoConsts = window.___MemoizedDevServerConsts ??= {};
+    else if (typeof globalThis !== 'undefined') memoConsts = globalThis.___MemoizedDevServerConsts ??= {};
+    else if (typeof global !== 'undefined') memoConsts = global.___MemoizedDevServerConsts ??= {};
+    else throw new Error('Cannot find global object to store memoized constants in!');
 
     memoConsts[key] ??= valueF();
     return memoConsts[key] as TValueType;
