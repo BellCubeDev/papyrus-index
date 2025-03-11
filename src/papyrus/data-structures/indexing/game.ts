@@ -3,7 +3,7 @@ import type { PapyrusGame } from "../pure/game";
 import type { PapyrusPossibleScripts, PapyrusScriptIndexedAggregate } from "./script";
 import type { PapyrusScriptSourceIndexed } from "./scriptSource";
 
-export const AllSourcesCombined: unique symbol = memoizeDevServerConst('AllSourcesCombined', ()=>Symbol('AllSourcesCombined')) as any;
+export const AllSourcesCombined: unique symbol = memoizeDevServerConst('AllSourcesCombined', ()=>Symbol.for('PAPYRUS_INDEX_AllSourcesCombined')) as any;
 
 export type AllSourcesCombinedObject<TGame extends PapyrusGame> = { [AllSourcesCombined]: PapyrusScriptIndexedAggregate<TGame> }
 export type PapyrusScriptBySources<TGame extends PapyrusGame> = PapyrusPossibleScripts<TGame> & AllSourcesCombinedObject<TGame>;

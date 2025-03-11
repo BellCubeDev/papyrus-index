@@ -15,7 +15,7 @@ declare global {
  * Return type is the return type of valueF, however this will not work for `unique symbol` types. You will need to explicitly set
  * the `unique symbol` type on your variable and cast this function's return value to `as any`. For example:
  * ```ts
- * export const UnknownPapyrusScript: unique symbol = memoizeDevServerConst('UnknownPapyrusScript', ()=>Symbol('UnknownPapyrusScript')) as any;
+ * export const UnknownPapyrusScript: unique symbol = memoizeDevServerConst('UnknownPapyrusScript', ()=>Symbol.for('PAPYRUS_INDEX_UnknownPapyrusScript')) as any;
  * ```
  *
  * ---
