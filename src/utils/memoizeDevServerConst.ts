@@ -28,8 +28,11 @@ declare global {
  */
 export function memoizeDevServerConst<TValueType>(key: string, valueF: ()=>TValueType): TValueType {
     let memoConsts: Record<string, unknown>;
-    if (typeof window !== 'undefined') memoConsts = window.___MemoizedDevServerConsts ??= {};
-    else memoConsts = globalThis.___MemoizedDevServerConsts ??= {};
+    if (typeof self !== 'undefined') memoConsts = self.___MemoizedDevServerConsts ??= {};
+    else if (typeof window !== 'undefined') memoConsts = window.___MemoizedDevServerConsts ??= {};
+    else if (typeof globalThis !== 'undefined') memoConsts = globalThis.___MemoizedDevServerConsts ??= {};
+    else if (typeof global !== 'undefined') memoConsts = global.___MemoizedDevServerConsts ??= {};
+    else throw new Error('Cannot find global object to store memoized constants in!');
 
     memoConsts[key] ??= valueF();
     return memoConsts[key] as TValueType;
