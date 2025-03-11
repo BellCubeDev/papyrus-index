@@ -63,11 +63,13 @@ function aggregateValue<T, TAggregated, TIdentifierType>(
     values: T[],
     getAggregation: (value: T) => typeof DoNotIncludeInAggregate | [identifier: TIdentifierType, aggregationKey: string|number|boolean|undefined|null, value: TAggregated],
     chooseAggregateRepresentative: null | ((a: TAggregated, b: TAggregated) => TAggregated),
+    identifiersSet?: Set<TIdentifierType>,
 ): [identifiers: TIdentifierType[], aggregated: TAggregated][] {
     const aggregationMap = new Map<unknown, [identifiers: TIdentifierType[], aggregated: TAggregated[]]>();
     for (const value of values) {
         const aggregationData = getAggregation(value);
         if (aggregationData === DoNotIncludeInAggregate) continue;
+        identifiersSet?.add(aggregationData[0]);
         const [identifier, aggregationKey, aggregatedValue] = aggregationData;
         const existing = aggregationMap.get(aggregationKey);
         if (existing) {
@@ -87,16 +89,17 @@ function aggregateRecordValue<TRecordKey extends string|number|symbol, TRecordVa
     recordPairings: TRecordPairing[],
     getAggregation: (value: [TRecordPairing, TRecordValue | undefined]) => typeof DoNotIncludeInAggregate | [identifier: TIdentifierType, aggregationKey: string|number|undefined|null, value: TAggregated],
     chooseAggregateRepresentative: null | ((a: TAggregated, b: TAggregated) => TAggregated),
-): Record<TRecordKey, [identifiers: TIdentifierType[], aggregated: TAggregated][]> {
+): Omit<Record<TRecordKey, [identifiers: TIdentifierType[], aggregated: TAggregated][]>, "$identifiers"> & {$identifiers: Set<TIdentifierType>} {
     const keys = new Set(records.flatMap(Object.keys) as TRecordKey[]);
+    const identifiers = new Set<TIdentifierType>();
     const newRecord = {} as Record<TRecordKey, [TIdentifierType[], TAggregated][]>;
     for (const key of keys) {
         if (typeof key !== 'string') throw new Error('Non-string keys not supported by aggregateRecordValue()!');
         const keyValues = records.map((record, index) => [recordPairings[index], record[key]] as [TRecordPairing, TRecordValue | undefined]);
-        newRecord[key] = aggregateValue(keyValues, getAggregation, chooseAggregateRepresentative);
+        newRecord[key] = aggregateValue(keyValues, getAggregation, chooseAggregateRepresentative, identifiers);
     }
 
-    return newRecord;
+    return Object.assign(newRecord, {$identifiers: identifiers});
 }
 
 
@@ -115,6 +118,7 @@ function mergeScriptAggregate<TGame extends PapyrusGame>(possibleScripts: Papyru
     if (scriptEntries.length === 0) throw new Error('No scripts to merge!');
 
     return {
+        $identifiers: Object.keys(possibleScripts),
         isConditional: aggregateValue(scriptEntries, ([sourceIdentifier, script]) => [sourceIdentifier, script.isConditional, script.isConditional], null),
         isConst: aggregateValue(scriptEntries, ([sourceIdentifier, script]) => [sourceIdentifier, script.isConst, script.isConst], null),
         default: aggregateValue(scriptEntries, ([sourceIdentifier, script]) => [sourceIdentifier, script.default, script.default], null),

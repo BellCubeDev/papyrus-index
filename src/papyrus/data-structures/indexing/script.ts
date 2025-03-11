@@ -56,6 +56,7 @@ type PapyrusScriptIndexedAggregateBase<TGame extends PapyrusGame> = {
 }
 
 export type PapyrusScriptIndexedAggregate<TGame extends PapyrusGame> = Omit<PapyrusScriptOnlyProps<TGame>, 'isBetaOnly'|'isDebugOnly'|'documentationComment'|'documentationString'> & Omit<PapyrusScriptIndexedAggregateBase<TGame>, 'isConst'|'default'|'namespace'|'isNative'|'isBetaOnly'|'isDebugOnly'|'structs'|'extendedBy'> & {
+    $identifiers: Lowercase<string>[];
     isConst: [Lowercase<string>[], (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? boolean : never) | false][];
     isNative: [Lowercase<string>[], (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? boolean : never) | (TGame extends PapyrusGame.SkyrimSE ? null : never)][];
     default: [Lowercase<string>[], (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? boolean : never) | (TGame extends PapyrusGame.SkyrimSE ? null : never)][];
