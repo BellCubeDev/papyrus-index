@@ -5,7 +5,8 @@
     flex-direction: row;
     gap: 1ch;
     > .functionName, > span:not(.wrapableSection, .functionParametersStart, .functionParametersEnd,  .functionParametersSeparator, .functionParametersParamWrapper) {
-        background: #1b1b1b;
+        background: #ffffff12;
+        * { background: none; }
         padding: 0.3em 0.5em 0.25em;
         border-radius: 0.3em;
     }
@@ -58,7 +59,7 @@
 
 .functionName {
     color: hsl(60deg, 42%, 76%);
-    
+
     --link-txt-color-noncurrent-normal: hsl(60deg, 42%, 76%);
     --link-udl-color-noncurrent-normal: hsl(60, 22%, 44%);
 

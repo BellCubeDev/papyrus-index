@@ -128,11 +128,14 @@ pre, code {
 }
 
 code {
-    background: #1b1b1b;
+    background: #ffffff12;
     padding: 0.3em 0.5em 0.2em;
     border-radius: 0.3em;
     position: relative;
     line-height: 1.1;
+    code {
+        background: none;
+    }
 }
 
 pre {
@@ -143,11 +146,13 @@ pre {
     max-height: 75vh;
     overflow-y: auto;
     line-height: 1.45;
-    background: #1b1b1b;
+    background: #ffffff12;
     text-align: left;
+    code {
+        background: none;
+    }
     > code {
         padding: 0;
-        background: #1b1b1b;
         line-height: unset;
     }
     counter-reset: linenumber;
