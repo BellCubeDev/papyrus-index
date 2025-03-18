@@ -89,7 +89,7 @@ function aggregateRecordValue<TRecordKey extends string|number|symbol, TRecordVa
     recordPairings: TRecordPairing[],
     getAggregation: (value: [TRecordPairing, TRecordValue | undefined]) => typeof DoNotIncludeInAggregate | [identifier: TIdentifierType, aggregationKey: string|number|undefined|null, value: TAggregated],
     chooseAggregateRepresentative: null | ((a: TAggregated, b: TAggregated) => TAggregated),
-): Omit<Record<TRecordKey, [identifiers: TIdentifierType[], aggregated: TAggregated][]>, "$identifiers"> & {$identifiers: Set<TIdentifierType>} {
+): Record<TRecordKey, [identifiers: TIdentifierType[], aggregated: TAggregated][]>{
     const keys = new Set(records.flatMap(Object.keys) as TRecordKey[]);
     const identifiers = new Set<TIdentifierType>();
     const newRecord = {} as Record<TRecordKey, [TIdentifierType[], TAggregated][]>;
@@ -99,7 +99,7 @@ function aggregateRecordValue<TRecordKey extends string|number|symbol, TRecordVa
         newRecord[key] = aggregateValue(keyValues, getAggregation, chooseAggregateRepresentative, identifiers);
     }
 
-    return Object.assign(newRecord, {$identifiers: identifiers});
+    return newRecord;
 }
 
 
