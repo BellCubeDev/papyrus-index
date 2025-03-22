@@ -8,7 +8,7 @@ interface ObjectConstructor {
     entries<T extends {}>(o: T): [SingleEntryForObject<T>, ...SingleEntryForObject<T>[]];
     entries<TKeyType extends string | number | symbol, TValueType>(o: Record<TKeyType, TValueType>): [TKeyType, TValueType][];
 
-    keys<T extends {}>(o: T): keyof T extends never ? never : (keyof T & string)[];
+    keys<T extends {}>(o: T): keyof T extends never ? never : (Extract<keyof T, string>)[];
 
     // Handle the special case of Record<> types, whose keys are optional but final types do not include undefined
     values<TValueType>(o: Record<any, TValueType>): TValueType[];
@@ -27,3 +27,6 @@ interface ObjectConstructor {
 type ObjectAssignDiff<TFromType extends {}, TIntoType extends {}> = Partial<TIntoType> & {
     readonly [K in keyof TIntoType as K extends keyof TFromType ? TFromType[K] extends TIntoType[K] ? never : K : K]: TIntoType[K]
 }
+
+type RecordOfPromises<T> = { [K in keyof T]: Awaitable<T[K]> };
+type RecordOfArrayOfPromises<T> = { [K in keyof T]: T[K] extends readonly (infer U)[] ? Awaitable<U>[] : Awaitable<T[K]> };

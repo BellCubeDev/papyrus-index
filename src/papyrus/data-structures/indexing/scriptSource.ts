@@ -11,3 +11,4 @@ export interface PapyrusScriptSourceScriptDataIndexed<TGame extends PapyrusGame>
 }
 
 export type PapyrusScriptSourceIndexed<TGame extends PapyrusGame> = PapyrusScriptSourceScriptDataIndexed<TGame> & PapyrusScriptSourceMetadata<TGame>;
+export type PapyrusScriptSourceIndexedNoScriptsProp<TGame extends PapyrusGame> = Omit<PapyrusScriptSourceScriptDataIndexed<TGame>, 'scripts'> & PapyrusScriptSourceMetadata<TGame>;
