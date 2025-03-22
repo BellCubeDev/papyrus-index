@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  fuzzysort:
+    hash: 6aff75555c827b664753872db3e693f1cc1b781c346f18078c6a21d9cd1ba134
+    path: patches/fuzzysort.patch
+
 importers:
 
   .:
@@ -100,7 +105,7 @@ importers:
         version: 5.1.0(eslint@9.19.0(jiti@1.21.7))
       fuzzysort:
         specifier: ^3.1.0
-        version: 3.1.0
+        version: 3.1.0(patch_hash=6aff75555c827b664753872db3e693f1cc1b781c346f18078c6a21d9cd1ba134)
       globals:
         specifier: ^15.14.0
         version: 15.14.0
@@ -6058,7 +6063,7 @@ snapshots:
 
   functions-have-names@1.2.3: {}
 
-  fuzzysort@3.1.0: {}
+  fuzzysort@3.1.0(patch_hash=6aff75555c827b664753872db3e693f1cc1b781c346f18078c6a21d9cd1ba134): {}
 
   gensync@1.0.0-beta.2: {}
 

@@ -1,0 +1,52 @@
+diff --git a/index.d.ts b/index.d.ts
+index c0e0cc69b708b76e8ae08bd03ecaac9043751ea8..6c27be066c4d55d5c574eae9cfc24e90b57a12bd 100644
+--- a/index.d.ts
++++ b/index.d.ts
+@@ -2,7 +2,7 @@ declare namespace Fuzzysort {
+ 
+   interface Result {
+     /**
+-    * 1 is a perfect match. 0.5 is a good match. 0 is no match. 
++    * 1 is a perfect match. 0.5 is a good match. 0 is no match.
+     */
+     readonly score: number
+ 
+@@ -30,7 +30,7 @@ declare namespace Fuzzysort {
+ 
+   interface KeysResult<T> extends ReadonlyArray<Result> {
+     /**
+-    * 1 is a perfect match. 0.5 is a good match. 0 is no match. 
++    * 1 is a perfect match. 0.5 is a good match. 0 is no match.
+     */
+     readonly score: number
+ 
+@@ -43,9 +43,9 @@ declare namespace Fuzzysort {
+   }
+ 
+ 
+-  interface Prepared {
++  interface Prepared<T = string> {
+     /** Your original target string */
+-    readonly target: string
++    readonly target: T
+   }
+ 
+   interface Options {
+@@ -62,7 +62,7 @@ declare namespace Fuzzysort {
+     key: string | ((obj: T) => string) | ReadonlyArray<string>
+   }
+   interface KeysOptions<T> extends Options {
+-    keys: ReadonlyArray<string | ((obj: T) => string) | ReadonlyArray<string>>
++    keys: ReadonlyArray<string | ((obj: T) => string | Prepared) | ReadonlyArray<string>>
+     scoreFn?: (keysResult: KeysResult<T>) => number
+   }
+ 
+@@ -79,7 +79,7 @@ declare namespace Fuzzysort {
+     /**
+     * Help the algorithm go fast by providing prepared targets instead of raw strings
+     */
+-    prepare(target: string): Prepared
++    prepare<T extends string>(target: T): Prepared<T>
+ 
+     /**
+     * Free memory caches if you're done using fuzzysort for now
