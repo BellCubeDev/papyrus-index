@@ -1,4 +1,4 @@
-import type { PapyrusScriptFunctionIndexed } from "../papyrus/data-structures/indexing/function";
+import type { PapyrusScriptFunctionIndexed, PapyrusScriptFunctionIndexedAggregate } from "../papyrus/data-structures/indexing/function";
 import type { PapyrusScriptFunction } from "../papyrus/data-structures/pure/function";
 import { PapyrusGame } from "../papyrus/data-structures/pure/game";
 import { getWiki, type PapyrusWiki } from "./getWiki";
@@ -6,8 +6,9 @@ import { getWikiPageHTMLDocument } from "./GetWikiPageHTML";
 import { parsoidElementsToMarkdown, parsoidToMarkdown } from "./parsoidToMarkdown";
 import { toLowerCase } from "../utils/toLowerCase";
 import { appendToJobSummarySection } from "../utils/stepSummary";
+import { getBestName, getBestNameVariant } from "../utils/getBestName";
 
-export type PotentialFunction<TGame extends PapyrusGame> = PapyrusScriptFunction<TGame> | PapyrusScriptFunctionIndexed<TGame>;
+export type PotentialFunction<TGame extends PapyrusGame> = PapyrusScriptFunctionIndexedAggregate<TGame>| PapyrusScriptFunction<TGame> | PapyrusScriptFunctionIndexed<TGame>;
 
 export interface WikiDataFunctionPage extends PapyrusWiki {
     /** Whether this function is marked as "latent" by the wiki. Will have the "Latent Functions" category. */
@@ -48,7 +49,8 @@ export interface WikiDataFunctionPage extends PapyrusWiki {
 export async function getWikiDataFunctionPage<TGame extends PapyrusGame, TFunc extends PotentialFunction<TGame>>(game: TGame, func: TFunc, scriptName: string): Promise<WikiDataFunctionPage | null> {
     const wiki = getWiki(game);
 
-    const pageName = `${func.name} - ${scriptName}`;
+    const functionName = Array.isArray(func.name) ? getBestNameVariant(func.name)[1] : func.name;
+    const pageName = `${functionName} - ${scriptName}`;
     const document = await getWikiPageHTMLDocument(wiki, pageName);
     if (!document) return null;
 
@@ -109,28 +111,38 @@ export async function getWikiDataFunctionPage<TGame extends PapyrusGame, TFunc e
         });
         if (!param) {
             const editSummary = `Correct Parameter Name (${name} --> CORRECT_NAME_HERE)`;
-            console.warn(`[MediaWiki Scraping - getWikiDataFunctionPage()] Parameter ${name} not found in function ${scriptName}.${func.name}!
-
-Invalid parameter name: ${name}
-Valid parameter names are: ${func.parameters.map(p => p.name).join(' | ')}
-
-Edit Link: ${document.location.href}?action=edit&summary=${encodeURIComponent(editSummary)}
-Edit Message: ${editSummary}
-
-Skipping...`);
+            console.warn(`
+⚠️  [96m[MediaWiki Scraping - getWikiDataFunctionPage()] Invalid Parameter Detected![0m
+[93m|[0m Parameter ${name} not found in function [32m${scriptName}[0m.[33m${functionName}[0m!
+[93m|[0m Wiki: ${wiki.wikiName} (for ${wiki.wikiTrueGame})
+[93m|[0m
+${wiki.wikiTrueGame !== game ?
+`[93m|[0m [101mCAUTION:[0m The wiki page is for ${wiki.wikiTrueGame}, but the function is for ${game}![0m` : ''
+}[93m|[0m Invalid parameter name: ${name}
+[93m|[0m Valid parameter names are: ${func.parameters.map(p => p.name).join(' | ')}
+[93m|[0m
+[93m|[0m Edit Link: [34m${document.location.href}?action=edit&summary=${encodeURIComponent(editSummary)}[0m
+[93m|[0m Edit Message: [35m${editSummary}[0m
+[93m|[0m
+[93m|[0m Skipping...`);
             appendToJobSummarySection(`
 ### Invalid Function Parameter Name
 - **Wiki**: [${wiki.wikiName}](${wiki.wikiBaseUrl}) (for ${wiki.wikiTrueGame})
 - **Wiki Page:** [${pageName}](${document.location.href})
-- **Function:** ${scriptName}.${func.name}
+- **Function:** ${scriptName}.${functionName}
 - **INVALID Parameter Name:** \`${name}\`
-- **Valid Parameter Names:** ${func.parameters.map(p => `\`${p.name}\``).join(' | ')}
+${
+    '$sources' in func
+        ? Object.entries(func.$sources).map(([source, variant]) => `- **Valid Parameter Names (from ${source}):** ${variant.parameters.map(p => `\`${p.name}\``).join(' | ')}`).join('\n')
+        : `- **Valid Parameter Names:** ${func.parameters.map(p => `\`${p.name}\``).join(' | ')}`
+}
+
 - **Edit Link:** [${document.location.href}?action=edit&summary=${encodeURIComponent(editSummary)}](${document.location.href}?action=edit&summary=${encodeURIComponent(editSummary)})
 - **Edit Message:** ${editSummary}
 `.trim());
             return null;
         }
-        name = param.name;
+        name = !Array.isArray(param) ? param.name : getBestName(param.map(p => p.name))[1];
         return {name, nameMarkdown, descriptionMarkdown};
     })).then(a => a.filter((obj): obj is NonNullable<typeof obj> => obj !== null));
 

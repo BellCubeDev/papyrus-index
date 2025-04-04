@@ -18,7 +18,7 @@ export function generateStaticParams(): ScriptRouteParams[] {
     for (const [game, gameData] of Object.entries(AllScriptsIndexed)) {
         for (const [scriptNameLowercase, scriptData] of Object.entries(gameData.scripts)) {
             params.push([
-                Object.keys(scriptData[AllSourcesCombined].functions).length + Object.keys(scriptData[AllSourcesCombined].propertyGroups).length + Object.keys(scriptData[AllSourcesCombined].events).length + Object.keys(scriptData[AllSourcesCombined].structs).length,
+                Object.keys(scriptData[AllSourcesCombined].functions).length + Object.keys(scriptData[AllSourcesCombined].propertyGroups).length + Object.keys(scriptData[AllSourcesCombined].events).length + Object.keys(scriptData[AllSourcesCombined].structs ?? {}).length,
                 {game: toLowerCase(game), scriptNameNoExt: scriptNameLowercase}
             ]);
         }
