@@ -1,7 +1,7 @@
 import type { PapyrusScriptFunctionIndexed, PapyrusScriptFunctionIndexedAggregate } from "../../../../../papyrus/data-structures/indexing/function";
 import type { PapyrusGame } from "../../../../../papyrus/data-structures/pure/game";
 import { serializePapyrusTypeForAggregation } from "../../../../../papyrus/indexing/aggregation/serializePapyrusTypeForAggregation";
-import type { SearchEntityFunctionIndexed } from "../../../../search/Entity";
+import type { SearchEntityFunction } from "../../../../search/Entity";
 import { SourcesList } from "../../SourcesList";
 import { PapyrusFunctionSignature } from "./FunctionSignature";
 import styles from './FunctionSignatureVariants.module.scss';
@@ -39,7 +39,7 @@ function splitFunctionVariants(funcAggregate: PapyrusScriptFunctionIndexedAggreg
     const variantMap = new Map<string, PapyrusScriptFunctionIndexed<PapyrusGame> & {profile: string, ckWikiDescription: string|null|undefined}>;
     for (const variant of Object.values(funcAggregate.$sources)) {
         const profile = getVariantProfileStringForSource(variant);
-        variantMap.set(profile, Object.assign(variant, {profile, ckWikiDescription: (funcAggregate as SearchEntityFunctionIndexed<PapyrusGame>).ckWikiDescription}));
+        variantMap.set(profile, Object.assign(variant, {profile, ckWikiDescription: (funcAggregate as SearchEntityFunction<PapyrusGame>).ckWikiDescription}));
     }
 
     return Array.from(variantMap.values());

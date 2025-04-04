@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { PapyrusGame, type PapyrusGameData } from "../../../papyrus/data-structures/pure/game";
 import { toLowerCase } from "../../../utils/toLowerCase";
 import { AllScripts } from "../../../papyrus/parsing/parse-or-load-all";
-import { SearchEntityNonIndexedBaseTypeMapping, SearchIndexEntitiesRecordRawType, SearchIndexEntityType } from "../../search/Entity";
+import { SearchEntityBaseTypeMapping, SearchIndexEntitiesRecordRawType, SearchIndexEntityType } from "../../search/Entity";
 import { AllScriptsIndexed } from "../../../papyrus/indexing/index-all";
 import { getGameFromParams } from "../getGameFromParams";
 import type { PapyrusScriptIndexedAggregate } from "../../../papyrus/data-structures/indexing/script";
@@ -15,7 +15,7 @@ import { AllSourcesCombined } from "../../../papyrus/data-structures/indexing/ga
 
 const PapyrusGamesCaseMapped = new Map<string, PapyrusGame>(Object.values(PapyrusGame).map(game => [game.toLowerCase(), game]));
 
-export type SingleExtraEntityDataRecord = { [TKey in keyof SearchIndexEntitiesRecordRawType<PapyrusGame>]: ObjectAssignDiff<SearchEntityNonIndexedBaseTypeMapping<PapyrusGame>[SearchIndexEntitiesRecordRawType<PapyrusGame>[TKey]['$entityType']], Omit<SearchIndexEntitiesRecordRawType<PapyrusGame>[TKey],'$entityType'>> };
+export type SingleExtraEntityDataRecord = { [TKey in keyof SearchIndexEntitiesRecordRawType<PapyrusGame>]: ObjectAssignDiff<SearchEntityBaseTypeMapping<PapyrusGame>[SearchIndexEntitiesRecordRawType<PapyrusGame>[TKey]['$entityType']], Omit<SearchIndexEntitiesRecordRawType<PapyrusGame>[TKey],'$entityType'>> };
 export type SingleExtraEntityData = SingleExtraEntityDataRecord[keyof SingleExtraEntityDataRecord];
 
 export interface SearchDataGETResponse {

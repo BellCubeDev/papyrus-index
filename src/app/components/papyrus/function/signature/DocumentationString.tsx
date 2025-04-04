@@ -3,7 +3,7 @@ import type { PapyrusScriptFunctionIndexed, PapyrusScriptFunctionIndexedAggregat
 import type { PapyrusGame } from "../../../../../papyrus/data-structures/pure/game";
 import { getBestNameVariant } from "../../../../../utils/getBestName";
 import { stripMD } from "../../../../../utils/stripMD";
-import type { SearchEntityFunctionIndexed } from "../../../../search/Entity";
+import type { SearchEntityFunction } from "../../../../search/Entity";
 import { GuardEmptyList } from "../../../GuardEmptyList";
 import { TextWithTooltip } from "../../../text-with-tooltip/TooltipText";
 import { WikiMarkdown } from "../../../wiki-markdown/WikiMarkdown";
@@ -21,7 +21,7 @@ function getBestStringFromMaybeArray<T extends string>(arr: T|null|([Lowercase<s
  *
  * Ideal for use in search indexing and SEO.
  */
-export function FunctionDocumentationStringRaw<TGame extends PapyrusGame>({game, func, scriptName}: {readonly game: TGame, readonly func: (SearchEntityFunctionIndexed<TGame>|PapyrusScriptFunctionIndexedAggregate<TGame>|PapyrusScriptFunctionIndexed<TGame>) & {ckWikiDescription?: string|null|undefined}, readonly scriptName: string}): string {
+export function FunctionDocumentationStringRaw<TGame extends PapyrusGame>({game, func, scriptName}: {readonly game: TGame, readonly func: (SearchEntityFunction<TGame>|PapyrusScriptFunctionIndexedAggregate<TGame>|PapyrusScriptFunctionIndexed<TGame>) & {ckWikiDescription?: string|null|undefined}, readonly scriptName: string}): string {
     let str = '';
 
     const wikiShortDescriptionMD = useGetWikiFunctionShortDescriptionMD(game, func, scriptName);

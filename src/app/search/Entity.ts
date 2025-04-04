@@ -47,39 +47,22 @@ export interface SearchEntityStructAdditions extends SearchEntityBase<SearchInde
 
 
 
-export interface SearchEntityScriptIndexed<TGame extends PapyrusGame> extends SearchEntityScriptAdditions, PapyrusScriptIndexedAggregate<TGame> {
+export interface SearchEntityScript<TGame extends PapyrusGame> extends SearchEntityScriptAdditions, PapyrusScriptIndexedAggregate<TGame> {
 }
 
-export interface SearchEntityFunctionIndexed<TGame extends PapyrusGame> extends SearchEntityFunctionAdditions, PapyrusScriptFunctionIndexedAggregate<TGame> {
+export interface SearchEntityFunction<TGame extends PapyrusGame> extends SearchEntityFunctionAdditions, PapyrusScriptFunctionIndexedAggregate<TGame> {
 }
 
-export interface SearchEntityEventIndexed<TGame extends PapyrusGame> extends SearchEntityEventAdditions, PapyrusScriptEventOrBaseFunctionIndexedAggregate<TGame> {
+export interface SearchEntityEvent<TGame extends PapyrusGame> extends SearchEntityEventAdditions, PapyrusScriptEventOrBaseFunctionIndexedAggregate<TGame> {
 }
 
-export interface SearchEntityPropertyIndexed<TGame extends PapyrusGame> extends SearchEntityPropertyAdditions, PapyrusScriptPropertyIndexedAggregate<TGame> {
+export interface SearchEntityProperty<TGame extends PapyrusGame> extends SearchEntityPropertyAdditions, PapyrusScriptPropertyIndexedAggregate<TGame> {
 }
 
-export interface SearchEntityStructIndexed<TGame extends PapyrusGame> extends SearchEntityStructAdditions, PapyrusScriptStructIndexedAggregate<Exclude<TGame, PapyrusGame.SkyrimSE>> {
+export interface SearchEntityStruct<TGame extends PapyrusGame> extends SearchEntityStructAdditions, PapyrusScriptStructIndexedAggregate<Exclude<TGame, PapyrusGame.SkyrimSE>> {
 }
 
-
-
-export interface SearchEntityScriptNonIndexed<TGame extends PapyrusGame> extends SearchEntityScriptAdditions, PapyrusScriptIndexedAggregate<TGame> {
-}
-
-export interface SearchEntityFunctionNonIndexed<TGame extends PapyrusGame> extends SearchEntityFunctionAdditions, PapyrusScriptFunctionIndexedAggregate<TGame> {
-}
-
-export interface SearchEntityEventNonIndexed<TGame extends PapyrusGame> extends SearchEntityEventAdditions, PapyrusScriptEventOrBaseFunctionIndexedAggregate<TGame> {
-}
-
-export interface SearchEntityPropertyNonIndexed<TGame extends PapyrusGame> extends SearchEntityPropertyAdditions, PapyrusScriptPropertyIndexedAggregate<TGame> {
-}
-
-export interface SearchEntityStructNonIndexed<TGame extends PapyrusGame> extends SearchEntityStructAdditions, PapyrusScriptStructIndexedAggregate<Exclude<TGame, PapyrusGame.SkyrimSE>> {
-}
-
-export type SearchEntityNonIndexedBaseTypeMapping<TGame extends PapyrusGame> = {
+export type SearchEntityBaseTypeMapping<TGame extends PapyrusGame> = {
     readonly [SearchIndexEntityType.Script]: PapyrusScriptIndexedAggregate<TGame>;
     readonly [SearchIndexEntityType.Function]: PapyrusScriptFunctionIndexedAggregate<TGame>;
     readonly [SearchIndexEntityType.Event]: PapyrusScriptEventOrBaseFunctionIndexedAggregate<TGame>;
@@ -89,24 +72,24 @@ export type SearchEntityNonIndexedBaseTypeMapping<TGame extends PapyrusGame> = {
 
 
 
-export type SearchIndexEntity<TGame extends PapyrusGame> = SearchEntityScriptIndexed<TGame> | SearchEntityFunctionIndexed<TGame> | SearchEntityEventIndexed<TGame> | SearchEntityPropertyIndexed<TGame> | SearchEntityStructIndexed<TGame>;
-export type SearchIndexEntityKeys<TGame extends PapyrusGame> = keyof SearchEntityScriptIndexed<TGame> | keyof SearchEntityFunctionIndexed<TGame> | keyof SearchEntityEventIndexed<TGame> | keyof SearchEntityPropertyIndexed<TGame> | keyof SearchEntityStructIndexed<TGame>;
+export type SearchIndexEntity<TGame extends PapyrusGame> = SearchEntityScript<TGame> | SearchEntityFunction<TGame> | SearchEntityEvent<TGame> | SearchEntityProperty<TGame> | SearchEntityStruct<TGame>;
+export type SearchIndexEntityKeys<TGame extends PapyrusGame> = keyof SearchEntityScript<TGame> | keyof SearchEntityFunction<TGame> | keyof SearchEntityEvent<TGame> | keyof SearchEntityProperty<TGame> | keyof SearchEntityStruct<TGame>;
 
 
 
-export type SearchIndexEntitiesRecordRawType<TGame extends PapyrusGame, TType extends 'non-indexed'|'indexed' = 'indexed'> = {
-    readonly [SearchIndexEntityType.Script]: TType extends 'indexed' ? SearchEntityScriptIndexed<TGame> : SearchEntityScriptNonIndexed<TGame>,
-    readonly [SearchIndexEntityType.Function]: TType extends 'indexed' ? SearchEntityFunctionIndexed<TGame> : SearchEntityFunctionNonIndexed<TGame>, // TODO: Create a function aggregate type and use that here
-    readonly [SearchIndexEntityType.Event]: TType extends 'indexed' ? SearchEntityEventIndexed<TGame> : SearchEntityEventNonIndexed<TGame>, // TODO: Create an event aggregate type and use that here
-    readonly [SearchIndexEntityType.Property]: TType extends 'indexed' ? SearchEntityPropertyIndexed<TGame> : SearchEntityPropertyNonIndexed<TGame>, // TODO: Create a property aggregate type and use that here
-    readonly [SearchIndexEntityType.Struct]: TType extends 'indexed' ? SearchEntityStructIndexed<TGame> : SearchEntityStructNonIndexed<TGame>,  // TODO: Create a struct aggregate type and use that here
+export type SearchIndexEntitiesRecordRawType<TGame extends PapyrusGame> = {
+    readonly [SearchIndexEntityType.Script]: SearchEntityScript<TGame>,
+    readonly [SearchIndexEntityType.Function]: SearchEntityFunction<TGame>,
+    readonly [SearchIndexEntityType.Event]: SearchEntityEvent<TGame>,
+    readonly [SearchIndexEntityType.Property]: SearchEntityProperty<TGame>,
+    readonly [SearchIndexEntityType.Struct]: SearchEntityStruct<TGame>,
 }
 
-export type AnySearchIndexEntity<TGame extends PapyrusGame, TType extends 'non-indexed'|'indexed' = 'indexed'> = SearchIndexEntitiesRecordRawType<TGame, TType>[keyof SearchIndexEntitiesRecordRawType<TGame, TType>];
+export type AnySearchIndexEntity<TGame extends PapyrusGame> = SearchIndexEntitiesRecordRawType<TGame>[keyof SearchIndexEntitiesRecordRawType<TGame>];
 
-export type SearchIndexEntityGroupRecord<TGame extends PapyrusGame, TType extends 'non-indexed'|'indexed' = 'indexed'> = { readonly [K in keyof SearchIndexEntitiesRecordRawType<TGame, TType>]: SearchIndexEntitiesRecordRawType<TGame, TType>[K][] };
+export type SearchIndexEntityGroupRecord<TGame extends PapyrusGame> = { readonly [K in keyof SearchIndexEntitiesRecordRawType<TGame>]: SearchIndexEntitiesRecordRawType<TGame>[K][] };
 export type SearchIndexEntityGroupRecordBlank<TGame extends PapyrusGame> = { readonly [K in keyof SearchIndexEntitiesRecordRawType<TGame>]: readonly SearchEntityBase<K>[] };
-export type SearchIndexEntityGroup<TGame extends PapyrusGame, TType extends 'non-indexed'|'indexed' = 'indexed'> = SearchIndexEntityGroupRecord<TGame, TType>[keyof SearchIndexEntityGroupRecord<TGame, TType>];
+export type SearchIndexEntityGroup<TGame extends PapyrusGame> = SearchIndexEntityGroupRecord<TGame>[keyof SearchIndexEntityGroupRecord<TGame>];
 
 
 export type SelectEntityGroups<TGame extends PapyrusGame, TAllGroups extends SearchIndexEntityGroupRecordBlank<TGame>, TTypes extends SearchIndexEntityType> = (TAllGroups[TTypes] extends readonly (infer U)[] ? U : never)[];
