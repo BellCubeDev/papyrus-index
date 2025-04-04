@@ -5,8 +5,10 @@ import { getWiki } from "../../wikimedia/getWiki";
 import { Link } from "../components/Link";
 import { WikiAttribution } from "../components/wiki-attribution/WikiAttribution";
 import { getGameFromParams, type GameRouteParams } from "./getGameFromParams";
-import { SearchProvider } from "../search/SearchProvider";
-import { generateSearchIndexHash } from "./search-index.json/generateSearchIndex";
+import { LOADING_IN_DEV_MODE, SearchProvider } from "../search/SearchProvider";
+import SearchBar from "./SearchBar";
+import { generateSearchJsonHash } from "./search-data.json/generateSearchJsonHash";
+import { Suspense } from "react";
 
 export async function generateMetadata({params}: {readonly params: Promise<GameRouteParams>}): Promise<Metadata> {
     const { game } = getGameFromParams(await params);
@@ -23,9 +25,26 @@ export async function generateMetadata({params}: {readonly params: Promise<GameR
 export default async function GameLayout({children, params}: {readonly children: React.ReactNode, readonly params: Promise<GameRouteParams>}) {
     const {game} = getGameFromParams(await params);
 
-    return <SearchProvider game={game} searchIndexHash={await generateSearchIndexHash(game)}>
+    const searchProviderChildren = <>
         <h1>From the game: <Link href={`/${toLowerCase(game)}` as const}>{getGameName(game)}</Link></h1>
+        <SearchBar game={game} />
         {children}
         <WikiAttribution {...getWiki(game)}  />
-    </SearchProvider>;
+    </>;
+
+    if (process.env.NODE_ENV === 'development') {
+        console.log('GameLayout: Development mode!');
+        return <Suspense fallback={<SearchProvider game={game} searchIndexHash={LOADING_IN_DEV_MODE}>
+            {searchProviderChildren}
+        </SearchProvider>}>{
+            generateSearchJsonHash(game).then((hash) => <SearchProvider game={game} searchIndexHash={hash}>
+                {searchProviderChildren}
+            </SearchProvider>)
+        }</Suspense>;
+    } else {
+        return <SearchProvider game={game} searchIndexHash={await generateSearchJsonHash(game)}>
+            {searchProviderChildren}
+        </SearchProvider>;
+    }
+
 }

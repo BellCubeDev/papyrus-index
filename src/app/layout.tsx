@@ -8,12 +8,11 @@ FontAwesomeConfig.autoAddCss = false;
 import { Roboto } from 'next/font/google';
 import { SourceCodePro } from './SourceCodePro';
 //import { ApolloWrapper } from '@/nexus-api/GraphQLClientClient';
-import { ProgressBar } from './ProgressBar';
-import { WikiMarkdown } from './components/wiki-markdown/WikiMarkdown';
-import Markdown from 'react-markdown';
-import { ThePapyrusIndexLogo } from './components/logo/ThePapyrusIndexLogo';
 import Image from 'next/image';
+import Markdown from 'react-markdown';
+import { ProgressBar } from './ProgressBar';
 import { Link } from './components/Link';
+import { ThePapyrusIndexLogo } from './components/logo/ThePapyrusIndexLogo';
 
 
 const roboto = Roboto({

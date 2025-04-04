@@ -51,7 +51,7 @@ export function papyrusTypeToString(type: PapyrusScriptType<boolean, true>|Papyr
     }
 }
 
-export function PapyrusType<TGame extends PapyrusGame>({game, type, inTooltip}: {readonly game: TGame, readonly type: PapyrusScriptTypeIndexed<boolean, true, TGame>, readonly inTooltip?: boolean}) {
+export function PapyrusType<TGame extends PapyrusGame>({game, type, inTooltip}: {readonly game: TGame, readonly type: PapyrusScriptTypeIndexed<boolean, true, TGame>, readonly inTooltip?: boolean | undefined}) {
     switch (type.type) {
         case PapyrusScriptTypeArchetype.None:
             return <span className={`${styles['type--void']}`}>void<PapyrusTypeArrayIndicator isArray={type.isArray} /></span>;
@@ -77,7 +77,7 @@ export function PapyrusType<TGame extends PapyrusGame>({game, type, inTooltip}: 
     }
 }
 
-export function PapyrusTypeNamed<TGame extends PapyrusGame>({game, name, type, inTooltip}: {readonly game: TGame, readonly name: string | null, readonly type: PapyrusScriptTypeIndexed<boolean, true, TGame>, readonly inTooltip?: boolean}) {
+export function PapyrusTypeNamed<TGame extends PapyrusGame>({game, name, type, inTooltip}: {readonly game: TGame, readonly name: string | null, readonly type: PapyrusScriptTypeIndexed<boolean, true, TGame>, readonly inTooltip?: boolean|undefined}) {
     return <span className={styles.typeWithName}>
         <PapyrusType game={game} type={type} inTooltip={inTooltip} />
         {name === null ? null : <span className={styles.typeName}>{name}</span>}
@@ -125,7 +125,7 @@ export function PapyrusTypeValueToken<TGame extends PapyrusGame>({game: _game, t
     }
 }
 
-export function PapyrusTypeWithValue<TGame extends PapyrusGame>({game, name, type, inTooltip}: {readonly game: TGame, readonly name: string | null, readonly type: PapyrusScriptValueIndexed<boolean, true, TGame>, readonly inTooltip?: boolean}) {
+export function PapyrusTypeWithValue<TGame extends PapyrusGame>({game, name, type, inTooltip}: {readonly game: TGame, readonly name: string | null, readonly type: PapyrusScriptValueIndexed<boolean, true, TGame>, readonly inTooltip?: boolean|undefined}) {
     return <span className={styles.typeWithName}>
         <PapyrusTypeNamed game={game} name={name} type={type} inTooltip={inTooltip} />
         <span className={styles.separator}>=</span>

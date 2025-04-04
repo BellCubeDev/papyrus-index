@@ -239,6 +239,18 @@ export async function getWikiPageHTMLString(wiki: PapyrusWiki, pageTitle: string
                 return null;
             }
             return res;
+        } catch (err) {
+            if (err instanceof Error && 'code' in err && err.code === 'ENOENT') {
+                changeIndexEntry(wiki, pageTitle, {
+                    exists: false,
+                    needsRedownloaded: page.needsRedownloaded,
+                    lastDownloaded: page.lastDownloaded,
+                });
+                await fs.rm(htmlFilePath, {force: true});
+                // intentionally continue on to downloading now
+            } else {
+                throw err;
+            }
         } finally {
             await releaseHTMLFileLock();
         }

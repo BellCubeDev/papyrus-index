@@ -144,14 +144,14 @@ process.stdout.isTTY = false;
 const targetLogMessage = ` ${Log.prefixes.info} Collecting page data ...`;
 
 /** The log since the last time patchLog() ran successfully */
-let currentLog = '';
+//let currentLog = '';
 const isOurLog = Symbol('isOurLog');
 const reallyOldLog = console.log;
 function patchLog(isInitialRun = false) {
     if ((console.log as any)[isOurLog]) return;
     const oldLog = console.log;
     //writeFileSync('typecheck.log.json', JSON.stringify(logsSoFar));
-    currentLog = '';
+    //currentLog = '';
     console.log = function log(...args: any[]) {
         if (args[0] === targetLogMessage) {
             Log.info('Typechecking finished without errors! Throwing an escape hatch, nominal "error" up the stack...');
@@ -160,13 +160,13 @@ function patchLog(isInitialRun = false) {
         oldLog(...args);
     };
     (console.log as any)[isOurLog] = true;
-    if (isInitialRun) Log.event('Typecheck script successfully monkey-patched console.log! To detect when typechecking ends, we look for the next log message, ""');
+    if (isInitialRun) Log.event('Typecheck script successfully monkey-patched console.log! To detect when typechecking ends, we look for the message:', targetLogMessage);
     else Log.info('Reestablished console.log monkey patch.');
 }
 const oldSTDOUTWrite = process.stdout.write;
 // @ts-ignore
 process.stdout.write = function write(this: ThisParameterType<typeof oldSTDOUTWrite>, ...args: Parameters<typeof oldSTDOUTWrite>) {
-    currentLog += args[0].toString();
+    //currentLog += args[0].toString();
     oldSTDOUTWrite.call(this, ...args);
 };
 patchLog(true);

@@ -1,18 +1,23 @@
 
 
-export function getBestNameVariant(names: [[Lowercase<string>[], string], ...([Lowercase<string>[], string][])]): [Lowercase<string>[], string];
+export function getBestNameVariant<T extends string>(names: [[Lowercase<string>[], T], ...([Lowercase<string>[], T][])]): [Lowercase<string>[], T];
+export function getBestNameVariant<T extends string>(names: [Lowercase<string>[], T][] & { length: Exclude<number, 0> }): [Lowercase<string>[], T];
+export function getBestNameVariant<T extends string>(names: [Lowercase<string>[], T][] & { length: 0 }): undefined;
 export function getBestNameVariant(names: []): undefined;
-export function getBestNameVariant(names: [Lowercase<string>[], string][] & { length: Exclude<number, 0> }): [Lowercase<string>[], string];
-export function getBestNameVariant(names: [Lowercase<string>[], string][] & { length: 0 }): undefined;
-export function getBestNameVariant(names: [Lowercase<string>[], string][]): [Lowercase<string>[], string] | undefined;
+export function getBestNameVariant<T extends string>(names: [Lowercase<string>[], T][]): [Lowercase<string>[], T] | undefined;
 /**
  * Because names in Papyrus are case-insensitive, we may have multiple case variations of a given name.
  *
  * We ideally want to choose the name that will be easiest for API consumers to understand. A name is considered
  * "better" using a simple algorithm which prioritizes names with roughly 25% uppercase characters.
  */
-export function getBestNameVariant(names: [Lowercase<string>[], string][]) {
-    return names.sort((a, b) => calculateNameDesirability(a[1]) - calculateNameDesirability(b[1]))[0];
+export function getBestNameVariant<T extends string>([firstName, ...remainingNames]: [Lowercase<string>[], T][]): [Lowercase<string>[], T] | undefined {
+    if (firstName === undefined) return undefined;
+    return remainingNames.reduce((acc, newest) => {
+        const newestScore = calculateNameDesirability(newest[1]);
+        if (acc[0] < newestScore) return [newestScore, newest] as const;
+        return acc;
+    }, [calculateNameDesirability(firstName[1]), firstName] as const)[1];
 }
 
 /**
@@ -21,8 +26,13 @@ export function getBestNameVariant(names: [Lowercase<string>[], string][]) {
  * We ideally want to choose the name that will be easiest for API consumers to understand. A name is considered
  * "better" using a simple algorithm which prioritizes names with roughly 25% uppercase characters.
  */
-export function getBestName(names: string[]) {
-    return names.sort((a, b) => calculateNameDesirability(a) - calculateNameDesirability(b))[0];
+export function getBestName<T extends string>([firstName, ...remainingNames]: T[]): T | undefined {
+    if (firstName === undefined) return undefined;
+    return remainingNames.reduce((acc, newest) => {
+        const newestScore = calculateNameDesirability(newest);
+        if (acc[0] < newestScore) return [newestScore, newest] as const;
+        return acc;
+    }, [calculateNameDesirability(firstName), firstName] as const)[1];
 }
 
 /**

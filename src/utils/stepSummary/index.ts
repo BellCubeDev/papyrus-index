@@ -74,7 +74,7 @@ if (isCI) {
 }
 
 export async function appendToJobSummarySection(message: string) {
-    if (clientPromise === null) return
+    if (clientPromise === null) return;
 
     console.log("::debug::[STEP SUMMARY THREAD] Queueing a message to send to job summary worker.");
     (await clientPromise).write(JSON.stringify({ type: JobSummaryWorkerMessageType.AppendToSection, message }));

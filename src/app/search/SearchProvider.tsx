@@ -1,9 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import type { PapyrusGame } from '../../papyrus/data-structures/pure/game';
-import type { WorkerMessageInput, WorkerMessageInputInit, WorkerMessageOutput } from './SEARCH.worker';
-import type { SearchIndexEntity } from '../[game]/search-index.json/SearchIndexEntity';
+import type { SearchIndexEntityType } from './Entity';
+import { deepUnprepare, DeepUnpreparedValue } from './Preparation';
+import type { WorkerMessageInput, WorkerMessageInputInit, WorkerMessageOutput, WorkerMessageOutputSearchIndexReady, WorkerMessageOutputSearchResult } from './SEARCH.worker';
+import { memoizeDevServerConst } from '../../utils/memoizeDevServerConst';
+import { SourceListUser } from '../components/papyrus/SourcesList';
 
 function generateWorker(game: PapyrusGame, searchIndexHash: string) {
     console.log('Creating search worker...');
@@ -15,9 +18,19 @@ function generateWorker(game: PapyrusGame, searchIndexHash: string) {
     };
 }
 
-interface SearchContext {
+export type SearchContextLoaded = {
     worker: Worker;
-    search(query: string): Promise<Fuzzysort.KeysResults<SearchIndexEntity>>;
+    sources: Promise<WorkerMessageOutputSearchIndexReady['sources']>;
+    DEVELOPMENT__LOADING_HASH: false;
+    LOADING_FROM_SSR: false;
+    search<TTypes extends SearchIndexEntityType>(query: string, types: TTypes[], signal?: undefined): Promise<DeepUnpreparedValue<WorkerMessageOutputSearchResult<PapyrusGame, TTypes>['results']>>;
+    search<TTypes extends SearchIndexEntityType>(query: string, types: TTypes[], signal?: AbortSignal | undefined): Promise<null | DeepUnpreparedValue<WorkerMessageOutputSearchResult<PapyrusGame, TTypes>['results']>>;
+    search<TTypes extends SearchIndexEntityType>(query: string, types: TTypes[], signal: AbortSignal | undefined): Promise<null | DeepUnpreparedValue<WorkerMessageOutputSearchResult<PapyrusGame, TTypes>['results']>>;
+}
+
+export type SearchContext = SearchContextLoaded | {
+    DEVELOPMENT__LOADING_HASH: boolean;
+    LOADING_FROM_SSR: boolean;
 }
 
 const searchContext = React.createContext<SearchContext | null>(null);
@@ -33,9 +46,22 @@ export function useSearchContext(advanced?: boolean): SearchContext | null {
     return res;
 }
 
-export function SearchProvider({children, game, searchIndexHash}: {readonly children: React.ReactNode, readonly game: PapyrusGame, readonly searchIndexHash: string}) {
+export const LOADING_IN_DEV_MODE: unique symbol = memoizeDevServerConst('SEARCH__LOADING_IN_DEV_MODE', () => Symbol.for('PAPYRUS_INDEX_LOADING_IN_DEV_MODE')) as any;
+
+export function SearchProvider({children, game, searchIndexHash}: {readonly children: React.ReactNode, readonly game: PapyrusGame, readonly searchIndexHash: string | typeof LOADING_IN_DEV_MODE}) {
+    const isLoadingHash = searchIndexHash === LOADING_IN_DEV_MODE;
     const typeofWorker = typeof Worker;
-    const worker = React.useMemo(() => typeofWorker === 'undefined' ? null : generateWorker(game, searchIndexHash), [game, searchIndexHash, typeofWorker]);
+    const worker = React.useMemo(() => (isLoadingHash || typeofWorker === 'undefined') ? null : generateWorker(game, searchIndexHash), [game, searchIndexHash, typeofWorker, isLoadingHash]);
+    const sources = React.useMemo(() => new Promise<WorkerMessageOutputSearchIndexReady['sources']>(resolve => {
+        if (!worker) return resolve(null as never);
+        const listener = (e: MessageEvent<WorkerMessageOutput>) => {
+            if (e.data.type !== 'SEARCH_INDEX_READY') return;
+                worker.removeEventListener('message', listener);
+                resolve(e.data.sources);
+            };
+            worker.addEventListener('message', listener);
+        }
+    ), [worker]);
 
     React.useEffect(() => {
         const previousWorker = worker;
@@ -44,30 +70,51 @@ export function SearchProvider({children, game, searchIndexHash}: {readonly chil
 
     const searchIdRef = React.useRef(0);
 
-    const search = React.useCallback(async function search(query: string) {
-        if (!worker) throw new Error('Cannot call search() from the server! Must be called on the client, with Web Workers enabled.');
-        const start = performance.now();
-        const searchId = ++searchIdRef.current;
-        const resultPromise = new Promise<Fuzzysort.KeysResults<SearchIndexEntity>>(resolve => {
-            const listener = (e: MessageEvent<WorkerMessageOutput>) => {
-                if (e.data.type !== 'SEARCH_RESULT' || e.data.id !== searchId) return;
-                worker.removeEventListener('message', listener);
-                resolve(e.data.results);
-            };
-            worker.addEventListener('message', listener);
-        });
-        worker.postMessage({type: 'SEARCH', query, id: searchIdRef.current});
-        const res = await resultPromise;
-        console.log('Search took', performance.now() - start, 'ms', {res});
-        return res;
-    }, [worker]);
+    const search = React.useCallback<SearchContextLoaded['search']>(
+        async function search<TTypes extends SearchIndexEntityType>(query: string, types: TTypes[], signal?: AbortSignal): Promise<any> {
+            if (!worker) throw new Error('Cannot call search() from the server! Must be called on the client, with Web Workers enabled.');
+            const start = performance.now();
+            const searchId = ++searchIdRef.current;
+            const resultPromise = new Promise<null | DeepUnpreparedValue<WorkerMessageOutputSearchResult<PapyrusGame, TTypes>['results']>>(resolve => {
+                const removeMessageListener = () => worker.removeEventListener('message', messageListener);
+                const messageListener = (e: MessageEvent<WorkerMessageOutput>) => {
+                    if (e.data.type !== 'SEARCH_RESULT' || e.data.id !== searchId) return;
+                    removeMessageListener();
+                    if (signal?.aborted) return;
+                    const narrowedE = e as MessageEvent<WorkerMessageOutputSearchResult<PapyrusGame, TTypes>>;
+                    resolve(deepUnprepare(narrowedE.data.results));
+                };
+                worker.addEventListener('message', messageListener);
+                signal?.addEventListener('abort', removeMessageListener);
+                signal?.addEventListener('abort', () => resolve(null));
+            });
+            worker.postMessage({
+                type: 'SEARCH',
+                query,
+                types,
+                id: searchIdRef.current
+            });
+            const res = await resultPromise;
+            console.log('Search took', performance.now() - start, 'ms', {res});
+            return res;
+        },
+    [worker]);
 
-    const value = React.useMemo(() => worker ? ({
+    const value = React.useMemo<SearchContext>(() => worker ? ({
         worker,
+        sources,
         search,
-    }) : null, [worker, search]);
+        DEVELOPMENT__LOADING_HASH: false,
+        LOADING_FROM_SSR: false,
+    }) : {
+        DEVELOPMENT__LOADING_HASH: isLoadingHash,
+        LOADING_FROM_SSR: typeof window === 'undefined',
+    }, [isLoadingHash, worker, sources, search]);
 
     return <searchContext.Provider value={value}>
         {children}
+        <Suspense>
+            <SourceListUser game={game} />
+        </Suspense>
     </searchContext.Provider>;
 }

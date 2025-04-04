@@ -15,7 +15,7 @@ const starryNight = await getStarryNightInstance();
 export function CodeBlock({language, code, doLineNumbers}: {readonly language: CodeBlockLanguage, readonly code: string, readonly doLineNumbers?: boolean}) {
     return <FloatingDelayGroup delay={300}><pre>
         <code data-language={language}>
-            <HighlightCode language={language} code={code} doLineNumbers={doLineNumbers} />
+            <HighlightCode language={language} code={code} doLineNumbers={doLineNumbers ?? false} />
         </code>
     </pre></FloatingDelayGroup>;
 }

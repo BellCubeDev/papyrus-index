@@ -9,11 +9,9 @@ import { Tooltip } from "../../tooltip/Tooltip";
 import styles from './PapyrusScriptReference.module.scss';
 import { PapyrusScriptReferenceTooltip } from "./PapyrusScriptReferenceTooltip";
 
-export function getScriptNameFromProps(propsObj: ComponentProps<typeof PapyrusScriptReferenceTooltip> & {missingName?: string | null}): string {
-    const {script, searchScript, scriptAggregate, possibleScripts, missingName} = propsObj;
-    if (searchScript) {
-        return searchScript.scriptNamespaceName.target;
-    } else if (script) {
+export function getScriptNameFromProps(propsObj: ComponentProps<typeof PapyrusScriptReferenceTooltip> & {missingName?: string | null|undefined}): string {
+    const {script, scriptAggregate, possibleScripts, missingName} = propsObj;
+    if (script) {
         return script.namespaceName;
     } else if (scriptAggregate) {
         return getBestNameVariant(scriptAggregate.namespaceName)[1];
@@ -25,17 +23,10 @@ export function getScriptNameFromProps(propsObj: ComponentProps<typeof PapyrusSc
     }
 }
 
-export function PapyrusScriptReference<TGame extends PapyrusGame>(propsObj: ComponentProps<typeof PapyrusScriptReferenceTooltip> & {readonly game: TGame, readonly missingName?: string|null, readonly inTooltip?: boolean}) {
-    const {game, searchScript, script, scriptAggregate, possibleScripts, missingName} = propsObj;
+export function PapyrusScriptReference<TGame extends PapyrusGame>(propsObj: ComponentProps<typeof PapyrusScriptReferenceTooltip> & {readonly game: TGame, readonly missingName?: string|null|undefined, readonly inTooltip?: boolean|undefined}) {
+    const {game, script, scriptAggregate, possibleScripts, missingName} = propsObj;
     const name = getScriptNameFromProps(propsObj);
-    if (searchScript) {
-        if (propsObj.inTooltip) return <span className={styles.reference}>{name}</span>;
-        return <Tooltip role='tooltip' wrapperClassName={styles.reference} tooltipContents={<PapyrusScriptReferenceTooltip searchScript={searchScript} />}>
-            <Link href={`/${toLowerCase(game)}/script/${toLowerCase(name)}` as const}>
-                {name}
-            </Link>
-        </Tooltip>;
-    } else if (script) {
+    if (script) {
         if (propsObj.inTooltip) return <span className={styles.reference}>{name}</span>;
         return <Tooltip role='tooltip' wrapperClassName={styles.reference} tooltipContents={<PapyrusScriptReferenceTooltip script={script} />}>
             <Link href={`/${toLowerCase(game)}/script/${toLowerCase(name)}` as const}>

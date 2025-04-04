@@ -1,7 +1,8 @@
 import type { PapyrusScriptDocumentable } from "../pure/documentable";
 import type { PapyrusGame } from "../pure/game";
-import type { PapyrusScriptPropertyGroupIndexed } from "./propertyGroup";
-import type { PapyrusScriptIndexed } from "./script";
+import type { PapyrusGameDataIndexed } from "./game";
+import type { PapyrusScriptPropertyGroupIndexed, PapyrusScriptPropertyGroupIndexedAggregate } from "./propertyGroup";
+import type { PapyrusScriptIndexed, PapyrusScriptIndexedAggregate } from "./script";
 import type { PapyrusScriptValueIndexed } from "./type";
 
 export interface PapyrusScriptPropertyIndexed<TGame extends PapyrusGame> extends PapyrusScriptDocumentable {
@@ -22,6 +23,8 @@ export interface PapyrusScriptPropertyIndexed<TGame extends PapyrusGame> extends
     group: PapyrusScriptPropertyGroupIndexed<TGame>;
     /** The script this property originates from */
     script: PapyrusScriptIndexed<TGame>;
+    /** The game this property originates from */
+    game: PapyrusGameDataIndexed<TGame>;
 
     // Post-Skyrim additions:
 
@@ -30,3 +33,22 @@ export interface PapyrusScriptPropertyIndexed<TGame extends PapyrusGame> extends
     /** Whether the CK will spit out a warning when this is property is not filled */
     mandatory: (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? true : never) | false;
 }
+
+type PapyrusScriptPropertyIndexedAggregateBase<TGame extends PapyrusGame> = {
+    [K in keyof PapyrusScriptPropertyIndexed<TGame>]:
+        NonNullable<PapyrusScriptPropertyIndexed<TGame>[K]> extends Record<Lowercase<string>, any>
+            ? Record<Lowercase<string>, [Lowercase<string>[], PapyrusScriptPropertyIndexed<TGame>[K][any]][]>
+            : [Lowercase<string>[], PapyrusScriptPropertyIndexed<TGame>[K]][];
+}
+
+type PapyrusScriptPropertyIndexedAggregateSpecialKeys<TGame extends PapyrusGame> = {
+    $entityId: number;
+    $sources: Record<Lowercase<string>, PapyrusScriptPropertyIndexed<TGame>>;
+    constant: [Lowercase<string>[], (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? true : never) | false][];
+    mandatory: [Lowercase<string>[], (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? true : never) | false][];
+    script: PapyrusScriptIndexedAggregate<TGame>;
+    game: PapyrusGameDataIndexed<TGame>;
+    group: PapyrusScriptPropertyGroupIndexedAggregate<TGame>;
+}
+
+export type PapyrusScriptPropertyIndexedAggregate<TGame extends PapyrusGame> = PapyrusScriptPropertyIndexedAggregateSpecialKeys<TGame> & Omit<PapyrusScriptPropertyIndexedAggregateBase<TGame>, keyof PapyrusScriptPropertyIndexedAggregateSpecialKeys<TGame>>;

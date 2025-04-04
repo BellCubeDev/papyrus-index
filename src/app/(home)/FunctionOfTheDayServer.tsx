@@ -1,14 +1,14 @@
 /* eslint-disable no-bitwise */
-import type { PapyrusScriptFunctionIndexed } from "../../papyrus/data-structures/indexing/function";
-import { AllSourcesCombined } from "../../papyrus/data-structures/indexing/game";
-import type { PapyrusGame } from "../../papyrus/data-structures/pure/game";
-import { getBestNameVariant } from "../../utils/getBestName";
-import { AllScriptsIndexed } from "../../papyrus/indexing/index-all";
-import { PapyrusFunctionSignatureVariants } from "../components/papyrus/function/signature/FunctionSignatureVariants";
 import 'server-only';
 import { Fragment } from "react";
+import type { PapyrusScriptFunctionIndexedAggregate } from "../../papyrus/data-structures/indexing/function";
+import { AllSourcesCombined } from "../../papyrus/data-structures/indexing/game";
+import type { PapyrusGame } from "../../papyrus/data-structures/pure/game";
+import { AllScriptsIndexed } from "../../papyrus/indexing/index-all";
+import { getBestNameVariant } from "../../utils/getBestName";
 import { getGameName } from "../../utils/getGameName";
 import { PapyrusScriptFunctionReference } from "../components/papyrus/function/reference/PapyrusScriptFunctionReference";
+import { PapyrusFunctionSignatureVariants } from "../components/papyrus/function/signature/FunctionSignatureVariants";
 
 function calculateFunctionNamePseudoRandom(value: string) {
     let hash = 0;
@@ -24,17 +24,17 @@ export type FunctionOfTheDayFunction = {
     readonly scriptNamespaceNameLowercase: Lowercase<string>;
     readonly scriptNamespaceNameVariants: [Lowercase<string>[], string][];
     readonly functionNameLowercase: Lowercase<string>;
-    readonly functionVariants: [Lowercase<string>[], PapyrusScriptFunctionIndexed<PapyrusGame>][];
+    readonly func: PapyrusScriptFunctionIndexedAggregate<PapyrusGame>;
 }
 
 const allFunctions: FunctionOfTheDayFunction[] = Object.entries(AllScriptsIndexed).flatMap(([game, gameData]) =>
     Object.entries(gameData.scripts).flatMap(([scriptNamespaceNameLowercase, bySources]) =>
-        Object.entries(bySources[AllSourcesCombined].functions).flatMap(([functionNameLowercase, functionVariants]) => ({
+        Object.entries(bySources[AllSourcesCombined].functions).flatMap(([functionNameLowercase, func]) => ({
             game,
             scriptNamespaceNameLowercase,
             scriptNamespaceNameVariants: bySources[AllSourcesCombined].namespaceName,
             functionNameLowercase,
-            functionVariants,
+            func,
         }))
     )
 ).sort((a, b) => {
@@ -54,7 +54,7 @@ export const functionOfTheDayOptions: FunctionOfTheDayOption[] = new Array(7).fi
 
 export const FunctionOfTheDayOptionsWithRendered = functionOfTheDayOptions.map(FunctionOfTheDay) as [number, React.ReactElement][];
 
-function FunctionOfTheDay({dayNum, game, scriptNamespaceNameLowercase, scriptNamespaceNameVariants, functionNameLowercase, functionVariants}: FunctionOfTheDayOption) {
+function FunctionOfTheDay({dayNum, game, scriptNamespaceNameLowercase, functionNameLowercase, func}: FunctionOfTheDayOption) {
     const script = AllScriptsIndexed[game].scripts[scriptNamespaceNameLowercase]!;
     const scriptName = getBestNameVariant(script[AllSourcesCombined].namespaceName)[1];
     if (!script) throw new Error(`Script ${scriptName} not found in game ${game} for Function of the Day! This should not be possible!`);
@@ -62,7 +62,7 @@ function FunctionOfTheDay({dayNum, game, scriptNamespaceNameLowercase, scriptNam
     return [dayNum, <Fragment key={`${game}/${scriptNamespaceNameLowercase}/${functionNameLowercase}`}>
         <h2>
             {getGameName(game)}:{' '}
-            <PapyrusScriptFunctionReference game={game} possibleFunctions={functionVariants} possibleScripts={script} missingName={scriptName} /> </h2>
-        <PapyrusFunctionSignatureVariants game={game} variants={functionVariants} scriptName={scriptName} />
+            <PapyrusScriptFunctionReference game={game} funcAggregate={func} possibleScripts={script} missingName={scriptName} /> </h2>
+        <PapyrusFunctionSignatureVariants game={game} funcAggregate={func} scriptName={scriptName} />
     </Fragment>] as const;
 }

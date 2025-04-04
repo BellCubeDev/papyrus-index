@@ -1,20 +1,17 @@
+import { Suspense } from "react";
 import type { PapyrusScriptFunctionIndexed } from "../../../../../papyrus/data-structures/indexing/function";
 import type { PapyrusGame } from "../../../../../papyrus/data-structures/pure/game";
-import styles from './FunctionSignature.module.scss';
-import { PapyrusType, PapyrusTypeNamed, PapyrusTypeWithValue } from "../../type/PapyrusType";
 import { joinJSXWithElementByWrapping } from "../../../../../utils/joinJSX";
-import { PapyrusFunctionSignatureParamSeparator, PapyrusFunctionSignatureParamWrapper } from "./FunctionSignatureParamSeparator";
-import { TextWithTooltip } from "../../../text-with-tooltip/TooltipText";
-import { getWikiDataFunctionPage } from "../../../../../wikimedia/GetWikiDataFunctionPage";
-import { WikiMarkdown } from "../../../wiki-markdown/WikiMarkdown";
-import { AllScriptsIndexed } from "../../../../../papyrus/indexing/index-all";
-import { Link } from "../../../Link";
 import { toLowerCase } from "../../../../../utils/toLowerCase";
+import { Link } from "../../../Link";
+import { TextWithTooltip } from "../../../text-with-tooltip/TooltipText";
+import { PapyrusType, PapyrusTypeNamed, PapyrusTypeWithValue } from "../../type/PapyrusType";
 import { FunctionDocumentationStringAll, FunctionDocumentationStringBest } from "./DocumentationString";
-import { Suspense } from "react";
+import styles from './FunctionSignature.module.scss';
+import { PapyrusFunctionSignatureParamSeparator, PapyrusFunctionSignatureParamWrapper } from "./FunctionSignatureParamSeparator";
 
 
-export function PapyrusFunctionSignature<TGame extends PapyrusGame>({game, func, scriptName, inTooltip, longerDescription}: {readonly game: TGame, readonly func: PapyrusScriptFunctionIndexed<TGame>, readonly scriptName: string, readonly inTooltip?: boolean, readonly longerDescription?: boolean}): React.ReactElement {
+export function PapyrusFunctionSignature<TGame extends PapyrusGame>({game, func, scriptName, inTooltip, longerDescription}: {readonly game: TGame, readonly func: PapyrusScriptFunctionIndexed<TGame> & {ckWikiDescription?: string|null|undefined}, readonly scriptName: string, readonly inTooltip?: boolean|undefined, readonly longerDescription?: boolean|undefined}): React.ReactElement {
 
     return <div className={styles.functionSignatureWithShortDescription}>
         <div className={styles.functionSignature}>
@@ -57,30 +54,30 @@ export function PapyrusFunctionSignature<TGame extends PapyrusGame>({game, func,
     </div>;
 }
 
-export function PapyrusFunctionSignatureFlagNative({inTooltip}: {readonly inTooltip?: boolean}) {
+export function PapyrusFunctionSignatureFlagNative({inTooltip}: {readonly inTooltip?: boolean|undefined}) {
     if (inTooltip) return <span className={styles.flag}>Native</span>;
 
     return <TextWithTooltip wrapperClassName={styles.flag} tooltipContents={<p>
-        &ldquo;Native&rdquo; Papyrus functions are integrated directly into the game engine itself.
-        New Native functions can be added by an xSE plugin.
+        <span className={styles.flag}>Native</span> Papyrus functions are integrated directly into the game engine itself.
+        New <span className={styles.flag}>Native</span> functions can be added by an xSE plugin.
     </p>}>
         Native
     </TextWithTooltip>;
 }
 
-export function PapyrusFunctionSignatureFlagGlobal({inTooltip}: {readonly inTooltip?: boolean}) {
+export function PapyrusFunctionSignatureFlagGlobal({inTooltip}: {readonly inTooltip?: boolean|undefined}) {
     if (inTooltip) return <span className={styles.flag}>Global</span>;
 
     return <TextWithTooltip wrapperClassName={styles.flag} tooltipContents={<>
         <p>
-            &ldquo;Global&rdquo; functions are not called on a ScriptObject instance (e.g. <code>
+            <span className={styles.flag}>Global</span> functions are not called on a ScriptObject instance (e.g. <code>
                 <span style={{color:'#9cdcfe'}}>myObjectReferenceVariable</span>.<span style={{color:'#dcdcaa'}}>Disable</span>()
             </code>).
             They can instead be called from anywhere in Papyrus (e.g. <code>
                 <span style={{color:'#4fc9b1'}}>Game</span>.<span style={{color:'#dcdcaa'}}>ForceFirstPerson</span>()
             </code>).
         </p><p>
-            Global functions have no access to the built-in <code style={{color:'#569cd6'}}>self</code> or <code style={{color:'#569cd6'}}>parent</code> variables
+            <span className={styles.flag}>Global</span> functions have no access to the built-in <code style={{color:'#569cd6'}}>self</code> or <code style={{color:'#569cd6'}}>parent</code> variables
             that a function running on a ScriptObject instance would have.
         </p><p>
             If this is confusing, you may wish to look at this function&rsquo;s usage example(s).
@@ -90,30 +87,30 @@ export function PapyrusFunctionSignatureFlagGlobal({inTooltip}: {readonly inTool
     </TextWithTooltip>;
 }
 
-export function PapyrusFunctionSignatureFlagDebugOnly({inTooltip}: {readonly inTooltip?: boolean}) {
+export function PapyrusFunctionSignatureFlagDebugOnly({inTooltip}: {readonly inTooltip?: boolean|undefined}) {
     if (inTooltip) return <span className={styles.flag}>DebugOnly</span>;
 
     return <TextWithTooltip wrapperClassName={styles.flag} tooltipContents={<>
         <p>
-            Calls to &ldquo;DebugOnly&rdquo; functions will be removed from your script
+            Calls to <span className={styles.flag}>DebugOnly</span> functions will be removed from your script
             when you compile it in Release mode or Beta mode.
         </p><p>
-            ADD RATIONALE FOR ITS EXISTENCE HERE
+            TODO: ADD RATIONALE FOR ITS EXISTENCE HERE
         </p>
     </>}>
         DebugOnly
     </TextWithTooltip>;
 }
 
-export function PapyrusFunctionSignatureFlagBetaOnly({inTooltip}: {readonly inTooltip?: boolean}) {
+export function PapyrusFunctionSignatureFlagBetaOnly({inTooltip}: {readonly inTooltip?: boolean|undefined}) {
     if (inTooltip) return <span className={styles.flag}>BetaOnly</span>;
 
     return <TextWithTooltip wrapperClassName={styles.flag} tooltipContents={<>
         <p>
-            Calls to &ldquo;BetaOnly&rdquo; functions will be removed from your script
+            Calls to <span className={styles.flag}>BetaOnly</span> functions will be removed from your script
             when you compile it in Release mode.
         </p><p>
-            ADD RATIONALE FOR ITS EXISTENCE HERE
+            TODO: ADD RATIONALE FOR ITS EXISTENCE HERE
         </p>
     </>}>
         BetaOnly

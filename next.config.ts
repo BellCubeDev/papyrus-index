@@ -15,13 +15,24 @@ const nextConfig = {
 
     output: 'export',
 
+    allowedDevOrigins: process.env.ALLOWED_DEV_ORIGINS?.split(',').map(o => o.trim()).filter(o => o.length > 0),
+
     productionBrowserSourceMaps: true,
 
-    /** @type {import('sass').Options} */
     sassOptions: {
+        implementation: 'sass',
         alertColor: true,
         style: 'compressed',
-    },
+        silenceDeprecations: [
+            'mixed-decls', // we don't depend on the order of CSS declarations being deterministic in the first place, so this deprecation is fine
+        ],
+
+        logger: {
+            warn(message, _options) {
+                console.warn(`⚠️  Sass Warning:\n${['',...message.split('\n')].join('\n  [96m|[0m ')}\n`);
+            },
+        }
+    } satisfies NextConfig['sassOptions'] & import('sass').Options<'sync' | 'async'>,
 
     experimental: {
         cpus: isCI ? cpus().length : cpus().length - 2,
@@ -48,6 +59,6 @@ const nextConfig = {
 
 
     transpilePackages: ['@wooorm/starry-night']
-} as const satisfies NextConfig;
+} as const satisfies RestoreLegacyOptionalKeys<NextConfig>;
 
 export default nextConfig;

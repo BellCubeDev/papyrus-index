@@ -17,6 +17,23 @@ const bsArchEXEPath = path.resolve(thisDirPath, 'BSArch.exe');
 // It is meant for use in CI environments.
 let hasInstalledWine = false;
 
+if (os.platform() !== 'win32') {
+    try {
+        await new Promise<void>((resolve, reject) => {
+            const child = spawn('wine --version', { shell: true });
+            child.once('exit', (code) => {
+                if (code === 0) resolve();
+                else reject(new Error('Wine is not installed or not accessible.'));
+            });
+            child.once('error', reject);
+        });
+        hasInstalledWine = true;
+    } catch (e) {
+        console.error('Encountered an error while checking for Wine installation:', e);
+        hasInstalledWine = false;
+    }
+}
+
 /** Class to handle interacting with the command-line tool BSArch */
 class BSArch {
     private static instance: BSArch;
