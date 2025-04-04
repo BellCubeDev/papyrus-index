@@ -21,6 +21,9 @@ const nextConfig = {
         implementation: 'sass',
         alertColor: true,
         style: 'compressed',
+        silenceDeprecations: [
+            'mixed-decls', // we don't depend on the order of CSS declarations being deterministic in the first place, so this deprecation is fine
+        ],
 
         logger: {
             warn(message, options) {
