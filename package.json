@@ -84,7 +84,8 @@
   },
   "pnpm": {
     "patchedDependencies": {
-      "fuzzysort": "patches/fuzzysort.patch"
+      "fuzzysort": "patches/fuzzysort.patch",
+      "typescript@5.8.2": "patches/typescript@5.8.2.patch"
     },
     "onlyBuiltDependencies": [
       "esbuild"

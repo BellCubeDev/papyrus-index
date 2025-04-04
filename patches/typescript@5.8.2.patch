@@ -1,0 +1,60 @@
+diff --git a/lib/_tsc.js b/lib/_tsc.js
+index 586d0514b6842000c0869c18f737802b85bef13d..2f84569a6a23c6b58278f37b76646e5b2fdd20e2 100644
+--- a/lib/_tsc.js
++++ b/lib/_tsc.js
+@@ -61658,7 +61658,10 @@ function createTypeChecker(host) {
+     let extraTypes;
+     let tailCount = 0;
+     while (true) {
+-      if (tailCount === 1e3) {
++      const tailCount__LIMIT = 1e5;
++      if (tailCount === tailCount__LIMIT) {
++        const newDiag = diag(2589, 1 /* Error */, "Type_instantiation_is_excessively_deep_and_possibly_infinite_2589", `ENCOUNTERED TYPE INSTANTIATION ERROR: ${JSON.stringify({tailCount, tailCount__LIMIT})}`);
++        error(currentNode, newDiag)
+         error(currentNode, Diagnostics.Type_instantiation_is_excessively_deep_and_possibly_infinite);
+         return errorType;
+       }
+@@ -62699,8 +62702,12 @@ function createTypeChecker(host) {
+     if (!couldContainTypeVariables(type)) {
+       return type;
+     }
+-    if (instantiationDepth === 100 || instantiationCount >= 5e6) {
++    const instantiationDepth_LIMIT = 700;
++    const instantiationCount__LIMIT = 5e7;
++    if (instantiationDepth === instantiationDepth_LIMIT || instantiationCount >= instantiationCount__LIMIT) {
+       (_a = tracing) == null ? void 0 : _a.instant(tracing.Phase.CheckTypes, "instantiateType_DepthLimit", { typeId: type.id, instantiationDepth, instantiationCount });
++      const newDiag = diag(2589, 1 /* Error */, "Type_instantiation_is_excessively_deep_and_possibly_infinite_2589", `ENCOUNTERED TYPE INSTANTIATION ERROR: ${JSON.stringify({instantiationDepth, instantiationDepth_LIMIT, instantiationCount, instantiationCount__LIMIT})}`);
++      error(currentNode, newDiag)
+       error(currentNode, Diagnostics.Type_instantiation_is_excessively_deep_and_possibly_infinite);
+       return errorType;
+     }
+diff --git a/lib/typescript.js b/lib/typescript.js
+index dc0fe9a56bb4d9b08efe8b5948a60a74a4e9997b..350851b85674dd6081ce27a01a2d04c3de692fbb 100644
+--- a/lib/typescript.js
++++ b/lib/typescript.js
+@@ -66268,7 +66268,10 @@ function createTypeChecker(host) {
+     let extraTypes;
+     let tailCount = 0;
+     while (true) {
+-      if (tailCount === 1e3) {
++      const tailCount__LIMIT = 1e5;
++      if (tailCount === tailCount__LIMIT) {
++        const newDiag = diag(2589, 1 /* Error */, "Type_instantiation_is_excessively_deep_and_possibly_infinite_2589", `ENCOUNTERED TYPE INSTANTIATION ERROR: ${JSON.stringify({tailCount, tailCount__LIMIT})}`);
++        error2(currentNode, newDiag)
+         error2(currentNode, Diagnostics.Type_instantiation_is_excessively_deep_and_possibly_infinite);
+         return errorType;
+       }
+@@ -67309,8 +67312,12 @@ function createTypeChecker(host) {
+     if (!couldContainTypeVariables(type)) {
+       return type;
+     }
+-    if (instantiationDepth === 100 || instantiationCount >= 5e6) {
++    const instantiationDepth_LIMIT = 700;
++    const instantiationCount__LIMIT = 5e7;
++    if (instantiationDepth === instantiationDepth_LIMIT || instantiationCount >= instantiationCount__LIMIT) {
+       (_a = tracing) == null ? void 0 : _a.instant(tracing.Phase.CheckTypes, "instantiateType_DepthLimit", { typeId: type.id, instantiationDepth, instantiationCount });
++      const newDiag = diag(2589, 1 /* Error */, "Type_instantiation_is_excessively_deep_and_possibly_infinite_2589", `ENCOUNTERED TYPE INSTANTIATION ERROR: ${JSON.stringify({instantiationDepth, instantiationDepth_LIMIT, instantiationCount, instantiationCount__LIMIT})}`);
++      error2(currentNode, newDiag)
+       error2(currentNode, Diagnostics.Type_instantiation_is_excessively_deep_and_possibly_infinite);
+       return errorType;
+     }
