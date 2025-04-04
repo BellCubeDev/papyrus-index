@@ -46,10 +46,7 @@ export function aggregateEventOrBaseFunction<TGame extends PapyrusGame>(
             }
 
             existingParameter.value = merged;
-
-            if (existingParameter.isRequired || !newParameter.isRequired)
-                existingParameter.isRequired = false;
-
+            existingParameter.isRequired &&= newParameter.isRequired;
 
             parameters[i]!.$sources![source] = newParameter;
         }
