@@ -8,7 +8,7 @@ import { getSourceTypeMultiplier } from "../../utils/getSourceTypeMultiplier";
 import { toLowerCase } from "../../utils/toLowerCase";
 import type { SearchDataGETResponse, SingleExtraEntityDataRecord } from "../[game]/search-data.json/route";
 import { SearchIndexEntityGroupRecord, SearchIndexEntityType, selectEntityGroups, type SearchIndexEntity, type SelectEntityGroups } from "./Entity";
-import { deepPrepareObject, getStringForSymbol, prepForBorderCrossing, SYMBOL_PREFIX, type DeepPreparedObject } from "./Preparation";
+import { deepPrepareObject, getStringForSymbol, prepForBorderCrossing, SYMBOL_PREFIX, type DeepPreparedObject, type MapTupleToPrepared } from "./Preparation";
 import { PapyrusScriptTypeArchetype, type PapyrusScriptType } from "../../papyrus/data-structures/pure/type";
 import { UnknownPapyrusScript, UnknownPapyrusScriptStruct, type PapyrusScriptTypeIndexed, type PapyrusScriptTypeScriptInstanceIndexed, type PapyrusScriptTypeStructIndexed } from "../../papyrus/data-structures/indexing/type";
 
@@ -35,7 +35,7 @@ export type WorkerMessageInput = WorkerMessageInputInit | WorkerMessageInputSear
 export interface WorkerMessageOutputSearchResult<TGame extends PapyrusGame, TTypes extends SearchIndexEntityType> extends WorkerMessageBase {
     type: 'SEARCH_RESULT';
     id: number;
-    results: Fuzzysort.KeysResults<SelectEntityGroups<TGame, DeepPreparedObject<SearchIndexEntityGroupRecord<PapyrusGame>>, TTypes> extends (infer AV)[] ? AV : never>
+    results: Fuzzysort.KeysResults<SelectEntityGroups<TGame, DeepPreparedObject<SearchIndexEntityGroupRecord<PapyrusGame>>, TTypes> extends readonly (infer AV)[] ? AV : never>
 }
 
 export interface WorkerMessageOutputSearchIndexReady extends WorkerMessageBase {

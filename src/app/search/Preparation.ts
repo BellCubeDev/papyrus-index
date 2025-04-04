@@ -37,20 +37,24 @@ export type PreparedForMark<T> = {
 }
 
 type MapTupleElementsToPrepared<T extends readonly [any, ...any[]]> =
-T extends readonly [infer U, ...(infer R)]
-        ? R extends [any, ...any[]]
+    T extends readonly [infer U, ...(infer R)]
+        ? R extends [any, ...[any, ...any[]]]
+            ? [DeepPreparedValue<U>, ...MapTupleElementsToPrepared<R>]
+        : R extends readonly [any, ...[any, ...any[]]]
             ? readonly [DeepPreparedValue<U>, ...MapTupleElementsToPrepared<R>]
-            : readonly [DeepPreparedValue<U>]
-        : never;
+        : [DeepPreparedValue<U>]
+    : never;
 
 
-export type MapTupleToPrepared<T extends ReadonlyArray<unknown>> =
+export type MapTupleToPrepared<T extends readonly any[]> =
     (
         T extends readonly [any, ...any[]]
-            ? (MapTupleElementsToPrepared<T> & {[K in keyof T as K extends ReservedSymbol | keyof ReadonlyArray<unknown> ? never : K]: DeepPreparedValue<T[K]>})
-            : {
-                [K in keyof T]: DeepPreparedValue<T[K]>
-            }
+            ? (MapTupleElementsToPrepared<T> & {[K in keyof T as K extends ReservedSymbol ? never : K extends number ? never : K extends keyof (T extends any[] ? DeepPreparedValue<any>[] : readonly DeepPreparedValue<any>[]) ? never : K]: DeepPreparedValue<T[K]>})
+            : T extends readonly (infer V)[]
+                ? (T extends V[] ? DeepPreparedValue<V>[] : readonly DeepPreparedValue<V>[]) & {
+                    [K in keyof T as K extends ReservedSymbol ? never : K extends number ? never : K extends keyof (T extends V[] ? DeepPreparedValue<V>[] : readonly DeepPreparedValue<V>[]) ? never : K]: DeepPreparedValue<T[K]>
+                }
+                : never
     ) & {
         [IS_PREPARED]: true;
     } & PreparedForMark<T>;
@@ -70,14 +74,14 @@ export type DeepPreparedValue<T> =
         ? `${typeof SYMBOL_PREFIX}${string}` & PreparedForMark<T>
     : T extends null | number | boolean | bigint | undefined | ((...args: any[]) => any)
         ? T
-    : T extends ReadonlyArray<any> ? MapTupleToPrepared<T>
+    : T extends readonly any[] ? MapTupleToPrepared<T>
     : T extends Record<any, any>
         ? DeepPreparedObject<T>
     : T;
 
 
-export type MapTupleToUnprepared<T extends ReadonlyArray<any>> = {
-    [K in keyof T as K extends ReservedSymbol | keyof ReadonlyArray<T> ? never : K]: DeepUnpreparedValue<T[K]>
+export type MapTupleToUnprepared<T extends readonly any[]> = {
+    [K in keyof T as K extends ReservedSymbol ? never : K extends number ? never : K extends keyof ReadonlyArray<T> ? never : K]: DeepUnpreparedValue<T[K]>
 } & ReadonlyArray<DeepUnpreparedValue<T[number]>>;
 
 export type DeepUnpreparedObject<T> = {
@@ -101,7 +105,7 @@ export type DeepUnpreparedValue<T> =
         ? U
     : T extends string | null | number | boolean | bigint | undefined | ((...args: any[]) => any)
         ? T
-    : T extends ReadonlyArray<any> ? MapTupleToUnprepared<T>
+    : T extends readonly any[] ? MapTupleToUnprepared<T>
     : T extends Record<any, any> ? DeepUnpreparedObject<T>
     : T;
 

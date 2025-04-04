@@ -3,6 +3,7 @@ import type { PapyrusScriptPropertyIndexedAggregate } from "../../papyrus/data-s
 import type { PapyrusScriptIndexedAggregate } from "../../papyrus/data-structures/indexing/script";
 import type { PapyrusScriptStructIndexedAggregate } from "../../papyrus/data-structures/indexing/struct";
 import type { PapyrusGame } from "../../papyrus/data-structures/pure/game";
+import type { MapTupleToPrepared } from "./Preparation";
 
 export enum SearchIndexEntityType {
     Script,
@@ -105,11 +106,11 @@ export type SearchIndexEntitiesRecordRawType<TGame extends PapyrusGame, TType ex
 export type AnySearchIndexEntity<TGame extends PapyrusGame, TType extends 'non-indexed'|'indexed' = 'indexed'> = SearchIndexEntitiesRecordRawType<TGame, TType>[keyof SearchIndexEntitiesRecordRawType<TGame, TType>];
 
 export type SearchIndexEntityGroupRecord<TGame extends PapyrusGame, TType extends 'non-indexed'|'indexed' = 'indexed'> = { readonly [K in keyof SearchIndexEntitiesRecordRawType<TGame, TType>]: SearchIndexEntitiesRecordRawType<TGame, TType>[K][] };
-export type SearchIndexEntityGroupRecordBlank<TGame extends PapyrusGame> = { readonly [K in keyof SearchIndexEntitiesRecordRawType<TGame>]: SearchEntityBase<K>[] };
+export type SearchIndexEntityGroupRecordBlank<TGame extends PapyrusGame> = { readonly [K in keyof SearchIndexEntitiesRecordRawType<TGame>]: readonly SearchEntityBase<K>[] };
 export type SearchIndexEntityGroup<TGame extends PapyrusGame, TType extends 'non-indexed'|'indexed' = 'indexed'> = SearchIndexEntityGroupRecord<TGame, TType>[keyof SearchIndexEntityGroupRecord<TGame, TType>];
 
 
-export type SelectEntityGroups<TGame extends PapyrusGame, TAllGroups extends SearchIndexEntityGroupRecordBlank<TGame>, TTypes extends SearchIndexEntityType> = (TAllGroups[TTypes] extends (infer U)[] ? U : never)[];
+export type SelectEntityGroups<TGame extends PapyrusGame, TAllGroups extends SearchIndexEntityGroupRecordBlank<TGame>, TTypes extends SearchIndexEntityType> = (TAllGroups[TTypes] extends readonly (infer U)[] ? U : never)[];
 export function selectEntityGroups<TGame extends PapyrusGame, TAllGroups extends SearchIndexEntityGroupRecordBlank<TGame>, TTypes extends SearchIndexEntityType>(allGroups: TAllGroups, ...types: TTypes[]): SelectEntityGroups<TGame, TAllGroups, TTypes> {
     return types.flatMap(type => allGroups[type] as any) as any;
 }
