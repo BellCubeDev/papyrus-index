@@ -17,11 +17,17 @@ const nextConfig = {
 
     productionBrowserSourceMaps: true,
 
-    /** @type {import('sass').Options} */
     sassOptions: {
+        implementation: 'sass',
         alertColor: true,
         style: 'compressed',
-    },
+
+        logger: {
+            warn(message, options) {
+                console.warn(`⚠️  Sass Warning:\n${['',...message.split('\n')].join('\n  [96m|[0m ')}\n`);
+            },
+        }
+    } satisfies NextConfig['sassOptions'] & import('sass').Options<'sync' | 'async'>,
 
     experimental: {
         cpus: isCI ? cpus().length : cpus().length - 2,
