@@ -1,6 +1,5 @@
 import { UnreachableError } from "../../../UnreachableError";
 import type { PapyrusScriptEventOrBaseFunctionIndexed, PapyrusScriptEventOrBaseFunctionIndexedAggregate, PapyrusScriptFunctionParameterIndexed } from "../../data-structures/indexing/function";
-import type { PapyrusScriptIndexedAggregate } from "../../data-structures/indexing/script";
 import { type PapyrusScriptTypeScriptInstanceIndexed, type PapyrusScriptTypeStructIndexed } from "../../data-structures/indexing/type";
 import type { PapyrusGame } from "../../data-structures/pure/game";
 import { aggregateGenericValue } from "./aggregateGenericValue";

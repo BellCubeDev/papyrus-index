@@ -1,6 +1,5 @@
 import { UnreachableError } from "../../../UnreachableError";
 import { doesScriptExtend } from "../../../utils/doesScriptExtend";
-import { iterateOverScriptParents } from "../../../utils/iterateOverScriptParents";
 import { UnknownPapyrusScript, type PapyrusScriptTypeIndexed, type PapyrusScriptValueIndexed } from "../../data-structures/indexing/type";
 import type { PapyrusGame } from "../../data-structures/pure/game";
 import { PapyrusScriptTypeArchetype } from "../../data-structures/pure/type";

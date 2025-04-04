@@ -3,7 +3,6 @@ import type { PapyrusScriptPropertyIndexedAggregate } from "../../papyrus/data-s
 import type { PapyrusScriptIndexedAggregate } from "../../papyrus/data-structures/indexing/script";
 import type { PapyrusScriptStructIndexedAggregate } from "../../papyrus/data-structures/indexing/struct";
 import type { PapyrusGame } from "../../papyrus/data-structures/pure/game";
-import type { MapTupleToPrepared } from "./Preparation";
 
 export enum SearchIndexEntityType {
     Script,

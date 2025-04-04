@@ -1,7 +1,7 @@
 import type { PapyrusPossibleScripts, PapyrusScriptIndexedAggregate } from "../../data-structures/indexing/script";
 import type { PapyrusScriptStructIndexed, PapyrusScriptStructIndexedAggregate } from "../../data-structures/indexing/struct";
 import type { PapyrusGame } from "../../data-structures/pure/game";
-import type { IndexingContextGame, IndexingContextSource } from "../index-game";
+import type { IndexingContextGame } from "../index-game";
 import { aggregateEventsOrBaseFunctionsRecord } from "./aggregateEventOrBaseFunction";
 import { aggregateFunctionsRecord } from "./aggregateFunction";
 import { aggregateGenericValue } from "./aggregateGenericValue";

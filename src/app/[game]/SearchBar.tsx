@@ -1,17 +1,17 @@
 'use client';
 
-import React, { type HTMLInputTypeAttribute } from "react";
+import React from "react";
 import type { PapyrusGame } from "../../papyrus/data-structures/pure/game";
 import { UnreachableError } from "../../UnreachableError";
 import { memoizeDevServerConst } from "../../utils/memoizeDevServerConst";
 import { GuardEmptyList } from "../components/GuardEmptyList";
 import { PapyrusScriptFunctionReference } from "../components/papyrus/function/reference/PapyrusScriptFunctionReference";
 import { PapyrusScriptReference } from "../components/papyrus/script/PapyrusScriptReference";
+import { useUpdatedRef } from "../hooks/useUpdatedRef";
 import { SearchIndexEntityType, type SearchIndexEntity } from "../search/Entity";
 import { DeepUnpreparedValue } from "../search/Preparation";
 import type { WorkerMessageOutputSearchResult } from "../search/SEARCH.worker";
 import { useSearchContext, type SearchContextLoaded } from "../search/SearchProvider";
-import { useUpdatedRef } from "../hooks/useUpdatedRef";
 
 const EMPTY_QUERY: unique symbol = memoizeDevServerConst('<SearchBar> EMPTY_QUERY', ()=>Symbol('<SearchBar> EMPTY_QUERY')) as any;
 const AWAITING_SEARCH: unique symbol = memoizeDevServerConst('<SearchBar> AWAITING_SEARCH', ()=>Symbol('<SearchBar> AWAITING_SEARCH')) as any;

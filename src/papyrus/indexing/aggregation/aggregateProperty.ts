@@ -1,9 +1,7 @@
 import type { PapyrusScriptPropertyIndexed, PapyrusScriptPropertyIndexedAggregate } from "../../data-structures/indexing/property";
-import type { PapyrusScriptPropertyGroupIndexedAggregate } from "../../data-structures/indexing/propertyGroup";
-import type { PapyrusScriptIndexedAggregate } from "../../data-structures/indexing/script";
 import type { PapyrusGame } from "../../data-structures/pure/game";
 import { aggregateGenericValue } from "./aggregateGenericValue";
-import { aggregatePropertyGroup, type AggregatePropertyGroupContext } from "./aggregatePropertyGroup";
+import { type AggregatePropertyGroupContext } from "./aggregatePropertyGroup";
 import { aggregateSourceRecordWithNameRecordEntries } from "./aggregateSourceRecordWithNameRecord";
 import { serializePapyrusTypeForAggregation } from "./serializePapyrusTypeForAggregation";
 

@@ -1,5 +1,4 @@
 import type { PapyrusScriptPropertyGroupIndexed, PapyrusScriptPropertyGroupIndexedAggregate } from "../../data-structures/indexing/propertyGroup";
-import type { PapyrusScriptIndexedAggregate } from "../../data-structures/indexing/script";
 import type { PapyrusGame } from "../../data-structures/pure/game";
 import { aggregateGenericValue } from "./aggregateGenericValue";
 import { aggregatePropertiesRecord } from "./aggregateProperty";

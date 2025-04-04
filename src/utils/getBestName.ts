@@ -1,9 +1,9 @@
 
 
 export function getBestNameVariant<T extends string>(names: [[Lowercase<string>[], T], ...([Lowercase<string>[], T][])]): [Lowercase<string>[], T];
-export function getBestNameVariant<T extends string>(names: []): undefined;
 export function getBestNameVariant<T extends string>(names: [Lowercase<string>[], T][] & { length: Exclude<number, 0> }): [Lowercase<string>[], T];
 export function getBestNameVariant<T extends string>(names: [Lowercase<string>[], T][] & { length: 0 }): undefined;
+export function getBestNameVariant(names: []): undefined;
 export function getBestNameVariant<T extends string>(names: [Lowercase<string>[], T][]): [Lowercase<string>[], T] | undefined;
 /**
  * Because names in Papyrus are case-insensitive, we may have multiple case variations of a given name.

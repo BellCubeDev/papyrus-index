@@ -1,15 +1,15 @@
-import { Worker } from "node:worker_threads";
+//import { Worker } from "node:worker_threads";
 import type { PapyrusScript } from "../data-structures/pure/script";
 import type { PapyrusGame } from "../data-structures/pure/game";
 import type { PapyrusScriptDiscoveredDocument } from "./parse-all-for-game";
-import path from "node:path";
-import url from "node:url";
+//import path from "node:path";
+//import url from "node:url";
 import { parseScriptSync, replaceFunctionImplementationWithGuard } from "./parse-script";
 import fs from "node:fs/promises";
 import { PapyrusSourceType, type PapyrusScriptSourceMetadata } from "../data-structures/pure/scriptSource";
 
-const filePath = url.fileURLToPath(import.meta.url);
-const fileExt = path.extname(filePath);
+//const filePath = url.fileURLToPath(import.meta.url);
+//const fileExt = path.extname(filePath);
 
 const GUARD_LOGIC = process.env.DO_GUARD_LOGIC === 'true';
 

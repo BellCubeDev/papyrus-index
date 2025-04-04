@@ -28,7 +28,7 @@ const nextConfig = {
         ],
 
         logger: {
-            warn(message, options) {
+            warn(message, _options) {
                 console.warn(`⚠️  Sass Warning:\n${['',...message.split('\n')].join('\n  [96m|[0m ')}\n`);
             },
         }

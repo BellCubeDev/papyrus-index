@@ -1,10 +1,9 @@
 import type { PapyrusScriptStructIndexed, PapyrusScriptStructIndexedAggregate } from "../../data-structures/indexing/struct";
-import type { PapyrusScriptIndexedAggregate } from "../../data-structures/indexing/script";
 import type { PapyrusGame } from "../../data-structures/pure/game";
 import { aggregateGenericValue } from "./aggregateGenericValue";
-import { aggregateStructMembersRecord } from "./aggregateStructMember";
-import { aggregateSourceRecordWithNameRecordEntries } from "./aggregateSourceRecordWithNameRecord";
 import type { AggregateScriptContext } from "./aggregateScript";
+import { aggregateSourceRecordWithNameRecordEntries } from "./aggregateSourceRecordWithNameRecord";
+import { aggregateStructMembersRecord } from "./aggregateStructMember";
 
 export interface AggregateStructContext<TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE>> extends AggregateScriptContext<TGame> {
     unfinishedStructAggregateRef: PapyrusScriptStructIndexedAggregate<TGame>;

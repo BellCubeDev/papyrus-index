@@ -54,7 +54,7 @@ export const functionOfTheDayOptions: FunctionOfTheDayOption[] = new Array(7).fi
 
 export const FunctionOfTheDayOptionsWithRendered = functionOfTheDayOptions.map(FunctionOfTheDay) as [number, React.ReactElement][];
 
-function FunctionOfTheDay({dayNum, game, scriptNamespaceNameLowercase, scriptNamespaceNameVariants, functionNameLowercase, func: functionVariants}: FunctionOfTheDayOption) {
+function FunctionOfTheDay({dayNum, game, scriptNamespaceNameLowercase, functionNameLowercase, func}: FunctionOfTheDayOption) {
     const script = AllScriptsIndexed[game].scripts[scriptNamespaceNameLowercase]!;
     const scriptName = getBestNameVariant(script[AllSourcesCombined].namespaceName)[1];
     if (!script) throw new Error(`Script ${scriptName} not found in game ${game} for Function of the Day! This should not be possible!`);
@@ -62,7 +62,7 @@ function FunctionOfTheDay({dayNum, game, scriptNamespaceNameLowercase, scriptNam
     return [dayNum, <Fragment key={`${game}/${scriptNamespaceNameLowercase}/${functionNameLowercase}`}>
         <h2>
             {getGameName(game)}:{' '}
-            <PapyrusScriptFunctionReference game={game} funcAggregate={functionVariants} possibleScripts={script} missingName={scriptName} /> </h2>
-        <PapyrusFunctionSignatureVariants game={game} funcAggregate={functionVariants} scriptName={scriptName} />
+            <PapyrusScriptFunctionReference game={game} funcAggregate={func} possibleScripts={script} missingName={scriptName} /> </h2>
+        <PapyrusFunctionSignatureVariants game={game} funcAggregate={func} scriptName={scriptName} />
     </Fragment>] as const;
 }

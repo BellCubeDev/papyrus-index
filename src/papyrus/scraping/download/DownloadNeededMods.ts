@@ -1,17 +1,17 @@
-import { PapyrusGame } from "../../data-structures/pure/game";
-import { PapyrusScriptSourceMetadata, PapyrusSourceType } from "../../data-structures/pure/scriptSource";
-import url from 'node:url';
-import path from 'node:path';
-import fs from 'node:fs/promises';
-import { parse as parseYaml } from 'yaml';
+import { unpack as unpackWith7z } from "7zip-min";
 import Ajv from 'ajv';
+import { ReadStream, type Dirent } from 'node:fs';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import type { ReadableStream } from 'node:stream/web';
+import url from 'node:url';
+import unzip from 'unzip-stream';
+import { parse as parseYaml } from 'yaml';
 import { UnreachableError } from "../../../UnreachableError";
 import { nexusModsREST60sMemo, nexusModsRESTRefetch } from "../../../nexus-api/RESTApi";
-import { readFile, ReadStream, type Dirent } from 'node:fs';
-import type { ReadableStream } from 'node:stream/web';
-import unzip from 'unzip-stream';
+import { PapyrusGame } from "../../data-structures/pure/game";
+import { PapyrusScriptSourceMetadata, PapyrusSourceType } from "../../data-structures/pure/scriptSource";
 import { bsArch } from "./BSArch";
-import { unpack as unpackWith7z } from "7zip-min";
 
 if (typeof window !== 'undefined') throw new Error('This module is not meant to be used in the browser!');
 

@@ -2,15 +2,15 @@ import fuzzysort from "fuzzysort";
 import { UnreachableError } from "../../UnreachableError";
 import { AllSourcesCombined } from "../../papyrus/data-structures/indexing/game";
 import type { PapyrusScriptSourceIndexedNoScriptsProp } from "../../papyrus/data-structures/indexing/scriptSource";
+import { UnknownPapyrusScript, UnknownPapyrusScriptStruct, type PapyrusScriptTypeIndexed, type PapyrusScriptTypeScriptInstanceIndexed, type PapyrusScriptTypeStructIndexed } from "../../papyrus/data-structures/indexing/type";
 import { PapyrusGame } from "../../papyrus/data-structures/pure/game";
+import { PapyrusScriptTypeArchetype } from "../../papyrus/data-structures/pure/type";
 import { indexGame } from "../../papyrus/indexing/index-game";
 import { getSourceTypeMultiplier } from "../../utils/getSourceTypeMultiplier";
 import { toLowerCase } from "../../utils/toLowerCase";
 import type { SearchDataGETResponse, SingleExtraEntityDataRecord } from "../[game]/search-data.json/route";
 import { SearchIndexEntityGroupRecord, SearchIndexEntityType, selectEntityGroups, type SearchIndexEntity, type SelectEntityGroups } from "./Entity";
-import { deepPrepareObject, getStringForSymbol, prepForBorderCrossing, SYMBOL_PREFIX, type DeepPreparedObject, type MapTupleToPrepared } from "./Preparation";
-import { PapyrusScriptTypeArchetype, type PapyrusScriptType } from "../../papyrus/data-structures/pure/type";
-import { UnknownPapyrusScript, UnknownPapyrusScriptStruct, type PapyrusScriptTypeIndexed, type PapyrusScriptTypeScriptInstanceIndexed, type PapyrusScriptTypeStructIndexed } from "../../papyrus/data-structures/indexing/type";
+import { deepPrepareObject, getStringForSymbol, prepForBorderCrossing, SYMBOL_PREFIX, type DeepPreparedObject } from "./Preparation";
 
 export interface WorkerMessageBase {
     type: string;
@@ -94,7 +94,7 @@ async function getSearchIndexOnWorkerLoad(): Promise<[DeepPreparedObject<SearchI
 
         const existingHash = await promisifyDBRequest(db.transaction('search-index-cache', "readonly").objectStore('search-index-cache').get(`${toLowerCase(game)}-key`));
         if (existingHash === searchIndexKey) {
-            const transaction = db.transaction('search-index-cache', "readonly").objectStore('search-index-cache')
+            const transaction = db.transaction('search-index-cache', "readonly").objectStore('search-index-cache');
             const existingIndex: DeepPreparedObject<SearchIndexEntityGroupRecord<PapyrusGame>> | null = await promisifyDBRequest(transaction.get(`${toLowerCase(game)}-index`));
             const existingSources: Record<Lowercase<string>, PapyrusScriptSourceIndexedNoScriptsProp<PapyrusGame>> = await promisifyDBRequest(transaction.get(`${toLowerCase(game)}-sources`));
             if (existingIndex && existingSources) {

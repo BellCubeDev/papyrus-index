@@ -1,4 +1,3 @@
-import type { PapyrusScriptIndexed } from "../../../../papyrus/data-structures/indexing/script";
 import type { PapyrusScriptStructIndexed } from "../../../../papyrus/data-structures/indexing/struct";
 import { UnknownPapyrusScriptStruct } from "../../../../papyrus/data-structures/indexing/type";
 import type { PapyrusGame } from "../../../../papyrus/data-structures/pure/game";
