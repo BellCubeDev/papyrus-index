@@ -53,11 +53,6 @@ export default [
 
   {
     rules: {
-      // covered by EITHER typescript-eslint or TypeScript
-      "no-unused-vars": "off",
-      "no-undef": "off",
-
-
       // Style Guide Rules: Customized
       "semi": ["warn", "always", {omitLastInOneLineBlock: true}],
       "one-var": ["warn", "never"],
@@ -88,6 +83,7 @@ export default [
           ignoreRestSiblings: false, // may need to re-enable this if we start using this feature
         }
       ],
+      "require-await": "warn",
 
 
       // Logic Rules
@@ -107,6 +103,8 @@ export default [
 
 
       // Disabled Rules
+      "no-unused-vars": "off",
+      "no-undef": "off",
       "@typescript-eslint/no-console": "off",
       "@typescript-eslint/no-unreachable": "off",
       "@typescript-eslint/no-extra-parens": "off",
