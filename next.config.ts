@@ -15,6 +15,8 @@ const nextConfig = {
 
     output: 'export',
 
+    allowedDevOrigins: process.env.ALLOWED_DEV_ORIGINS?.split(',').map(o => o.trim()).filter(o => o.length > 0),
+
     productionBrowserSourceMaps: true,
 
     sassOptions: {
