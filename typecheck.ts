@@ -160,7 +160,7 @@ function patchLog(isInitialRun = false) {
         oldLog(...args);
     };
     (console.log as any)[isOurLog] = true;
-    if (isInitialRun) Log.event('Typecheck script successfully monkey-patched console.log! To detect when typechecking ends, we look for the next log message, ""');
+    if (isInitialRun) Log.event('Typecheck script successfully monkey-patched console.log! To detect when typechecking ends, we look for the message:', targetLogMessage);
     else Log.info('Reestablished console.log monkey patch.');
 }
 const oldSTDOUTWrite = process.stdout.write;
