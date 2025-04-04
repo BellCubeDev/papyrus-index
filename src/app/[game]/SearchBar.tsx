@@ -23,7 +23,7 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
 
     const timeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    const searchProviderLoadedPromiseRef = React.useRef<{resolve?:(res:SearchContextLoaded)=>void,promise: Promise<SearchContextLoaded>}>(null);
+    const searchProviderLoadedPromiseRef = React.useRef<{resolve?:null|((res:SearchContextLoaded)=>void),promise: Promise<SearchContextLoaded>}>(null);
     const isLoading = searchProvider.LOADING_FROM_SSR || searchProvider.DEVELOPMENT__LOADING_HASH;
     searchProviderLoadedPromiseRef.current ??= (()=>{
         if (!isLoading) return {promise: Promise.resolve(searchProvider as SearchContextLoaded)};
@@ -31,7 +31,7 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
         const promise = new Promise<SearchContextLoaded>((resolve) => {
             hoistedResolveF = (loaded)=> {
                 resolve(loaded);
-                delete searchProviderLoadedPromiseRef.current!.resolve;
+                searchProviderLoadedPromiseRef.current!.resolve = null;
             };
         });
         return {resolve: hoistedResolveF!, promise} as const;
