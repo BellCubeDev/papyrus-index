@@ -1,0 +1,38 @@
+import type { PapyrusScriptStructIndexedAggregate, PapyrusScriptStructMemberIndexed, PapyrusScriptStructMemberIndexedAggregate } from "../../data-structures/indexing/struct";
+import type { PapyrusScriptIndexedAggregate } from "../../data-structures/indexing/script";
+import type { PapyrusGame } from "../../data-structures/pure/game";
+import { aggregateGenericValue } from "./aggregateGenericValue";
+import { aggregateSourceRecordWithNameRecordEntries } from "./aggregateSourceRecordWithNameRecord";
+import { serializePapyrusTypeForAggregation } from "./serializePapyrusTypeForAggregation";
+import type { AggregateStructContext } from "./aggregateStruct";
+
+export function aggregateStructMember<TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE>>(
+    _name: Lowercase<string>,
+    valuesBySource: [source: Lowercase<string>, value: PapyrusScriptStructMemberIndexed<TGame>][],
+    ctx: AggregateStructContext<TGame>,
+): PapyrusScriptStructMemberIndexedAggregate<TGame> {
+    return {
+        $entityId: ctx.nextEntityIdRef.nextEntityId++,
+        $sources: Object.fromEntries(valuesBySource),
+        name: aggregateGenericValue(valuesBySource, ([source, value]) => [source, value.name, value.name], null),
+        documentationComment: aggregateGenericValue(valuesBySource, ([source, value]) => [source, value.documentationComment, value.documentationComment], null),
+        documentationString: aggregateGenericValue(valuesBySource, ([source, value]) => [source, value.documentationString, value.documentationString], null),
+        value: aggregateGenericValue(valuesBySource, ([source, value]) => [source, serializePapyrusTypeForAggregation(value.value), value.value], null),
+        script: ctx.unfinishedScriptAggregateRef,
+        hidden: aggregateGenericValue(valuesBySource, ([source, value]) => [source, value.hidden, value.hidden], null),
+        mandatory: aggregateGenericValue(valuesBySource, ([source, value]) => [source, value.mandatory, value.mandatory], null),
+        struct: ctx.unfinishedStructAggregateRef,
+        game: ctx.unfinishedGameRef,
+    };
+}
+
+export function aggregateStructMembersRecord<TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE>>(
+    recordEntries: [Lowercase<string>, Record<Lowercase<string>, PapyrusScriptStructMemberIndexed<TGame>>][],
+    ctx: AggregateStructContext<TGame>,
+) {
+    return aggregateSourceRecordWithNameRecordEntries(
+        recordEntries,
+        aggregateStructMember,
+        ctx,
+    );
+}
