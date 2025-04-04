@@ -1,20 +1,17 @@
+import { Suspense } from "react";
 import type { PapyrusScriptFunctionIndexed } from "../../../../../papyrus/data-structures/indexing/function";
 import type { PapyrusGame } from "../../../../../papyrus/data-structures/pure/game";
-import styles from './FunctionSignature.module.scss';
-import { PapyrusType, PapyrusTypeNamed, PapyrusTypeWithValue } from "../../type/PapyrusType";
 import { joinJSXWithElementByWrapping } from "../../../../../utils/joinJSX";
-import { PapyrusFunctionSignatureParamSeparator, PapyrusFunctionSignatureParamWrapper } from "./FunctionSignatureParamSeparator";
-import { TextWithTooltip } from "../../../text-with-tooltip/TooltipText";
-import { getWikiDataFunctionPage } from "../../../../../wikimedia/GetWikiDataFunctionPage";
-import { WikiMarkdown } from "../../../wiki-markdown/WikiMarkdown";
-import { AllScriptsIndexed } from "../../../../../papyrus/indexing/index-all";
-import { Link } from "../../../Link";
 import { toLowerCase } from "../../../../../utils/toLowerCase";
+import { Link } from "../../../Link";
+import { TextWithTooltip } from "../../../text-with-tooltip/TooltipText";
+import { PapyrusType, PapyrusTypeNamed, PapyrusTypeWithValue } from "../../type/PapyrusType";
 import { FunctionDocumentationStringAll, FunctionDocumentationStringBest } from "./DocumentationString";
-import { Suspense } from "react";
+import styles from './FunctionSignature.module.scss';
+import { PapyrusFunctionSignatureParamSeparator, PapyrusFunctionSignatureParamWrapper } from "./FunctionSignatureParamSeparator";
 
 
-export function PapyrusFunctionSignature<TGame extends PapyrusGame>({game, func, scriptName, inTooltip, longerDescription}: {readonly game: TGame, readonly func: PapyrusScriptFunctionIndexed<TGame>, readonly scriptName: string, readonly inTooltip?: boolean, readonly longerDescription?: boolean}): React.ReactElement {
+export function PapyrusFunctionSignature<TGame extends PapyrusGame>({game, func, scriptName, inTooltip, longerDescription}: {readonly game: TGame, readonly func: PapyrusScriptFunctionIndexed<TGame> & {ckWikiDescription?: string|null|undefined}, readonly scriptName: string, readonly inTooltip?: boolean|undefined, readonly longerDescription?: boolean|undefined}): React.ReactElement {
 
     return <div className={styles.functionSignatureWithShortDescription}>
         <div className={styles.functionSignature}>
@@ -57,7 +54,7 @@ export function PapyrusFunctionSignature<TGame extends PapyrusGame>({game, func,
     </div>;
 }
 
-export function PapyrusFunctionSignatureFlagNative({inTooltip}: {readonly inTooltip?: boolean}) {
+export function PapyrusFunctionSignatureFlagNative({inTooltip}: {readonly inTooltip?: boolean|undefined}) {
     if (inTooltip) return <span className={styles.flag}>Native</span>;
 
     return <TextWithTooltip wrapperClassName={styles.flag} tooltipContents={<p>
@@ -68,7 +65,7 @@ export function PapyrusFunctionSignatureFlagNative({inTooltip}: {readonly inTool
     </TextWithTooltip>;
 }
 
-export function PapyrusFunctionSignatureFlagGlobal({inTooltip}: {readonly inTooltip?: boolean}) {
+export function PapyrusFunctionSignatureFlagGlobal({inTooltip}: {readonly inTooltip?: boolean|undefined}) {
     if (inTooltip) return <span className={styles.flag}>Global</span>;
 
     return <TextWithTooltip wrapperClassName={styles.flag} tooltipContents={<>
@@ -90,7 +87,7 @@ export function PapyrusFunctionSignatureFlagGlobal({inTooltip}: {readonly inTool
     </TextWithTooltip>;
 }
 
-export function PapyrusFunctionSignatureFlagDebugOnly({inTooltip}: {readonly inTooltip?: boolean}) {
+export function PapyrusFunctionSignatureFlagDebugOnly({inTooltip}: {readonly inTooltip?: boolean|undefined}) {
     if (inTooltip) return <span className={styles.flag}>DebugOnly</span>;
 
     return <TextWithTooltip wrapperClassName={styles.flag} tooltipContents={<>
@@ -105,7 +102,7 @@ export function PapyrusFunctionSignatureFlagDebugOnly({inTooltip}: {readonly inT
     </TextWithTooltip>;
 }
 
-export function PapyrusFunctionSignatureFlagBetaOnly({inTooltip}: {readonly inTooltip?: boolean}) {
+export function PapyrusFunctionSignatureFlagBetaOnly({inTooltip}: {readonly inTooltip?: boolean|undefined}) {
     if (inTooltip) return <span className={styles.flag}>BetaOnly</span>;
 
     return <TextWithTooltip wrapperClassName={styles.flag} tooltipContents={<>

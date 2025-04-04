@@ -7,7 +7,7 @@ import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion';
 
 export function Tooltip({children, wrapperClassName, role: roleRaw, tooltipContents}: {
     readonly children: ReactNode;
-    readonly wrapperClassName?: string;
+    readonly wrapperClassName?: string | undefined;
     /**
      * If your reference element has its own label (text), use 'tooltip'.
      * If your reference element does not have its own label, e.g. an icon, use 'label'.

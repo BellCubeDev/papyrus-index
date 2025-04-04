@@ -67,17 +67,15 @@ export default async function ScriptPage({params}: {readonly params: Promise<Scr
         <details>
             {/* Include property groups here too! */}
             <summary>Properties</summary>
-            {Object.entries(scriptBySources[AllSourcesCombined].propertyGroups).map(([groupName, groupVariants]) => <div key={groupName}>
-                {groupVariants.map(([sources, group]) => <div key={sources.join('/')}>
-                    <h2>{group.name}</h2>
-                    <div className={styles.properties}>
-                        {Object.entries(group.properties).map(([propName, prop]) => <div key={propName}>
-                            <div className={styles.property}>
-                                <PapyrusTypeWithValue game={game} type={prop.value} name={propName} />
-                            </div>
-                        </div>)}
-                    </div>
-                </div>)}
+            {Object.entries(scriptBySources[AllSourcesCombined].propertyGroups).map(([groupName, group]) => <div key={groupName}>
+                <h2>{group.name}</h2>
+                <div className={styles.properties}>
+                    {Object.entries(group.properties).map(([propName, prop]) => <div key={propName}>
+                        <div className={styles.property}>
+                            <PapyrusTypeWithValue game={game} type={prop.value[0]![1]} name={propName} />
+                        </div>
+                    </div>)}
+                </div>
             </div>)}
 
             <div className={styles.properties}></div>
@@ -91,7 +89,7 @@ export default async function ScriptPage({params}: {readonly params: Promise<Scr
             <div className={styles.functions}>
                 <GuardEmptyList replacement={<p>No functions found.</p>}>
                     {Object.entries(scriptBySources[AllSourcesCombined].functions).map(([funcName, variants]) => <div key={funcName}>
-                        <PapyrusFunctionSignatureVariants game={game} variants={variants} scriptName={scriptNamespaceName} />
+                        <PapyrusFunctionSignatureVariants game={game} funcAggregate={variants} scriptName={scriptNamespaceName} />
                     </div>)}
                 </GuardEmptyList>
             </div>

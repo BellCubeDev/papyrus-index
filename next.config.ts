@@ -59,6 +59,6 @@ const nextConfig = {
 
 
     transpilePackages: ['@wooorm/starry-night']
-} as const satisfies NextConfig;
+} as const satisfies RestoreLegacyOptionalKeys<NextConfig>;
 
 export default nextConfig;

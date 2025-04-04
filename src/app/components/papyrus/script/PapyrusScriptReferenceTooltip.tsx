@@ -1,33 +1,19 @@
 import { UnknownPapyrusScript } from "../../../../papyrus/data-structures/indexing/type";
 import type { PapyrusGame } from "../../../../papyrus/data-structures/pure/game";
 import styles from './PapyrusScriptReference.module.scss';
-import type { SearchIndexEntityScript } from "../../../[game]/search-index.json/SearchIndexEntity";
 import type { PapyrusPossibleScripts, PapyrusScriptIndexed, PapyrusScriptIndexedAggregate } from "../../../../papyrus/data-structures/indexing/script";
 import type { PapyrusScriptBySources } from "../../../../papyrus/data-structures/indexing/game";
 import { UnreachableError } from "../../../../UnreachableError";
 import { getScriptNameFromProps } from "./PapyrusScriptReference";
 
 export function PapyrusScriptReferenceTooltip<TGame extends PapyrusGame>(propsObj:
-    | {readonly searchScript: SearchIndexEntityScript, readonly script?: undefined, readonly scriptAggregate?: undefined, readonly possibleScripts?: undefined}
-    | {readonly searchScript?: undefined, readonly script: |PapyrusScriptIndexed<TGame>, readonly scriptAggregate?: undefined, readonly possibleScripts?: undefined}
-    | {readonly searchScript?: undefined, readonly script?: undefined, readonly scriptAggregate: PapyrusScriptIndexedAggregate<TGame>, readonly possibleScripts?: undefined}
-    | {readonly searchScript?: undefined, readonly script?: undefined, readonly scriptAggregate?: undefined, readonly possibleScripts: typeof UnknownPapyrusScript | PapyrusPossibleScripts<TGame> | PapyrusScriptBySources<TGame>, missingName: string|null}
+    | {readonly script: |PapyrusScriptIndexed<TGame>, readonly scriptAggregate?: undefined, readonly possibleScripts?: undefined}
+    | {readonly script?: undefined, readonly scriptAggregate: PapyrusScriptIndexedAggregate<TGame>, readonly possibleScripts?: undefined}
+    | {readonly script?: undefined, readonly scriptAggregate?: undefined, readonly possibleScripts: typeof UnknownPapyrusScript | PapyrusPossibleScripts<TGame> | PapyrusScriptBySources<TGame>, missingName: string|null}
 ): React.ReactElement {
-    const {script, searchScript, scriptAggregate, possibleScripts} = propsObj;
+    const {script, scriptAggregate, possibleScripts} = propsObj;
     const name = getScriptNameFromProps(propsObj);
-    if (searchScript) {
-        return <div className={styles.tooltip}>
-            {name} (
-            {searchScript.isNative === null
-                ? searchScript.extends?.target
-                    ? `extends ${searchScript.extends.target}`
-                    : 'top-level'
-                : searchScript.isNative
-                    ? 'Native'
-                    : 'Papyrus-Only'}
-            )
-        </div>;
-    } else if (script) {
+    if (script) {
         return <div className={styles.tooltip}>
             {name} (
             {script.isNative === null
