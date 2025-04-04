@@ -58,8 +58,8 @@ export function PapyrusFunctionSignatureFlagNative({inTooltip}: {readonly inTool
     if (inTooltip) return <span className={styles.flag}>Native</span>;
 
     return <TextWithTooltip wrapperClassName={styles.flag} tooltipContents={<p>
-        &ldquo;Native&rdquo; Papyrus functions are integrated directly into the game engine itself.
-        New Native functions can be added by an xSE plugin.
+        <span className={styles.flag}>Native</span> Papyrus functions are integrated directly into the game engine itself.
+        New <span className={styles.flag}>Native</span> functions can be added by an xSE plugin.
     </p>}>
         Native
     </TextWithTooltip>;
@@ -70,14 +70,14 @@ export function PapyrusFunctionSignatureFlagGlobal({inTooltip}: {readonly inTool
 
     return <TextWithTooltip wrapperClassName={styles.flag} tooltipContents={<>
         <p>
-            &ldquo;Global&rdquo; functions are not called on a ScriptObject instance (e.g. <code>
+            <span className={styles.flag}>Global</span> functions are not called on a ScriptObject instance (e.g. <code>
                 <span style={{color:'#9cdcfe'}}>myObjectReferenceVariable</span>.<span style={{color:'#dcdcaa'}}>Disable</span>()
             </code>).
             They can instead be called from anywhere in Papyrus (e.g. <code>
                 <span style={{color:'#4fc9b1'}}>Game</span>.<span style={{color:'#dcdcaa'}}>ForceFirstPerson</span>()
             </code>).
         </p><p>
-            Global functions have no access to the built-in <code style={{color:'#569cd6'}}>self</code> or <code style={{color:'#569cd6'}}>parent</code> variables
+            <span className={styles.flag}>Global</span> functions have no access to the built-in <code style={{color:'#569cd6'}}>self</code> or <code style={{color:'#569cd6'}}>parent</code> variables
             that a function running on a ScriptObject instance would have.
         </p><p>
             If this is confusing, you may wish to look at this function&rsquo;s usage example(s).
@@ -92,10 +92,10 @@ export function PapyrusFunctionSignatureFlagDebugOnly({inTooltip}: {readonly inT
 
     return <TextWithTooltip wrapperClassName={styles.flag} tooltipContents={<>
         <p>
-            Calls to &ldquo;DebugOnly&rdquo; functions will be removed from your script
+            Calls to <span className={styles.flag}>DebugOnly</span> functions will be removed from your script
             when you compile it in Release mode or Beta mode.
         </p><p>
-            ADD RATIONALE FOR ITS EXISTENCE HERE
+            TODO: ADD RATIONALE FOR ITS EXISTENCE HERE
         </p>
     </>}>
         DebugOnly
@@ -107,10 +107,10 @@ export function PapyrusFunctionSignatureFlagBetaOnly({inTooltip}: {readonly inTo
 
     return <TextWithTooltip wrapperClassName={styles.flag} tooltipContents={<>
         <p>
-            Calls to &ldquo;BetaOnly&rdquo; functions will be removed from your script
+            Calls to <span className={styles.flag}>BetaOnly</span> functions will be removed from your script
             when you compile it in Release mode.
         </p><p>
-            ADD RATIONALE FOR ITS EXISTENCE HERE
+            TODO: ADD RATIONALE FOR ITS EXISTENCE HERE
         </p>
     </>}>
         BetaOnly
