@@ -11,7 +11,7 @@ async function getWikiFunctionShortDescriptionMD__Server<TGame extends PapyrusGa
     return wikiData.shortDescriptionMarkdown;
 }
 
-export function useGetWikiFunctionShortDescriptionMD<TGame extends PapyrusGame>(game: TGame, func: (SearchEntityFunction<TGame>|PapyrusScriptFunctionIndexedAggregate<TGame>|PapyrusScriptFunctionIndexed<TGame>) & {ckWikiDescription?: string|null|undefined}, scriptName: string): string | null {
+export async function getWikiFunctionShortDescriptionMD<TGame extends PapyrusGame>(game: TGame, func: (SearchEntityFunction<TGame>|PapyrusScriptFunctionIndexedAggregate<TGame>|PapyrusScriptFunctionIndexed<TGame>) & {ckWikiDescription?: string|null|undefined}, scriptName: string): Promise<string | null> {
     if (typeof window !== 'undefined') return 'ckWikiDescription' in func ? func.ckWikiDescription as string|null : null;
-    return use(getWikiFunctionShortDescriptionMD__Server(game, func, scriptName));
+    return await getWikiFunctionShortDescriptionMD__Server(game, func, scriptName);
 }
