@@ -1,11 +1,12 @@
+@use "sass:string";
 $themehue: 275deg;
 
 @function css-function( $function, $values... ) {
 	@return
 		$function
-		+ unquote( '(' )
+		+ string.unquote( '(' )
 		+ $values
-		+ unquote( ')' )
+		+ string.unquote( ')' )
 	;
 }
 
