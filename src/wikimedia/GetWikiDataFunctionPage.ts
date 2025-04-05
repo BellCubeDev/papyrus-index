@@ -113,12 +113,11 @@ export async function getWikiDataFunctionPage<TGame extends PapyrusGame, TFunc e
             const editSummary = `Correct Parameter Name (${name} --> CORRECT_NAME_HERE)`;
             console.warn(`
 ⚠️  [96m[MediaWiki Scraping - getWikiDataFunctionPage()] Invalid Parameter Detected![0m
-[93m|[0m Parameter ${name} not found in function [32m${scriptName}[0m.[33m${functionName}[0m!
+[93m|[0m Parameter ${name} not found in function [32m${scriptName}[0m.[33m${functionName}[0m()!
 [93m|[0m Wiki: ${wiki.wikiName} (for ${wiki.wikiTrueGame})
 [93m|[0m
-${wiki.wikiTrueGame !== game ?
-`[93m|[0m [101mCAUTION:[0m The wiki page is for ${wiki.wikiTrueGame}, but the function is for ${game}![0m` : ''
-}[93m|[0m Invalid parameter name: ${name}
+${wiki.wikiTrueGame !== game ? `[93m|[0m [101mCAUTION: The wiki page is for ${wiki.wikiTrueGame}, but the function is for ${game}![0m
+` : ''}[93m|[0m Invalid parameter name: ${name}
 [93m|[0m Valid parameter names are: ${func.parameters.map(p => p.name).join(' | ')}
 [93m|[0m
 [93m|[0m Edit Link: [34m${document.location.href}?action=edit&summary=${encodeURIComponent(editSummary)}[0m
@@ -127,6 +126,8 @@ ${wiki.wikiTrueGame !== game ?
 [93m|[0m Skipping...`);
             appendToJobSummarySection(`
 ### Invalid Function Parameter Name
+
+${game !== wiki.wikiTrueGame ? `***CAUTION: The wiki page is for ${wiki.wikiTrueGame}, but the function is for ${game}!***` : ''}
 - **Wiki**: [${wiki.wikiName}](${wiki.wikiBaseUrl}) (for ${wiki.wikiTrueGame})
 - **Wiki Page:** [${pageName}](${document.location.href})
 - **Function:** ${scriptName}.${functionName}
@@ -136,7 +137,6 @@ ${
         ? Object.entries(func.$sources).map(([source, variant]) => `- **Valid Parameter Names (from ${source}):** ${variant.parameters.map(p => `\`${p.name}\``).join(' | ')}`).join('\n')
         : `- **Valid Parameter Names:** ${func.parameters.map(p => `\`${p.name}\``).join(' | ')}`
 }
-
 - **Edit Link:** [${document.location.href}?action=edit&summary=${encodeURIComponent(editSummary)}](${document.location.href}?action=edit&summary=${encodeURIComponent(editSummary)})
 - **Edit Message:** ${editSummary}
 `.trim());
