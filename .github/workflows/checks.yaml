@@ -27,6 +27,8 @@ jobs:
           submodules: recursive
 
       - name: Create Missing Directories for Next Step
+        # tj-actions/changed-files seems to require a directory to exist for each repo/submodule
+        # so we'll create the submodules' directories before we run that action
         run: |
           mkdir -p cache/parsoid-service
 

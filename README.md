@@ -27,7 +27,7 @@ The extracted information is initially stored in a JSON-compatible data structur
 
 The website also fetches documentation from the following sources:
 * The game's CK wiki (or a fallback if the game doesn't have its own CK wiki; e.g. Starfield uses FO4's CK wiki)
-    * In order to parse the CK wiki, your machine must have PHP, Compositor, and the XML, and CURL extensions for PHP installed so it can run [Parsoid](https://www.mediawiki.org/wiki/Parsoid) (the official PHP-based parser for the MediaWiki format—and the only good option out there).
+    * To parse the CK wiki, your machine must have PHP, Composer, the XML and CURL extensions for PHP installed so it can run [Parsoid](https://www.mediawiki.org/wiki/Parsoid) (the official PHP-based parser for the MediaWiki format—and the only good option out there).
 * TODO: The GitHub Wiki for the mod (if applicable)
 * TODO: The GitHub Wiki for the Papyrus Index <!-- can be grabbed via `git clone https://github.com/BellCubeDev/papyrus-index.wiki.git` -->
 
