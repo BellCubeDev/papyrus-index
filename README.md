@@ -27,7 +27,37 @@ The extracted information is initially stored in a JSON-compatible data structur
 
 The website also fetches documentation from the following sources:
 * The game's CK wiki (or a fallback if the game doesn't have its own CK wiki; e.g. Starfield uses FO4's CK wiki)
+    * In order to parse the CK wiki, your machine must have PHP, Compositor, and the XML, and CURL extensions for PHP installed so it can run [Parsoid](https://www.mediawiki.org/wiki/Parsoid) (the official PHP-based parser for the MediaWiki format—and the only good option out there).
 * TODO: The GitHub Wiki for the mod (if applicable)
 * TODO: The GitHub Wiki for the Papyrus Index <!-- can be grabbed via `git clone https://github.com/BellCubeDev/papyrus-index.wiki.git` -->
 
 We then use this data to generate the site. The website is a static site built with Next.js.
+
+## Setting Up Your Environment
+To set up your environment, you need to install the following tools:
+* [Node.js](https://nodejs.org/en/download/) (LTS version recommended)
+* [pnpm](https://pnpm.io/installation) (a speedy package manager for Node.js)
+* [PHP 7.x](https://www.php.net/downloads)
+    * PHP XML extension
+    * PHP CURL extension
+* [Composer](https://getcomposer.org/download/) (a dependency manager for PHP)
+
+Once those tools are installed, clone this repository and run the following command in the root of the project:
+```bash
+pnpm install
+```
+This will install all the dependencies for the project.
+
+Once that's done, you can run the following command to start the development server:
+```bash
+pnpm run dev
+```
+
+Alternatively, you can run the following command to build the project:
+```bash
+pnpm run build
+```
+The built output can be found in the `out/` directory. You can run the following command to start a local server to view the built output:
+```bash
+pnpm exec serve out
+```

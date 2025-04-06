@@ -3,9 +3,9 @@ import path from 'path';
 import url from 'url';
 import type { GameWithWiki, PapyrusWiki } from './getWiki';
 import { WIKI_FETCH_403FORBIDDEN, wikiFetchGet } from './wikiFetch';
-import { getWikiPageHTMLStringRaw } from './getWikiPageStringRaw';
 import lockfileUtil from 'proper-lockfile';
 import { memoizeDevServerConst } from '../utils/memoizeDevServerConst';
+import { parsoidGetPageHTML } from './parsoid';
 
 export interface WikiStorageIndex {
     /** ISO timestamp of the latest change indexed */
@@ -302,7 +302,7 @@ async function downloadWikiPageHTMLString(wiki: PapyrusWiki, pageTitle: string, 
     const releaseHTMLFileLock = await getLock(htmlFilePath);
     try {
         const startDateISO = new Date().toISOString();
-        const pageContent = await getWikiPageHTMLStringRaw(wiki, pageTitle);
+        const pageContent = await parsoidGetPageHTML(wiki.wikiBaseUrl, pageTitle);
         if (!pageContent) {
             changeIndexEntry(wiki, pageTitle, {
                 exists: false,

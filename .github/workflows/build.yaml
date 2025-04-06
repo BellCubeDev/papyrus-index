@@ -43,6 +43,8 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Restore Custom Caches
         id: cache-restore-custom
@@ -65,14 +67,31 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4 # uses version in package.json
 
-      - name: Use Node.js v22
+      - name: Set Up Node.js v22 & Use NPM Package Caching
         uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'pnpm'
 
+      - name: Set Up PHP
+        uses: shivammathur/setup-php@2.32.0
+        with:
+          php-version: '7.3'
+          extensions: xml,curl
+
       - name: Install NPM Dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Use Composer Package Caching
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('node_modules/parsoid/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
 
       - name: Use Next.js Caching
         uses: actions/cache@v4

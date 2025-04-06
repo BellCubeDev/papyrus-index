@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@10.2.1",
+  "packageManager": "pnpm@10.7.1",
   "scripts": {
     "dev": "pnpm run parse:reset && next dev",
     "start": "npx serve out",
     "lint": "next lint",
     "clear-socket": "rm -f ./src/utils/stepSummary/jobSummarySocket.sock",
-    "prepare": "pnpm run clear-socket && pnpm run prepare:wiki-repo && pnpm run prepare:schemas",
+    "prepare": "pnpm run clear-socket && pnpm run prepare:wiki-repo && pnpm run prepare:schemas && pnpm run prepare:parsoid-service",
+    "prepare:parsoid-service": "cd ./node_modules/parsoid-service && composer install",
     "prepare:wiki-repo": "If (-not (Test-Path -Path './cache/github-wiki/')) { git clone https://github.com/BellCubeDev/papyrus-index.wiki.git ./cache/github-wiki/ } else { git -C ./cache/github-wiki/ pull }",
     "prepare:schemas": "typescript-json-schema './src/papyrus/data-structures/pure/scriptSource.ts' PapyrusScriptSourceMetadata --required --noExtraProps --strictNullChecks --skipLibCheck -o './data/SourceMetadata.schema.json' --include './src/papyrus/data-structures/pure/**' && typescript-json-schema './src/papyrus/data-structures/ignore-yaml.ts' IgnoreYaml --required --noExtraProps --strictNullChecks --skipLibCheck -o './data/IgnoreYaml.schema.json' --include './src/papyrus/data-structures/ignore-yaml.ts'",
     "download-mods": "pnpm run clear-socket && tsx  --env-file-if-exists=./.env ./src/papyrus/scraping/download/DownloadNeededMods.ts",
@@ -64,6 +65,7 @@
     "next-nprogress-bar": "^2.4.7",
     "node-fetch": "^3.3.2",
     "octokit": "^4.1.2",
+    "parsoid-service": "file:./cache/parsoid-service",
     "proper-lockfile": "^4.1.2",
     "react": "~19.0.0",
     "react-dom": "~19.0.0",
@@ -90,5 +92,8 @@
     "onlyBuiltDependencies": [
       "esbuild"
     ]
+  },
+  "devDependencies": {
+    "serve": "^14.2.4"
   }
 }

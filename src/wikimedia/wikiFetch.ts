@@ -140,7 +140,7 @@ async function wikiFetchGetInternalFetch(originalUrl: URL, retriesSoFar: number)
 
     try {
         response = await fetch(noCacheUrl, {
-            signal: AbortSignal.timeout(2000),
+            signal: AbortSignal.timeout(30 * 1000),
             headers: {
                 'User-Agent': 'Papyrus Index (https://papyrus.bellcube.dev/)',
             },

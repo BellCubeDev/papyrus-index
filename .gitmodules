@@ -1,0 +1,3 @@
+[submodule "Parsoid"]
+	path = cache/parsoid-service
+	url = https://github.com/BellCubeDev/forked-mediawiki-services-parsoid
