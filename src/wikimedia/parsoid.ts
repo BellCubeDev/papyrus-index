@@ -66,10 +66,10 @@ export async function parsoidGetPageHTML(wikiURL: string, pageTitle: string, att
                 );
             }
 
-            let hasBeginFinalization = false;
+            let hasBegunFinalization = false;
             async function finalize(code?: number|null) {
-                if (hasBeginFinalization) return;
-                hasBeginFinalization = true;
+                if (hasBegunFinalization) return;
+                hasBegunFinalization = true;
                 await new Promise((r)=> setTimeout(r, 50)); // try to get ahead of any potential race conditions (e.g. if the child process is still writing to stdout/stderr)
 
                 if ([stdout, stderr].some((data) => data.includes('parse.php: The specified revision does not exist.'))) {
@@ -152,7 +152,7 @@ export async function parsoidGetPageHTML(wikiURL: string, pageTitle: string, att
             childProcess.stdin!.end();
 
             setTimeout(() => {
-                if (hasBeginFinalization) return;
+                if (hasBegunFinalization) return;
 
                 if (childProcess!.exitCode !== null) { // process has already exited
                     finalize();
