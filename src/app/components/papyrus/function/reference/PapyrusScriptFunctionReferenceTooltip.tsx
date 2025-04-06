@@ -15,9 +15,7 @@ export function PapyrusScriptFunctionReferenceTooltip(propsObj: ComponentProps<t
         </div>;
     } else if (funcAggregate) {
         return <div className={styles.tooltip}>
-            <Suspense fallback={<p>Loading...</p>}>
-                <PapyrusFunctionSignatureVariants scriptName={scriptName} game={game} funcAggregate={funcAggregate} inTooltip />
-            </Suspense>
+            <PapyrusFunctionSignatureVariants scriptName={scriptName} game={game} funcAggregate={funcAggregate} inTooltip />
         </div>;
     } else {
         throw new UnreachableError(propsObj, 'Unknown Papyrus script reference type passed to <PapyrusScriptFunctionReference> component!');

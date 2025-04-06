@@ -1,4 +1,4 @@
-import type { ComponentProps } from "react";
+import { Suspense, type ComponentProps } from "react";
 import type { PapyrusScriptFunctionIndexed, PapyrusScriptFunctionIndexedAggregate } from "../../../../../papyrus/data-structures/indexing/function";
 import type { PapyrusGame } from "../../../../../papyrus/data-structures/pure/game";
 import { UnreachableError } from "../../../../../UnreachableError";

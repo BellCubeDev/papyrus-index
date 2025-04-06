@@ -1,7 +1,7 @@
 'use client';
 
 import { arrow, autoUpdate, flip, FloatingArrow, offset, shift, useDismiss, useFloating, useFocus, useHover, useInteractions, useRole } from './FloatingUIClient';
-import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
+import { Suspense, useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import styles from './Tooltip.module.scss';
 import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion';
 
@@ -20,7 +20,7 @@ export function Tooltip({children, wrapperClassName, role: roleRaw, tooltipConte
     const [isOpen, setIsOpen] = useState(false);
     const [isTransitioning, setIsTransitioning] = useState(false);
 
-    const arrowRef = useRef(null);
+    const arrowRef = useRef<SVGSVGElement>(null);
 
     const setOpenState = useCallback((open: boolean) => {
         if (prefersReducedMotion) return setIsOpen(open);
@@ -78,22 +78,27 @@ export function Tooltip({children, wrapperClassName, role: roleRaw, tooltipConte
         <span ref={refs.setReference} {...getReferenceProps()} className={wrapperClassName}>
             {children}
         </span>
-        {isOpen || isTransitioning ? <div
-            ref={refs.setFloating}
-            style={floatingStyles}
-            {...getFloatingProps()}
-            data-is-open={isOpen}
-            data-side={context.placement}
-            className={styles.tooltip}
-        >
-            <FloatingArrow
-                width={48}
-                height={16}
-                ref={arrowRef}
-                className={styles.tooltipArrow}
-                context={context}
-                additive='sum' />
-            {tooltipContents}
-        </div> : null}
+        <Suspense>
+            {isOpen || isTransitioning ? <div
+                ref={refs.setFloating}
+                {...getFloatingProps()}
+                style={{
+                    ...floatingStyles,
+                    opacity: arrowRef.current === null ? 0 : undefined,
+                }}
+                data-is-open={isOpen}
+                data-side={context.placement}
+                className={styles.tooltip}
+            >
+                <FloatingArrow
+                    width={48}
+                    height={16}
+                    ref={arrowRef}
+                    className={styles.tooltipArrow}
+                    context={context}
+                    additive='sum' />
+                {tooltipContents}
+            </div> : null}
+        </Suspense>
     </>;
 }

@@ -8,7 +8,7 @@ import { getGameFromParams, type GameRouteParams } from "./getGameFromParams";
 import { LOADING_IN_DEV_MODE, SearchProvider } from "../search/SearchProvider";
 import SearchBar from "./SearchBar";
 import { generateSearchJsonHash } from "./search-data.json/generateSearchJsonHash";
-import { Suspense } from "react";
+import { SuspenseIfServer } from "../components/SuspenseIfServer";
 
 export async function generateMetadata({params}: {readonly params: Promise<GameRouteParams>}): Promise<Metadata> {
     const { game } = getGameFromParams(await params);
@@ -32,19 +32,15 @@ export default async function GameLayout({children, params}: {readonly children:
         <WikiAttribution {...getWiki(game)}  />
     </>;
 
-    if (process.env.NODE_ENV === 'development') {
-        console.log('GameLayout: Development mode!');
-        return <Suspense fallback={<SearchProvider game={game} searchIndexHash={LOADING_IN_DEV_MODE}>
+    return <SuspenseIfServer fallback={
+        <SearchProvider game={game} searchIndexHash={LOADING_IN_DEV_MODE}>
             {searchProviderChildren}
-        </SearchProvider>}>{
-            generateSearchJsonHash(game).then((hash) => <SearchProvider game={game} searchIndexHash={hash}>
-                {searchProviderChildren}
-            </SearchProvider>)
-        }</Suspense>;
-    } else {
-        return <SearchProvider game={game} searchIndexHash={await generateSearchJsonHash(game)}>
+        </SearchProvider>
+    }  >
+        {generateSearchJsonHash(game).then((hash) => <SearchProvider game={game} searchIndexHash={hash}>
             {searchProviderChildren}
-        </SearchProvider>;
-    }
+        </SearchProvider>)}
+    </SuspenseIfServer>;
+
 
 }

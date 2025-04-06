@@ -8,6 +8,7 @@ import { GuardEmptyList } from "../../../GuardEmptyList";
 import { TextWithTooltip } from "../../../text-with-tooltip/TooltipText";
 import { WikiMarkdown } from "../../../wiki-markdown/WikiMarkdown";
 import { getWikiFunctionShortDescriptionMD } from "./getWikiFunctionDescription";
+import { onlyUseIfUsable } from "../../../../hooks/onlyUseIfPromise";
 
 function getBestStringFromMaybeArray<T extends string>(arr: T|null|([Lowercase<string>[], T|null][])): T|null {
     if (!Array.isArray(arr)) return arr;
@@ -50,7 +51,7 @@ export async function FunctionDocumentationStringRaw<TGame extends PapyrusGame>(
  * Otherwise, use some form of heuristics to determine which of the in-script documentation strings/comments to use.
  */
 export function FunctionDocumentationStringBest<TGame extends PapyrusGame>({game, func, scriptName, inTooltip}: {readonly game: TGame, readonly func: PapyrusScriptFunctionIndexedAggregate<TGame>|PapyrusScriptFunctionIndexed<TGame>, readonly scriptName: string, readonly inTooltip?: boolean|undefined}): null|React.ReactElement {
-    const wikiShortDescriptionMD = use(getWikiFunctionShortDescriptionMD(game, func, scriptName));
+    const wikiShortDescriptionMD = onlyUseIfUsable(getWikiFunctionShortDescriptionMD(game, func, scriptName));
     if (wikiShortDescriptionMD !== null)
         return <WikiMarkdown gameData={func.game} md={wikiShortDescriptionMD} inTooltip={inTooltip} />;
 
@@ -102,7 +103,7 @@ export function FunctionDocumentationStringAll<TGame extends PapyrusGame>({game,
         </Fragment>);
     }
 
-    const wikiShortDescriptionMD = use(getWikiFunctionShortDescriptionMD(game, func, scriptName));
+    const wikiShortDescriptionMD = onlyUseIfUsable(getWikiFunctionShortDescriptionMD(game, func, scriptName));
     if (wikiShortDescriptionMD !== null) {
         elements.push(<Fragment key='wiki'>
             <h3>Wiki Description</h3>
