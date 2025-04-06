@@ -12,6 +12,10 @@ const parsoidFolder = path.resolve(srcDir, "..", "node_modules", "parsoid-servic
 
 let lastParsoidDelayPromise = Promise.resolve(null as string | null);
 
+const PARSOID_ATTEMPT_LIMIT = 8;
+
+export async function parsoidGetPageHTML(wikiURL: string, pageTitle: string): Promise<string|null>
+export async function parsoidGetPageHTML(wikiURL: string, pageTitle: string, attemptNumber: number): Promise<string|null> // using an overload signature hides the attemptNumber parameter from the normally-displayed function signature
 /** You probably did not mean to call this.
  *
  * This is as low-level as it gets when it comes to fetching a page from the wiki, as far
@@ -20,7 +24,7 @@ let lastParsoidDelayPromise = Promise.resolve(null as string | null);
  * Parsoid then builds the page's HTML using data from the wiki's API and returns
  * its results in the form of an STDOUT string.
  */
-export async function parsoidGetPageHTML(wikiURL: string, pageTitle: string): Promise<string|null> {
+export async function parsoidGetPageHTML(wikiURL: string, pageTitle: string, attemptNumber = 1): Promise<string|null> {
     lastParsoidDelayPromise = lastParsoidDelayPromise.then(()=>new Promise(resolve => setTimeout(resolve, 35 * (process.env.NODE_ENV === 'development' ? 1 : nextConfig.experimental.cpus))));
     await lastParsoidDelayPromise;
     let gotPage = false;
@@ -70,8 +74,13 @@ export async function parsoidGetPageHTML(wikiURL: string, pageTitle: string): Pr
                     }
 
                     if ([stdout, stderr].some((data) => data.includes('ApiHelper.php: HTTP request failed: HTTP code 5'))) {
-                        Log.warn(`[95mparsoidGetPageHTML[0m() child child process got HTTP error 5xx while querying "${wikiURL}" for "${pageTitle}". Retrying in 10s...`);
-                        return resolve(new Promise(r => setTimeout(r, 10_000)).then(()=>parsoidGetPageHTML(wikiURL, pageTitle)));
+                        if (attemptNumber >= PARSOID_ATTEMPT_LIMIT) {
+                            Log.error(`[95mparsoidGetPageHTML[0m() child child process got HTTP error 5xx while querying "${wikiURL}" for "${pageTitle}". Giving up.`);
+                            return reject(new Error(`Failed to get page HTML from Parsoid after ${PARSOID_ATTEMPT_LIMIT} attempts.`));
+                        } else {
+                            Log.warn(`[95mparsoidGetPageHTML[0m() child child process got HTTP error 5xx while querying "${wikiURL}" for "${pageTitle}". Retrying in 10s...`);
+                            return resolve(new Promise(r => setTimeout(r, 10_000)).then(()=>parsoidGetPageHTML(wikiURL, pageTitle, attemptNumber + 1)));
+                        }
                     }
 
                     if (!stderr) {
@@ -89,7 +98,7 @@ export async function parsoidGetPageHTML(wikiURL: string, pageTitle: string): Pr
                 }, 50);
             }
 
-            Log.wait(`[95mparsoidGetPageHTML[0m() called for page "${pageTitle}" on wiki "${wikiURL}"`);
+            Log.wait(`[95mparsoidGetPageHTML[0m() called for page "${pageTitle}" on wiki "${wikiURL}"${attemptNumber > 1 ? ` (attempt ${attemptNumber})` : ''} ...`);
             childProcess = exec(`php bin/parse.php --wt2html "--apiURL=${new URL('/w/api.php', wikiURL)}" "--domain=${new URL(wikiURL).hostname}" "--pageName=${pageTitle}"`, {
                 cwd: parsoidFolder,
                 timeout: 3 * 60 * 1000,
