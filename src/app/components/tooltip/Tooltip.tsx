@@ -75,7 +75,7 @@ export function Tooltip({children, wrapperClassName, role: roleRaw, tooltipConte
       role,
     ]);
 
-    const componentMounted = useRefObjectValue(arrowRef) === null;
+    const areTooltipContentsMounted = useRefObjectValue(arrowRef) !== null;
 
     return <>
         <span ref={refs.setReference} {...getReferenceProps()} className={wrapperClassName}>
@@ -87,7 +87,7 @@ export function Tooltip({children, wrapperClassName, role: roleRaw, tooltipConte
                 {...getFloatingProps()}
                 style={{
                     ...floatingStyles,
-                    opacity: componentMounted ? 0 : undefined,
+                    opacity: areTooltipContentsMounted ? undefined : 0,
                 }}
                 data-is-open={isOpen}
                 data-side={context.placement}
