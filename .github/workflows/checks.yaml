@@ -39,6 +39,7 @@ jobs:
         id: changed_files
         with:
           since_last_remote_commit: true
+          base_sha: ${{ github.event.pull_request.base.sha }}
           files: 'data/**/*.psc'
 
 
