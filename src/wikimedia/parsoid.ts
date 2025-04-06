@@ -66,36 +66,39 @@ export async function parsoidGetPageHTML(wikiURL: string, pageTitle: string, att
                 );
             }
 
-            function finalize(code?: number|null) {
-                setTimeout(() => {
-                    if ([stdout, stderr].some((data) => data.includes('parse.php: The specified revision does not exist.'))) {
-                        //Log.trace(`[95mparsoidGetPageHTML[0m() child child process got a 404 error while querying "${wikiURL}" for "${pageTitle}".`);
-                        return resolve(null);
+            let isFinalizing = false;
+            async function finalize(code?: number|null) {
+                if (isFinalizing) return;
+                isFinalizing = true;
+                await new Promise((r)=> setTimeout(r, 50)); // try to get ahead of any potential race conditions (e.g. if the child process is still writing to stdout/stderr)
+
+                if ([stdout, stderr].some((data) => data.includes('parse.php: The specified revision does not exist.'))) {
+                    //Log.trace(`[95mparsoidGetPageHTML[0m() child child process got a 404 error while querying "${wikiURL}" for "${pageTitle}".`);
+                    return resolve(null);
+                }
+
+                if ([stdout, stderr].some((data) => data.includes('ApiHelper.php: HTTP request failed: HTTP code 5'))) {
+                    if (attemptNumber >= PARSOID_ATTEMPT_LIMIT) {
+                        Log.error(`[95mparsoidGetPageHTML[0m() child child process got HTTP error 5xx while querying "${wikiURL}" for "${pageTitle}". Giving up.`);
+                        return reject(new Error(`Failed to get page HTML from Parsoid after ${PARSOID_ATTEMPT_LIMIT} attempts.`));
+                    } else {
+                        Log.warn(`[95mparsoidGetPageHTML[0m() child child process got HTTP error 5xx while querying "${wikiURL}" for "${pageTitle}". Retrying in 10s...`);
+                        return resolve(new Promise(r => setTimeout(r, 10_000)).then(()=>parsoidGetPageHTML(wikiURL, pageTitle, attemptNumber + 1)));
                     }
+                }
 
-                    if ([stdout, stderr].some((data) => data.includes('ApiHelper.php: HTTP request failed: HTTP code 5'))) {
-                        if (attemptNumber >= PARSOID_ATTEMPT_LIMIT) {
-                            Log.error(`[95mparsoidGetPageHTML[0m() child child process got HTTP error 5xx while querying "${wikiURL}" for "${pageTitle}". Giving up.`);
-                            return reject(new Error(`Failed to get page HTML from Parsoid after ${PARSOID_ATTEMPT_LIMIT} attempts.`));
-                        } else {
-                            Log.warn(`[95mparsoidGetPageHTML[0m() child child process got HTTP error 5xx while querying "${wikiURL}" for "${pageTitle}". Retrying in 10s...`);
-                            return resolve(new Promise(r => setTimeout(r, 10_000)).then(()=>parsoidGetPageHTML(wikiURL, pageTitle, attemptNumber + 1)));
-                        }
-                    }
+                if (!stderr) {
+                    if (typeof code === 'number' && code !== 0) Log.error(`[95mparsoidGetPageHTML[0m() child process exited with code ${code}`);
+                    else return resolve(stdout);
+                }
 
-                    if (!stderr) {
-                        if (typeof code === 'number' && code !== 0) Log.error(`[95mparsoidGetPageHTML[0m() child process exited with code ${code}`);
-                        else return resolve(stdout);
-                    }
+                Log.trace({
+                    stdout,
+                    stderr,
+                    code,
+                });
 
-                    Log.trace({
-                        stdout,
-                        stderr,
-                        code,
-                    });
-
-                    return reject(stderr ? new Error(stderr) : new Error(`[95mparsoidGetPageHTML[0m() child process exited with code ${code}`));
-                }, 50);
+                return reject(stderr ? new Error(stderr) : new Error(`[95mparsoidGetPageHTML[0m() child process exited with code ${code}`));
             }
 
             Log.wait(`[95mparsoidGetPageHTML[0m() called for page "${pageTitle}" on wiki "${wikiURL}"${attemptNumber > 1 ? ` (attempt ${attemptNumber})` : ''} ...`);
