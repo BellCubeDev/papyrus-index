@@ -9,6 +9,7 @@ import { PapyrusType, PapyrusTypeNamed, PapyrusTypeWithValue } from "../../type/
 import { FunctionDocumentationStringAll, FunctionDocumentationStringBest } from "./DocumentationString";
 import styles from './FunctionSignature.module.scss';
 import { PapyrusFunctionSignatureParamSeparator, PapyrusFunctionSignatureParamWrapper } from "./FunctionSignatureParamSeparator";
+import { SuspenseIfServer } from "../../../SuspenseIfServer";
 
 
 export function PapyrusFunctionSignature<TGame extends PapyrusGame>({game, func, scriptName, inTooltip, longerDescription}: {readonly game: TGame, readonly func: PapyrusScriptFunctionIndexed<TGame> & {ckWikiDescription?: string|null|undefined}, readonly scriptName: string, readonly inTooltip?: boolean|undefined, readonly longerDescription?: boolean|undefined}): React.ReactElement {
@@ -45,12 +46,12 @@ export function PapyrusFunctionSignature<TGame extends PapyrusGame>({game, func,
             </span>
         </div>
         {longerDescription
-            ? <div className={styles.longDescription}><Suspense fallback={<p>[DEV SERVER] Loading description...</p>}>
+            ? <div className={styles.longDescription}><SuspenseIfServer fallback={<p>[DEV SERVER] Loading description...</p>}>
                 <FunctionDocumentationStringAll game={game} func={func} scriptName={scriptName} inTooltip={inTooltip} />
-            </Suspense></div>
-            : <div className={styles.shortDescription}><Suspense fallback={<p>[DEV SERVER] Loading description...</p>}>
+            </SuspenseIfServer></div>
+            : <div className={styles.shortDescription}><SuspenseIfServer fallback={<p>[DEV SERVER] Loading description...</p>}>
                 <FunctionDocumentationStringBest game={game} func={func} scriptName={scriptName} inTooltip={inTooltip} />
-            </Suspense></div>}
+            </SuspenseIfServer></div>}
     </div>;
 }
 
