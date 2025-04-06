@@ -46,9 +46,9 @@ function WikiMarkdownLink(gameData: PapyrusGameDataIndexed<PapyrusGame>, inToolt
 
     const asEvent = script[AllSourcesCombined].events[toLowerCase(functOrEvent)];
     if (asEvent) //return <EventReference game={gameData.game} scriptName={functOrEventScriptName} possibleEvents={asEvent} />;
-        console.warn('<EventReference> component not implemented, but we needed it for a WikiMarkdownLink.');
+        if (process.env.SKIP_HIGH_LEVEL_DIAGNOSTIC_LOGS !== 'true') console.warn('<EventReference> component not implemented, but we needed it for a WikiMarkdownLink.');
 
-    console.warn(`Wiki page ${pageName} is not a function or event, but looks like a member of a script.`);
+    if (process.env.SKIP_HIGH_LEVEL_DIAGNOSTIC_LOGS !== 'true') console.warn(`Wiki page ${pageName} is not a function or event, but looks like a member of a script.`);
     return <a href={href}>{children}</a>;
 }
 

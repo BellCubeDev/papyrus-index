@@ -24,6 +24,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           sparse-checkout: '.gitignore'
+          submodules: recursive
+
+      - name: Create Missing Directories for Next Step
+        # tj-actions/changed-files seems to require a directory to exist for each repo/submodule
+        # so we'll create the submodules' directories before we run that action
+        run: |
+          mkdir -p cache/parsoid-service
 
 
       # only run subsequent steps if one of the changes includes a data/**/*.psc file
@@ -38,6 +45,8 @@ jobs:
       - name: Checkout
         if: steps.changed_files.outputs.all_changed_files_count != '0'
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       # If the cache with downloaded mods is here, we might as well use it.
       - name: Restore Custom Caches
@@ -96,6 +105,8 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4 # uses version in package.json
@@ -128,6 +139,8 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4 # uses version in package.json

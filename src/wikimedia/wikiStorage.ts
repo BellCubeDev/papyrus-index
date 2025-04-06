@@ -3,9 +3,9 @@ import path from 'path';
 import url from 'url';
 import type { GameWithWiki, PapyrusWiki } from './getWiki';
 import { WIKI_FETCH_403FORBIDDEN, wikiFetchGet } from './wikiFetch';
-import { getWikiPageHTMLStringRaw } from './getWikiPageStringRaw';
 import lockfileUtil from 'proper-lockfile';
 import { memoizeDevServerConst } from '../utils/memoizeDevServerConst';
+import { parsoidGetPageHTML } from './parsoid';
 
 export interface WikiStorageIndex {
     /** ISO timestamp of the latest change indexed */
@@ -53,19 +53,34 @@ interface MediaWikiRecentChange {
     timestamp: string;
 }
 
-function getLock(filePath: string): Promise<() => Promise<void>> {
+const lockPromisePoolObj = memoizeDevServerConst('lockPromisePoolObj', ()=>({
+    lockPromisePool: new Array(500).fill(Promise.resolve()),
+    lockPromisePoolCursor: 0,
+}));
+
+const lockPromisePool: Promise<any>[] = lockPromisePoolObj.lockPromisePool;
+let lockPromisePoolCursor = lockPromisePoolObj.lockPromisePoolCursor;
+function getLockPromise<T = void>(then: ()=>Promise<T>): Promise<T> {
+    const promise = lockPromisePool[lockPromisePoolCursor]!;
+    const newPromise = Promise.allSettled([promise]).then(then);
+    lockPromisePool[lockPromisePoolCursor] = newPromise;
+    lockPromisePoolCursor = (lockPromisePoolCursor + 1) % lockPromisePool.length;
+    return newPromise;
+}
+
+function getLock_(filePath: string): Promise<() => Promise<void>> {
     const promise = lockfileUtil.lock(filePath, {
         retries: {
             forever: true,
-            factor: 1.1,
-            minTimeout: 300,
-            maxTimeout: 3000
+            factor: 1.3,
+            minTimeout: 500,
+            maxTimeout: 6000
         },
         onCompromised(err) {
             console.error('The lockfile for', filePath, 'was compromised! See the proper-lockfile docs for more info on what this means', err);
         },
-        stale: 30_000,
-        update: 5_000,
+        stale: 60_000,
+        update: 10_000,
         realpath: false,
     });
 
@@ -77,6 +92,10 @@ function getLock(filePath: string): Promise<() => Promise<void>> {
             return Promise.resolve();
         }
     });
+}
+
+function getLock(filePath: string): Promise<() => Promise<void>> {
+    return getLockPromise(() => getLock_(filePath));
 }
 
 /**
@@ -196,12 +215,15 @@ async function applyIndexChangesRAW(wiki: PapyrusWiki, changes: [page: string, p
     pendingChangesByWiki.set(wiki.wikiTrueGame, changes);
     const indexPath = getWikiIndexPath(wiki);
     const releaseIndexLock = await getLock(indexPath);
-    const latestData = JSON.parse(await fs.readFile(indexPath, 'utf8'));
-    for (const [page, payload] of changes) latestData.pages[page] = payload;
-    pendingChangesByWiki.delete(wiki.wikiTrueGame);
-    await fs.writeFile(indexPath, JSON.stringify(latestData));
-    storageIndexCache.set(wiki.wikiTrueGame, [latestData, Date.now()]);
-    await releaseIndexLock();
+    try {
+        const latestData = JSON.parse(await fs.readFile(indexPath, 'utf8'));
+        for (const [page, payload] of changes) latestData.pages[page] = payload;
+        pendingChangesByWiki.delete(wiki.wikiTrueGame);
+        await fs.writeFile(indexPath, JSON.stringify(latestData));
+        storageIndexCache.set(wiki.wikiTrueGame, [latestData, Date.now()]);
+    } finally {
+        await releaseIndexLock();
+    }
 }
 
 
@@ -215,6 +237,23 @@ function changeIndexEntry(wiki: PapyrusWiki, page: string, payload: WikiStorageE
         const [data] = cachedStorageIndex;
         data.pages[page] = payload;
     }
+}
+
+
+const writePromisePoolObj = memoizeDevServerConst('writePromisePoolObj', ()=>({
+    writePromisePool: new Array(250).fill(Promise.resolve()),
+    writePromisePoolCursor: 0,
+}));
+
+const writePromisePool: Promise<any>[] = writePromisePoolObj.writePromisePool;
+let writePromisePoolCursor = writePromisePoolObj.writePromisePoolCursor;
+
+function getQueuedWritePromise<T = void>(then: ()=>Promise<T>): Promise<T> {
+    const promise = writePromisePool[writePromisePoolCursor]!;
+    const newPromise = Promise.allSettled([promise]).then(then);
+    writePromisePool[writePromisePoolCursor] = newPromise;
+    writePromisePoolCursor = (writePromisePoolCursor + 1) % writePromisePool.length;
+    return newPromise;
 }
 
 export async function getWikiPageHTMLString(wiki: PapyrusWiki, pageTitle: string): Promise<string | null> {
@@ -256,13 +295,14 @@ export async function getWikiPageHTMLString(wiki: PapyrusWiki, pageTitle: string
         }
     }
 
-    const htmlFileHandle = await fs.open(htmlFilePath, 'w');
+    return await getQueuedWritePromise(()=>downloadWikiPageHTMLString(wiki, pageTitle, htmlFilePath));
+}
+
+async function downloadWikiPageHTMLString(wiki: PapyrusWiki, pageTitle: string, htmlFilePath: string): Promise<string | null> {
     const releaseHTMLFileLock = await getLock(htmlFilePath);
-    let pageContent: string | null;
     try {
         const startDateISO = new Date().toISOString();
-        pageContent = await getWikiPageHTMLStringRaw(wiki, pageTitle);
-
+        const pageContent = await parsoidGetPageHTML(wiki.wikiBaseUrl, pageTitle);
         if (!pageContent) {
             changeIndexEntry(wiki, pageTitle, {
                 exists: false,
@@ -270,21 +310,15 @@ export async function getWikiPageHTMLString(wiki: PapyrusWiki, pageTitle: string
                 lastDownloaded: startDateISO,
             });
         } else {
-            htmlFileHandle.writeFile(pageContent).then(()=>{
-                changeIndexEntry(wiki, pageTitle, {
-                    exists: true,
-                    needsRedownloaded: false,
-                    lastDownloaded: startDateISO,
-                });
+            await fs.writeFile(htmlFilePath, pageContent);
+            changeIndexEntry(wiki, pageTitle, {
+                exists: true,
+                needsRedownloaded: false,
+                lastDownloaded: startDateISO,
             });
         }
+        return pageContent;
     } finally {
-        try {
-            await htmlFileHandle.close();
-        } finally {
-            await releaseHTMLFileLock();
-        }
+        await releaseHTMLFileLock();
     }
-
-    return pageContent;
 }

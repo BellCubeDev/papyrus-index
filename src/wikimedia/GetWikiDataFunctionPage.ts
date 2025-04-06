@@ -111,7 +111,8 @@ export async function getWikiDataFunctionPage<TGame extends PapyrusGame, TFunc e
         });
         if (!param) {
             const editSummary = `Correct Parameter Name (${name} --> CORRECT_NAME_HERE)`;
-            console.warn(`
+            if (process.env.SKIP_HIGH_LEVEL_DIAGNOSTIC_LOGS !== 'true') {
+                console.warn(`
 ⚠️  [96m[MediaWiki Scraping - getWikiDataFunctionPage()] Invalid Parameter Detected![0m
 [93m|[0m Parameter ${name} not found in function [32m${scriptName}[0m.[33m${functionName}[0m()!
 [93m|[0m Wiki: ${wiki.wikiName} (for ${wiki.wikiTrueGame})
@@ -139,7 +140,8 @@ ${
 }
 - **Edit Link:** [${document.location.href}?action=edit&summary=${encodeURIComponent(editSummary)}](${document.location.href}?action=edit&summary=${encodeURIComponent(editSummary)})
 - **Edit Message:** ${editSummary}
-`.trim());
+`.trim()        );
+            }
             return null;
         }
         name = !Array.isArray(param) ? param.name : getBestName(param.map(p => p.name))[1];

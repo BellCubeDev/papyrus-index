@@ -13,7 +13,8 @@ eslint_report.json
 /public/raw.json
 
 # Don't just store raw wiki data and whatever else we cache; that's not nice! (even if it is allowed)
-/cache
+/cache/*
+!/cache/parsoid-service
 
 
 # BSArch, used to download mods automatically
