@@ -4,6 +4,7 @@ import { arrow, autoUpdate, flip, FloatingArrow, offset, shift, useDismiss, useF
 import { Suspense, useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import styles from './Tooltip.module.scss';
 import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion';
+import { useRefObjectValue } from '../../hooks/useRefValue';
 
 export function Tooltip({children, wrapperClassName, role: roleRaw, tooltipContents}: {
     readonly children: ReactNode;
@@ -74,6 +75,8 @@ export function Tooltip({children, wrapperClassName, role: roleRaw, tooltipConte
       role,
     ]);
 
+    const componentMounted = useRefObjectValue(arrowRef) === null;
+
     return <>
         <span ref={refs.setReference} {...getReferenceProps()} className={wrapperClassName}>
             {children}
@@ -84,7 +87,7 @@ export function Tooltip({children, wrapperClassName, role: roleRaw, tooltipConte
                 {...getFloatingProps()}
                 style={{
                     ...floatingStyles,
-                    opacity: arrowRef.current === null ? 0 : undefined,
+                    opacity: componentMounted ? 0 : undefined,
                 }}
                 data-is-open={isOpen}
                 data-side={context.placement}
