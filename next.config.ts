@@ -57,7 +57,13 @@ const nextConfig = {
         formats: ['image/avif', 'image/webp'],
     },
 
-
+    webpack(config: Parameters<NonNullable<NextConfig['webpack']>>[0], _context: Parameters<NonNullable<NextConfig['webpack']>>[1]) {
+        return Object.assign(config, {
+            experiments: Object.assign(config.experiments ?? {}, {
+                topLevelAwait: true,
+            }),
+        });
+    },
 
     transpilePackages: ['@wooorm/starry-night']
 } as const satisfies RestoreLegacyOptionalKeys<NextConfig>;

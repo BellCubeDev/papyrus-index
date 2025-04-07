@@ -1,3 +1,4 @@
+/* eslint-disable max-depth */
 import { unpack as unpackWith7z } from "7zip-min";
 import Ajv from 'ajv';
 import { ReadStream, type Dirent } from 'node:fs';
@@ -85,12 +86,15 @@ async function maybeDownloadMod(folder: string) {
             hasError = true;
             try {
                 if (!metadata.nexusIndexedFileId) throw new Error(`Mod ${path.basename(folder)} is marked for download, but has no nexusIndexedFileId specified in its meta.yaml file! Folder: ${folder}`);
-                if (metadata.nexusIndexedFileId !== null) {
+                if (metadata.nexusIndexedFileId === null) {
+                    console.log(`Mod ${path.basename(folder)} has not been downloaded yet; starting download!`);
+                } else {
                     if (metadata.nexusIndexedFileId === downloadedFileId) {
                         console.log(`Mod ${path.basename(folder)} is already up-to-date!`);
                         hasError = false;
                         return;
                     } else {
+                        console.log(`Mod ${path.basename(folder)} is out of date; redownloading!`);
                         await fs.rm(destinationFolder, {recursive: true});
                         await fs.mkdir(destinationFolder, {recursive: true});
                     }
@@ -123,75 +127,85 @@ Please download the file at https://www.nexusmods.com/Core/Libs/Common/Widgets/D
         }
 
         const [firstDownloadLinkRaw] = await nexusModsRESTRefetch.getDownloadURLs(modId, fileId, undefined, undefined, gameDomain);
-        if (!firstDownloadLinkRaw) throw new Error('No BSArch download link returned by Nexus mods\' API');
+        if (!firstDownloadLinkRaw) throw new Error('No mod download link returned by Nexus mods\' API');
         const firstDownloadLink = new URL(firstDownloadLinkRaw.URI);
 
         const download = await fetch(firstDownloadLink);
+        let hasDownloadError = false;
+        try {
+            if (!download.ok) throw new Error(`Mod download failed with status ${download.status}!`);
+            if (!download.body) throw new Error('No body in mod download response!');
 
-        if (!download.ok) throw new Error(`BSArch download failed with status ${download.status}`);
-        if (!download.body) throw new Error('No body in BSArch download response');
+            const tempFileName = path.basename(decodeURI(firstDownloadLink.pathname));
 
-        const tempFileName = path.basename(decodeURI(firstDownloadLink.pathname));
+            startedDownload = true;
+            // TODO: Will need to handle the case where the download is a 7z or a rar file
 
-        startedDownload = true;
-        // TODO: Will need to handle the case where the download is a 7z or a rar file
-
-        // Use a direct stream from request to extraction if possible.
-        // If not, write the archive to file and then use the ol' reliable 7z binaries to extract.
-        //
-        // Would be nice if there were a way to stream the archive to 7z directly,
-        // but I don't see an easy way to do that outside of (maybe) STDIN.
-        // Still, this method is clean and works well. Even if it's a little more IO-heavy than I'd like.
-        let cleanupPromise: Promise<void> | undefined;
-        if (download.headers.get('Content-Type') === 'application/zip') {
-            await new Promise<void>((resolve, reject) => {
-                ReadStream.fromWeb(download.body as ReadableStream<any>)
-                    .pipe(unzip.Extract({ path: destinationFolder }))
-                    .on('close', resolve)
-                    .on('error', reject);
-            });
-        } else {
-            const tmpFilePath = path.join(tempDownloadDir, tempFileName);
-            let hasErrorWithTempDownloadFile = true;
-            await createTempDownloadDirPromise;
-            try {
-                console.log(`Downloading mod ${nexusLink} to ${tmpFilePath}...`);
-                const archiveFile = await fs.open(tmpFilePath, 'w+');
-                const archiveFileStream = archiveFile.createWriteStream();
-                console.log(`Created download stream for ${tempFileName}...`);
+            // Use a direct stream from request to extraction if possible.
+            // If not, write the archive to file and then use the ol' reliable 7z binaries to extract.
+            //
+            // Would be nice if there were a way to stream the archive to 7z directly,
+            // but I don't see an easy way to do that outside of (maybe) STDIN.
+            // Still, this method is clean and works well. Even if it's a little more IO-heavy than I'd like.
+            let cleanupPromise: Promise<void> | undefined;
+            if (download.headers.get('Content-Type') === 'application/zip') {
                 await new Promise<void>((resolve, reject) => {
-                    ReadStream.fromWeb(download.body as ReadableStream<any>).pipe(archiveFileStream)
-                        .on('close', ()=> { archiveFileStream.close((err) => err ? reject(err) : resolve()) })
+                    ReadStream.fromWeb(download.body as ReadableStream<any>)
+                        .pipe(unzip.Extract({ path: destinationFolder }))
+                        .on('close', resolve)
                         .on('error', reject);
                 });
-                console.log(`Extracting ${tempFileName} to ${destinationFolder}...`);
-                await new Promise<void>((resolve, reject) => unpackWith7z(tmpFilePath, destinationFolder, err => err ? reject(err) : resolve()));
-                cleanupPromise = fs.rm(tmpFilePath);
-                console.log(`Extracted ${tempFileName} to ${destinationFolder}`);
-                hasErrorWithTempDownloadFile = false;
-            } finally {
-                if (hasErrorWithTempDownloadFile) {
-                    await Promise.all([
-                        fs.readdir(destinationFolder, {recursive: true}).then(children=> children.length===0 ? fs.rm(destinationFolder) : Promise.resolve() ),
-                        fs.rm(tmpFilePath),
-                    ]);
+            } else {
+                const tmpFilePath = path.join(tempDownloadDir, tempFileName);
+                let hasErrorWithTempDownloadFile = true;
+                await createTempDownloadDirPromise;
+                try {
+                    console.log(`Downloading mod ${nexusLink} to ${tmpFilePath}...`);
+                    const archiveFile = await fs.open(tmpFilePath, 'w+');
+                    const archiveFileStream = archiveFile.createWriteStream();
+                    console.log(`Created download stream for ${tempFileName}...`);
+                    await new Promise<void>((resolve, reject) => {
+                        ReadStream.fromWeb(download.body as ReadableStream<any>).pipe(archiveFileStream)
+                            .on('close', ()=> { archiveFileStream.close((err) => err ? reject(err) : resolve()) })
+                            .on('error', reject);
+                    });
+                    console.log(`Extracting ${tempFileName} to ${destinationFolder}...`);
+                    await new Promise<void>((resolve, reject) => unpackWith7z(tmpFilePath, destinationFolder, err => err ? reject(err) : resolve()));
+                    cleanupPromise = fs.rm(tmpFilePath);
+                    console.log(`Extracted ${tempFileName} to ${destinationFolder}`);
+                    hasErrorWithTempDownloadFile = false;
+                } finally {
+                    if (hasErrorWithTempDownloadFile) {
+                        console.error(`Error downloading mod ${nexusLink} to ${tmpFilePath}!`);
+                        await Promise.all([
+                            fs.readdir(destinationFolder, {recursive: true}).then(children=> children.length===0 ? fs.rm(destinationFolder) : Promise.resolve() ),
+                            fs.rm(tmpFilePath),
+                        ]);
+                    }
                 }
             }
-        }
 
-        const extractedFiles = await fs.readdir(destinationFolder, {withFileTypes: true, recursive: true});
-        const bsaFiles = extractedFiles.filter(file => file.isFile() && (file.name.endsWith('.bsa') || file.name.endsWith('.ba2')));
-        await Promise.all(bsaFiles.map(bsaFile => bsArch.extractArchive(path.join(bsaFile.path, bsaFile.name), bsaFile.path)));
-        await fs.writeFile(path.join(destinationFolder, '.nexusFileId'), fileId.toString(10), 'utf8');
-        await cleanupPromise;
-        hasError = false;
+            const extractedFiles = await fs.readdir(destinationFolder, {withFileTypes: true, recursive: true});
+            const bsaFiles = extractedFiles.filter(file => file.isFile() && (file.name.endsWith('.bsa') || file.name.endsWith('.ba2')));
+            await Promise.all(bsaFiles.map(bsaFile => bsArch.extractArchive(path.join(bsaFile.path, bsaFile.name), bsaFile.path)));
+            await fs.writeFile(path.join(destinationFolder, '.nexusFileId'), fileId.toString(10), 'utf8');
+            await cleanupPromise;
+            hasError = false;
+            hasDownloadError = false;
+        } finally {
+            if (hasDownloadError) console.error(`Response data for error in downloading mod ${nexusLink}:`, download);
+        }
     } finally {
         if (hasError) {
-            console.error(`Error downloading mod ${nexusLink} - ${startedDownload ? 'removing extracted folder...' : ''}`);
+            console.error(`Error downloading mod ${nexusLink}${startedDownload ? ' - removing extracted folder...' : ''}`);
             await fs.rm(destinationFolder, {recursive: true});
+        } else {
+            console.log(`Mod ${nexusLink} downloaded successfully!`);
         }
     }
 }
+
+console.log(`Downloading mods...`);
 
 await Promise.all(Object.values(PapyrusGame).map(async game => {
     const gameDir = getGameDir(game);
@@ -204,4 +218,9 @@ await Promise.all(Object.values(PapyrusGame).map(async game => {
     }
 
     await Promise.all(gameFolders.map(gameFolder => maybeDownloadMod(path.join(gameFolder.path, gameFolder.name))));
-}));
+})).catch(err => {
+    console.error('Error downloading mods:', err);
+    process.exit(8311);
+});
+
+console.log(`Finished downloading mods!`);

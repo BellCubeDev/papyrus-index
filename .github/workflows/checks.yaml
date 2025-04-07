@@ -76,6 +76,21 @@ jobs:
           node-version: '22'
           cache: 'pnpm'
 
+      - name: Get Composer Cache Directory
+        if: steps.changed_files.outputs.all_changed_files_count != '0'
+        id: composer-cache
+        run: |
+          cd cache/parsoid-service
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Restore Composer Package Cache
+        if: steps.changed_files.outputs.all_changed_files_count != '0'
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('cache/parsoid-service/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
+
       - name: Install NPM Dependencies
         id: install-deps
         if: steps.changed_files.outputs.all_changed_files_count != '0'
@@ -88,7 +103,7 @@ jobs:
       - name: Save Custom Caches
         id: cache-save-custom
         uses: actions/cache/save@v4
-        if: always() && steps.install-deps.outcome == 'success'
+        if: always() && steps.changed_files.outputs.all_changed_files_count != '0' && steps.install-deps.outcome == 'success'
         with:
           path: |
             cache
@@ -118,8 +133,31 @@ jobs:
           node-version: '22'
           cache: 'pnpm'
 
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          cd cache/parsoid-service
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Restore Composer Package Cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('cache/parsoid-service/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
+
       - name: Install NPM Dependencies
+        id: install-deps
         run: pnpm install --frozen-lockfile
+
+      # Using Next.js caching actually just slowed it down. Transfer speeds are slower than just computing from scratch.
+      #- name: Use Next.js Caching
+      #  uses: actions/cache@v4
+      #  with:
+      #    path: .next/cache
+      #    key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('src/**/*.js', 'src/**/*.jsx', 'src/**/*.ts', 'src/**/*.tsx') }}
+      #    restore-keys: |
+      #      ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
 
       - name: Run Type Check
         run: pnpm run typecheck
@@ -132,6 +170,13 @@ jobs:
       #    typescript-log: typecheck.log
       #    typescript-annotation-prefix: 'Type error:'
       #    only-changed-in-pr: ${{ github.base_ref != null }}
+
+      - name: Save Composer Package Cache
+        uses: actions/cache/save@v4
+        if: always() && steps.install-deps.outcome == 'success'
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('cache/parsoid-service/composer.json') }}
 
   eslint-check:
     runs-on: ubuntu-latest
@@ -152,7 +197,21 @@ jobs:
           node-version: '22'
           cache: 'pnpm'
 
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          cd cache/parsoid-service
+          echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Restore Composer Package Cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('cache/parsoid-service/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-
+
       - name: Install NPM Dependencies
+        id: install-deps
         run: pnpm install --frozen-lockfile
 
       - name: Run ESLint Check
@@ -165,3 +224,10 @@ jobs:
         with:
           eslint-report: eslint_report.json
           only-changed-in-pr: ${{ github.base_ref != null }}
+
+      - name: Save Composer Package Cache
+        uses: actions/cache/save@v4
+        if: always() && steps.install-deps.outcome == 'success'
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('cache/parsoid-service/composer.json') }}

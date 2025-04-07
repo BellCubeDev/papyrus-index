@@ -36,6 +36,12 @@ print_done () {
     printf "${GREEN} done.\r\n"
 }
 
+
+# Determine the distribution information.
+codename=$(lsb_release -cs)
+version=$(lsb_release -rs)
+
+
 install_wine () {
 
 
@@ -55,8 +61,8 @@ install_wine () {
     fi
     print_done
 
-    printf "${NC}Adding WineHQ repository to APT (bionic main)..."
-    sudo apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu bionic main'
+    printf "${NC}Adding WineHQ repository to APT (${codename} main)..."
+    sudo apt-add-repository "deb https://dl.winehq.org/wine-builds/ubuntu ${codename} main"
     print_done
 
     printf "${NC}Installing software-properties-common..."

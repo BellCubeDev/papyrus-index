@@ -5,7 +5,7 @@ import path from 'node:path';
 import { nexusModsREST60sMemo, nexusModsRESTRefetch } from '../../../nexus-api/RESTApi';
 import unzip from 'unzip-stream';
 import type { ReadableStream } from 'node:stream/web';
-import { spawn } from 'node:child_process';
+import { exec, spawn } from 'node:child_process';
 import os from 'node:os';
 
 const thisFilePath = url.fileURLToPath(import.meta.url);
@@ -15,23 +15,102 @@ const bsArchEXEPath = path.resolve(thisDirPath, 'BSArch.exe');
 // The Wine installation script in the INSTALL_WINE_SCRIPT_PATH environment variable
 // will run every time this module is used and BSArch is needed.
 // It is meant for use in CI environments.
-let hasInstalledWine = false;
+const wineReadyPromise = Object.assign(Promise.withResolvers<void>(), {
+    needsToStartInstall: false,
+});
+
 
 if (os.platform() !== 'win32') {
+    const WineNoInstalledError = new Error('Wine is not installed or not accessible.');
     try {
         await new Promise<void>((resolve, reject) => {
             const child = spawn('wine --version', { shell: true });
             child.once('exit', (code) => {
                 if (code === 0) resolve();
-                else reject(new Error('Wine is not installed or not accessible.'));
+                else reject(WineNoInstalledError);
             });
             child.once('error', reject);
         });
-        hasInstalledWine = true;
+        console.log('Wine is installed and accessible. If BSArch needs to be run, it will run under Wine, and should work without issue.');
+        wineReadyPromise.resolve();
+        wineReadyPromise.needsToStartInstall = false;
     } catch (e) {
-        console.error('Encountered an error while checking for Wine installation:', e);
-        hasInstalledWine = false;
+        wineReadyPromise.needsToStartInstall = true;
+
+        if (e === WineNoInstalledError) console.log('Wine is not installed. If BSArch needs to be run, it will need to be installed. If this is a CI environment, Wine may be installed automatically by this script, depending on the CI configuration.');
+        else console.error('Encountered an error while checking for Wine installation:', e);
+
+        const rawResolve = wineReadyPromise.resolve;
+        wineReadyPromise.resolve = () => {
+            console.log('Wine installation completed successfully.');
+            return rawResolve();
+        };
+
+        const rawReject = wineReadyPromise.reject;
+        wineReadyPromise.reject = (err) => {
+            console.error('Wine installation failed:', err);
+            return rawReject(err);
+        };
     }
+}
+
+async function ensureWineInstalled() {
+    if (os.platform() === 'win32') return console.warn('Wine is not needed on Windows, but ensureWineInstalled() was called. This is likely a bug in the code.');
+    if (!wineReadyPromise.needsToStartInstall) {
+        console.log('Wine has been flagged as either installed or currently being installed. Waiting for the completion signal...');
+        return await wineReadyPromise.promise;
+    }
+
+    console.log('Wine is not installed. Attempting to install...');
+
+    if (!process.env.INSTALL_WINE_SCRIPT_PATH) throw new Error('INSTALL_WINE_SCRIPT_PATH environment variable is not set (i.e. this is not a CI workflow). Wine must be installed manually.');
+    wineReadyPromise.needsToStartInstall = false;
+
+    console.log('INSTALL_WINE_SCRIPT_PATH:', process.env.INSTALL_WINE_SCRIPT_PATH);
+    console.log('Ensuring INSTALL_WINE_SCRIPT_PATH is executable...');
+
+    const stats = await fs.stat(process.env.INSTALL_WINE_SCRIPT_PATH);
+    // eslint-disable-next-line no-bitwise
+    if (!(stats.mode & 0o100)) await fs.chmod(process.env.INSTALL_WINE_SCRIPT_PATH, stats.mode | 0o100);
+
+    console.log('INSTALL_WINE_SCRIPT_PATH is executable. Running installation script...');
+
+    let hasErrorSpawning = true;
+    try {
+        const scriptProcess = exec(`sudo ${process.env.INSTALL_WINE_SCRIPT_PATH!}`, (err, _stdout, _stderr) => {
+            if (err) {
+                console.error('Wine installation failed:', err);
+                wineReadyPromise.reject(err);
+            }
+            if (scriptProcess.exitCode !== 0) {
+                console.error('Wine installation failed with exit code:', scriptProcess.exitCode, scriptProcess);
+                wineReadyPromise.reject(new Error(`Wine installation failed with exit code ${scriptProcess.exitCode}`));
+            }
+
+            console.log('Wine installation completed successfully.');
+            wineReadyPromise.resolve();
+        });
+
+        scriptProcess.stdout?.pipe(process.stdout);
+        scriptProcess.stderr?.pipe(process.stderr);
+
+        scriptProcess.once('error', (err) => {
+            console.error('Wine installation failed:', err);
+            wineReadyPromise.reject(err);
+        });
+
+        scriptProcess.once('spawn', () => {
+            console.log('Wine installation script spawned successfully. Waiting for completion...');
+            hasErrorSpawning = false;
+        });
+
+        console.log('Wine installation script spawning queued successfully. Waiting for completion...');
+        hasErrorSpawning = false;
+    } finally {
+        if (hasErrorSpawning) console.error('Wine installation failed: Could not spawn process. Please check the INSTALL_WINE_SCRIPT_PATH environment variable and make sure it points to a valid script and that there are no strange errors elsewhere in the log.');
+    }
+
+    await wineReadyPromise.promise;
 }
 
 /** Class to handle interacting with the command-line tool BSArch */
@@ -50,34 +129,38 @@ class BSArch {
     }
 
     public async extractArchive(archivePath: string, outputPath: string): Promise<void> {
+
+        console.log(`Queueing BSArch to extract archive ${archivePath} to ${outputPath}`);
         await this.bsArchReady();
+        console.log(`Extracting archive ${archivePath} to ${outputPath}`);
 
         await fs.mkdir(outputPath, { recursive: true });
 
         let execString = `"${bsArchEXEPath}" unpack "${archivePath}" "${outputPath}" -mt`;
         if (os.platform() !== 'win32') {
+            console.log('BSarch will be run under Wine.');
+            await ensureWineInstalled();
+            console.log('Wine is installed and accessible. Running BSArch under Wine...');
             execString = `wine ${execString}`;
-            if (process.env.INSTALL_WINE_SCRIPT_PATH && !hasInstalledWine) {
-                const stats = await fs.stat(process.env.INSTALL_WINE_SCRIPT_PATH);
-                // eslint-disable-next-line no-bitwise
-                if (!(stats.mode & 0o100)) await fs.chmod(process.env.INSTALL_WINE_SCRIPT_PATH, stats.mode | 0o100);
-                console.log('Installing Wine for BSArch...');
-                await new Promise<void>((resolve, reject) => {
-                    const child = spawn(`sudo ${process.env.INSTALL_WINE_SCRIPT_PATH!}`, { shell: true, stdio: 'inherit' });
-                    child.once('exit', (code) => {
-                        if (code === 0) resolve();
-                        else reject(new Error(`Wine installation exited with code ${code}`));
-                    });
+        }
+        let hasError = true;
+        try {
+            await new Promise<void>((resolve, reject) => {
+                const child = spawn(execString, { shell: true, stdio: 'inherit' });
+                child.once('exit', (code) => {
+                    if (code === 0) resolve();
+                    else reject(new Error(`BSArch exited with code ${code}`));
                 });
+            });
+            hasError = false;
+        } finally {
+            if (hasError) {
+                console.error(`BSArch extraction failed. Please check the output for more information.`);
+                console.log(`If you are using Wine, please make sure it is installed and accessible.`);
+            } else {
+                console.log(`BSArch extraction completed successfully.`);
             }
         }
-        await new Promise<void>((resolve, reject) => {
-            const child = spawn(execString, { shell: true, stdio: 'inherit' });
-            child.once('exit', (code) => {
-                if (code === 0) resolve();
-                else reject(new Error(`BSArch exited with code ${code}`));
-            });
-        });
     }
 
     // eslint-disable-next-line class-methods-use-this
