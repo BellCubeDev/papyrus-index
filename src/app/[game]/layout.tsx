@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getGameName } from "../../utils/getGameName";
 import { toLowerCase } from "../../utils/toLowerCase";
-import { getWiki } from "../../wikimedia/getWiki";
+import { getWiki } from "../../mediawiki/getWiki";
 import { Link } from "../components/Link";
 import { WikiAttribution } from "../components/wiki-attribution/WikiAttribution";
 import { getGameFromParams, type GameRouteParams } from "./getGameFromParams";

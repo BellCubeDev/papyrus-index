@@ -9,7 +9,7 @@ import type { PapyrusScriptIndexedAggregate } from "../../../papyrus/data-struct
 import type { PapyrusScriptEventOrBaseFunctionIndexedAggregate, PapyrusScriptFunctionIndexedAggregate } from "../../../papyrus/data-structures/indexing/function";
 import type { PapyrusScriptStructIndexedAggregate } from "../../../papyrus/data-structures/indexing/struct";
 import type { PapyrusScriptPropertyIndexedAggregate } from "../../../papyrus/data-structures/indexing/property";
-import { getWikiDataFunctionPage } from "../../../wikimedia/GetWikiDataFunctionPage";
+import { getMediaWikiFunctionData } from "../../../mediawiki/data-extraction/getMediaWikiFunctionData";
 import { getBestNameVariant } from "../../../utils/getBestName";
 import { AllSourcesCombined } from "../../../papyrus/data-structures/indexing/game";
 
@@ -68,7 +68,7 @@ async function getExtraEntityDataForScript(_game: PapyrusGame, script: PapyrusSc
 }
 
 async function getExtraEntityDataForFunction(game: PapyrusGame, func: PapyrusScriptFunctionIndexedAggregate<PapyrusGame>): Promise<[number, SingleExtraEntityDataRecord[SearchIndexEntityType.Function]]> {
-    const wikiData = await getWikiDataFunctionPage(game, func, getBestNameVariant(func.script.namespaceName)[1]);
+    const wikiData = await getMediaWikiFunctionData(game, func, getBestNameVariant(func.script.namespaceName)[1]);
 
     return [func.$entityId, {
         ckWikiDescription: wikiData ? wikiData.shortDescriptionMarkdown : null,

@@ -1,4 +1,4 @@
-import type { PapyrusWiki } from './getWiki';
+import type { PapyrusWiki } from '../getWiki';
 import { getWikiPageHTMLString } from './wikiStorage';
 
 async function parseDocument(html: string, url: string): Promise<Document> {

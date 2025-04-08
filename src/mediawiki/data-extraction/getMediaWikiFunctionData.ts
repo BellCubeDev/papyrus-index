@@ -1,12 +1,12 @@
-import type { PapyrusScriptFunctionIndexed, PapyrusScriptFunctionIndexedAggregate } from "../papyrus/data-structures/indexing/function";
-import type { PapyrusScriptFunction } from "../papyrus/data-structures/pure/function";
-import { PapyrusGame } from "../papyrus/data-structures/pure/game";
-import { getWiki, type PapyrusWiki } from "./getWiki";
-import { getWikiPageHTMLDocument } from "./GetWikiPageHTML";
+import type { PapyrusScriptFunctionIndexed, PapyrusScriptFunctionIndexedAggregate } from "../../papyrus/data-structures/indexing/function";
+import type { PapyrusScriptFunction } from "../../papyrus/data-structures/pure/function";
+import { PapyrusGame } from "../../papyrus/data-structures/pure/game";
+import { getWiki, type PapyrusWiki } from "../getWiki";
+import { getWikiPageHTMLDocument } from "../fetching/GetWikiPageHTML";
 import { parsoidElementsToMarkdown, parsoidToMarkdown } from "./parsoidToMarkdown";
-import { toLowerCase } from "../utils/toLowerCase";
-import { appendToJobSummarySection } from "../utils/stepSummary";
-import { getBestName, getBestNameVariant } from "../utils/getBestName";
+import { toLowerCase } from "../../utils/toLowerCase";
+import { appendToJobSummarySection } from "../../utils/stepSummary";
+import { getBestName, getBestNameVariant } from "../../utils/getBestName";
 
 export type PotentialFunction<TGame extends PapyrusGame> = PapyrusScriptFunctionIndexedAggregate<TGame>| PapyrusScriptFunction<TGame> | PapyrusScriptFunctionIndexed<TGame>;
 
@@ -46,7 +46,7 @@ export interface WikiDataFunctionPage extends PapyrusWiki {
     seeAlsoMarkdown: string;
 }
 
-export async function getWikiDataFunctionPage<TGame extends PapyrusGame, TFunc extends PotentialFunction<TGame>>(game: TGame, func: TFunc, scriptName: string): Promise<WikiDataFunctionPage | null> {
+export async function getMediaWikiFunctionData<TGame extends PapyrusGame, TFunc extends PotentialFunction<TGame>>(game: TGame, func: TFunc, scriptName: string): Promise<WikiDataFunctionPage | null> {
     const wiki = getWiki(game);
 
     const functionName = Array.isArray(func.name) ? getBestNameVariant(func.name)[1] : func.name;
