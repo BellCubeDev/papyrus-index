@@ -95,7 +95,7 @@ async function getMediaWikiFunctionDataInternal<TGame extends PapyrusGame, TFunc
     const shortDescriptionMarkdown = shortDescriptionElements.length === 0 ? null : await parsoidElementsToMarkdown(shortDescriptionElements, document.location.href);
     if (shortDescriptionMarkdown === null) console.warn(`[MediaWiki Scraping - getWikiDataFunctionPage()] Short description is null for page "${pageName}" on wiki "${wiki.wikiName}" (${document.location.href})!`);
 
-    const exampleCodeElements = pageData.sectionsById.examples?.contents.filter(el=>el.tagName.toLowerCase() === 'pre') ?? [];
+    const exampleCodeElements = pageData.sectionsById.examples?.contents.filter(el=>el.getAttribute('typeof') === 'mw:Extension/source') ?? [];
     const examplesData = exampleCodeElements.map(e => ({code: e.textContent || ''}));
 
     const returnValueDescriptionElements = pageData.sectionsById.return_value?.contents ?? [];
