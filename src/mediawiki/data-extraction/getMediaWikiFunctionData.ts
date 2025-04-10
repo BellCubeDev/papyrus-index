@@ -9,6 +9,7 @@ import { toLowerCase } from "../../utils/toLowerCase";
 import { appendToJobSummarySection } from "../../utils/stepSummary";
 import { getBestName, getBestNameVariant } from "../../utils/getBestName";
 import { extractLinearWikiPageData } from "./parsoidToPageData";
+import { memoizeDevServerConst } from "../../utils/memoizeDevServerConst";
 
 export type PotentialFunction<TGame extends PapyrusGame> = PapyrusScriptFunctionIndexedAggregate<TGame>| PapyrusScriptFunction<TGame> | PapyrusScriptFunctionIndexed<TGame>;
 
@@ -51,7 +52,7 @@ export interface WikiDataFunctionPage extends PapyrusWiki {
     wikiPageUrl: string;
 }
 
-const wikiFunctionDataMemoization = new WeakMap<PotentialFunction<PapyrusGame>, WikiDataFunctionPage | null>();
+const wikiFunctionDataMemoization = memoizeDevServerConst('wikiFunctionDataMemoization', () => new WeakMap<PotentialFunction<PapyrusGame>, WikiDataFunctionPage | null>());
 
 export async function getMediaWikiFunctionData<TGame extends PapyrusGame, TFunc extends PotentialFunction<TGame>>(game: TGame, func: TFunc, scriptName: string): Promise<WikiDataFunctionPage | null> {
     const wikiFunctionData = wikiFunctionDataMemoization.get(func);

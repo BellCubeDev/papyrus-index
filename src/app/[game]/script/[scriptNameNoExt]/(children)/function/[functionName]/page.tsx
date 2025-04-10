@@ -14,6 +14,7 @@ import { PapyrusFunctionSignatureVariants } from "../../../../../../components/p
 import { SourceName } from "../../../../../../components/papyrus/SourceName";
 import { TextWithTooltip } from "../../../../../../components/text-with-tooltip/TooltipText";
 import { getGameAndScriptAndFunctionFromParams, type FunctionRouteParams } from "./getGameAndScriptAndFunctionFromParams";
+import { WikiMarkdown } from "../../../../../../components/wiki-markdown/WikiMarkdown";
 
 export function generateStaticParams(): FunctionRouteParams[] {
     const params: FunctionRouteParams[] = [];
