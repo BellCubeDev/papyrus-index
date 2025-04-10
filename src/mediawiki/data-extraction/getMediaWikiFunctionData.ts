@@ -46,6 +46,9 @@ export interface WikiDataFunctionPage extends PapyrusWiki {
 
     /** Pages a reader may also want to read, given the subject matter of this one (e.g. `Quest.Start()` might link to `Quest.Stop()`) */
     seeAlsoMarkdown: string;
+
+    /** A link to the wiki page for this function */
+    wikiPageUrl: string;
 }
 
 const wikiFunctionDataMemoization = new WeakMap<PotentialFunction<PapyrusGame>, WikiDataFunctionPage | null>();
@@ -171,5 +174,6 @@ ${
         notesMarkdown,
         parameters,
         seeAlsoMarkdown,
+        wikiPageUrl: document.location.href,
     };
 }
