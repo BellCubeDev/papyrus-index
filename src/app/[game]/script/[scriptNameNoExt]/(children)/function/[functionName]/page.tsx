@@ -54,7 +54,6 @@ export default async function FunctionPage({params}: {readonly params: Promise<F
     const wikiDataPromise = getMediaWikiFunctionData(game, func, scriptNamespaceName);
 
     return <>
-        <p>{scriptNamespaceName}</p>
         <GuardEmptyList replacement={<p>No variants of this function found.</p>}>
             <PapyrusFunctionSignatureVariants game={game} funcAggregate={func} scriptName={scriptNamespaceName} longerDescription />
         </GuardEmptyList>
