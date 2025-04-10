@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import type { PapyrusScriptFunctionIndexed, PapyrusScriptFunctionIndexedAggregate } from "../../papyrus/data-structures/indexing/function";
 import type { PapyrusScriptFunction } from "../../papyrus/data-structures/pure/function";
 import { PapyrusGame } from "../../papyrus/data-structures/pure/game";
@@ -7,6 +8,7 @@ import { parsoidElementsToMarkdown, parsoidToMarkdown } from "./parsoidToMarkdow
 import { toLowerCase } from "../../utils/toLowerCase";
 import { appendToJobSummarySection } from "../../utils/stepSummary";
 import { getBestName, getBestNameVariant } from "../../utils/getBestName";
+import { extractLinearWikiPageData } from "./parsoidToPageData";
 
 export type PotentialFunction<TGame extends PapyrusGame> = PapyrusScriptFunctionIndexedAggregate<TGame>| PapyrusScriptFunction<TGame> | PapyrusScriptFunctionIndexed<TGame>;
 
@@ -18,7 +20,7 @@ export interface WikiDataFunctionPage extends PapyrusWiki {
     isMarkedNonDelayed: boolean;
 
     /** HTML elements representing the wiki's short description of this element. */
-    shortDescriptionMarkdown: string;
+    shortDescriptionMarkdown: string | null;
 
     /** Examples from the wiki page designed to demonstrate the usage of this function */
     examplesData: Array<{
@@ -46,7 +48,18 @@ export interface WikiDataFunctionPage extends PapyrusWiki {
     seeAlsoMarkdown: string;
 }
 
+const wikiFunctionDataMemoization = new WeakMap<PotentialFunction<PapyrusGame>, WikiDataFunctionPage | null>();
+
 export async function getMediaWikiFunctionData<TGame extends PapyrusGame, TFunc extends PotentialFunction<TGame>>(game: TGame, func: TFunc, scriptName: string): Promise<WikiDataFunctionPage | null> {
+    const wikiFunctionData = wikiFunctionDataMemoization.get(func);
+    if (wikiFunctionData) return wikiFunctionData;
+
+    const wikiFunctionDataNew = await getMediaWikiFunctionDataInternal(game, func, scriptName);
+    wikiFunctionDataMemoization.set(func, wikiFunctionDataNew);
+    return wikiFunctionDataNew;
+}
+
+async function getMediaWikiFunctionDataInternal<TGame extends PapyrusGame, TFunc extends PotentialFunction<TGame>>(game: TGame, func: TFunc, scriptName: string): Promise<WikiDataFunctionPage | null> {
     const wiki = getWiki(game);
 
     const functionName = Array.isArray(func.name) ? getBestNameVariant(func.name)[1] : func.name;
@@ -54,45 +67,42 @@ export async function getMediaWikiFunctionData<TGame extends PapyrusGame, TFunc 
     const document = await getWikiPageHTMLDocument(wiki, pageName);
     if (!document) return null;
 
-    const categories = Array.from(document.querySelectorAll('link[rel="mw:PageProp/Category"]'))
-        .map(e => {
-            const attr = e.getAttribute('data-parsoid');
-            if (!attr) return null;
-            return JSON.parse(attr)?.sa?.href;
-        })
-        .filter(a => typeof a === 'string');
+    const pageData = extractLinearWikiPageData(document);
 
     // TODO: Better support the formatting on display in the Skyrim CK wiki's ColorComponent script,
     //       especially the parameters section. That, or contribute to the wiki and standardize it.
     // e.g. https://ck.uesp.net/wiki/GetAlpha_-_ColorComponent
 
-    const isMarkedLatent = categories.includes('Category:Latent Functions');
-    const isMarkedNonDelayed = categories.includes('Category:Non-delayed Native Function');
+    const isMarkedLatent = pageData.categories.includes('Category:Latent Functions');
+    const isMarkedNonDelayed = pageData.categories.includes('Category:Non-delayed Native Function');
 
-    const shortDescriptionElements = Array.from(document.querySelectorAll<HTMLElement>('section[data-mw-section-id="0"] > :not(link, meta)'));
+    const shortDescriptionElements = pageData.sections[0]?.contents || [];
     while (true) {
         if (!shortDescriptionElements[0]) break;
-        const trimmedTextContent = shortDescriptionElements[0].textContent?.trim().toLocaleLowerCase() as Omit<Lowercase<string>, 'startsWith'> & {startsWith: (s: Lowercase<string>) => boolean};
-        if (trimmedTextContent !== undefined) {
-            if (!trimmedTextContent.startsWith('source:')
-                && !trimmedTextContent.startsWith('member of:')
-                && !trimmedTextContent.startsWith('skse member of:'))
+        const contentToMatch = shortDescriptionElements[0].textContent?.trim().toLocaleLowerCase() as Omit<Lowercase<string>, 'startsWith'> & {startsWith: (s: Lowercase<string>) => boolean};
+        if (contentToMatch !== undefined) {
+            if (!contentToMatch.startsWith('source:')
+                && !contentToMatch.startsWith('member of:')
+                && !contentToMatch.match(/^\w\wse member of:/u))
                 break;
         }
         shortDescriptionElements.shift();
     }
-    const shortDescriptionMarkdown = await parsoidElementsToMarkdown(shortDescriptionElements, document.location.href);
+    const shortDescriptionMarkdown = shortDescriptionElements.length === 0 ? null : await parsoidElementsToMarkdown(shortDescriptionElements, document.location.href);
+    if (shortDescriptionMarkdown === null) console.warn(`[MediaWiki Scraping - getWikiDataFunctionPage()] Short description is null for page "${pageName}" on wiki "${wiki.wikiName}" (${document.location.href})!`);
 
-    const exampleCodeElements = Array.from(document.querySelectorAll('section:has(#Examples) pre'));
+    const exampleCodeElements = pageData.sectionsById.examples?.contents.filter(el=>el.tagName.toLowerCase() === 'pre') ?? [];
     const examplesData = exampleCodeElements.map(e => ({code: e.textContent || ''}));
 
-    const returnValueDescriptionElements = Array.from(document.querySelectorAll<HTMLElement>('#Return_Value ~ *'));
+    const returnValueDescriptionElements = pageData.sectionsById.return_value?.contents ?? [];
     const returnValueDescriptionMarkdown = await parsoidElementsToMarkdown(returnValueDescriptionElements, document.location.href);
 
-    const notesElements = Array.from(document.querySelectorAll<HTMLLIElement>('#Notes ~ *'));
+    const notesElements = pageData.sectionsById.notes?.contents ?? [];
     const notesMarkdown = await parsoidElementsToMarkdown(notesElements, document.location.href);
 
-    const parametersListItems = Array.from(document.querySelectorAll<HTMLLIElement>('#Parameters ~ ul > li'));
+    const parametersListElements = pageData.sectionsById.parameters?.contents ?? [];
+    const parametersListItems = parametersListElements.filter((el): el is HTMLUListElement => el.tagName.toLowerCase() === 'ul').map(ul => Array.from(ul.children).filter((li): li is HTMLLIElement => li.tagName.toLowerCase() === 'li')).flat(1);
+
     const parameters: WikiDataFunctionPage['parameters'] = await Promise.all(parametersListItems.map(async li => {
         const asMarkdown = await parsoidToMarkdown(li.innerHTML, document.location.href);
         const [nameMarkdown, descriptionMarkdown] = asMarkdown.split(':', 2).map(s => s.trim());
@@ -148,7 +158,7 @@ ${
         return {name, nameMarkdown, descriptionMarkdown};
     })).then(a => a.filter((obj): obj is NonNullable<typeof obj> => obj !== null));
 
-    const seeAlsoElements = Array.from(document.querySelectorAll<HTMLLIElement>('#See_Also ~ *'));
+    const seeAlsoElements = pageData.sectionsById.see_also?.contents ?? [];
     const seeAlsoMarkdown = await parsoidElementsToMarkdown(seeAlsoElements, document.location.href);
 
     return {
