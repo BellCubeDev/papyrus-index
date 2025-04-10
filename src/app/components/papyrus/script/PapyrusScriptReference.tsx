@@ -28,14 +28,14 @@ export function PapyrusScriptReference<TGame extends PapyrusGame>(propsObj: Comp
     const name = getScriptNameFromProps(propsObj);
     if (script) {
         if (propsObj.inTooltip) return <span className={styles.reference}>{name}</span>;
-        return <Tooltip role='tooltip' wrapperClassName={styles.reference} tooltipContents={<PapyrusScriptReferenceTooltip script={script} />}>
+        return <Tooltip role='tooltip' wrapperClassName={styles.reference} tooltipContents={<PapyrusScriptReferenceTooltip game={game} script={script} />}>
             <Link href={`/${toLowerCase(game)}/script/${toLowerCase(name)}` as const}>
                 {name}
             </Link>
         </Tooltip>;
     } else if (scriptAggregate) {
         if (propsObj.inTooltip) return <span className={styles.reference}>{name}</span>;
-        return <Tooltip role='tooltip' wrapperClassName={styles.reference} tooltipContents={<PapyrusScriptReferenceTooltip scriptAggregate={scriptAggregate} />}>
+        return <Tooltip role='tooltip' wrapperClassName={styles.reference} tooltipContents={<PapyrusScriptReferenceTooltip game={game} scriptAggregate={scriptAggregate} />}>
             <Link href={`/${toLowerCase(game)}/script/${toLowerCase(name)}` as const}>
                 {name}
             </Link>
@@ -44,7 +44,7 @@ export function PapyrusScriptReference<TGame extends PapyrusGame>(propsObj: Comp
         if (possibleScripts === UnknownPapyrusScript) {
             const nameToUse = missingName ? `<UNKNOWN_SCRIPT: ${missingName}>` : `<UNKNOWN_SCRIPT>`;
             if (propsObj.inTooltip) return <span className={styles['reference--unknown']}>{nameToUse}</span>;
-            return <Tooltip role='tooltip' wrapperClassName={styles['reference--unknown']} tooltipContents={<PapyrusScriptReferenceTooltip possibleScripts={possibleScripts} missingName={missingName} />}>
+            return <Tooltip role='tooltip' wrapperClassName={styles['reference--unknown']} tooltipContents={<PapyrusScriptReferenceTooltip game={game} possibleScripts={possibleScripts} missingName={missingName} />}>
                 {nameToUse}
             </Tooltip>;
         }
@@ -52,7 +52,7 @@ export function PapyrusScriptReference<TGame extends PapyrusGame>(propsObj: Comp
             {name}
         </Link>;
         if (propsObj.inTooltip) return <span className={styles.reference}>{content}</span>;
-        return <Tooltip role='tooltip' wrapperClassName={styles.reference} tooltipContents={<PapyrusScriptReferenceTooltip possibleScripts={possibleScripts} missingName={missingName} />}>
+        return <Tooltip role='tooltip' wrapperClassName={styles.reference} tooltipContents={<PapyrusScriptReferenceTooltip game={game} possibleScripts={possibleScripts} missingName={missingName} />}>
             {content}
         </Tooltip>;
     } else {

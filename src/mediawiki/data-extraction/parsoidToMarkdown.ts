@@ -12,6 +12,6 @@ export async function parsoidToMarkdown(html: string, url: string): Promise<stri
             fragment: true,
             space: 'html',
             emitParseErrors: true,
-        }
+        },
     })).trim();
 }

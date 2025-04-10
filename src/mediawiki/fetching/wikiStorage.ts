@@ -1,10 +1,10 @@
 import fs from 'fs/promises';
 import path from 'path';
 import url from 'url';
-import type { GameWithWiki, PapyrusWiki } from './getWiki';
+import type { GameWithWiki, PapyrusWiki } from '../getWiki';
 import { WIKI_FETCH_403FORBIDDEN, wikiFetchGet } from './wikiFetch';
 import lockfileUtil from 'proper-lockfile';
-import { memoizeDevServerConst } from '../utils/memoizeDevServerConst';
+import { memoizeDevServerConst } from '../../utils/memoizeDevServerConst';
 import { parsoidGetPageHTML } from './parsoid';
 
 export interface WikiStorageIndex {
@@ -35,9 +35,11 @@ export interface WikiStorageEntry {
 
 const thisFilePath = url.fileURLToPath(import.meta.url);
 const thisDirPath = path.dirname(thisFilePath);
-if (path.basename(thisDirPath) !== 'wikimedia') throw new Error(`Expected wikiStorage.ts to be in the wikimedia directory, but found ${thisDirPath}`);
-const srcDir = path.join(thisDirPath, '..');
-if (path.basename(srcDir) !== 'src') throw new Error(`Expected the parent of the 'wikimedia' folder to be in the src directory, but found ${srcDir}`);
+if (path.basename(thisDirPath) !== 'fetching') throw new Error(`Expected wikiStorage.ts to be in the mediawiki/fetching directory, but found ${thisDirPath}`);
+const mediaWikiDir = path.join(thisDirPath, '..');
+if (path.basename(mediaWikiDir) !== 'mediawiki') throw new Error(`Expected the parent of the 'fetching' folder to be in the mediawiki directory, but found ${mediaWikiDir}`);
+const srcDir = path.join(mediaWikiDir, '..');
+if (path.basename(srcDir) !== 'src') throw new Error(`Expected the parent of the 'mediawiki' folder to be in the src directory, but found ${srcDir}`);
 const wikiStoragePath = path.join(srcDir, '../cache/wiki-storage');
 function getWikiStorageDirPath(wiki: PapyrusWiki): string {
     return path.join(wikiStoragePath, wiki.wikiTrueGame);

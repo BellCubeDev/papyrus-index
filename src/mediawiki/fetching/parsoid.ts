@@ -1,12 +1,12 @@
 import { exec } from "node:child_process";
 import path from "node:path";
 import url from "node:url";
-import nextConfig from "../../next.config";
+import nextConfig from "../../../next.config";
 import * as Log from 'next/dist/build/output/log';
 
 const thisFilePath = url.fileURLToPath(import.meta.url);
 const thisFolder = path.dirname(thisFilePath);
-const srcDir = path.resolve(thisFolder, "..");
+const srcDir = path.resolve(thisFolder, "../..");
 if (!srcDir.endsWith(`${path.sep}src`)) throw new Error(`Expected srcDir to end with ${path.sep}src, but got ${srcDir}`);
 const parsoidFolder = path.resolve(srcDir, "..", "node_modules", "parsoid-service");
 

@@ -1,35 +1,41 @@
 /* eslint-disable no-await-in-loop */
 import { inspect } from "node:util";
-import nextConfig from "../../next.config";
-import { memoizeDevServerConst } from "../utils/memoizeDevServerConst";
-import type { PapyrusWiki } from "./getWiki";
+import nextConfig from "../../../next.config";
+import { memoizeDevServerConst } from "../../utils/memoizeDevServerConst";
+import type { PapyrusWiki } from "../getWiki";
 import { isCI } from "next/dist/server/ci-info";
 import * as Log from 'next/dist/build/output/log';
 
 const wikiFetchPromisesByURL = memoizeDevServerConst('wikiFetchCache', ()=>{
     const map = new Map<string, Promise<{}|null|typeof WIKI_FETCH_403FORBIDDEN>>();
-    const originalMapSet = map.set.bind(map);
-    map.set = function set(key, value) {
-        let memoryUsageData = process.memoryUsage();
 
-        if (!map.has(key)) {
-            let i = 0;
-            while (memoryUsageData.heapUsed / memoryUsageData.heapTotal > 0.85 && i++ < 100) {
-                const nextKey = map.keys().next().value;
-                if (!nextKey) {
-                    let logString = `wikiFetchGet: Memory usage is over 85%, but no keys found in the wikiFetchPromisesByURL map! Memory usage data: ${inspect(memoryUsageData)}`;
-                    if (isCI) logString = logString.split('\n').map(line => `::debug::${line}`).join('\n');
-                    Log.warn(logString);
-                    break;
-                }
-                map.delete(nextKey);
-                memoryUsageData = process.memoryUsage();
-            }
-        }
-
-        //Log.trace(`Current memory usage: ${memoryUsage.toFixed(2)}%`);
-        return originalMapSet(key, value);
-    };
+    //
+    // In ye olden times, this code stopped memory leaks because we'our code would fetch a TON of data from the wiki
+    // But now that our code only fetches a little bit of data directly, we'd prefer
+    // to make the space-time tradeoff to keep the results for the lifetime of the process.
+    //
+    //    const originalMapSet = map.set.bind(map);
+    //    map.set = function set(key, value) {
+    //        let memoryUsageData = process.memoryUsage();
+    //
+    //        if (!map.has(key)) {
+    //            let i = 0;
+    //            while (memoryUsageData.heapUsed / memoryUsageData.heapTotal > 0.85 && i++ < 100) {
+    //                const nextKey = map.keys().next().value;
+    //                if (!nextKey) {
+    //                    let logString = `wikiFetchGet: Memory usage is over 85%, but no keys found in the wikiFetchPromisesByURL map! Memory usage data: ${inspect(memoryUsageData)}`;
+    //                    if (isCI) logString = logString.split('\n').map(line => `::debug::${line}`).join('\n');
+    //                    Log.warn(logString);
+    //                    break;
+    //                }
+    //                map.delete(nextKey);
+    //                memoryUsageData = process.memoryUsage();
+    //            }
+    //        }
+    //
+    //        //Log.trace(`Current memory usage: ${memoryUsage.toFixed(2)}%`);
+    //        return originalMapSet(key, value);
+    //    };
     return map;
 });
 

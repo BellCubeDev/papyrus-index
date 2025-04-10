@@ -1,4 +1,4 @@
-import type { PapyrusWiki } from "./getWiki";
+import type { PapyrusWiki } from "../getWiki";
 import { WIKI_FETCH_403FORBIDDEN, wikiFetchGet } from "./wikiFetch";
 
 // eslint-disable-next-line complexity -- most of this is caught up in guard clauses

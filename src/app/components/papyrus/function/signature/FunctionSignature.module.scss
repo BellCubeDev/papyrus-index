@@ -17,6 +17,7 @@
 .functionSignature {
     align-items: baseline;
     padding-right: 3ch;
+    font-size: css-clamp(.8em, 1.75svw, 1em);
 }
 
 .wrapableSection {
