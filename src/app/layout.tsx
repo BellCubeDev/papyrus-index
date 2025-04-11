@@ -154,13 +154,25 @@ export default function RootLayout({ children }: { readonly children: React.Reac
                 },
                 operatingSystem: "Windows, Mac, Linux"//, Android, iOS",
             }) }} />
+
+
+
+            <noscript><style>
+                {`
+
+                    .js-only { display: none }
+                    noscript { display: contents }
+                    * { transition: none !important; }
+                `.split('\n').map(l=>l.trim()).join(' ').trim()}
+            </style></noscript>
+
+
+
         </head>
         <body className={`${roboto.className} ${roboto.variable} ${SourceCodePro.variable}`} suppressHydrationWarning>
             <ProgressBar />
             <div>
-                <main>
-                    {children}
-                </main>
+                {children}
             </div>
             <div>
                 <footer>

@@ -50,7 +50,7 @@ export default async function ScriptPage({params}: {readonly params: Promise<Scr
 
     const scriptNamespaceName = getBestNameVariant(scriptBySources[AllSourcesCombined].namespaceName)[1];
 
-    return <>
+    return <main>
         <div className={styles.scriptHeader}>
             <h1>{scriptNamespaceName}</h1>
             <div className={styles.extendsList}>
@@ -95,6 +95,6 @@ export default async function ScriptPage({params}: {readonly params: Promise<Scr
             </div>
         </details>
 
-    </>;
+    </main>;
 
 }

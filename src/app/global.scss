@@ -59,9 +59,14 @@ p {
 
 main, article, footer {
     > :first-child:is(h1, h2, h3, h4, h5, h6) {
-            margin-top: 0;
-        }
+        margin-top: 0;
     }
+}
+
+main {
+    // this set of rules allows the game image to go behind the rest of the content
+    position: relative;
+    z-index: 0;
 }
 
 :root {
@@ -124,10 +129,10 @@ pre, code {
     font-family: var(--code-font);
     font-weight: 600;
     font-size: 0.9em;
+    background: $codeBG;
 }
 
 code {
-    background: #ffffff12;
     padding: 0.3em 0.5em 0.2em;
     border-radius: 0.3em;
     position: relative;
@@ -145,7 +150,6 @@ pre {
     max-height: 75vh;
     overflow-y: auto;
     line-height: 1.45;
-    background: #ffffff12;
     text-align: left;
     code {
         background: none;
@@ -155,12 +159,12 @@ pre {
         line-height: unset;
     }
     counter-reset: linenumber;
-
+    backdrop-filter: blur(32px);
     --tooltipBG: #111;
 }
 
 main, footer {
-    padding: css-min(2vw, 32px) css-min(3vw, 48px) css-min(10vw, 64px);
+    padding: css-min(2vw, 32px) css-min(3vw, 48px);
     width: 100%;
     box-sizing: border-box;
 }
@@ -184,7 +188,6 @@ div:has(> footer) {
 footer {
     text-align: center;
     align-self: center;
-    padding-bottom: css-min(2vw, 32px);
     display: flex;
     align-items: center;
     justify-content: space-evenly;

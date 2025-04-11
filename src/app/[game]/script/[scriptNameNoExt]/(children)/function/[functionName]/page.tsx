@@ -54,13 +54,14 @@ export default async function FunctionPage({params}: {readonly params: Promise<F
 
     const wikiDataPromise = getMediaWikiFunctionData(game, func, scriptNamespaceName);
 
-    return <>
+    return <main>
         <GuardEmptyList replacement={<p>No variants of this function found.</p>}>
             <PapyrusFunctionSignatureVariants game={game} funcAggregate={func} scriptName={scriptNamespaceName} longerDescription />
         </GuardEmptyList>
+
+        <br />
+
         <h2>Examples</h2>
-
-
         <Suspense fallback={<p>[Development] Loading examples...</p>}>
             {wikiDataPromise.then(wikiData =>
                 <GuardEmptyList replacement={<p>No human-generated examples found for this function.</p>}>
@@ -70,7 +71,6 @@ export default async function FunctionPage({params}: {readonly params: Promise<F
                 </GuardEmptyList>
             )}
         </Suspense>
-
         <h3>
             <TextWithTooltip tooltipContents={<>
                 <p>This example is auto-generated to show new Papyrus programmers roughly how to use this function.</p>
@@ -98,5 +98,5 @@ export default async function FunctionPage({params}: {readonly params: Promise<F
                 wikiData?.wikiPageUrl && <p className="text-center"><a href={wikiData.wikiPageUrl} target="_blank" rel="noopener noreferrer">View this function&rsquo;s page on the {wikiData.wikiName}</a></p>
             )}
         </Suspense>
-    </>;
+    </main>;
 }

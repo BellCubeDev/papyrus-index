@@ -1,0 +1,15 @@
+.gameBackground {
+    position: fixed;
+    top: -9px;
+    left: -9px;
+    width: calc(100lvw + 9px);
+    width: calc(100vw + 9px);
+    height: calc(100% + 9px);
+    height: calc(100lvh + 9px);
+    height: calc(100vh + 9px);
+    object-fit: cover;
+    opacity: 0.05;
+    filter: contrast(2.7) saturate(0.7) blur(9px);
+    pointer-events: none;
+    user-select: none;
+}

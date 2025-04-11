@@ -47,6 +47,7 @@ export function PapyrusFunctionSignature<TGame extends PapyrusGame>({game, func,
         </div>
         {longerDescription
             ? <div className={styles.longDescription}><SuspenseIfServer fallback={<p>[DEV SERVER] Loading description...</p>}>
+                <br />
                 <FunctionDocumentationStringAll game={game} func={func} scriptName={scriptName} inTooltip={inTooltip} />
             </SuspenseIfServer></div>
             : <div className={styles.shortDescription}><SuspenseIfServer fallback={<p>[DEV SERVER] Loading description...</p>}>

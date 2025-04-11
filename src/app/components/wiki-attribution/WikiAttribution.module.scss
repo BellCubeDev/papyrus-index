@@ -1,3 +1,10 @@
 .attributionBox {
-    
+    width: calc(100% - 96px);
+    min-height: 48px;
+    margin: 32px;
+    padding: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
 }
