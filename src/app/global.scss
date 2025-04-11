@@ -58,8 +58,7 @@ p {
 }
 
 main, article, footer {
-    > :first-child {
-        &h1, &h2, &h3, &h4, &h5, &h6 {
+    > :first-child:is(h1, h2, h3, h4, h5, h6) {
             margin-top: 0;
         }
     }

@@ -5,7 +5,7 @@
   "type": "module",
   "packageManager": "pnpm@10.7.1",
   "scripts": {
-    "dev": "pnpm run parse:reset && next dev",
+    "dev": "pnpm run parse:reset && next dev --turbo",
     "start": "npx serve out",
     "lint": "next lint",
     "clear-socket": "rm -f ./src/utils/stepSummary/jobSummarySocket.sock",
