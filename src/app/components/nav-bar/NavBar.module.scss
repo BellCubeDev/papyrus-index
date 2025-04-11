@@ -1,0 +1,148 @@
+.nav {
+    width: calc(100% - 4rem);
+    height: 3.5rem;
+    justify-content: space-between;
+    background: #000;
+    position: sticky;
+    top: 0;
+    left: 0;
+    overflow-y: hidden;
+    overflow-x: auto;
+    z-index: 100;
+    padding: .3rem 2rem;
+    //padding-right: calc(100svw - 100dvw + 2rem);
+
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 100%;
+    align-items: center;
+    justify-items: center;
+
+    > :nth-child(2) { // Papyrus Index Logo
+        margin: 0rem;
+        > h1 {
+            margin: 0;
+        }
+    }
+}
+
+.gameDropdownWrapper {
+    width: 100%;
+    justify-items: center;
+}
+
+.gameDropdownFallback {
+    display: flex;
+    gap: 0.5rem;
+    width: 100%;
+    justify-content: space-evenly;
+}
+
+.gameDropdownContainer {
+
+}
+
+.gameDropdownButton {
+    font-size: 1.5em;
+
+    padding: 0.15em 0.3em;
+    padding-left: 0.15em;
+    display: flex;
+
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+
+    gap: 0.75em;
+
+    background: #272727;
+    border-radius: 6px;
+    border: 2px solid #7a7a7a;
+    outline: none;
+
+    transition: border-color 0.1s ease-in, background 0.2s ease-in-out;
+
+    &[data-hover], &[data-active], &[data-focus] {
+        background: #161616;
+        border-color: #b4b4b4;
+    }
+}
+
+.gameDropdownImage {
+    font-size: 1em;
+    height: 1.75em;
+}
+
+.gameDropdownOptionImage {
+    height: 2.5em;
+}
+
+.gameDropdownChevron {
+
+}
+
+.gameDropdownOptions {
+    position: fixed !important;
+    z-index: 200;
+
+    font-size: 1rem;
+
+    display: flex;
+    flex-direction: column;
+    //padding: 0.5em 1em;
+    margin-top: 0.25rem;
+
+    background: #232323;
+    border: 2px solid #7a7a7a;
+    border-radius: 6px;
+
+    min-width: calc(var(--button-width) - 4px);
+    transition: min-width 0.15s ease-out;
+
+    --link-txt-color-noncurrent-normal: hsl(305deg, 80%, 65%);
+    --link-udl-color-noncurrent-normal: hsla(305deg, 53%, 55%, 0%);
+
+    --link-txt-color-noncurrent-hover: hsl(305deg, 100%, 75%);
+    --link-udl-color-noncurrent-hover: hsla(305deg, 100%, 60%, 90%);
+}
+
+.gameDropdownOption {
+    padding: 0.35em 1em;
+    &:first-child {
+        padding-top: 0.5em;
+    }
+    &:last-child {
+        padding-bottom: 0.5em;
+    }
+
+    display: flex;;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 1em;
+    > span {
+        margin-top: 0.1em;
+    }
+
+    background: #232323;
+
+    transition-property: background-color, color, text-decoration-color  !important;
+
+    &[data-selected] {
+        background: #1F1F1F; // 2302755 - .25(3355443 - 2302755)
+
+        --link-txt-color-noncurrent-normal: hsl(305deg, 60%, 60%);
+        --link-udl-color-noncurrent-normal: hsla(305deg, 33%, 55%, 0%);
+
+        --link-txt-color-noncurrent-hover: hsl(305deg, 60%, 65%);
+        --link-udl-color-noncurrent-hover: hsla(305deg, 80%, 60%, 90%);
+    }
+
+    &[data-hover], &[data-active], &[data-focus] {
+        transition-timing-function: cubic-bezier(0.13, 0.7, 0.52, 1);
+        background: #333333;
+        &[data-selected] {background: #2B2B2B;}
+    }
+}

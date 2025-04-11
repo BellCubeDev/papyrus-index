@@ -33,7 +33,7 @@ export default async function GamePage({params}: {readonly params: Promise<GameR
 
     const gameData = AllScriptsIndexed[game];
 
-    return <div>
+    return <main>
         <h1>{game}</h1>
         <div className={styles.inheritanceTree}>
             <InheritanceDisplay game={game} data={gameData.topLevelScripts} />
@@ -50,5 +50,5 @@ export default async function GamePage({params}: {readonly params: Promise<GameR
                 </div>
             </div>)}
         </div>
-    </div>;
+    </main>;
 }

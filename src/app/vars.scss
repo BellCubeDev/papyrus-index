@@ -21,3 +21,5 @@ $themehue: 275deg;
 @function css-clamp( $values... ) {
 	@return css-function( clamp, $values );
 }
+
+$codeBG: #5f5f5f52;
