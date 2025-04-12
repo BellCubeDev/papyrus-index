@@ -23,7 +23,7 @@ export function PapyrusScriptFunctionReference<TGame extends PapyrusGame>(propsO
             { inTooltip
                 ? <span className={styles.reference}>{func.name}</span>
                 : <Tooltip role='tooltip' wrapperClassName={styles.reference} tooltipContents={<PapyrusScriptFunctionReferenceTooltip {...propsObj} />}>
-                    <Link href={`/${toLowerCase(game)}/script/${toLowerCase(scriptName)}/function/${toLowerCase(func.name)}` as const}>
+                    <Link href={`/${toLowerCase(game)}/script/${toLowerCase(scriptName)}/function/${toLowerCase(func.name)}` as const} data-ref=''>
                         {func.name}
                     </Link>
                 </Tooltip> }
@@ -37,7 +37,7 @@ export function PapyrusScriptFunctionReference<TGame extends PapyrusGame>(propsO
             { inTooltip
                 ? <span className={styles.reference}>{funcName}</span>
                 : <Tooltip role='tooltip' wrapperClassName={styles.reference} tooltipContents={<PapyrusScriptFunctionReferenceTooltip {...propsObj} />}>
-                    <Link href={`/${toLowerCase(game)}/script/${toLowerCase(scriptName)}/function/${toLowerCase(funcName)}` as const}>
+                    <Link href={`/${toLowerCase(game)}/script/${toLowerCase(scriptName)}/function/${toLowerCase(funcName)}` as const} data-ref=''>
                         {funcName}
                     </Link>
                 </Tooltip> }

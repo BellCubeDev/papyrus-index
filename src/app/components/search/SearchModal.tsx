@@ -1,17 +1,28 @@
 'use client';
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import SearchBar from './SearchBar';
 import type { PapyrusGame } from '../../../papyrus/data-structures/pure/game';
 import styles from './Search.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeftLong, faMagnifyingGlass, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { usePostHog } from 'posthog-js/react';
+import { useUpdatedRef } from '../../hooks/useUpdatedRef';
 
 export function SearchModalButton({game}: {readonly game: PapyrusGame}): React.ReactElement {
+    const posthog = usePostHog();
+    const posthogRef = useUpdatedRef(posthog);
+
     const [isOpen, setIsOpen] = useState(false);
     const toggleOpen = useCallback(() => setIsOpen((prev) => !prev), []);
+
+    useEffect(() => {
+        if (isOpen) posthogRef.current.capture('SearchModal opened', {source: 'button'});
+        else posthogRef.current.capture('SearchModal closed', {source: 'button'});
+    }, [isOpen, posthogRef]);
+
     return <>
-        <button type='button' onClick={toggleOpen}>Open Search</button>
+        <button type='button' onClick={toggleOpen} className='js-only'>Open Search</button>
         <Dialog open={isOpen} onClose={toggleOpen} className={styles.searchModalBackdrop!} unmount={false}>
             <DialogPanel className={styles.searchModalDialog!}>
                 <div className={styles.searchModalHeader!}>

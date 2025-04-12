@@ -1,4 +1,4 @@
-import React, { Fragment, use } from "react";
+import React, { Fragment } from "react";
 import type { PapyrusScriptFunctionIndexed, PapyrusScriptFunctionIndexedAggregate } from "../../../../../papyrus/data-structures/indexing/function";
 import type { PapyrusGame } from "../../../../../papyrus/data-structures/pure/game";
 import { getBestNameVariant } from "../../../../../utils/getBestName";
@@ -88,7 +88,7 @@ export function FunctionDocumentationStringAll<TGame extends PapyrusGame>({game,
             <h3><TextWithTooltip tooltipContents={<DocumentationStringTooltipContents />}>
                 Documentation String
             </TextWithTooltip></h3>
-            <WikiMarkdown gameData={func.game} md={func.documentationString} inTooltip={inTooltip} />
+            <WikiMarkdown data-analytics-id="docs-description-string" gameData={func.game} md={func.documentationString} inTooltip={inTooltip} />
         </Fragment>);
     }
 
@@ -99,7 +99,7 @@ export function FunctionDocumentationStringAll<TGame extends PapyrusGame>({game,
                     Documentation Comment
                 </TextWithTooltip>
             </h3>
-            <WikiMarkdown gameData={func.game} md={func.documentationComment} inTooltip={inTooltip} />
+            <WikiMarkdown data-analytics-id="docs-description-comment" gameData={func.game} md={func.documentationComment} inTooltip={inTooltip} />
         </Fragment>);
     }
 
@@ -107,7 +107,7 @@ export function FunctionDocumentationStringAll<TGame extends PapyrusGame>({game,
     if (wikiShortDescriptionMD !== null) {
         elements.push(<Fragment key='wiki'>
             <h3>Wiki Description</h3>
-            <WikiMarkdown gameData={func.game} md={wikiShortDescriptionMD} inTooltip={inTooltip} />
+            <WikiMarkdown data-analytics-id="docs-description-mediawiki" gameData={func.game} md={wikiShortDescriptionMD} inTooltip={inTooltip} />
         </Fragment>);
     }
 

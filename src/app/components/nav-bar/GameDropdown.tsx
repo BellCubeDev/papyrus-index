@@ -11,6 +11,8 @@ import { useRouter } from 'next/navigation';
 import { toLowerCase } from "../../../utils/toLowerCase";
 import Link from "next/link";
 import { PrefetchKind } from "next/dist/client/components/router-reducer/router-reducer-types";
+import { useUpdatedRef } from "../../hooks/useUpdatedRef";
+import { usePostHog } from "posthog-js/react";
 
 const games = Object.values(PapyrusGame);
 
@@ -18,10 +20,15 @@ export function GameDropdown({currentGame}: {readonly currentGame: PapyrusGame |
     const [desiredGame, setDesiredGame] = useState<PapyrusGame | null>(currentGame);
     const isLoading = desiredGame !== currentGame;
     const router = useRouter();
+    const posthog = usePostHog();
 
-    const handleOnChange = React.useCallback((game: PapyrusGame) => {
-        setDesiredGame(game);
-    }, []);
+    const desiredGameRef = useUpdatedRef(desiredGame);
+    const handleOnChange = React.useCallback((newGame: PapyrusGame) => {
+        if (newGame === desiredGameRef.current) return;
+        setDesiredGame(newGame);
+
+        posthog?.capture('Game dropdown selection', { game: newGame });
+    }, [desiredGameRef, posthog]);
 
     useEffect(() => {
         for (const game of games) router.prefetch(`/${toLowerCase(game)}`, { kind: PrefetchKind.FULL });

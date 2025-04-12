@@ -13,6 +13,7 @@ import Markdown from 'react-markdown';
 import { ProgressBar } from './ProgressBar';
 import { Link } from './components/Link';
 import { ThePapyrusIndexLogo } from './components/logo/ThePapyrusIndexLogo';
+import { PostHogProvider } from './components/posthog/posthog-provider';
 
 
 const roboto = Roboto({
@@ -169,7 +170,7 @@ export default function RootLayout({ children }: { readonly children: React.Reac
 
 
         </head>
-        <body className={`${roboto.className} ${roboto.variable} ${SourceCodePro.variable}`} suppressHydrationWarning>
+        <body className={`${roboto.className} ${roboto.variable} ${SourceCodePro.variable}`} suppressHydrationWarning><PostHogProvider>
             <ProgressBar />
             <div>
                 {children}
@@ -202,7 +203,7 @@ export default function RootLayout({ children }: { readonly children: React.Reac
                     </div>
                 </footer>
             </div>
-        </body>
+        </PostHogProvider></body>
     </html>;
 }
 

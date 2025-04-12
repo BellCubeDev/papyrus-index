@@ -1,6 +1,6 @@
 'use client';
 
-import React from "react";
+import React, { useEffect } from "react";
 import type { PapyrusGame } from "../../../papyrus/data-structures/pure/game";
 import { UnreachableError } from "../../../UnreachableError";
 import { memoizeDevServerConst } from "../../../utils/memoizeDevServerConst";
@@ -15,16 +15,21 @@ import { useSearchContext, type SearchContextLoaded } from "../../search/SearchP
 import styles from './Search.module.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import { usePostHog } from "posthog-js/react";
+import { CLEAR_ANY_TIMER, useStoredInterval, useStoredTimeout } from "../../hooks/useStoredTimeout";
 
 const EMPTY_QUERY: unique symbol = memoizeDevServerConst('<SearchBar> EMPTY_QUERY', ()=>Symbol('<SearchBar> EMPTY_QUERY')) as any;
 const AWAITING_SEARCH: unique symbol = memoizeDevServerConst('<SearchBar> AWAITING_SEARCH', ()=>Symbol('<SearchBar> AWAITING_SEARCH')) as any;
 
 export default function SearchBar({game}: {readonly game: PapyrusGame}): React.ReactElement {
+    const posthog = usePostHog();
+
     const searchProvider = useSearchContext();
     type ResultForRendering = DeepUnpreparedValue<WorkerMessageOutputSearchResult<PapyrusGame, SearchIndexEntityType>['results']>;
     const [result, setResult] = React.useState<typeof EMPTY_QUERY | typeof AWAITING_SEARCH | Error | ResultForRendering>(EMPTY_QUERY);
 
-    const timeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+    const {clear: clearDisplayAwaitingTimeout, start: startDisplayAwaitingTimeout} = useStoredTimeout();
+    const {clear: clearTookTooLongInterval, start: startTookTooLongInterval} = useStoredInterval();
 
     const searchProviderLoadedPromiseRef = React.useRef<{resolve?:null|((res:SearchContextLoaded)=>void),promise: Promise<SearchContextLoaded>}>(null);
     const isLoading = searchProvider.LOADING_FROM_SSR || searchProvider.DEVELOPMENT__LOADING_HASH;
@@ -41,28 +46,51 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
     })();
     if (!isLoading && searchProviderLoadedPromiseRef.current.resolve) searchProviderLoadedPromiseRef.current.resolve(searchProvider as SearchContextLoaded);
 
-
     const search = React.useCallback(async function search(query: string) {
         console.log('Searching for', query);
-        const oldTimeout = timeoutRef.current;
-        if (oldTimeout) clearTimeout(oldTimeout);
+
         if (!query) {
-            timeoutRef.current = null;
+            clearDisplayAwaitingTimeout(CLEAR_ANY_TIMER);
             return setResult(EMPTY_QUERY);
         }
+
         let hasResults = false;
-        const newTimeout = setTimeout(() => {
-            if (!hasResults) setResult(AWAITING_SEARCH);
-        }, 100);
-        timeoutRef.current = newTimeout;
-        const searchProviderLoaded = searchProviderLoadedPromiseRef.current!.resolve ? await searchProviderLoadedPromiseRef.current!.promise : searchProvider as SearchContextLoaded;
-        const res = await searchProviderLoaded.search(query, [SearchIndexEntityType.Script, SearchIndexEntityType.Function]);
+
+        const newDisplayAwaitingInterval = startDisplayAwaitingTimeout(100, () => {
+            if (hasResults) return;
+            setResult(AWAITING_SEARCH);
+            posthog?.capture('SearchBar rendered awaiting', {game, query});
+        });
+
+
+        clearTookTooLongInterval(CLEAR_ANY_TIMER);
+
+        const startTimeLoadSearchProvider = performance.now();
+        const loadedSearchProvider = searchProviderLoadedPromiseRef.current!.resolve ? await searchProviderLoadedPromiseRef.current!.promise : searchProvider as SearchContextLoaded;
+
+
+        const startTimeForSearch = performance.now();
+        startTookTooLongInterval(1000, () => {
+            const debugData = {
+                game,
+                query,
+                hasResults,
+                search_time: performance.now() - startTimeForSearch,
+                search_time_since_query: performance.now() - startTimeLoadSearchProvider,
+            };
+            console.warn('Search taking too long!', debugData);
+            posthog?.capture('Search taking too long', debugData);
+        });
+
+        const res = await loadedSearchProvider.search(query, [SearchIndexEntityType.Script, SearchIndexEntityType.Function]);
+
         hasResults = true;
-        clearTimeout(newTimeout);
-        if (timeoutRef.current !== newTimeout) return;
-        timeoutRef.current = null;
+
+        const isCurrent = clearDisplayAwaitingTimeout(newDisplayAwaitingInterval);
+        if (!isCurrent) return;
+
         setResult(res);
-    }, [searchProvider]);
+    }, [startDisplayAwaitingTimeout, clearTookTooLongInterval, searchProvider, startTookTooLongInterval, clearDisplayAwaitingTimeout, posthog, game]);
 
     const onChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => search(e.target.value), [search]);
 
@@ -79,6 +107,18 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
             onChangeRef.current({target: searchInputRef.current} as React.ChangeEvent<HTMLInputElement>);
         }
     }, [game, onChangeRef]);
+
+    useEffect(() => {
+        if (isLoading) return;
+        if (result === AWAITING_SEARCH) return;
+        clearTookTooLongInterval(CLEAR_ANY_TIMER);
+        if (result === EMPTY_QUERY) return;
+        if (result instanceof Error) {
+            posthog?.capture('SearchBar rendered error', {game, error: result, inputValue: searchInputRef.current?.value ?? null});
+            return;
+        }
+        posthog?.capture('SearchBar rendered result', {game, result: result.map(res => res.obj.$entityId)});
+    }, [isLoading, game, posthog, result, clearTookTooLongInterval]);
 
     return <>
         <div className={styles.searchModalBodySplitRight1!}>

@@ -52,8 +52,8 @@ function WikiMarkdownLink(gameData: PapyrusGameDataIndexed<PapyrusGame>, inToolt
     return <a href={href}>{children}</a>;
 }
 
-export function WikiMarkdown({md, gameData, inTooltip}: {readonly md: string, readonly gameData: PapyrusGameDataIndexed<PapyrusGame>, readonly inTooltip?: boolean | undefined}): React.ReactElement {
-    return <Markdown skipHtml remarkPlugins={[remarkBreaks]} components={{a: WikiMarkdownLink.bind(null, gameData, inTooltip)}}>
+export function WikiMarkdown({md, gameData, inTooltip, ...dataAttributes}: {readonly md: string, readonly gameData: PapyrusGameDataIndexed<PapyrusGame>, readonly inTooltip?: boolean | undefined} & Record<`data-${string}`, string|boolean>): React.ReactElement {
+    return <div {...dataAttributes} data-is-md=''><Markdown skipHtml remarkPlugins={[remarkBreaks]} components={{a: WikiMarkdownLink.bind(null, gameData, inTooltip)}}>
         {md}
-    </Markdown>;
+    </Markdown></div>;
 }

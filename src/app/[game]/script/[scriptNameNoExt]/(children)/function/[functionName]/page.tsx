@@ -84,19 +84,19 @@ export default async function FunctionPage({params}: {readonly params: Promise<F
         <br />
 
         <h2>Related Pages</h2>
-        <Suspense fallback={<p>[Development] Loading related pages...</p>}>
+        <div data-analytics-id="docs-related"><Suspense fallback={<p>[Development] Loading related pages...</p>}>
             {wikiDataPromise.then(wikiData =>
                 wikiData?.seeAlsoMarkdown && <WikiMarkdown gameData={func.game} md={wikiData.seeAlsoMarkdown} />
             )}
-        </Suspense>
+        </Suspense></div>
 
         <br />
 
         <h2>Additional References</h2>
-        <Suspense fallback={<p>[Development] Loading wiki link...</p>}>
+        <div data-analytics-id="docs-additional-references"><Suspense fallback={<p>[Development] Loading wiki link...</p>}>
             {wikiDataPromise.then(wikiData =>
                 wikiData?.wikiPageUrl && <p className="text-center"><a href={wikiData.wikiPageUrl} target="_blank" rel="noopener noreferrer">View this function&rsquo;s page on the {wikiData.wikiName}</a></p>
             )}
-        </Suspense>
+        </Suspense></div>
     </main>;
 }

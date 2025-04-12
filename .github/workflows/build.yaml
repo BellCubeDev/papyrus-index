@@ -39,6 +39,8 @@ jobs:
     env:
       NEXUS_API_KEY: ${{ secrets.NEXUS_API_KEY }}
       NEXT_PUBLIC_BUILD_SOURCE_MD: '___ ERROR DURING BUILD ___'
+      NEXT_PUBLIC_POSTHOG_KEY: ${{ vars.NEXT_PUBLIC_POSTHOG_KEY }}
+      NEXT_PUBLIC_POSTHOG_HOST: ${{ vars.NEXT_PUBLIC_POSTHOG_HOST }}
     steps:
 
       - name: Checkout
