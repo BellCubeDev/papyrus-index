@@ -40,12 +40,13 @@ const nextConfig = {
         staleTimes: {
             static: 24*60*60,
         },
-        turbo: {
-
-        },
         reactCompiler: {
             panicThreshold: 'NONE',
         },
+    },
+
+    turbopack: {
+
     },
 
     staticPageGenerationTimeout: 45 * 60,

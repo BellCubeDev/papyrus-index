@@ -29,14 +29,14 @@ export function PapyrusScriptReference<TGame extends PapyrusGame>(propsObj: Comp
     if (script) {
         if (propsObj.inTooltip) return <span className={styles.reference}>{name}</span>;
         return <Tooltip role='tooltip' wrapperClassName={styles.reference} tooltipContents={<PapyrusScriptReferenceTooltip game={game} script={script} />}>
-            <Link href={`/${toLowerCase(game)}/script/${toLowerCase(name)}` as const}>
+            <Link href={`/${toLowerCase(game)}/script/${toLowerCase(name)}` as const} data-ref=''>
                 {name}
             </Link>
         </Tooltip>;
     } else if (scriptAggregate) {
         if (propsObj.inTooltip) return <span className={styles.reference}>{name}</span>;
         return <Tooltip role='tooltip' wrapperClassName={styles.reference} tooltipContents={<PapyrusScriptReferenceTooltip game={game} scriptAggregate={scriptAggregate} />}>
-            <Link href={`/${toLowerCase(game)}/script/${toLowerCase(name)}` as const}>
+            <Link href={`/${toLowerCase(game)}/script/${toLowerCase(name)}` as const} data-ref=''>
                 {name}
             </Link>
         </Tooltip>;
@@ -48,7 +48,7 @@ export function PapyrusScriptReference<TGame extends PapyrusGame>(propsObj: Comp
                 {nameToUse}
             </Tooltip>;
         }
-        const content = <Link href={`/${toLowerCase(game)}/script/${toLowerCase(name)}` as const}>
+        const content = <Link href={`/${toLowerCase(game)}/script/${toLowerCase(name)}` as const} data-ref=''>
             {name}
         </Link>;
         if (propsObj.inTooltip) return <span className={styles.reference}>{content}</span>;

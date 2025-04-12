@@ -1,3 +1,4 @@
+95mparsoid
 algoliasearch
 ampproject
 anymatch
@@ -69,6 +70,7 @@ parsoid
 picocolors
 picomatch
 postcss
+Posthog
 prismjs
 punycode
 pwsh
@@ -103,6 +105,7 @@ trpc
 trysound
 tseslint
 tsup
+turbopack
 typebox
 universalify
 unplugin
@@ -110,4 +113,3 @@ webassemblyjs
 webpackbar
 wooorm
 xtuc
-95mparsoid

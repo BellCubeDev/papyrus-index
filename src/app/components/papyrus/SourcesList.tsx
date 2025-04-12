@@ -10,7 +10,7 @@ import type { WorkerMessageOutputSearchIndexReady } from "../../search/SEARCH.wo
 import { use } from "react";
 
 async function loadSourceListOnServer(game: PapyrusGame) {
-    return (await import(typeof window !== 'undefined' ? 'data:text/plain;charset=utf-8;base64,MQ==' : "../../../papyrus/indexing/index-all")).AllScriptsIndexed[game].scriptSources;
+    return (await import(typeof window !== 'undefined' ? '@/empty' : "../../../papyrus/indexing/index-all")).AllScriptsIndexed[game].scriptSources;
 }
 
 function useLoadSourceListOnClient() {

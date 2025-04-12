@@ -223,10 +223,16 @@ export function deepUnprepareObject<T>(obj: T): DeepUnpreparedObject<T> {
             if (typeof key === "symbol")
                 return this.get!(target as any, `${SYMBOL_PREFIX}${String(key)}`, receiver);
 
-
-            const mappedValue = deepUnprepare(obj[key as keyof T]);
-            (target as any)[key] = mappedValue;
-            return mappedValue;
+            let hasError = true;
+            try {
+                const mappedValue = deepUnprepare(obj[key as keyof T]);
+                (target as any)[key] = mappedValue;
+                hasError = false;
+                return mappedValue;
+            } finally {
+                if (hasError)
+                    console.error('Error occurred while attempting to unprepare value', {obj, key});
+            }
         },
         has(target, key) {
             if (key in target) return true;
@@ -279,10 +285,17 @@ function deepUnprepareArrayWithExtraProps<T extends any[]>(arr: T): DeepUnprepar
 
             if (!(key in arr)) return undefined;
 
-            const value = arr[key as keyof T];
-            const mappedValue = deepUnprepare(value);
-            target[key as keyof typeof target] = mappedValue as any;
-            return mappedValue;
+            let hasError = true;
+            try {
+                const value = arr[key as keyof T];
+                const mappedValue = deepUnprepare(value);
+                target[key as keyof typeof target] = mappedValue as any;
+                hasError = false;
+                return mappedValue;
+            } finally {
+                if (hasError)
+                    console.error('Error occurred while attempting to unprepare value', {arr, key});
+            }
         },
         has(target, key) {
             return key in target || key in arr;
@@ -311,12 +324,15 @@ function deepUnprepareArrayWithExtraProps<T extends any[]>(arr: T): DeepUnprepar
 
 export function isFuzzysortPrepared(obj: any): obj is Fuzzysort.Prepared {
     return (
-        obj &&
-        typeof obj === "object" &&
-        "target" in obj &&
-        typeof obj.target === "string" &&
-        "_bitflags" in obj &&
-        typeof obj._bitflags === "number"
+        obj && typeof obj === "object"
+        && "target" in obj && typeof obj.target === "string"
+        && (
+            ("_bitflags" in obj && typeof obj._bitflags === "number")
+            || (
+                "_indexes" in obj && Array.isArray(obj._indexes) && obj._indexes.every((i: any) => typeof i === "number")
+                && "_score" in obj && typeof obj._score === "number"
+            )
+        )
     );
 }
 
@@ -328,17 +344,25 @@ function getSymbolFromString<T>(s: `${typeof SYMBOL_PREFIX}${string}` & Prepared
 
 export function deepUnprepare<T>(v: T): DeepUnpreparedValue<T> {
     const typeOfV = typeof v;
-    return (
-        isFuzzysortPrepared(v)
-            ? v.target
-        : Array.isArray(v)
-            ? deepUnprepareArrayWithExtraProps(v)
-        : typeOfV === "symbol"
-            ? null as never // this should not be possible!
-        : typeOfV === "string"
-            ? getSymbolFromString(v as `${typeof SYMBOL_PREFIX}${string}` & PreparedForMark<any>)
-        : v === null || typeOfV === "function" || typeOfV === "number" || typeOfV === "boolean" || typeOfV === "bigint" || typeOfV === "undefined"
-            ? v
-        : deepUnprepareObject(v)
-    ) as any;
+    let hasError = true;
+    try {
+        const res = (
+            isFuzzysortPrepared(v)
+                ? v.target
+            : Array.isArray(v)
+                ? deepUnprepareArrayWithExtraProps(v)
+            : typeOfV === "symbol"
+                ? null as never // this should not be possible!
+            : typeOfV === "string"
+                ? getSymbolFromString(v as `${typeof SYMBOL_PREFIX}${string}` & PreparedForMark<any>)
+            : v === null || typeOfV === "function" || typeOfV === "number" || typeOfV === "boolean" || typeOfV === "bigint" || typeOfV === "undefined"
+                ? v
+            : deepUnprepareObject(v)
+        ) as any;
+        hasError = false;
+        return res;
+    } finally {
+        if (hasError)
+            console.error('Error occurred while attempting to unprepare value', {v, typeOfV});
+    }
 }
