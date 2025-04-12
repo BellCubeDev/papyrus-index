@@ -39,12 +39,20 @@ export function getBestName<T extends string>([firstName, ...remainingNames]: T[
  * Returns the desirability rating of a name. Higher is better.
  */
 function calculateNameDesirability(name: string) {
-    const uppercaseCount = name.split('').filter(char => char === char.toUpperCase()).length;
+    let hasError = true;
+    try {
+        const uppercaseCount = name.split('').filter(char => char === char.toUpperCase()).length;
 
-    // Paste into Desmos to play around with the math
-    // Use the `l` slider to set the length of the name
-    // Use the `X` slider to set the uppercase count
-    // Replace `X` with `x` to see it graphed
-    // -\frac{\left(X-\frac{l}{4}\right)^{1.4}}{\left(X-l-1\right)^{2}}-\left(X-\frac{l}{3}\right)^{2}-\frac{l^{1.8}}{X+1}
-    return -( (uppercaseCount - (name.length/4))**1.4  /  (uppercaseCount - name.length - 1)**2 )   -   ((uppercaseCount - name.length / 3)**2)   -   ((name.length**1.8)  /  (uppercaseCount + 1));
+        // Paste into Desmos to play around with the math
+        // Use the `l` slider to set the length of the name
+        // Use the `X` slider to set the uppercase count
+        // Replace `X` with `x` to see it graphed
+        // -\frac{\left(X-\frac{l}{4}\right)^{1.4}}{\left(X-l-1\right)^{2}}-\left(X-\frac{l}{3}\right)^{2}-\frac{l^{1.8}}{X+1}
+        const val =  -( (uppercaseCount - (name.length/4))**1.4  /  (uppercaseCount - name.length - 1)**2 )   -   ((uppercaseCount - name.length / 3)**2)   -   ((name.length**1.8)  /  (uppercaseCount + 1));
+        hasError = false;
+        return val;
+    } finally {
+        if (hasError)
+            console.error('Error encountered attempting to call calculateNameDesirability() on the name property in the following object', {name});
+    }
 }
