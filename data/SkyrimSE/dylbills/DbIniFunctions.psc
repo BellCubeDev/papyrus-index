@@ -103,7 +103,7 @@ Endfunction
 ;     DbIniFunctions.SetIniInt("Data/Interface/MyMod/Settings.ini", "Main", "MyInt", 42, true)
 ; Endfunction
 ; You can then use this function to create your ini file and write all the inis in one go.
-; requires skse
+; requires skse and papyrusUtil
 Function WriteForceSetIniFunction(String inputFilePath, string outputFilePath, string functionName, bool onlyInisWithDefaults = true) global
     Guard()
 EndFunction

@@ -36,6 +36,8 @@ Form[] Function SortFormArray(Form[] akForms, int sortOption = 1) Global Native
 ;6 = by form Id descending
 Form[] Function FormListToArray(Formlist akList, int sortOption = 0) Global Native
 
+function RemoveFormListAddedForm(formlist akList, form akForm) Global Native
+
 ;Add forms in akForms array to akList
 Function AddFormsToList(Form[] akForms, Formlist akList) Global Native
 
@@ -151,6 +153,14 @@ Armor[] Function GetAllArmorsForSlotMask(int slotMask) global native
 WorldSpace function GetCellWorldSpace(cell akCell) global native
 
 Location Function GetCellLocation(cell akCell) global native
+
+bool Function IsCellPublic(cell akCell) global native
+
+Function SetCellPublic(cell akCell, bool bPublic) global native
+
+bool Function IsCellOffLimits(cell akCell) global native
+
+Function SetCellOffLimits(cell akCell, bool bOffLimits) global native
 
 ;Get all interior cells in game that match the akLocation and or akOwner 
 ;if matchMode == 0, get all cells in game where either the passed in akLocation or akOwner match.
@@ -380,6 +390,9 @@ ObjectReference function GetLastPlayerMenuActivatedRef() Global Native
 
 ;If the ref is an ashpile, gets the actor linked to it, if any. If the ref is an actor, gets the ashpile linked to it, if any. 
 ObjectReference function GetAshPileLinkedRef(ObjectReference ref) Global Native
+
+;Get the enable parent of the ref, if there is one.
+ObjectReference function GetEnableParentRef(ObjectReference ref) Global Native
 
 ;Get the closest object reference in the refs array to the ref
 ObjectReference function GetClosestObjectFromRef(ObjectReference ref, ObjectReference[] refs) Global Native
@@ -899,6 +912,106 @@ TextureSet function GetArtObjectNthTextureSet(art akArtObject, int n) Global Nat
 String function GetArtObjectModelNth3dName(art akArtObject, int n) Global Native
 
 int function GetArtObjectNumOfTextureSets(art akArtObject) Global Native
+
+;this only works on models that have a new texture sets applied to them. The int n is the index of the model with the override texture set.
+String function GetFormWorldModelNth3dName(form akForm, int n) Global Native
+
+;get all forms that use the akTextureSet. 
+;If modName != "", only gets forms from that mod, otherwise gets all forms in game that use the textureset
+form[] function GetAllFormsThatUseTextureSet(TextureSet akTextureSet, string modName = "") Global Native
+
+;get all container refs, including actors, that have at least 1 of the akForm in their inventory.
+ObjectReference[] Function GetAllContainerRefsThatContainForm(form akForm) Global Native
+
+;UI functions. These are for use with skse's UI.psc script. Valid menuNames are the same as in UI.psc
+;These will allow you to explore UI targets without needing adobe flash.
+;Before using these functions make sure the menu is open with for example "If (UI.IsMenuOpen("InventoryMenu"))"
+;Using these functions will also log the data to C:/Users/YourUserName/Documents/My Games/Skyrim Special Edition/SKSE/DbSkseFunctions.log
+
+;Get all target members that the UI target has. 
+;Example, start with "GetUiTargetMembers("InventoryMenu", "_root)"
+;This will get all target members that _root has. One will be Menu_mc.
+;Then you can do "GetUiTargetMembers("InventoryMenu", "_root.Menu_mc)"
+;And so on and so forth. Another good starting place is for example "GetUiTargetMembers("InventoryMenu", "_global)"
+string[] function GetUiTargetMembers(string menuName, string target) Global Native
+
+;This is the same as GetUiTargetMembers except it gets the type, current value and full target path of members. 
+;Example, start with "UI.GetUiTargetMembers("InventoryMenu", "_root.Menu_mc)"
+;One string in the array will be "type[bool] value[true] member[_root.Menu_mc._visible]"
+string[] function GetUiTargetMembersData(string menuName, string target) Global Native
+
+;types are: 
+;Undefined = 0
+;Null = 1
+;Boolean = 2
+;Number = 3
+;String = 4
+;StringW = 5
+;Object = 6
+;Array = 7
+;DisplayObject = 8
+int function GetUITargetType(string menuName, string target) Global Native
+
+string function GetUITargetTypeAsString(string menuName, string target) Global Native
+
+;Instead of UI.GetBool, UI.GetString ect, gets the current value of the target as string. Bools will be "true" or "false".
+string function GetUITargetValueAsString(string menuName, string target) Global Native
+
+function TraceUiMenuTargetMembersData(string menu, string target, string asUserLog = "") Global
+    Guard()
+EndFunction
+
+;These animation Log functions log to 'info' level, so make sure [LOG] iMinLevel is 2 or less in Data/Skse/Plugins/DbSkseFunctions.ini
+;Can view the log in C:/Users/YourUserName/Documents/My Games/Skyrim Special Edition/SKSE/DbSkseFunctions.log
+;To view in game check out my mod Console Log Viewer: https://www.nexusmods.com/skyrimspecialedition/mods/144291
+
+;Log the animation variables in the variables array for the ref. 
+;Valid types are: 0 = bool, 1 = int, 2 = float, 3 (default) = log all types.
+;If variables == none (default) logs default variables from the CK wiki page for the type, or all variables from the wiki if type is 3.
+;CK wiki page: (https://www.creationkit.com/index.php?title=List_of_Animation_Variables). To see which default variables are logged see the
+;DbAnimationVariableBools.txt, DbAnimationVariableInts.txt and DbAnimationVariableFloats.txt files in Data/Interface/DbMiscFunctions.
+Function LogAnimationVariables(ObjectReference ref, string[] variables = none, int type = 3) Global Native
+
+;Log all animation variables and their values for the ref
+Function LogAllAnimationVariables(ObjectReference ref) Global Native
+
+;Log all animations for the ref, to use with: 
+;objectReference.PlayAnimation, objectReference.playAnimationAndWait, RegisterForAnimationEvent, OnAnimationEvent ect.
+Function LogAllAnimations(ObjectReference ref) Global Native
+
+;Log all animation attributes for the ref, to use with: 
+Function LogAllAnimationsAttributes(ObjectReference ref) Global Native
+
+;Log all animation character properties for the ref, to use with: 
+Function LogAllAnimationsCharacterProperties(ObjectReference ref) Global Native
+
+;get the top level base 3d node name for ref
+string function GetBase3DNodeNameForRef(ObjectReference ref, bool firstPerson = false) Global Native
+
+;This will also log the names to C:/Users/YourUserName/Documents/My Games/Skyrim Special Edition/SKSE/DbSkseFunctions.log
+string[] function GetAll3DNodeNamesForRef(ObjectReference ref, bool firstPerson = false) Global Native
+
+;race functions for getting and setting slot masks, similar to skse's Armor GetSlotMask, SetSlotMask ect..
+;use Armor.GetMaskForSlot for convenience. Example, to add the ring slot to slot mask: 
+;AddRaceSlotToMask(someRace, Armor.GetMaskForSlot(36))
+
+int function GetRaceSlotMask(Race akRace) global native
+function SetRaceSlotMask(Race akRace, int slotMask) global native
+function AddRaceSlotToMask(Race akRace, int slotMask) global native
+function RemoveRaceSlotFromMask(Race akRace, int slotMask) global native
+
+;does the race / armor or armorAddon have the slot mask?
+;use Armor.GetMaskForSlot for convenience. Example, find if the race has the ring slot:
+;RaceSlotMaskHasPartOf(someRace, Armor.GetMaskForSlot(36))
+
+bool function RaceSlotMaskHasPartOf(Race akRace, int slotMask) global native
+bool function ArmorSlotMaskHasPartOf(Armor akArmor, int slotMask) global native
+bool function ArmorAddonSlotMaskHasPartOf(Armor akArmorAddon, int slotMask) global native
+
+Race[] function GetArmorAddonRaces(armorAddon akArmorAddon) global native
+bool function ArmorAddonHasRace(armorAddon akArmorAddon, race akRace) global native
+function AddAdditionalRaceToArmorAddon(armorAddon akArmorAddon, race akRace) global native
+function RemoveAdditionalRaceFromArmorAddon(armorAddon akArmorAddon, race akRace) global native
 
 Function Guard()
     Debug.MessageBox("DbSkseFunctions: Don't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")

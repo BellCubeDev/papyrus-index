@@ -5,12 +5,9 @@ scriptname RogueUtil
 int[] function GetVersion() native global
 
 int function GetVersionInt() global
-	int[] v = GetVersion();
-
-	int result = Math.LeftShift(v[0], 23)
-	result = Math.LogicalOR(Math.LeftShift(v[1], 15), result);
-	result = Math.LogicalOR(Math.LeftShift(v[2], 7), result);
-	result = Math.LogicalOR(v[3], result);
-
-	return result
+    Guard()
 endFunction
+
+Function Guard()
+    Debug.MessageBox("RogueUtil: Don't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
+EndFunction
