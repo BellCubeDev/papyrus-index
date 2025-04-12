@@ -1,4 +1,4 @@
-import '/node_modules/.pnpm/@wooorm+starry-night@3.6.0/node_modules/@wooorm/starry-night/style/dark.css'; // this is ugly but the only way Next.js will recognize it
+import '../../../../node_modules/@wooorm/starry-night/style/dark.css'; // this is ugly but the only way Next.js will recognize it
 import { getStarryNightInstance } from './StarryNightInstance';
 import './CodeBlock.scss';
 import type { ElementContent, Root, RootContent } from 'hast';

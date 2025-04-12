@@ -1,3 +1,4 @@
+95mparsoid
 algoliasearch
 ampproject
 anymatch
@@ -103,6 +104,7 @@ trpc
 trysound
 tseslint
 tsup
+turbopack
 typebox
 universalify
 unplugin
@@ -110,4 +112,3 @@ webassemblyjs
 webpackbar
 wooorm
 xtuc
-95mparsoid
