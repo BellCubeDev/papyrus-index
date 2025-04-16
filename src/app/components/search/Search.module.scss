@@ -223,6 +223,10 @@ details.searchModalFilters:not([open]) {
         &:focus {
             box-shadow: 0 0 0.6em hsla(275deg, 100%, 75%, 0.4);
         }
+
+        &::-webkit-search-cancel-button {
+            display: none;
+        }
     }
 }
 
@@ -255,6 +259,7 @@ details.searchModalFilters:not([open]) {
 .searchModalBodySplitRight1 > input {
     width: 100%;
     font-size: 1.2em;
+    padding-right: 2.25em;
 }
 
 .searchModalSearchIcon {
@@ -269,6 +274,23 @@ details.searchModalFilters:not([open]) {
 .searchButton > .searchModalSearchIcon {
     font-size: 1em;
     left: .6em;
+}
+
+.searchModalCancelButton {
+    background: none;
+    border: none;
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
+    font-size: 1.4em;
+
+    position: absolute;
+    right: 1em;
+    top: 50%;
+
+    transform: translateY(-47.5%);
+    > * {
+        color: #979797;
+    }
 }
 
 .searchModalBodySplitRight2 {

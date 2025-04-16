@@ -1,23 +1,23 @@
 'use client';
 
+import { faBan, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { usePostHog } from "posthog-js/react";
 import React, { useEffect } from "react";
 import type { PapyrusGame } from "../../../papyrus/data-structures/pure/game";
 import { UnreachableError } from "../../../UnreachableError";
 import { memoizeDevServerConst } from "../../../utils/memoizeDevServerConst";
-import { GuardEmptyList } from "../GuardEmptyList";
-import { PapyrusScriptFunctionReference } from "../papyrus/function/reference/PapyrusScriptFunctionReference";
-import { PapyrusScriptReference } from "../papyrus/script/PapyrusScriptReference";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { CLEAR_ANY_TIMER, useStoredInterval } from "../../hooks/useStoredTimeout";
 import { useUpdatedRef } from "../../hooks/useUpdatedRef";
 import { SearchIndexEntityType, type SearchIndexEntity } from "../../search/Entity";
 import { DeepUnpreparedValue } from "../../search/Preparation";
 import type { WorkerMessageOutputSearchResult } from "../../search/SEARCH.worker";
 import { useSearchContext, type SearchContextLoaded } from "../../search/SearchProvider";
+import { GuardEmptyList } from "../GuardEmptyList";
+import { PapyrusScriptFunctionReference } from "../papyrus/function/reference/PapyrusScriptFunctionReference";
+import { PapyrusScriptReference } from "../papyrus/script/PapyrusScriptReference";
 import styles from './Search.module.scss';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import { usePostHog } from "posthog-js/react";
-import { CLEAR_ANY_TIMER, useStoredInterval, useStoredTimeout } from "../../hooks/useStoredTimeout";
-import { useMediaQuery } from "../../hooks/useMediaQuery";
 
 const EMPTY_QUERY: unique symbol = memoizeDevServerConst('<SearchBar> EMPTY_QUERY', ()=>Symbol('<SearchBar> EMPTY_QUERY')) as any;
 const AWAITING_SEARCH: unique symbol = memoizeDevServerConst('<SearchBar> AWAITING_SEARCH', ()=>Symbol('<SearchBar> AWAITING_SEARCH')) as any;
@@ -30,8 +30,9 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
     type ResultForRendering = DeepUnpreparedValue<WorkerMessageOutputSearchResult<PapyrusGame, SearchIndexEntityType>['results']>;
     const [result, setResult] = React.useState<typeof EMPTY_QUERY | typeof AWAITING_SEARCH | Error | ResultForRendering>(EMPTY_QUERY);
 
-    const {clear: clearDisplayAwaitingTimeout, start: startDisplayAwaitingTimeout} = useStoredTimeout();
-    const {clear: clearTookTooLongInterval, start: startTookTooLongInterval} = useStoredInterval();
+    const [hasText, setHasText] = React.useState(false);
+
+    const {clear: clearTookTooLongInterval, start: startTookTooLongInterval, isCurrent: isCurrentTookTooLongInterval} = useStoredInterval();
 
     const searchProviderLoadedPromiseRef = React.useRef<{resolve?:null|((res:SearchContextLoaded)=>void),promise: Promise<SearchContextLoaded>}>(null);
     const isLoading = searchProvider.LOADING_FROM_SSR || searchProvider.DEVELOPMENT__LOADING_HASH;
@@ -50,29 +51,18 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
 
     const search = React.useCallback(async function search(query: string) {
         console.log('Searching for', query);
+        setHasText(query !== '');
 
-        if (!query) {
-            clearDisplayAwaitingTimeout(CLEAR_ANY_TIMER);
-            return setResult(EMPTY_QUERY);
-        }
+        if (!query) return setResult(query ? AWAITING_SEARCH : EMPTY_QUERY);
+        else setResult(AWAITING_SEARCH);
 
         let hasResults = false;
-
-        const newDisplayAwaitingInterval = startDisplayAwaitingTimeout(100, () => {
-            if (hasResults) return;
-            setResult(AWAITING_SEARCH);
-            posthog?.capture('SearchBar rendered awaiting', {game, query});
-        });
-
-
-        clearTookTooLongInterval(CLEAR_ANY_TIMER);
 
         const startTimeLoadSearchProvider = performance.now();
         const loadedSearchProvider = searchProviderLoadedPromiseRef.current!.resolve ? await searchProviderLoadedPromiseRef.current!.promise : searchProvider as SearchContextLoaded;
 
-
         const startTimeForSearch = performance.now();
-        startTookTooLongInterval(1000, () => {
+        const newTookTooLongInterval = startTookTooLongInterval(3000, () => {
             const debugData = {
                 game,
                 query,
@@ -84,15 +74,19 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
             posthog?.capture('Search taking too long', debugData);
         });
 
+        // debounce
+        await new Promise(resolve => setTimeout(resolve, 250)); // this can sometimes be 3x as long as the search itself! The things we do to make the UI feel snappier...
+        if (!isCurrentTookTooLongInterval(newTookTooLongInterval)) return;
+
         const res = await loadedSearchProvider.search(query, [SearchIndexEntityType.Script, SearchIndexEntityType.Function]);
 
         hasResults = true;
 
-        const isCurrent = clearDisplayAwaitingTimeout(newDisplayAwaitingInterval);
+        const isCurrent = clearTookTooLongInterval(newTookTooLongInterval);
         if (!isCurrent) return;
 
         setResult(res);
-    }, [startDisplayAwaitingTimeout, clearTookTooLongInterval, searchProvider, startTookTooLongInterval, clearDisplayAwaitingTimeout, posthog, game]);
+    }, [searchProvider, startTookTooLongInterval, isCurrentTookTooLongInterval, clearTookTooLongInterval, game, posthog]);
 
     const onChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => search(e.target.value), [search]);
 
@@ -109,6 +103,14 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
             onChangeRef.current({target: searchInputRef.current} as React.ChangeEvent<HTMLInputElement>);
         }
     }, [game, onChangeRef]);
+
+    const clearSearch = React.useCallback(() => {
+        setResult(EMPTY_QUERY);
+        setHasText(false);
+        const searchInput = searchInputRef.current;
+        if (searchInput) searchInput.value = '';
+        isCurrentTookTooLongInterval(CLEAR_ANY_TIMER);
+    }, [isCurrentTookTooLongInterval]);
 
     useEffect(() => {
         if (isLoading) return;
@@ -130,6 +132,7 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
         <div className={styles.searchModalBodySplitRight1!}>
             <input type="search" placeholder="Search..." onChange={onChange} ref={searchInputRef} />
             <FontAwesomeIcon icon={faMagnifyingGlass} className={styles.searchModalSearchIcon!} />
+            <button type='reset' onClick={clearSearch} hidden={!hasText} className={styles.searchModalCancelButton!}><FontAwesomeIcon icon={faBan} /></button>
         </div>
         <div className={styles.searchModalBodySplitLeft!}>
             {
