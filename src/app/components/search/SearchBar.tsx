@@ -110,7 +110,7 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
         setHasText(false);
         const searchInput = searchInputRef.current;
         if (searchInput) searchInput.value = '';
-        isCurrentTookTooLongInterval(CLEAR_ANY_TIMER);
+        clearTookTooLongInterval(CLEAR_ANY_TIMER);
     }, [isCurrentTookTooLongInterval]);
 
     useEffect(() => {
