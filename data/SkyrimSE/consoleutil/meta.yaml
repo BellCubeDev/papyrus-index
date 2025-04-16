@@ -2,7 +2,7 @@
 
 type: xSE Plugin (Only An Extender)
 nameProper: ConsoleUtil
-nameShort: ConUtil
+nameShort: ConsoleUtil
 indexedVersion: "1.4.0"
 nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/24858
 gitRepo: https://github.com/VersuchDrei/ConsoleUtilSSE # since Ryan's is gone, cough cough drama

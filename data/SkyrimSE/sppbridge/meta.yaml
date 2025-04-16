@@ -2,7 +2,7 @@
 
 type: xSE Plugin (Only An Extender)
 nameProper: Skyrim Platform Papyrus Bridge
-nameShort: SPPBridge
+nameShort: SP Bridge
 indexedVersion: "1.1"
 nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/59468
 gitRepo: https://github.com/skyrim-platform/papyrus-bridge
