@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 
-// we never clear this map out, which risks a theoretical memory leak---
-// but we'll never add enough unique queries to actually reach that
-const MediaQueryMap = new Map<string, MediaQueryList>();
+const MediaQueryMap = new Map<string, MediaQueryList & {refCount: number}>();
 
-function getQuery(query: string): Pick<MediaQueryList, 'matches' | 'addEventListener' | 'removeEventListener'> {
+function getQuery(query: string): Pick<MediaQueryList, 'matches' | 'addEventListener' | 'removeEventListener'> & {refCount: number} {
     const existingQuery = MediaQueryMap.get(query);
     if (existingQuery) return existingQuery;
-    const mediaQuery = typeof window !== 'undefined' ? window.matchMedia(query) : { matches: false } as MediaQueryList;
+    const mediaQuery = Object.assign(
+        typeof window !== 'undefined' ? window.matchMedia(query) : { matches: false } as MediaQueryList,
+        { refCount: 0 }
+    );
     MediaQueryMap.set(query, mediaQuery);
     return mediaQuery;
 }
@@ -20,11 +21,16 @@ export function useMediaQuery(query: string) {
 
     useEffect(() => {
         const mediaQuery = getQuery(query);
+        setMatches(mediaQuery.matches);
         const listener = (event: MediaQueryListEvent) => setMatches(event.matches);
         mediaQuery.addEventListener('change', listener);
+        mediaQuery.refCount++;
         return () => {
             mediaQuery.removeEventListener('change', listener);
-            MediaQueryMap.delete(query);
+            mediaQuery.refCount--;
+            requestAnimationFrame(() => {
+                if (mediaQuery.refCount === 0) MediaQueryMap.delete(query);
+            });
         };
     }, [query]);
 
