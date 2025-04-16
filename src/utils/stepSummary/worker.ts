@@ -121,10 +121,8 @@ async function exitHandler(exitCode: number) {
     isExiting = true;
     console.log('[STEP SUMMARY WORKER] Cleaning up before exit...');
     const file = await filePromise;
-    await Promise.all([
-        file.close(),
-        new Promise<void>((resolve, reject) => server.close((err) => err ? reject(err) : resolve())),
-    ]);
+    await new Promise<void>((resolve, reject) => server.close((err) => err ? reject(err) : resolve()));
+    await file.close();
     process.exit(exitCode);
 }
 

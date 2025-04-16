@@ -69,9 +69,9 @@ export async function wikiFetchGet(wiki: PapyrusWiki, path: `/${string}`): Promi
 
         const loggingIntervalQueued = setInterval(() => {
             Log.info(`wikiFetchGetInternalCreatedPromise: The request queue is fairly backed up; waiting for it to clear out a little before adding ${url}`);
-        }, 60000).unref();
+        }, 60000);
 
-        while (unfulfilledFetches.size >= 200) await new Promise(resolve => setTimeout(resolve, 20000).unref());
+        while (unfulfilledFetches.size >= 200) await new Promise(resolve => setTimeout(resolve, 20000));
 
         unfulfilledFetches.add(url.href);
         queuedFetches.delete(url.href);
@@ -84,13 +84,13 @@ export async function wikiFetchGet(wiki: PapyrusWiki, path: `/${string}`): Promi
 
         //const loggingIntervalUnfulfilled = setInterval(() => {
         //    Log.log(`wikiFetchGetInternalCreatedPromise: still waiting for previous requests to finish before fetching ${url}`);
-        //}, 60000).unref();
+        //}, 60000);
 
         const existingFetchQueuePromise = fetchQueuePromisesByHostname.get(url.hostname) || Promise.resolve();
         const newFetchQueuePromise = async function wikiFetchGetInternalCreatedFetchQueuePromise() {
             await existingFetchQueuePromise;
             clearInterval(loggingIntervalWaitingForPreviousRequests);
-            await new Promise(resolve => setTimeout(resolve, 50 * (process.env.NODE_ENV === 'development' ? 1 : nextConfig.experimental.cpus)).unref()); // since we spawn 6 workers in build mode, we need to wait an appropriate amount of time to avoid DOSing the server
+            await new Promise(resolve => setTimeout(resolve, 50 * (process.env.NODE_ENV === 'development' ? 1 : nextConfig.experimental.cpus))); // since we spawn 6 workers in build mode, we need to wait an appropriate amount of time to avoid DOSing the server
             const res = await wikiFetchGetInternalWithParseJsonAndHandleErrors(wiki, path, 0, url);
             unfulfilledFetches.delete(url.href);
             //Log.log(`wikiFetchGetInternalCreatedPromise: finished fetching ${url}\n    This worker/process has ${unfulfilledFetches.size} unfulfilled fetches and ${queuedFetches.size} queued fetches remaining.`);
@@ -120,7 +120,7 @@ async function wikiFetchGetInternalWithParseJsonAndHandleErrors(wiki: PapyrusWik
                     throw new Error(`[wikiFetchGetInternalWithParseJsonAndHandleErrors - OUT_OF_RETRIES] Failed to fetch ${url} after ${retriesSoFar} retries due to a timeout; giving up.`);
                 } else {
                     Log.trace(`Timeout fetching ${url} (server-side parsoid timeout); retrying in 60s`);
-                    await new Promise(resolve => setTimeout(resolve, 60000).unref());
+                    await new Promise(resolve => setTimeout(resolve, 60000));
                     return await wikiFetchGetInternalWithParseJsonAndHandleErrors(wiki, path, retriesSoFar + 1, url);
                 }
             }
@@ -145,7 +145,7 @@ async function wikiFetchGetInternalFetch(originalUrl: URL, retriesSoFar: number)
     noCacheUrl.searchParams.set('__nextjs__nocache_timestamp', Date.now().toString());
 
     Log.wait(`Fetching ${noCacheUrl}${retriesSoFar > 0 ? ` (retry #${retriesSoFar}/${MAX_RETRIES})` : ''}`);
-    const loggingInterval = setInterval(() => { Log.trace(`wikiFetchGetInternalFetch: stalled while fetching ${noCacheUrl}`) }, 60000 /* 60s */).unref();
+    const loggingInterval = setInterval(() => { Log.trace(`wikiFetchGetInternalFetch: stalled while fetching ${noCacheUrl}`) }, 60000 /* 60s */);
 
 
     try {
@@ -160,7 +160,7 @@ async function wikiFetchGetInternalFetch(originalUrl: URL, retriesSoFar: number)
             throw new Error(`[wikiFetchGetInternalFetch - OUT_OF_RETRIES] Failed to fetch ${noCacheUrl} after ${retriesSoFar} retries due to a fetch error; giving up.`);
         } else {
             Log.trace(`Fetch error while fetching ${noCacheUrl} (fetch error); retrying in 60s`, e);
-            await new Promise(resolve => setTimeout(resolve, 60000).unref());
+            await new Promise(resolve => setTimeout(resolve, 60000));
             return await wikiFetchGetInternalFetch(originalUrl, retriesSoFar + 1);
         }
     } finally {
@@ -189,7 +189,7 @@ async function wikiFetchGetInternalFetch(originalUrl: URL, retriesSoFar: number)
                 throw new Error(`[wikiFetchGetInternalFetch - OUT_OF_RETRIES] Failed to fetch ${noCacheUrl} after ${retriesSoFar} retries due to a fetch error; giving up.`);
             } else {
                 Log.trace(`Service appears to be temporarily down while fetching ${noCacheUrl}; retrying in 60s`);
-                await new Promise(resolve => setTimeout(resolve, 60000).unref());
+                await new Promise(resolve => setTimeout(resolve, 60000));
                 return await wikiFetchGetInternalFetch(originalUrl, retriesSoFar + 1);
             }
         }

@@ -1,18 +1,24 @@
 import { execa } from "execa";
-import "./src/utils/stepSummary";
+import { spawnStepSummaryWorker } from "./src/utils/stepSummary/spawnWorker";
+import Log from 'next/dist/build/output/log';
 
-console.log('[buildWithJobSummary.ts] Starting build from script...');
+const closeStepSummaryWorker = await spawnStepSummaryWorker();
 
-process.env.FORCE_COLOR = 'true';
+Log.wait('[buildWithJobSummary.ts] Starting build from script...');
 
 let hasError = true;
 try {
+    console.log('\n\n');
     const subprocess = execa("next",  ["build", "--turbo"], {
         stdio: ["inherit", "inherit", "inherit"],
     });
     await subprocess;
     hasError = false;
 } finally {
-    if (hasError) console.log('[buildWithJobSummary.ts] Build failed!');
-    else console.log('[buildWithJobSummary.ts] Build finished successfully!');
+    console.log('\n\n');
+
+    if (hasError) Log.error('[buildWithJobSummary.ts] Build failed!');
+    else Log.event('[buildWithJobSummary.ts] Build finished successfully!');
+
+    closeStepSummaryWorker();
 }
