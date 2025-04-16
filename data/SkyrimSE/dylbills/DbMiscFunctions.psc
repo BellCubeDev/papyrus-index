@@ -354,6 +354,20 @@ Bool Function ToggleCreationKitMarkers(Bool ShowMarkers = true, ObjectReference 
     Guard()
 EndFunction
 
+;Enable all the object refs in akCell that match formTypeFilter.
+;If formTypeFilter is 0 (default) enable all refs in the cell. 
+;Requires skse.
+function EnableRefsInCell(cell akCell, int formTypeFilter = 0) Global
+    Guard()
+EndFunction
+
+;Disable all the object refs in akCell that match formTypeFilter.
+;If formTypeFilter is 0 (default) disable all refs in the cell. 
+;Requires skse.
+function DisableRefsInCell(cell akCell, int formTypeFilter = 0) Global
+    Guard()
+EndFunction 
+
 ;create new xMarker ObjectReference 
 ;if PlaceAtMeRef == none (default) places new marker at the player.
 ;no requirements
@@ -485,6 +499,12 @@ EndFunction
 ;If allKeywords == true, only returns true if the akForm has all keywords in the List. 
 ;Requires skse and PapyrusUtil
 Bool Function FormHasKeywordInJsonUtilList(Form akForm, String JsonFilePath, String ListKeyName, Bool AllKeywords = False) Global
+    Guard()
+EndFunction
+
+;Copy keywords from form A onto form B. 
+;Requires skse and papyrus extender
+Function CopykeywordsToForm(Form A, Form B) Global
     Guard()
 EndFunction
 
@@ -1572,6 +1592,13 @@ String Function StringRemoveCharAt(String s, Int Index) Global
     Guard()
 EndFunction
 
+;Find the last index of the string toFind in string s. 
+;returns -1 if not found. 
+;requires skse
+int function StringRFind(string s, string toFind) Global 
+    Guard()
+EndFunction
+
 ;Remove Non printable characters from string 
 ;Requires skse.
 String Function StringRemoveNonPrintableCharacters(String s) Global
@@ -2015,10 +2042,6 @@ Function WriteJsonSaveAndLoadFunctionsToFile(String SourceFilePath, String Desti
     Bool GlobalVariablesToggle = true, Bool FloatsToggle = true, Bool StringsToggle = true, Bool IntsToggle = true, Bool BoolsToggle = true, \
     Bool GlobalVariableArraysToggle = true, Bool FloatArraysToggle = true, Bool StringArraysToggle = true, Bool IntArraysToggle = true, Bool BoolArraysToggle = true, \
     int Messages = 0, String ConfirmMessage = "Done Writing Json Functions", Bool UsePropertiesAsDefaults = True) global
-    Guard()
-    MiscUtil.WriteToFile(f, "\t" + "EndFunction" + "\n\n")
-    
-    MiscUtil.WriteToFile(f, "\t" + "Bool[] Function GetBoolArray()" + "\n")
     Guard()
 EndFunction 
 

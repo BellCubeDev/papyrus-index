@@ -1,0 +1,8 @@
+#!/bin/sh
+
+pwsh ./.husky/pre-commit.ps1
+
+if [ $? -ne 0 ]; then
+  echo "PowerShell pre-commit failed."
+  exit 1
+fi
