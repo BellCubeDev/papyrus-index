@@ -3,6 +3,8 @@
 # PSC files are typically used on Windows
 *.psc   	text eol=crlf
 
+.husky/**	text eol=lf
+
 *.png       -text
 *.jpg       -text
 *.jpeg      -text
