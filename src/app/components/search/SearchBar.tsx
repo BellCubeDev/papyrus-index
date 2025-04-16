@@ -17,12 +17,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { usePostHog } from "posthog-js/react";
 import { CLEAR_ANY_TIMER, useStoredInterval, useStoredTimeout } from "../../hooks/useStoredTimeout";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
 
 const EMPTY_QUERY: unique symbol = memoizeDevServerConst('<SearchBar> EMPTY_QUERY', ()=>Symbol('<SearchBar> EMPTY_QUERY')) as any;
 const AWAITING_SEARCH: unique symbol = memoizeDevServerConst('<SearchBar> AWAITING_SEARCH', ()=>Symbol('<SearchBar> AWAITING_SEARCH')) as any;
 
 export default function SearchBar({game}: {readonly game: PapyrusGame}): React.ReactElement {
     const posthog = usePostHog();
+    const useCompactWidthLayout = useMediaQuery('(max-width: 900px)');
 
     const searchProvider = useSearchContext();
     type ResultForRendering = DeepUnpreparedValue<WorkerMessageOutputSearchResult<PapyrusGame, SearchIndexEntityType>['results']>;
@@ -120,16 +122,29 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
         posthog?.capture('SearchBar rendered result', {game, result: result.map(res => res.obj.$entityId)});
     }, [isLoading, game, posthog, result, clearTookTooLongInterval]);
 
+    const filtersChildren = <>
+        Filters coming soon!
+    </>;
+
     return <>
         <div className={styles.searchModalBodySplitRight1!}>
             <input type="search" placeholder="Search..." onChange={onChange} ref={searchInputRef} />
             <FontAwesomeIcon icon={faMagnifyingGlass} className={styles.searchModalSearchIcon!} />
         </div>
         <div className={styles.searchModalBodySplitLeft!}>
-            Filters coming soon!
+            {
+                useCompactWidthLayout
+                    ? <details className={styles.searchModalFilters!}>
+                        <summary>Filters</summary>
+                        {filtersChildren}
+                    </details>
+                    : <div className={styles.searchModalFilters!}>
+                        {filtersChildren}
+                    </div>
+            }
         </div>
         <div className={styles.searchModalBodySplitRight2!}>
-            <ul>
+            <ul className={styles.searchModalResults!}>
                 <GuardEmptyList replacement={<li>No results! Try another query!</li>}>
                     {
                         searchProvider.DEVELOPMENT__LOADING_HASH ? <li>DEVELOPMENT ONLY - Hashing the search index! This may take a second, especially if this is the first time you&rsquo;ve opened this game!</li>

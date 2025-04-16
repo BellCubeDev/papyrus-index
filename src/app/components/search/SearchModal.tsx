@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeftLong, faMagnifyingGlass, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { usePostHog } from 'posthog-js/react';
 import { useUpdatedRef } from '../../hooks/useUpdatedRef';
+import { useMediaQuery } from '../../hooks/useMediaQuery';
 
 export function SearchModalButton({game}: {readonly game: PapyrusGame}): React.ReactElement {
     const posthog = usePostHog();
@@ -21,6 +22,8 @@ export function SearchModalButton({game}: {readonly game: PapyrusGame}): React.R
         else posthogRef.current.capture('SearchModal closed', {source: 'button'});
     }, [isOpen, posthogRef]);
 
+    const useCompactWidthLayout = useMediaQuery('(max-width: 900px)');
+
     return <>
         <button type='button' onClick={toggleOpen} className={`${styles.searchButton} js-only`}>
             <FontAwesomeIcon icon={faMagnifyingGlass} className={styles.searchModalSearchIcon!} />
@@ -29,7 +32,11 @@ export function SearchModalButton({game}: {readonly game: PapyrusGame}): React.R
         <Dialog open={isOpen} onClose={toggleOpen} className={styles.searchModalBackdrop!} unmount={false}>
             <DialogPanel className={styles.searchModalDialog!}>
                 <div className={styles.searchModalHeader!}>
-                    <button type='button' onClick={toggleOpen} className={styles.searchModalReturnButton!}>
+                    <button
+                        type='button' onClick={toggleOpen}
+                        className={styles.searchModalReturnButton!}
+                        disabled={useCompactWidthLayout} hidden={useCompactWidthLayout}
+                    >
                         <FontAwesomeIcon icon={faArrowLeftLong} />
                         <span>Return to Page</span>
                     </button>
@@ -42,7 +49,9 @@ export function SearchModalButton({game}: {readonly game: PapyrusGame}): React.R
                     </button>
                 </div>
                 <div className={styles.searchModalBody!}>
-                    <SearchBar game={game} />
+                    <div className={styles.searchModalBodyContentWrapper!}>
+                        <SearchBar game={game} />
+                    </div>
                 </div>
             </DialogPanel>
         </Dialog>
