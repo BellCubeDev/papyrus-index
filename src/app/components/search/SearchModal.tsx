@@ -1,20 +1,22 @@
 'use client';
-import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
-import { useCallback, useEffect, useState } from 'react';
-import SearchBar from './SearchBar';
-import type { PapyrusGame } from '../../../papyrus/data-structures/pure/game';
-import styles from './Search.module.scss';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeftLong, faMagnifyingGlass, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
+import { usePathname } from 'next/navigation';
 import { usePostHog } from 'posthog-js/react';
-import { useUpdatedRef } from '../../hooks/useUpdatedRef';
+import { useCallback, useEffect, useState } from 'react';
+import type { PapyrusGame } from '../../../papyrus/data-structures/pure/game';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
+import { useUpdatedRef } from '../../hooks/useUpdatedRef';
+import styles from './Search.module.scss';
+import SearchBar from './SearchBar';
 
 export function SearchModalButton({game}: {readonly game: PapyrusGame}): React.ReactElement {
     const posthog = usePostHog();
     const posthogRef = useUpdatedRef(posthog);
 
     const [isOpen, setIsOpen] = useState(false);
+    const closeModal  = useCallback(() => setIsOpen(false), []);
     const toggleOpen = useCallback(() => setIsOpen((prev) => !prev), []);
 
     useEffect(() => {
@@ -24,16 +26,19 @@ export function SearchModalButton({game}: {readonly game: PapyrusGame}): React.R
 
     const useCompactWidthLayout = useMediaQuery('(max-width: 900px)');
 
+    const pathname = usePathname();
+    useEffect(closeModal, [pathname, closeModal]);
+
     return <>
         <button type='button' onClick={toggleOpen} className={`${styles.searchButton} js-only`}>
             <FontAwesomeIcon icon={faMagnifyingGlass} className={styles.searchModalSearchIcon!} />
             <span>Search...</span>
         </button>
-        <Dialog open={isOpen} onClose={toggleOpen} className={styles.searchModalBackdrop!} unmount={false}>
+        <Dialog open={isOpen} onClose={closeModal} className={styles.searchModalBackdrop!} unmount={false}>
             <DialogPanel className={styles.searchModalDialog!}>
                 <div className={styles.searchModalHeader!}>
                     <button
-                        type='button' onClick={toggleOpen}
+                        type='button' onClick={closeModal}
                         className={styles.searchModalReturnButton!}
                         disabled={useCompactWidthLayout} hidden={useCompactWidthLayout}
                     >
@@ -44,7 +49,7 @@ export function SearchModalButton({game}: {readonly game: PapyrusGame}): React.R
                         <FontAwesomeIcon icon={faMagnifyingGlass} />
                         <span>Papyrus Index Search</span>
                     </DialogTitle>
-                    <button type='button' onClick={toggleOpen} className={styles.searchModalCloseButton!}>
+                    <button type='button' onClick={closeModal} className={styles.searchModalCloseButton!}>
                         <FontAwesomeIcon icon={faXmark} />
                     </button>
                 </div>
