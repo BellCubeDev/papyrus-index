@@ -1,10 +1,8 @@
 /* eslint-disable no-await-in-loop */
-import { inspect } from "node:util";
+import * as Log from 'next/dist/build/output/log';
 import nextConfig from "../../../next.config";
 import { memoizeDevServerConst } from "../../utils/memoizeDevServerConst";
 import type { PapyrusWiki } from "../getWiki";
-import { isCI } from "next/dist/server/ci-info";
-import * as Log from 'next/dist/build/output/log';
 
 const wikiFetchPromisesByURL = memoizeDevServerConst('wikiFetchCache', ()=>{
     const map = new Map<string, Promise<{}|null|typeof WIKI_FETCH_403FORBIDDEN>>();

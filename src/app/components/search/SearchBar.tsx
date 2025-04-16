@@ -111,7 +111,7 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
         const searchInput = searchInputRef.current;
         if (searchInput) searchInput.value = '';
         clearTookTooLongInterval(CLEAR_ANY_TIMER);
-    }, [isCurrentTookTooLongInterval]);
+    }, [clearTookTooLongInterval]);
 
     useEffect(() => {
         if (isLoading) return;

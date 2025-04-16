@@ -23,7 +23,7 @@ export default [
     languageOptions: { globals: { ...globals.browser, ...globals.node } },
   },
   {
-    ignores: ["src/forks/"],
+    ignores: ["./cache"],
   },
   includeIgnoreFile(gitignorePath),
   pluginJs.configs.all,
