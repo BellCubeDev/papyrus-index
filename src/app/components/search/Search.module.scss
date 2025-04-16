@@ -321,6 +321,7 @@ details.searchModalFilters:not([open]) {
     flex-wrap: nowrap;
     gap: .5em;
     > li {
+        outline: none;
         list-style: none;
     }
 }

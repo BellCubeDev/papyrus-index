@@ -18,6 +18,7 @@ import { GuardEmptyList } from "../GuardEmptyList";
 import { PapyrusScriptFunctionReference } from "../papyrus/function/reference/PapyrusScriptFunctionReference";
 import { PapyrusScriptReference } from "../papyrus/script/PapyrusScriptReference";
 import styles from './Search.module.scss';
+import { usePrefersReducedMotion } from "../../hooks/usePrefersReducedMotion";
 
 const EMPTY_QUERY: unique symbol = memoizeDevServerConst('<SearchBar> EMPTY_QUERY', ()=>Symbol('<SearchBar> EMPTY_QUERY')) as any;
 const AWAITING_SEARCH: unique symbol = memoizeDevServerConst('<SearchBar> AWAITING_SEARCH', ()=>Symbol('<SearchBar> AWAITING_SEARCH')) as any;
@@ -124,13 +125,38 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
         posthog?.capture('SearchBar rendered result', {game, result: result.map(res => res.obj.$entityId)});
     }, [isLoading, game, posthog, result, clearTookTooLongInterval]);
 
+    const searchResultsULRef = React.useRef<HTMLUListElement>(null);
+
+    const prefersReducedMotion = usePrefersReducedMotion();
+
+    const focusSearchResults = React.useCallback(() => {
+        const searchResultsUL = searchResultsULRef.current;
+        if (!searchResultsUL) return;
+        const firstChild = searchResultsUL.firstElementChild as HTMLLIElement | null;
+        if (!firstChild) return;
+        firstChild.scrollIntoView({behavior: prefersReducedMotion ? 'instant' : 'smooth', block: 'nearest', inline: 'nearest'});
+        firstChild.focus({preventScroll: true});
+    }, [prefersReducedMotion]);
+
+    const focusSearchResultsOnEnter = React.useCallback((e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            focusSearchResults();
+        }
+    }, [focusSearchResults]);
+
     const filtersChildren = <>
         Filters coming soon!
     </>;
 
     return <>
         <div className={styles.searchModalBodySplitRight1!}>
-            <input type="search" placeholder="Search..." onChange={onChange} ref={searchInputRef} />
+            <input type="search" placeholder="Search..."
+                enterKeyHint="search"
+                ref={searchInputRef}
+                onChange={onChange}
+                onKeyUp={focusSearchResultsOnEnter}
+            />
             <FontAwesomeIcon icon={faMagnifyingGlass} className={styles.searchModalSearchIcon!} />
             <button type='reset' onClick={clearSearch} hidden={!hasText} className={styles.searchModalCancelButton!}><FontAwesomeIcon icon={faBan} /></button>
         </div>
@@ -147,35 +173,35 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
             }
         </div>
         <div className={styles.searchModalBodySplitRight2!}>
-            <ul className={styles.searchModalResults!}>
+            <ul className={styles.searchModalResults!} ref={searchResultsULRef}>
                 <GuardEmptyList replacement={<li>No results! Try another query!</li>}>
                     {
-                        searchProvider.DEVELOPMENT__LOADING_HASH ? <li>DEVELOPMENT ONLY - Hashing the search index! This may take a second, especially if this is the first time you&rsquo;ve opened this game!</li>
-                        : result === EMPTY_QUERY ? <li suppressHydrationWarning>Empty query! Try searching for something...</li>
-                        : result === AWAITING_SEARCH ? <li>Search in progress...</li>
-                        : result instanceof Error ? <li>Error: <pre><code>{result.stack}</code></pre></li>
-                        : result.map(res => {
+                        searchProvider.DEVELOPMENT__LOADING_HASH ? <li tabIndex={-1}>DEVELOPMENT ONLY - Hashing the search index! This may take a second, especially if this is the first time you&rsquo;ve opened this game!</li>
+                        : result === EMPTY_QUERY ? <li suppressHydrationWarning tabIndex={-1}>Empty query! Try searching for something...</li>
+                        : result === AWAITING_SEARCH ? <li tabIndex={-1}>Search in progress...</li>
+                        : result instanceof Error ? <li tabIndex={-1}>Error: <pre><code>{result.stack}</code></pre></li>
+                        : result.map((res, i) => {
                             const obj = res.obj;
                             const score = res.score;
                             switch (obj.$entityType) {
                                 case SearchIndexEntityType.Script:
-                                    return <li key={obj.$entityId}>
+                                    return <li key={obj.$entityId} tabIndex={i === 0 ? -1 : undefined}>
                                         <PapyrusScriptReference game={game} scriptAggregate={obj} /> (score: <code>{score}</code>)
                                     </li>;
                                 case SearchIndexEntityType.Function:
-                                    return <li key={obj.$entityId}>
+                                    return <li key={obj.$entityId} tabIndex={i === 0 ? -1 : undefined}>
                                         <PapyrusScriptFunctionReference game={game} scriptAggregate={obj.script} funcAggregate={obj} /> (score: <code>{score}</code>)
                                     </li>;
                                 case SearchIndexEntityType.Event:
-                                    return <li key={obj.$entityId}>
+                                    return <li key={obj.$entityId} tabIndex={i === 0 ? -1 : undefined}>
                                         Event {obj.name} (score: <code>{score}</code>)
                                     </li>;
                                 case SearchIndexEntityType.Property:
-                                    return <li key={obj.$entityId}>
+                                    return <li key={obj.$entityId} tabIndex={i === 0 ? -1 : undefined}>
                                         Property {obj.name} (score: <code>{score}</code>)
                                     </li>;
                                 case SearchIndexEntityType.Struct:
-                                    return <li key={obj.$entityId}>
+                                    return <li key={obj.$entityId} tabIndex={i === 0 ? -1 : undefined}>
                                         Struct {obj.name} (score: <code>{score}</code>)
                                     </li>;
                                 default:
