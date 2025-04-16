@@ -141,7 +141,6 @@ class WorkerExitedError extends Error {
 }
 
 process.stdout.isTTY = false;
-process.env.FORCE_COLOR = 'true';
 const targetLogMessage = ` ${Log.prefixes.info} Collecting page data ...`;
 
 /** The log since the last time patchLog() ran successfully */
