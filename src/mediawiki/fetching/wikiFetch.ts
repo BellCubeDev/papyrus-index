@@ -77,6 +77,11 @@ export async function wikiFetchGet(wiki: PapyrusWiki, path: `/${string}`): Promi
         queuedFetches.delete(url.href);
         clearInterval(loggingIntervalQueued);
 
+        Log.trace(`wikiFetchGetInternalCreatedPromise: Once previous fetches complete, will fetch ${url}`);
+        const loggingIntervalWaitingForPreviousRequests = setInterval(() => {
+            Log.trace(`wikiFetchGetInternalCreatedPromise: still waiting for previous fetches to complete before starting the queued fetch for ${url}`);
+        });
+
         //const loggingIntervalUnfulfilled = setInterval(() => {
         //    Log.log(`wikiFetchGetInternalCreatedPromise: still waiting for previous requests to finish before fetching ${url}`);
         //}, 60000).unref();
@@ -84,6 +89,7 @@ export async function wikiFetchGet(wiki: PapyrusWiki, path: `/${string}`): Promi
         const existingFetchQueuePromise = fetchQueuePromisesByHostname.get(url.hostname) || Promise.resolve();
         const newFetchQueuePromise = async function wikiFetchGetInternalCreatedFetchQueuePromise() {
             await existingFetchQueuePromise;
+            clearInterval(loggingIntervalWaitingForPreviousRequests);
             await new Promise(resolve => setTimeout(resolve, 50 * (process.env.NODE_ENV === 'development' ? 1 : nextConfig.experimental.cpus)).unref()); // since we spawn 6 workers in build mode, we need to wait an appropriate amount of time to avoid DOSing the server
             const res = await wikiFetchGetInternalWithParseJsonAndHandleErrors(wiki, path, 0, url);
             unfulfilledFetches.delete(url.href);
