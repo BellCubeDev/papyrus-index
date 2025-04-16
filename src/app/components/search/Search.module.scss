@@ -152,7 +152,7 @@
     min-height: 100%;
 }
 
-@media (max-width: 900) {
+@media (max-width: 900px) {
     .searchModalBodyContentWrapper {
         display: flex;
         flex-direction: column;
@@ -179,7 +179,7 @@
     }
 }
 
-@media (max-width: 660) {
+@media (max-width: 660px) {
     .searchModalHeader {
         > h2 {
             grid-template-columns: 1fr auto 1fr;
@@ -307,7 +307,7 @@ details.searchModalFilters:not([open]) {
     box-sizing: border-box;
 }
 
-@media (max-width: 900) {
+@media (max-width: 900px) {
     .searchModalBodySplitRight2 {
         overflow-x: auto;
         overflow-y: unset;
