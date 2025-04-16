@@ -2043,10 +2043,6 @@ Function WriteJsonSaveAndLoadFunctionsToFile(String SourceFilePath, String Desti
     Bool GlobalVariableArraysToggle = true, Bool FloatArraysToggle = true, Bool StringArraysToggle = true, Bool IntArraysToggle = true, Bool BoolArraysToggle = true, \
     int Messages = 0, String ConfirmMessage = "Done Writing Json Functions", Bool UsePropertiesAsDefaults = True) global
     Guard()
-    MiscUtil.WriteToFile(f, "\t" + "EndFunction" + "\n\n")
-    
-    MiscUtil.WriteToFile(f, "\t" + "Bool[] Function GetBoolArray()" + "\n")
-    Guard()
 EndFunction 
 
 

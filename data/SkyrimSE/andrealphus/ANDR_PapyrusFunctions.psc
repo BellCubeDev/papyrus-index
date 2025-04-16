@@ -10,21 +10,21 @@ Int Function GetAndrealphusExtenderVersion() Global Native
 }
 
 Function CastEnchantment(Actor akSource, Enchantment akEnchantment, Actor akTarget) global native
-{
+{ 
 - akSource: The Actor from which to cast the Enchantment.
 - akEnchantment: Enchantment to cast.
 - akTarget: Actor at which to aim the Enchantment.
 }
 
 Function CastPotion(Actor akSource, Potion akPotion, Actor akTarget) global native
-{
+{ 
 - akSource: The Actor from which to cast the Potion.
 - akPotion: Potion to cast.
 - akTarget: Actor at which to aim the Potion.
 }
 
 Function CastIngredient(Actor akSource, Ingredient akIngedient, Actor akTarget) global native
-{
+{ 
 - akSource: The Actor from which to cast the Ingredient.
 - akIngedient: Ingredient to cast.
 - akTarget: Actor at which to aim the Ingredient.
@@ -68,11 +68,11 @@ ActiveMagicEffect Function GetActiveMagicEffectFromActor(Actor akActor, MagicEff
 Function SetRefAsNoAIAcquire(ObjectReference akObject, Bool SetNoAIAquire) global native
 {
 - akObject: the objectreference
-- SetNoAIAquire: to disable or enable SetNoAIAquire field.
+- SetNoAIAquire: to disable or enable SetNoAIAquire field. 
 }
 
 Function CastSpellFromRef(Actor akSource, Spell akSpell, ObjectReference akTarget, ObjectReference akOriginRef) global native
-{
+{ 
 - akSource: The caster of the spell.
 - akSpell: Spell to cast.
 - akTarget: An ObjectReference at which to aim the spell.
@@ -91,10 +91,31 @@ Function CastSpellFromPointToPoint(Actor akSource, Spell akSpell, Float StartPoi
 - EndPoint_Z: The Z position of the ending point.
 }
 
+Function LaunchAmmo(Actor akCaster, Ammo akAmmo, Weapon akWeapon, String sNodeName = "", ObjectReference akTarget = None, Projectile akProjectile) Global Native
+{
+; based off of fenix31415's and po3's launcharrow function
+- akCaster: the actor "casting" the ammo.
+- akAmmo: the ammo being used
+- akWeapon: the weapon that's being used.
+- NodeSource: the name of the skeleton bone node of the akCaster, the ammo is launch from.
+- akTarget: the target of the ammo. (might cause issues if none)
+- akProjectile: the base projectile.
+}
+
+Function LaunchSpellProjectile(Actor akCaster, Spell akSpell, String sNodeName = "", ObjectReference akTarget = None, Projectile akProjectile) Global Native
+{
+- akCaster: the caster.
+- akSpell: the spell to cast.
+- sNodeName: the name of the skeleton bone node of the akCaster, the ammo is launch from.
+- akTarget: the target the spell is aimed at, for the player.  (might cause issues if none)
+- akProjectile: the projectile that's being used.
+}
+
 ; ============================= NON-NATIVE FUNCTIONS =============================
 
 Function CastSpellFromHand(Actor akSource, Spell akSpell, Bool IsLeftHand, Float DistanceVar = 2000.0, Float HeightVar = 100.0, Float Offset_NoSneak_Left_X = 30.0, Float Offset_NoSneak_Left_Y = 30.0, Float Offset_NoSneak_Left_Z = 110.0, Float Offset_NoSneak_Right_X = 30.0, Float Offset_NoSneak_Right_Y = -30.0, Float Offset_NoSneak_Right_Z = 110.0, Float Offset_Sneak_Left_X = 30.0, Float Offset_Sneak_Left_Y = 30.0, Float Offset_Sneak_Left_Z = 70.0, Float Offset_Sneak_Right_X = 30.0, Float Offset_Sneak_Right_Y = -30.0, Float Offset_Sneak_Right_Z = 70.0)	global
 	{
+	; Dislaimer: This can be replaced with LaunchSpellProjectile(), but I'm keeping this function for reference and dependencies.
 	- akSource: The caster.
 	- akSpell: The spell to cast.
 	- IsLeftHand: True if cast from the left hand, false if cast from the right hand.
@@ -116,57 +137,192 @@ Function CastSpellFromHand(Actor akSource, Spell akSpell, Bool IsLeftHand, Float
     Guard()
 EndFunction
 
+Function CastSpellFromRefAimed(Actor akSource, Spell akSpell, ObjectReference akOriginRef) global
+	{ 
+	- akSource: The caster of the spell.
+	- akSpell: Spell to cast.
+	- akOriginRef: The ObjectReference where to cast the spell from.
+	}
+    Guard()
+EndFunction
 
 ; ============================= WIP Functions =============================
 
-;Function SetObjectRefFlag(ObjectReference akObject, Int FlagInt, Bool TurnOn)
-;{
-;- akObject: the objectreference
-;- FlagInt: the Int representing the flag.
-	;0	kIsGroundPiece
-	;1	kCollisionsDisabled -> unknown?
-	;2	kDeleted
-	;3	kHiddenFromLocalMap -> only for statics!
-	;4	kTurnOffFire
-	;5	kInaccessible -> only for doors!
-	;6	kLODRespectsEnableState  -> only for statics!
-	;7	kStartsDead  -> only for actors!
-	;8	kDoesntLightWater
-	;9	kMotionBlur  -> only for statics!
-	;10	kPersistent
-	;11	kInitiallyDisabled
-	;12	kIgnored
-	;13	kStartUnconscious  -> only for actors!
-	;14	kSkyMarker
-	;15	kHarvested   -> only for trees!
-	;16	kIsFullLOD   -> only for actors!
-	;17	kNeverFades   -> only for lights!
-	;18	kDoesntLightLandscape
-	;19	kIgnoreFriendlyHits   -> only for actors!
-	;20	kNoAIAcquire
-	;21	kCollisionGeometry_Filter
-	;22	kCollisionGeometry_BoundingBox
-	;23	kReflectedByAutoWater
-	;24	kDontHavokSettle
-	;25	kGround
-	;26	kRespawns
-	;27	kMultibound
-; - TurnOn: To turn the flag on or off.
-;}
+;/
+Function SetObjectRefFlag(ObjectReference akObject, Int FlagInt, Bool TurnOn)
+{
+- akObject: the objectreference
+- FlagInt: the Int representing the flag.
+	0	kIsGroundPiece 
+	1	kCollisionsDisabled -> unknown?
+	2	kDeleted 
+	3	kHiddenFromLocalMap -> only for statics!
+	4	kTurnOffFire 
+	5	kInaccessible -> only for doors!
+	6	kLODRespectsEnableState  -> only for statics!
+	7	kStartsDead  -> only for actors!
+	8	kDoesntLightWater 
+	9	kMotionBlur  -> only for statics!
+	10	kPersistent 
+	11	kInitiallyDisabled 
+	12	kIgnored 
+	13	kStartUnconscious  -> only for actors!
+	14	kSkyMarker 
+	15	kHarvested   -> only for trees!
+	16	kIsFullLOD   -> only for actors!
+	17	kNeverFades   -> only for lights!
+	18	kDoesntLightLandscape 
+	19	kIgnoreFriendlyHits   -> only for actors!
+	20	kNoAIAcquire 
+	21	kCollisionGeometry_Filter 
+	22	kCollisionGeometry_BoundingBox 
+	23	kReflectedByAutoWater 
+	24	kDontHavokSettle 
+	25	kGround 
+	26	kRespawns 
+	27	kMultibound 
+ - TurnOn: To turn the flag on or off.
+}
+/;
 
 
+;/
+Function RegisterForCollision(ObjectReference akObject) global native
 
-;Function RegisterForCollision(ObjectReference akObject) global native
+Used for Registering whenever an object physically colides with an actor.
+akObject: the object we are monitoring
+/;
 
-; Used for Registering whenever an object physically colides with an actor.
-; akObject: the object we are monitoring
+;/
+Function OnObjectCollision(ObjectReference akObject, ObjectReference akTarget) global native
 
-;Function OnObjectCollision(ObjectReference akObject, ObjectReference akTarget) global native
+This is based of OnTrapHitStart(), but that function is objectreference function and needs to have one of its collision layers in the mesh to be set as L_TRAP.
+akObject: The object that's colliding with something or someone.
+akTarget: The object or actor being hit.
+/;
 
-; This is based of OnTrapHitStart(), but that function is objectreference function and needs to have one of its collision layers in the mesh to be set as L_TRAP.
-; akObject: The object that's colliding with something or someone.
-; akTarget: The object or actor being hit.
+;/
+Function SetActorLevel(actor akActor, Int iLevel)
+{Requires ConsoleUtil. Sets level of an actor.}
+	ConsoleUtil.SetSelectedReference(akActor)
+	ConsoleUtil.ExecuteCommand("setlevel " + iLevel + "")
+EndFuntion
+/;
 
+;/
+Function MoveRefToCrosshairLocation(ObjectReference akOriginRef, ObjectReference akTargetRef, float DistanceVar = 2000.0, float HeightVar = 130.0) Global Native
+{
+Move akTargetRef in front of the origin ref, simulating the crosshair location.
+- akOriginRef: the origin ref to start calculating from. (Most often the player, but works for NPCs as well, in which case akTargetRef will be placed in front of them.)
+- akTargetRef: the ref to move to the crosshair location.
+- DistanceVar: the distance. (most often 2000 units)
+- HeightVar: the rough height of akOriginRef (usually between 64 and 96 units)
+Source: https://old.reddit.com/r/skyrimmods/comments/k8nvb3/some_calculus_that_can_help_modders_with_moveto/
+}
+/;
+
+; ============================= Wish list =============================
+
+;/
+InfoTopic Function GetCurrentDialogueTopic()  global native
+{Returns the InfoTopic that is currently being said by an NPC.}
+/;
+
+;/
+Bool Function IsPlayerControlEnabled(Int iControlType)
+{Returns whether or not a speific player control is enabled
+iControlType can be:
+0: abMovement: player's movement controls. 
+1: abFighting: player's combat controls. 
+2: abCamSwitch: ability to switch point of view. 
+3: abLooking: player's look controls. 
+4: abSneaking: player's sneak controls. 
+5: abMenu: menu controls (Journal, Inventory, Pause, etc.). 
+6: abActivate: ability for player to activate objects. 
+7 abJournalTabs: all Journal tabs except System. 
+}
+/;
+
+;/
+Function SetPlayerControl(Bool bEnable, Int iControlType)
+{Disables the specified type of player controls.
+- bEnable: true to enable a control, false to disable it.
+- iControlType can be:
+0: abMovement: player's movement controls. 
+1: abFighting: player's combat controls. 
+2: abCamSwitch: ability to switch point of view. 
+3: abLooking: player's look controls. 
+4: abSneaking: player's sneak controls. 
+5: abMenu: menu controls (Journal, Inventory, Pause, etc.). 
+6: abActivate: ability for player to activate objects. 
+7 abJournalTabs: all Journal tabs except System. 
+}
+/;
+
+;/ 
+Function ReplaceBookText(Book akBook, String sOriginalText, String sNewText)
+{Replaces text in a book.
+- akBook: the book to edit.
+- sOriginalText: the original string to replace.
+- sNewtext: the new string to replace the original string with.
+}
+/;
+
+;/
+Function SetObjectAsFavorite(Form akObject, Int iHotkey = 0)	
+{Sets an akObject as favorite, with akHotkey as possible hotkey. 
+- iHotKey: 0 means no hotkey (default value) and 1-9 will be the requested hotkey. -1 will mean no longer favorited.
+;Example: SetObjectAsFavorite(IronSword, 3) -> Set an IronSword as favorite and assign to hotkey 3.
+}
+/;
+
+;/
+Int Function GetHotKeyFavoriteObject(Form akForm)	;Gets the hotkey of item as integer. -1 means not favorited, 0 means favorited but no hotkey and 1-9 will be the hotkey.
+	;Example:
+	;If GetHotKeyFavoriteObject(IronSword) == 3
+	;debug.notification("An IronSword is currently bound to 3.")
+	;EndIf
+/;
+
+;/
+Form Function GetObjectFavoriteHotkey(Int iHotkey)	;Gets the object currently bound to the hotkey. Returns a none if nothing is bound to the key.
+	;If GetObjectFavoriteHotkey(3) == IronSword
+	;debug.notification("Hotkey 3 is assigned to an IronSword.")
+	;EndIf
+/;	
+
+;/
+Function MarkInventoryAsOwned(ObjectReference akInventory, Actor akOwnerActor = None, Faction akOwnerfaction = None )	;Marks all items in the akInventory (container or actor ref) as owned by akOwner (either an actor or faction).
+	If akInventory is an actor this should include outfit, death item and inventory.
+	If both akOwnerActor and akOwnerfaction are none -> remove ownership
+/;
+
+;/
+Function SetControlledActor(Actor akActor)	;akActor will be fully controllable, with them being able to move through load-doors, fully able to use all animations, and able to see their inventory, spells and perks.
+	;Less than 0.5 second script load should be ideal, to make swapping control in combat viable.
+	;note: It's unlikely this one can be done easily. I've attempted it, but couldn't get it to work.
+/;	
+
+;/
+Function SetPlayerCombatAIDriven()	
+; same as SetPlayerAIDriven, but for combat AI https://ck.uesp.net/wiki/SetPlayerAIDriven_-_Game
+/;	
+
+;/
+Actor Function GetCommandingActor(Actor akActor)
+; gets the commanding actor of this actor.
+/;
+
+;/
+Actor[] Function GetCommandedActors(Actor akActor)
+; gets all commanded actors of this actor.
+/;
+
+;/
+Function SetCommandingActor(Actor CommandedActor, Actor CommandingActor = None)
+; sets makes actors commanded and commanding of each other.
+; if CommandingActor is None, clears the commanded actor from being commanded.
+/;
 
 Function Guard()
     Debug.MessageBox("ANDR_PapyrusFunctions: Don't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
