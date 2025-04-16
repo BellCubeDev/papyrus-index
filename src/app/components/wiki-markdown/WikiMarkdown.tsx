@@ -49,10 +49,10 @@ function WikiMarkdownLink(gameData: PapyrusGameDataIndexed<PapyrusGame>, inToolt
     if (asEvent) {//return <EventReference game={gameData.game} scriptName={functOrEventScriptName} possibleEvents={asEvent} />;
         if (process.env.SKIP_HIGH_LEVEL_DIAGNOSTIC_LOGS !== 'true') console.warn('<EventReference> component not implemented, but we needed it for a WikiMarkdownLink.');
         appendToJobSummarySection(`\`<EventReference>\` component not implemented, but we needed it for a WikiMarkdownLink.`, JobSummarySection.UnimplementedFeatures);
+    } else {
+        if (process.env.SKIP_HIGH_LEVEL_DIAGNOSTIC_LOGS !== 'true') console.warn(`Wiki page ${pageName} is not a function or event, but looks like a member of a script.`);
+        appendToJobSummarySection(`Wiki page ${pageName} is not a function or event, but looks like a member of a script.`, JobSummarySection.MediaWikiFormattingWarnings);
     }
-
-    if (process.env.SKIP_HIGH_LEVEL_DIAGNOSTIC_LOGS !== 'true') console.warn(`Wiki page ${pageName} is not a function or event, but looks like a member of a script.`);
-    appendToJobSummarySection(`Wiki page ${pageName} is not a function or event, but looks like a member of a script.`, JobSummarySection.MediaWikiFormattingWarnings);
 
     return <a href={href}>{children}</a>;
 }
