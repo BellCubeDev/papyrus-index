@@ -1,4 +1,5 @@
 @use '../../vars' as *;
+@use '../nav-bar/NavBar.module' as *;
 
 .searchModalBackdrop {
     position: fixed;
@@ -11,6 +12,17 @@
     z-index: 998;
 
     backdrop-filter: blur(10px);
+
+    opacity: 1;
+    transition: opacity 0.2s cubic-bezier(0.69, 0.09, 0.15, 0.94);
+    user-select: contain;
+
+    &[hidden] {
+        transition-timing-function: cubic-bezier(0.85, 0.06, 0.31, 0.91);
+        display: unset !important;
+        opacity: 0;
+        pointer-events: none;
+    }
 }
 
 .searchModalDialog {
@@ -143,24 +155,11 @@
     padding: .75em;
     grid-column: 2;
     grid-row: 1;
-
     position: relative;
-
     > input {
-        font-size: 1.2em;
-        width: 100%;
-        padding: 0.5em;
+        padding: .5em;
         padding-left: 2.5em;
-        border-radius: 0.5em;
-        background: #222;
-        color: #ddd;
-        border: none;
-        outline: none;
-
         box-shadow: 0 0 0.6em hsla(210, 100%, 59%, 0.1);
-        transition-property: box-shadow;
-        transition-duration: 0.15s;
-        transition-timing-function: cubic-bezier(0.19, 0.01, 0.23, 0.73);
         &:hover {
             box-shadow:  0 0 0.3em hsla(210, 100%, 59%, 0.1), 0 0 0.3em hsla(275deg, 100%, 75%, 0.3);
         }
@@ -170,6 +169,37 @@
     }
 }
 
+.searchButton {
+    padding: .4em;
+    padding-left: 2em;
+    position: relative;
+
+    box-shadow: 0 0 .7em hsla(210, 100%, 59%, 0.2);
+    &:hover {
+        box-shadow:  0 0 1.5em hsla(210, 100%, 59%, 0.1), 0 0 0.6em hsla(275deg, 100%, 75%, 0.6);
+    }
+    &:focus {
+        box-shadow: 0 0 0.8em hsla(275deg, 100%, 75%, 0.9);
+    }
+}
+
+.searchModalBodySplitRight1 > input, .searchButton {
+    border-radius: 0.5em;
+    background: #222;
+    color: #ddd;
+    border: none;
+    outline: none;
+
+    transition-property: box-shadow;
+    transition-duration: 0.14s;
+    transition-timing-function: cubic-bezier(0.19, 0.01, 0.23, 0.73);
+}
+
+.searchModalBodySplitRight1 > input {
+    width: 100%;
+    font-size: 1.2em;
+}
+
 .searchModalSearchIcon {
     font-size: 1.5em;
     color: #ddd;
@@ -177,6 +207,11 @@
     left: 1em;
     top: 50%;
     transform: translateY(-47.5%);
+}
+
+.searchButton > .searchModalSearchIcon {
+    font-size: 1em;
+    left: .6em;
 }
 
 .searchModalBodySplitRight2 {

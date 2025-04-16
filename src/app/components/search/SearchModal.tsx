@@ -22,7 +22,10 @@ export function SearchModalButton({game}: {readonly game: PapyrusGame}): React.R
     }, [isOpen, posthogRef]);
 
     return <>
-        <button type='button' onClick={toggleOpen} className='js-only'>Open Search</button>
+        <button type='button' onClick={toggleOpen} className={`${styles.searchButton} js-only`}>
+            <FontAwesomeIcon icon={faMagnifyingGlass} className={styles.searchModalSearchIcon!} />
+            <span>Search...</span>
+        </button>
         <Dialog open={isOpen} onClose={toggleOpen} className={styles.searchModalBackdrop!} unmount={false}>
             <DialogPanel className={styles.searchModalDialog!}>
                 <div className={styles.searchModalHeader!}>

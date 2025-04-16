@@ -1,5 +1,7 @@
+@use '../../vars' as *;
+
 .nav {
-    width: calc(100% - 4rem);
+    width: calc(100% - css-min(4rem, 8vw));
     height: 3.5rem;
     justify-content: space-between;
     background: #000;
@@ -10,7 +12,7 @@
     overflow-x: auto;
     z-index: 100;
     padding: .3rem 2rem;
-    //padding-right: calc(100svw - 100dvw + 2rem);
+    padding: .3rem css-min(2rem, 4vw);
 
 
     display: grid;
@@ -27,9 +29,17 @@
     }
 }
 
+@media (max-height: 600px) {
+    .nav {
+        position: relative;
+    }
+}
+
 .gameDropdownWrapper {
-    width: 100%;
     justify-items: center;
+    width: max-content;
+
+    font-size: css-min(1em, 2vw)
 }
 
 .gameDropdownFallback {
@@ -81,6 +91,64 @@
 
 .gameDropdownChevron {
 
+}
+
+.logo {
+    font-size: css-min(1em, 1.4vw)
+}
+
+.searchButton {
+    width: max-content;
+    font-size: css-clamp(1em, 4.2vw, 1.6em);
+    > span {
+        font-size: .65em;
+        display: block;
+        width: css-clamp(4.5em, 7vw, 7em);
+        text-align: left;
+    }
+}
+
+@media (max-width: 750px) {
+    .nav {
+        display: flex;
+        justify-content: space-around;
+    }
+    .logo {
+        > div {
+            font-size: css-min(1em, 8vw);
+            width: 20em;
+            margin: 0;
+            > h1 {
+                margin: 0;
+            }
+        }
+    }
+    .gameDropdownWrapper {
+        font-size: 14px
+    }
+    .searchButton {
+        font-size: 30px;
+
+        padding: .3em;
+        background: none;
+        border: none;
+        outline: none;
+        > span {
+            font-size: .65em;
+            display: block;
+        }
+    }
+}
+
+@media (max-width: 590px) {
+    .nav {
+        justify-content: space-evenly;
+        overflow-x: hidden;
+    }
+    .logo {
+        width: 0;
+        opacity: 0;
+    }
 }
 
 .gameDropdownOptions {

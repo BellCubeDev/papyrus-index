@@ -1,6 +1,6 @@
 'use client';
 
-import styles from './NavBar.module.scss'
+import styles from './NavBar.module.scss';
 import type { PapyrusGame } from "../../../papyrus/data-structures/pure/game";
 import { useSearchContext } from '../../search/SearchProvider';
 import { ThePapyrusIndexLogo } from '../logo/ThePapyrusIndexLogo';
@@ -17,7 +17,7 @@ export function NavBar({game}: {
 
         <GameDropdown currentGame={game} />
 
-        {game ? <ThePapyrusIndexLogo /> : null}
+        {game ? <span className={styles.logo} ><ThePapyrusIndexLogo /></span> : null}
 
         {game && searchContext ? <SearchModalButton game={game!} /> : null}
     </nav>;
