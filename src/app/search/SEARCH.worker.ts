@@ -131,7 +131,7 @@ async function getSearchIndexOnWorkerLoad(): Promise<[DeepPreparedObject<SearchI
 
     performance.mark('startDownloadRawData');
 
-    const res = await fetch(new URL(`/${toLowerCase(game)}/search-data.json?hash=${searchIndexHash}`, self.location.href), {
+    const res = await fetch(new URL(`/${toLowerCase(game)}/search-data.json?hash=${searchIndexHash}`, self.origin), {
         cache: 'force-cache',
     });
     if (!res.ok) {
