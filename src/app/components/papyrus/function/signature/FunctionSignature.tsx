@@ -1,15 +1,14 @@
-import { Suspense } from "react";
 import type { PapyrusScriptFunctionIndexed } from "../../../../../papyrus/data-structures/indexing/function";
 import type { PapyrusGame } from "../../../../../papyrus/data-structures/pure/game";
 import { joinJSXWithElementByWrapping } from "../../../../../utils/joinJSX";
 import { toLowerCase } from "../../../../../utils/toLowerCase";
 import { Link } from "../../../Link";
+import { SuspenseIfServer } from "../../../SuspenseIfServer";
 import { TextWithTooltip } from "../../../text-with-tooltip/TooltipText";
 import { PapyrusType, PapyrusTypeNamed, PapyrusTypeWithValue } from "../../type/PapyrusType";
 import { FunctionDocumentationStringAll, FunctionDocumentationStringBest } from "./DocumentationString";
 import styles from './FunctionSignature.module.scss';
 import { PapyrusFunctionSignatureParamSeparator, PapyrusFunctionSignatureParamWrapper } from "./FunctionSignatureParamSeparator";
-import { SuspenseIfServer } from "../../../SuspenseIfServer";
 
 
 export function PapyrusFunctionSignature<TGame extends PapyrusGame>({game, func, scriptName, inTooltip, longerDescription}: {readonly game: TGame, readonly func: PapyrusScriptFunctionIndexed<TGame> & {ckWikiDescription?: string|null|undefined}, readonly scriptName: string, readonly inTooltip?: boolean|undefined, readonly longerDescription?: boolean|undefined}): React.ReactElement {

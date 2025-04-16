@@ -1,35 +1,39 @@
 'use client';
 
+import { faBan, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { usePostHog } from "posthog-js/react";
 import React, { useEffect } from "react";
 import type { PapyrusGame } from "../../../papyrus/data-structures/pure/game";
 import { UnreachableError } from "../../../UnreachableError";
 import { memoizeDevServerConst } from "../../../utils/memoizeDevServerConst";
-import { GuardEmptyList } from "../GuardEmptyList";
-import { PapyrusScriptFunctionReference } from "../papyrus/function/reference/PapyrusScriptFunctionReference";
-import { PapyrusScriptReference } from "../papyrus/script/PapyrusScriptReference";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
+import { CLEAR_ANY_TIMER, useStoredInterval } from "../../hooks/useStoredTimeout";
 import { useUpdatedRef } from "../../hooks/useUpdatedRef";
 import { SearchIndexEntityType, type SearchIndexEntity } from "../../search/Entity";
 import { DeepUnpreparedValue } from "../../search/Preparation";
 import type { WorkerMessageOutputSearchResult } from "../../search/SEARCH.worker";
 import { useSearchContext, type SearchContextLoaded } from "../../search/SearchProvider";
+import { GuardEmptyList } from "../GuardEmptyList";
+import { PapyrusScriptFunctionReference } from "../papyrus/function/reference/PapyrusScriptFunctionReference";
+import { PapyrusScriptReference } from "../papyrus/script/PapyrusScriptReference";
 import styles from './Search.module.scss';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import { usePostHog } from "posthog-js/react";
-import { CLEAR_ANY_TIMER, useStoredInterval, useStoredTimeout } from "../../hooks/useStoredTimeout";
+import { usePrefersReducedMotion } from "../../hooks/usePrefersReducedMotion";
 
 const EMPTY_QUERY: unique symbol = memoizeDevServerConst('<SearchBar> EMPTY_QUERY', ()=>Symbol('<SearchBar> EMPTY_QUERY')) as any;
 const AWAITING_SEARCH: unique symbol = memoizeDevServerConst('<SearchBar> AWAITING_SEARCH', ()=>Symbol('<SearchBar> AWAITING_SEARCH')) as any;
 
 export default function SearchBar({game}: {readonly game: PapyrusGame}): React.ReactElement {
     const posthog = usePostHog();
+    const useCompactWidthLayout = useMediaQuery('(max-width: 900px)');
 
     const searchProvider = useSearchContext();
     type ResultForRendering = DeepUnpreparedValue<WorkerMessageOutputSearchResult<PapyrusGame, SearchIndexEntityType>['results']>;
     const [result, setResult] = React.useState<typeof EMPTY_QUERY | typeof AWAITING_SEARCH | Error | ResultForRendering>(EMPTY_QUERY);
 
-    const {clear: clearDisplayAwaitingTimeout, start: startDisplayAwaitingTimeout} = useStoredTimeout();
-    const {clear: clearTookTooLongInterval, start: startTookTooLongInterval} = useStoredInterval();
+    const [hasText, setHasText] = React.useState(false);
+
+    const {clear: clearTookTooLongInterval, start: startTookTooLongInterval, isCurrent: isCurrentTookTooLongInterval} = useStoredInterval();
 
     const searchProviderLoadedPromiseRef = React.useRef<{resolve?:null|((res:SearchContextLoaded)=>void),promise: Promise<SearchContextLoaded>}>(null);
     const isLoading = searchProvider.LOADING_FROM_SSR || searchProvider.DEVELOPMENT__LOADING_HASH;
@@ -48,29 +52,18 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
 
     const search = React.useCallback(async function search(query: string) {
         console.log('Searching for', query);
+        setHasText(query !== '');
 
-        if (!query) {
-            clearDisplayAwaitingTimeout(CLEAR_ANY_TIMER);
-            return setResult(EMPTY_QUERY);
-        }
+        if (!query) return setResult(query ? AWAITING_SEARCH : EMPTY_QUERY);
+        else setResult(AWAITING_SEARCH);
 
         let hasResults = false;
-
-        const newDisplayAwaitingInterval = startDisplayAwaitingTimeout(100, () => {
-            if (hasResults) return;
-            setResult(AWAITING_SEARCH);
-            posthog?.capture('SearchBar rendered awaiting', {game, query});
-        });
-
-
-        clearTookTooLongInterval(CLEAR_ANY_TIMER);
 
         const startTimeLoadSearchProvider = performance.now();
         const loadedSearchProvider = searchProviderLoadedPromiseRef.current!.resolve ? await searchProviderLoadedPromiseRef.current!.promise : searchProvider as SearchContextLoaded;
 
-
         const startTimeForSearch = performance.now();
-        startTookTooLongInterval(1000, () => {
+        const newTookTooLongInterval = startTookTooLongInterval(3000, () => {
             const debugData = {
                 game,
                 query,
@@ -82,15 +75,19 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
             posthog?.capture('Search taking too long', debugData);
         });
 
+        // debounce
+        await new Promise(resolve => setTimeout(resolve, 250)); // this can sometimes be 3x as long as the search itself! The things we do to make the UI feel snappier...
+        if (!isCurrentTookTooLongInterval(newTookTooLongInterval)) return;
+
         const res = await loadedSearchProvider.search(query, [SearchIndexEntityType.Script, SearchIndexEntityType.Function]);
 
         hasResults = true;
 
-        const isCurrent = clearDisplayAwaitingTimeout(newDisplayAwaitingInterval);
+        const isCurrent = clearTookTooLongInterval(newTookTooLongInterval);
         if (!isCurrent) return;
 
         setResult(res);
-    }, [startDisplayAwaitingTimeout, clearTookTooLongInterval, searchProvider, startTookTooLongInterval, clearDisplayAwaitingTimeout, posthog, game]);
+    }, [searchProvider, startTookTooLongInterval, isCurrentTookTooLongInterval, clearTookTooLongInterval, game, posthog]);
 
     const onChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => search(e.target.value), [search]);
 
@@ -108,6 +105,14 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
         }
     }, [game, onChangeRef]);
 
+    const clearSearch = React.useCallback(() => {
+        setResult(EMPTY_QUERY);
+        setHasText(false);
+        const searchInput = searchInputRef.current;
+        if (searchInput) searchInput.value = '';
+        clearTookTooLongInterval(CLEAR_ANY_TIMER);
+    }, [clearTookTooLongInterval]);
+
     useEffect(() => {
         if (isLoading) return;
         if (result === AWAITING_SEARCH) return;
@@ -120,44 +125,83 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
         posthog?.capture('SearchBar rendered result', {game, result: result.map(res => res.obj.$entityId)});
     }, [isLoading, game, posthog, result, clearTookTooLongInterval]);
 
+    const searchResultsULRef = React.useRef<HTMLUListElement>(null);
+
+    const prefersReducedMotion = usePrefersReducedMotion();
+
+    const focusSearchResults = React.useCallback(() => {
+        const searchResultsUL = searchResultsULRef.current;
+        if (!searchResultsUL) return;
+        const firstChild = searchResultsUL.firstElementChild as HTMLLIElement | null;
+        if (!firstChild) return;
+        firstChild.scrollIntoView({behavior: prefersReducedMotion ? 'instant' : 'smooth', block: 'nearest', inline: 'nearest'});
+        firstChild.focus({preventScroll: true});
+    }, [prefersReducedMotion]);
+
+    const focusSearchResultsOnEnter = React.useCallback((e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            focusSearchResults();
+        }
+    }, [focusSearchResults]);
+
+    const filtersChildren = <>
+        Filters coming soon!
+    </>;
+
     return <>
         <div className={styles.searchModalBodySplitRight1!}>
-            <input type="search" placeholder="Search..." onChange={onChange} ref={searchInputRef} />
+            <input type="search" placeholder="Search..."
+                enterKeyHint="search"
+                ref={searchInputRef}
+                onChange={onChange}
+                onKeyUp={focusSearchResultsOnEnter}
+            />
             <FontAwesomeIcon icon={faMagnifyingGlass} className={styles.searchModalSearchIcon!} />
+            <button type='reset' onClick={clearSearch} hidden={!hasText} className={styles.searchModalCancelButton!}><FontAwesomeIcon icon={faBan} /></button>
         </div>
         <div className={styles.searchModalBodySplitLeft!}>
-            Filters coming soon!
+            {
+                useCompactWidthLayout
+                    ? <details className={styles.searchModalFilters!}>
+                        <summary>Filters</summary>
+                        {filtersChildren}
+                    </details>
+                    : <div className={styles.searchModalFilters!}>
+                        {filtersChildren}
+                    </div>
+            }
         </div>
         <div className={styles.searchModalBodySplitRight2!}>
-            <ul>
+            <ul className={styles.searchModalResults!} ref={searchResultsULRef}>
                 <GuardEmptyList replacement={<li>No results! Try another query!</li>}>
                     {
-                        searchProvider.DEVELOPMENT__LOADING_HASH ? <li>DEVELOPMENT ONLY - Hashing the search index! This may take a second, especially if this is the first time you&rsquo;ve opened this game!</li>
-                        : result === EMPTY_QUERY ? <li suppressHydrationWarning>Empty query! Try searching for something...</li>
-                        : result === AWAITING_SEARCH ? <li>Search in progress...</li>
-                        : result instanceof Error ? <li>Error: <pre><code>{result.stack}</code></pre></li>
-                        : result.map(res => {
+                        searchProvider.DEVELOPMENT__LOADING_HASH ? <li tabIndex={-1}>DEVELOPMENT ONLY - Hashing the search index! This may take a second, especially if this is the first time you&rsquo;ve opened this game!</li>
+                        : result === EMPTY_QUERY ? <li suppressHydrationWarning tabIndex={-1}>Empty query! Try searching for something...</li>
+                        : result === AWAITING_SEARCH ? <li tabIndex={-1}>Search in progress...</li>
+                        : result instanceof Error ? <li tabIndex={-1}>Error: <pre><code>{result.stack}</code></pre></li>
+                        : result.map((res, i) => {
                             const obj = res.obj;
                             const score = res.score;
                             switch (obj.$entityType) {
                                 case SearchIndexEntityType.Script:
-                                    return <li key={obj.$entityId}>
+                                    return <li key={obj.$entityId} tabIndex={i === 0 ? -1 : undefined}>
                                         <PapyrusScriptReference game={game} scriptAggregate={obj} /> (score: <code>{score}</code>)
                                     </li>;
                                 case SearchIndexEntityType.Function:
-                                    return <li key={obj.$entityId}>
+                                    return <li key={obj.$entityId} tabIndex={i === 0 ? -1 : undefined}>
                                         <PapyrusScriptFunctionReference game={game} scriptAggregate={obj.script} funcAggregate={obj} /> (score: <code>{score}</code>)
                                     </li>;
                                 case SearchIndexEntityType.Event:
-                                    return <li key={obj.$entityId}>
+                                    return <li key={obj.$entityId} tabIndex={i === 0 ? -1 : undefined}>
                                         Event {obj.name} (score: <code>{score}</code>)
                                     </li>;
                                 case SearchIndexEntityType.Property:
-                                    return <li key={obj.$entityId}>
+                                    return <li key={obj.$entityId} tabIndex={i === 0 ? -1 : undefined}>
                                         Property {obj.name} (score: <code>{score}</code>)
                                     </li>;
                                 case SearchIndexEntityType.Struct:
-                                    return <li key={obj.$entityId}>
+                                    return <li key={obj.$entityId} tabIndex={i === 0 ? -1 : undefined}>
                                         Struct {obj.name} (score: <code>{score}</code>)
                                     </li>;
                                 default:

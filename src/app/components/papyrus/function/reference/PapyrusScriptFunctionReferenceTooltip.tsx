@@ -1,10 +1,10 @@
-import { Suspense, type ComponentProps } from "react";
+import { type ComponentProps } from "react";
+import { UnreachableError } from "../../../../../UnreachableError";
+import { getScriptNameFromProps } from "../../script/PapyrusScriptReference";
+import { PapyrusFunctionSignature } from "../signature/FunctionSignature";
+import { PapyrusFunctionSignatureVariants } from "../signature/FunctionSignatureVariants";
 import type { PapyrusScriptFunctionReference } from "./PapyrusScriptFunctionReference";
 import styles from './PapyrusScriptFunctionReference.module.scss';
-import { PapyrusFunctionSignature } from "../signature/FunctionSignature";
-import { getScriptNameFromProps } from "../../script/PapyrusScriptReference";
-import { PapyrusFunctionSignatureVariants } from "../signature/FunctionSignatureVariants";
-import { UnreachableError } from "../../../../../UnreachableError";
 
 export function PapyrusScriptFunctionReferenceTooltip(propsObj: ComponentProps<typeof PapyrusScriptFunctionReference>) {
     const {game, func, funcAggregate} = propsObj;
