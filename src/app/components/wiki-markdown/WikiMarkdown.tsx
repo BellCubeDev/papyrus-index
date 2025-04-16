@@ -6,6 +6,7 @@ import { toLowerCase } from "../../../utils/toLowerCase";
 import type { ComponentProps } from "react";
 import { PapyrusScriptReference } from "../papyrus/script/PapyrusScriptReference";
 import { PapyrusScriptFunctionReference } from "../papyrus/function/reference/PapyrusScriptFunctionReference";
+import { appendToJobSummarySection, JobSummarySection } from "../../../utils/stepSummary";
 
 function WikiMarkdownLink(gameData: PapyrusGameDataIndexed<PapyrusGame>, inTooltip: boolean|undefined, {href, children}: ComponentProps<'a'> & ExtraProps): React.ReactElement {
     if (!href) return <>{children}</>;
@@ -45,10 +46,14 @@ function WikiMarkdownLink(gameData: PapyrusGameDataIndexed<PapyrusGame>, inToolt
     }
 
     const asEvent = script[AllSourcesCombined].events[toLowerCase(functOrEvent)];
-    if (asEvent) //return <EventReference game={gameData.game} scriptName={functOrEventScriptName} possibleEvents={asEvent} />;
+    if (asEvent) {//return <EventReference game={gameData.game} scriptName={functOrEventScriptName} possibleEvents={asEvent} />;
         if (process.env.SKIP_HIGH_LEVEL_DIAGNOSTIC_LOGS !== 'true') console.warn('<EventReference> component not implemented, but we needed it for a WikiMarkdownLink.');
+        appendToJobSummarySection(`\`<EventReference>\` component not implemented, but we needed it for a WikiMarkdownLink.`, JobSummarySection.UnimplementedFeatures);
+    }
 
     if (process.env.SKIP_HIGH_LEVEL_DIAGNOSTIC_LOGS !== 'true') console.warn(`Wiki page ${pageName} is not a function or event, but looks like a member of a script.`);
+    appendToJobSummarySection(`Wiki page ${pageName} is not a function or event, but looks like a member of a script.`, JobSummarySection.MediaWikiFormattingWarnings);
+
     return <a href={href}>{children}</a>;
 }
 

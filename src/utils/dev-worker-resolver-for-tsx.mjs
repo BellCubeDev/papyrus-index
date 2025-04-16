@@ -11,5 +11,8 @@ else if (process.env.TSX_DEV_WORKER_SCRIPT_PATH) scriptPath = process.env.TSX_DE
 if (!scriptPath) throw new Error(`No script path provided to worker!`);
 
 console.log(`[DEV WORKER RESOLVER FOR TSX] Loading script: ${scriptPath}`);
-
-await import(scriptPath);
+try {
+    await import(scriptPath);
+} finally {
+    console.log(`[DEV WORKER RESOLVER FOR TSX] Script import completed: ${scriptPath}`);
+}

@@ -1,13 +1,3 @@
-import { isCI } from "next/dist/server/ci-info";
-import net from "node:net";
-import fs from "node:fs/promises";
-import path from "node:path";
-import url from "node:url";
-
-let client: net.Socket | null = null;
-const thisFilePath = url.fileURLToPath(import.meta.url);
-const thisFolder = path.dirname(thisFilePath);
-export const socketPath = path.join(thisFolder, "jobSummarySocket.sock");
 
 export enum JobSummaryWorkerMessageType {
     AppendToSection,
@@ -19,29 +9,27 @@ export enum JobSummarySection {
 
     /** Section for listing which mods were downloaded */
     DownloadedMods,
+
+    /** Section for warnings about features that aren't implemented yet */
+    UnimplementedFeatures,
 }
 
-
-if (isCI && !process.env.BELLCUBE___IS_JOB_SUMMARY_WORKER) {
-    let fileExists = false;
-    try {
-        await fs.stat(socketPath);
-        fileExists = true;
-    } catch (e) {
-        if (!(e instanceof Error)) throw e;
-        if (!('code' in e)) throw e;
-        if (e.code !== "ENOENT") throw e;
-    }
-
-    if (!fileExists) throw new Error("[STEP SUMMARY THREAD] Socket file does not exist! Did you forget to spawn the worker?");
-    client = net.createConnection(socketPath);
-    client.unref();
+export interface JobSummaryWorkerMessageBase {
+    type: JobSummaryWorkerMessageType;
 }
 
-export function appendToJobSummarySection(message: string) {
-    if (client === null) return;
+export interface JobSummaryWorkerMessageAppendToSection extends JobSummaryWorkerMessageBase {
+    type: JobSummaryWorkerMessageType.AppendToSection;
+    message: string;
+    section: JobSummarySection;
+}
 
-    console.log("::debug::[STEP SUMMARY THREAD] Queueing a message to send to job summary worker.");
-    client.write(JSON.stringify({ type: JobSummaryWorkerMessageType.AppendToSection, message }));
-    console.log("::debug::[STEP SUMMARY THREAD] Sent a message to job summary worker.");
+export type JobSummaryWorkerMessage = JobSummaryWorkerMessageAppendToSection;
+
+
+export async function appendToJobSummarySection(message: string, section: JobSummarySection) {
+    const buildtimeSafetyFile = await import(typeof window === 'undefined' ? './appendToJobSummarySectionInternal' : '@/empty') as typeof import('./appendToJobSummarySectionInternal') | typeof import('@/empty');
+
+    if (!('appendToJobSummarySectionInternal' in buildtimeSafetyFile)) return console.debug('Not in a buildtime context; attempted to append to job summary:', {section: JobSummarySection[section], message});
+    buildtimeSafetyFile.appendToJobSummarySectionInternal(message, section);
 }

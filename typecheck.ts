@@ -4,7 +4,7 @@ import * as Log from 'next/dist/build/output/log';
 //import { writeFileSync } from 'node:fs';
 import fs, { type FileHandle } from 'node:fs/promises';
 
-let interval: NodeJS.Timer | null = null;
+let interval: ReturnType<typeof setInterval> | null = null;
 
 const writeLogToFile = process.env.CI_WRITE_LOG_TO_FILE === 'true';
 let logFile: FileHandle | null = null;

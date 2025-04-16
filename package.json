@@ -8,13 +8,12 @@
     "dev": "$env:FORCE_COLOR = 'true'; pnpm run parse:reset; next dev --turbo",
     "start": "npx serve out",
     "lint": "next lint",
-    "clear-socket": "rm -f ./src/utils/stepSummary/jobSummarySocket.sock",
-    "prepare": "husky; pnpm run clear-socket; pnpm run prepare:wiki-repo; pnpm run prepare:schemas; pnpm run prepare:parsoid-service",
+    "prepare": "husky; pnpm run prepare:wiki-repo; pnpm run prepare:schemas; pnpm run prepare:parsoid-service",
     "prepare:parsoid-service": "cd ./node_modules/parsoid-service; composer install",
     "prepare:wiki-repo": "If (-not (Test-Path -Path './cache/github-wiki/')) { git clone https://github.com/BellCubeDev/papyrus-index.wiki.git ./cache/github-wiki/ } else { git -C ./cache/github-wiki/ pull }",
     "prepare:schemas": "typescript-json-schema './src/papyrus/data-structures/pure/scriptSource.ts' PapyrusScriptSourceMetadata --required --noExtraProps --strictNullChecks --skipLibCheck -o './data/SourceMetadata.schema.json' --include './src/papyrus/data-structures/pure/**'; typescript-json-schema './src/papyrus/data-structures/ignore-yaml.ts' IgnoreYaml --required --noExtraProps --strictNullChecks --skipLibCheck -o './data/IgnoreYaml.schema.json' --include './src/papyrus/data-structures/ignore-yaml.ts'",
-    "download-mods": "pnpm run clear-socket; tsx  --env-file-if-exists=./.env ./src/papyrus/scraping/download/DownloadNeededMods.ts",
-    "parse:reset": "pnpm run clear-socket; rm -f ./public/raw.json",
+    "download-mods": "tsx  --env-file-if-exists=./.env ./src/papyrus/scraping/download/DownloadNeededMods.ts",
+    "parse:reset": "rm -f ./public/raw.json",
     "parse:raw": "tsx ./src/papyrus/parsing/parse-or-load-all.ts",
     "parse": "pnpm run parse:reset; pnpm run parse:raw",
     "guard-papyrus-logic": "$env:DO_GUARD_LOGIC='true'\npnpm run parse",
@@ -42,7 +41,7 @@
     "@types/7zip-min": "^1.3.3",
     "@types/hast": "^3.0.4",
     "@types/jsdom": "^21.1.7",
-    "@types/node": "20.2.5",
+    "@types/node": "^22.14.1",
     "@types/proper-lockfile": "^4.1.4",
     "@types/react": "^19.1.1",
     "@types/react-dom": "^19.1.2",
@@ -95,7 +94,10 @@
     },
     "onlyBuiltDependencies": [
       "esbuild"
-    ]
+    ],
+    "overrides": {
+      "@types/node": "^22.14.1"
+    }
   },
   "devDependencies": {
     "serve": "^14.2.4"
