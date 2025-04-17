@@ -6,7 +6,7 @@ import { getWiki, type PapyrusWiki } from "../getWiki";
 import { getWikiPageHTMLDocument } from "../fetching/GetWikiPageHTML";
 import { parsoidElementsToMarkdown, parsoidToMarkdown } from "./parsoidToMarkdown";
 import { toLowerCase } from "../../utils/toLowerCase";
-import { appendToJobSummarySection, JobSummarySection } from "../../utils/stepSummary";
+import { appendToStepSummarySection, StepSummarySection } from "../../utils/stepSummary";
 import { getBestName, getBestNameVariant } from "../../utils/getBestName";
 import { extractLinearWikiPageData } from "./parsoidToPageData";
 import { memoizeDevServerConst } from "../../utils/memoizeDevServerConst";
@@ -140,7 +140,7 @@ ${wiki.wikiTrueGame !== game ? `[93m|[0m [101mCAUTION: The wiki page is for $
 [93m|[0m
 [93m|[0m Skipping...`);
             }
-            appendToJobSummarySection(`
+            appendToStepSummarySection(`
 ### Invalid Function Parameter Name
 
 ${game !== wiki.wikiTrueGame ? `***CAUTION: The wiki page is for ${wiki.wikiTrueGame}, but the function is for ${game}!***` : ''}
@@ -155,7 +155,7 @@ ${
 }
 - **Edit Link:** [${document.location.href}?action=edit&summary=${encodeURIComponent(editSummary)}](${document.location.href}?action=edit&summary=${encodeURIComponent(editSummary)})
 - **Edit Message:** ${editSummary}
-`.trim(), JobSummarySection.MediaWikiFormattingWarnings);
+`.trim(), StepSummarySection.MediaWikiFormattingWarnings);
             return null;
         }
         name = !Array.isArray(param) ? param.name : getBestName(param.map(p => p.name))[1];

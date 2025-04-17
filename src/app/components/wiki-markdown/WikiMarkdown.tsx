@@ -6,8 +6,9 @@ import { toLowerCase } from "../../../utils/toLowerCase";
 import type { ComponentProps } from "react";
 import { PapyrusScriptReference } from "../papyrus/script/PapyrusScriptReference";
 import { PapyrusScriptFunctionReference } from "../papyrus/function/reference/PapyrusScriptFunctionReference";
-import { appendToJobSummarySection, JobSummarySection } from "../../../utils/stepSummary";
+import { appendToStepSummarySection, StepSummarySection } from "../../../utils/stepSummary";
 
+// eslint-disable-next-line complexity
 function WikiMarkdownLink(gameData: PapyrusGameDataIndexed<PapyrusGame>, inTooltip: boolean|undefined, {href, children}: ComponentProps<'a'> & ExtraProps): React.ReactElement {
     if (!href) return <>{children}</>;
     const wikiPageMatch = href.match(/\/wiki\/(?<page>[^?#/]+)/ui);
@@ -46,13 +47,23 @@ function WikiMarkdownLink(gameData: PapyrusGameDataIndexed<PapyrusGame>, inToolt
     }
 
     const asEvent = script[AllSourcesCombined].events[toLowerCase(functOrEvent)];
-    if (asEvent) {//return <EventReference game={gameData.game} scriptName={functOrEventScriptName} possibleEvents={asEvent} />;
+    if (asEvent) {//return <EventReference game={gameData.game} scriptName={functOrEventScriptName} eventAggregate={asEvent} />;
         if (process.env.SKIP_HIGH_LEVEL_DIAGNOSTIC_LOGS !== 'true') console.warn('<EventReference> component not implemented, but we needed it for a WikiMarkdownLink.');
-        appendToJobSummarySection(`\`<EventReference>\` component not implemented, but we needed it for a WikiMarkdownLink.`, JobSummarySection.UnimplementedFeatures);
-    } else {
-        if (process.env.SKIP_HIGH_LEVEL_DIAGNOSTIC_LOGS !== 'true') console.warn(`Wiki page ${pageName} is not a function or event, but looks like a member of a script.`);
-        appendToJobSummarySection(`Wiki page ${pageName} is not a function or event, but looks like a member of a script.`, JobSummarySection.MediaWikiFormattingWarnings);
+        appendToStepSummarySection(`\`<EventReference>\` component not implemented, but we needed it for a WikiMarkdownLink.`, StepSummarySection.UnimplementedFeatures);
+        return <a href={href}>{children}</a>;
     }
+
+    const structName = functOrEvent.match(/(?<structName>.+)_struct/ui)?.groups?.structName;
+    const asStruct = structName && script[AllSourcesCombined].structs?.[toLowerCase(structName)];
+    if (asStruct) {
+        //return <StructReference game={gameData.game} scriptName={functOrEventScriptName} structAggregate={asEvent} />;
+        if (process.env.SKIP_HIGH_LEVEL_DIAGNOSTIC_LOGS !== 'true') console.warn('<StructReference> component not implemented, but we needed it for a WikiMarkdownLink.');
+        appendToStepSummarySection(`\`<StructReference>\` component not implemented, but we needed it for a WikiMarkdownLink.`, StepSummarySection.UnimplementedFeatures);
+        return <a href={href}>{children}</a>;
+    }
+
+    if (process.env.SKIP_HIGH_LEVEL_DIAGNOSTIC_LOGS !== 'true') console.warn(`Wiki page ${pageName} is not a function, struct, or event documented in the Papyrus Index, but this link target looks like a member of a script.`);
+    appendToStepSummarySection(`Wiki page ${pageName} is not a function, struct, or event documented in the Papyrus Index, but this link target looks like a member of a script.`, StepSummarySection.MediaWikiFormattingWarnings);
 
     return <a href={href}>{children}</a>;
 }

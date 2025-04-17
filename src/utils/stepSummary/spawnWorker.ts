@@ -7,7 +7,7 @@ import { fork } from "node:child_process";
 const thisFilePath = url.fileURLToPath(import.meta.url);
 const fileExt = path.extname(thisFilePath);
 const thisFolder = path.dirname(thisFilePath);
-export const socketPath = path.join(thisFolder, "jobSummarySocket.sock");
+export const socketPath = path.join(thisFolder, "stepSummarySocket.sock");
 
 
 /** Spawns the worker and returns a function to close the worker once finished. */

@@ -13,6 +13,7 @@ import { nexusModsREST60sMemo, nexusModsRESTRefetch } from "../../../nexus-api/R
 import { PapyrusGame } from "../../data-structures/pure/game";
 import { PapyrusScriptSourceMetadata, PapyrusSourceType } from "../../data-structures/pure/scriptSource";
 import { bsArch } from "./BSArch";
+import { appendToStepSummarySection, StepSummarySection } from "../../../utils/stepSummary";
 
 if (typeof window !== 'undefined') throw new Error('This module is not meant to be used in the browser!');
 
@@ -91,6 +92,7 @@ async function maybeDownloadMod(folder: string) {
                 } else {
                     if (metadata.nexusIndexedFileId === downloadedFileId) {
                         console.log(`Mod ${path.basename(folder)} is already up-to-date!`);
+                        appendToStepSummarySection(`✅ Mod [${metadata.nameProper}](${metadata.nexusPage || metadata.preferredModPage}) was already up-to-date.`, StepSummarySection.DownloadedMods);
                         hasError = false;
                         return;
                     } else {
@@ -100,6 +102,7 @@ async function maybeDownloadMod(folder: string) {
                     }
                 }
                 await definitelyDownloadMod(metadata.nexusPage, metadata.nexusIndexedFileId, destinationFolder);
+                appendToStepSummarySection(`🔄 Mod [${metadata.nameProper}](${metadata.nexusPage || metadata.preferredModPage}) was downloaded/updated.`, StepSummarySection.DownloadedMods);
                 hasError = false;
             } finally {
                 if (hasError) console.error(`Error downloading mod ${path.basename(folder)}!`);

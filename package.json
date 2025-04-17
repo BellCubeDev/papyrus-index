@@ -18,8 +18,7 @@
     "parse": "pnpm run parse:reset; pnpm run parse:raw",
     "guard-papyrus-logic": "$env:DO_GUARD_LOGIC='true'\npnpm run parse",
     "parse:and-index": "pnpm run parse; tsx ./src/papyrus/indexing/index-all.ts",
-    "prebuild": "pnpm run download-mods; pnpm run parse",
-    "build": "$env:FORCE_COLOR = 'true'; tsx buildWithJobSummary.ts",
+    "build": "$env:FORCE_COLOR = 'true'; tsx buildWithStepSummary.ts",
     "typecheck": "$env:FORCE_COLOR = 'true'; tsx ./typecheck.ts"
   },
   "engines": {

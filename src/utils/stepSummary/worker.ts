@@ -1,6 +1,6 @@
 import net from "node:net";
 import fs from "node:fs";
-import { JobSummarySection, JobSummaryWorkerMessageType, type JobSummaryWorkerMessage } from '.';
+import { StepSummarySection, StepSummaryWorkerMessageType, type StepSummaryWorkerMessage } from '.';
 import { socketPath } from "./spawnWorker";
 
 console.log('[STEP SUMMARY WORKER] Starting step summary worker...');
@@ -35,24 +35,22 @@ const filePromise = fs.promises.open(stepSummaryFile, "w");
 
 /** A string that supports Markdown formatting, GitHub-flavor */
 type gfm_markdown_string = string & {};
-const JobSummary: Record<JobSummarySection, Set<gfm_markdown_string>> = {
-    [JobSummarySection.MediaWikiFormattingWarnings]: new Set(),
-    [JobSummarySection.DownloadedMods]: new Set(),
-    [JobSummarySection.UnimplementedFeatures]: new Set(),
+const StepSummary: Record<StepSummarySection, Set<gfm_markdown_string>> = {
+    [StepSummarySection.MediaWikiFormattingWarnings]: new Set(),
+    [StepSummarySection.DownloadedMods]: new Set(),
+    [StepSummarySection.UnimplementedFeatures]: new Set(),
 };
 
 const SectionHeaders = {
-    [JobSummarySection.MediaWikiFormattingWarnings]: "⚠️ MediaWiki Formatting Warnings",
-    [JobSummarySection.DownloadedMods]: "⬇️ Downloaded Mods",
-    [JobSummarySection.UnimplementedFeatures]: "🚧 Unimplemented Features",
+    [StepSummarySection.MediaWikiFormattingWarnings]: "⚠️ MediaWiki Formatting Warnings",
+    [StepSummarySection.UnimplementedFeatures]: "🚧 Unimplemented Features",
+    [StepSummarySection.DownloadedMods]: "⬇️ Downloaded Mods",
 };
 
 let previousDumpData: [AbortController, Promise<void>] | null = null;
 async function dumpFileBase(signal: AbortSignal) {
-    const contents = Object.entries(JobSummary).filter(([_section, messages]) => messages.size > 0).map(([section, messages]) =>
-        `<details><summary><h2>${SectionHeaders[section]}</h2></summary>\n\n${messages.values().reduce((acc, next, i) =>
-            `${acc}${i === 0 ? '' : '\n\n---\n\n'}${next}`
-        , '')}\n\n</details>`
+    const contents = Object.entries(StepSummary).filter(([_section, messages]) => messages.size > 0).map(([section, messages]) =>
+        `<details><summary><h2>${SectionHeaders[section]}</h2></summary>\n\n${Array.from(messages.values()).sort().join('\n\n---\n\n')}\n\n</details>`
     ).join('\n\n');
     const file =  await filePromise;
     if (signal.aborted) return;
@@ -61,7 +59,7 @@ async function dumpFileBase(signal: AbortSignal) {
     console.log('::debug::[STEP SUMMARY WORKER] Dumped to file');
 }
 
-async function dumpFile() {
+async function dumpFile(isFinalFlush = false) {
     const myController = new AbortController();
     if (previousDumpData) {
         const [oldController, promise] = previousDumpData;
@@ -69,6 +67,8 @@ async function dumpFile() {
         oldController.abort();
         await promise;
     }
+    previousDumpData = [myController, Promise.resolve()];
+    if (!isFinalFlush) await new Promise(r=>setTimeout(r, 5000));
     if (myController.signal.aborted) return;
     const promise = dumpFileBase(myController.signal);
     previousDumpData = [myController, promise];
@@ -99,11 +99,11 @@ server.on('connection', (socket) => {
                 console.log('::debug::[STEP SUMMARY WORKER] Processing message:', messageStr);
 
                 try {
-                    const obj = JSON.parse(messageStr) as JobSummaryWorkerMessage;
+                    const obj = JSON.parse(messageStr) as StepSummaryWorkerMessage;
                     switch (obj.type) {
-                        case JobSummaryWorkerMessageType.AppendToSection: {
+                        case StepSummaryWorkerMessageType.AppendToSection: {
                             const message = obj.message;
-                            JobSummary[obj.section].add(message);
+                            StepSummary[obj.section].add(message);
                             dumpFile();
                             break;
                         }
@@ -145,6 +145,7 @@ async function exitHandler(exitCode: number) {
     console.log('[STEP SUMMARY WORKER] Cleaning up before exit...');
     const file = await filePromise;
     await new Promise<void>((resolve, reject) => server.close((err) => err ? reject(err) : resolve()));
+    await dumpFile(true);
     await file.close();
     process.exit(exitCode);
 }

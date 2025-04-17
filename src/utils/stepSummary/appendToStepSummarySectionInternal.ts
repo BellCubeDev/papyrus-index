@@ -1,7 +1,7 @@
 import { isCI } from "next/dist/server/ci-info";
 import fs from "node:fs/promises";
 import net from "node:net";
-import { JobSummaryWorkerMessageType, type JobSummarySection } from ".";
+import { StepSummaryWorkerMessageType, type StepSummarySection } from ".";
 import { socketPath } from "./spawnWorker";
 
 let client: net.Socket | null = null;
@@ -22,22 +22,20 @@ if (isCI && !process.env.BELLCUBE___IS_JOB_SUMMARY_WORKER) {
     client.unref();
 }
 
-export function appendToJobSummarySectionInternal(message: string, section: JobSummarySection) {
+export function appendToStepSummarySectionInternal(message: string, section: StepSummarySection) {
     if (client === null) return;
 
-    console.log("::debug::[STEP SUMMARY POSTER] Queueing a message to send to job summary worker.");
-
-    // Convert the message object to JSON string
     const jsonMessage = JSON.stringify({
-        type: JobSummaryWorkerMessageType.AppendToSection,
+        type: StepSummaryWorkerMessageType.AppendToSection,
         message,
         section
     });
 
     const messageBuffer = Buffer.from(jsonMessage, 'utf8');
+    
     const lengthPrefixedMessage = Buffer.alloc(4 + messageBuffer.length);
     lengthPrefixedMessage.writeUInt32BE(messageBuffer.length, 0);
     messageBuffer.copy(lengthPrefixedMessage, 4);
+
     client.write(lengthPrefixedMessage);
-    console.log("::debug::[STEP SUMMARY POSTER] Sent a message to job summary worker.");
 }
