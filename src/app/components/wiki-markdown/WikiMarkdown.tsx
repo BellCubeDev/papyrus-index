@@ -62,8 +62,8 @@ function WikiMarkdownLink(gameData: PapyrusGameDataIndexed<PapyrusGame>, inToolt
         return <a href={href}>{children}</a>;
     }
 
-    if (process.env.SKIP_HIGH_LEVEL_DIAGNOSTIC_LOGS !== 'true') console.warn(`Wiki page ${pageName} is not a function, struct, or event documented in the Papyrus Index, but this link target looks like a member of a script.`);
-    appendToStepSummarySection(`Wiki page ${pageName} is not a function, struct, or event documented in the Papyrus Index, but this link target looks like a member of a script.`, StepSummarySection.MediaWikiFormattingWarnings);
+    if (process.env.SKIP_HIGH_LEVEL_DIAGNOSTIC_LOGS !== 'true') console.warn(`Wiki page ${pageName} is not a function, struct, or event documented for ${gameData.game} in the Papyrus Index, but this link target looks like a member of a script.`);
+    appendToStepSummarySection(`Wiki page ${pageName} is not a function, struct, or event documented for ${gameData.game} in the Papyrus Index, but this link target looks like a member of a script.`, StepSummarySection.MediaWikiFormattingWarnings);
 
     return <a href={href}>{children}</a>;
 }
