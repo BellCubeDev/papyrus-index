@@ -1,6 +1,6 @@
 'use client';
 
-import { arrow, autoUpdate, flip, FloatingArrow, offset, shift, useDismiss, useFloating, useFocus, useHover, useInteractions, useRole } from './FloatingUIClient';
+import { arrow, autoUpdate, flip, FloatingArrow, FloatingPortal, offset, shift, useDismiss, useFloating, useFocus, useHover, useInteractions, useRole } from './FloatingUIClient';
 import { Suspense, useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import styles from './Tooltip.module.scss';
 import { usePrefersReducedMotion } from '../../hooks/usePrefersReducedMotion';
@@ -32,8 +32,10 @@ export function Tooltip({children, wrapperClassName, role: roleRaw, tooltipConte
     const {refs, floatingStyles, context} = useFloating({
       open: isOpen,
       onOpenChange: (open) => setOpenState(open),
-      // eslint-disable-next-line react-compiler/react-compiler
-      middleware: [offset(20), flip(), shift(), arrow({element: arrowRef})],
+      middleware: [offset(20), flip(), shift({
+          padding: 30,
+          crossAxis: false,
+      }), arrow({element: arrowRef})], // eslint-disable-line react-compiler/react-compiler
       whileElementsMounted: autoUpdate,
       strategy: 'absolute',
     });
@@ -82,7 +84,7 @@ export function Tooltip({children, wrapperClassName, role: roleRaw, tooltipConte
             {children}
         </span>
         <Suspense>
-            {isOpen || isTransitioning ? <div
+            {isOpen || isTransitioning ? <FloatingPortal><div
                 ref={refs.setFloating}
                 {...getFloatingProps()}
                 style={{
@@ -101,7 +103,7 @@ export function Tooltip({children, wrapperClassName, role: roleRaw, tooltipConte
                     context={context}
                     additive='sum' />
                 {tooltipContents}
-            </div> : null}
+            </div></FloatingPortal> : null}
         </Suspense>
     </>;
 }

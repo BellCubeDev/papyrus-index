@@ -19,7 +19,7 @@
 .functionSignature {
     align-items: baseline;
     padding-right: 3ch;
-    font-size: css-clamp(.8em, 1.75svw, 1em);
+    font-size: css-clamp(.7em, 1.75svw, 1em);
 
     max-width: 100%;
     overflow-x: auto;
@@ -27,7 +27,9 @@
 
 .wrapableSection {
     flex-wrap: wrap;
-    min-width: css-min(87vw, 30em);
+    min-width: min-content;
+    width: max-content;
+    max-width: max(87vw, 30em);
     padding-left: 4ch;
     > :first-child {
         margin-left: -4ch;
