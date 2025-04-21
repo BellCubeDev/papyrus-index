@@ -5,9 +5,9 @@ import { WikiAttribution } from "../components/wiki-attribution/WikiAttribution"
 import { getGameFromParams, type GameRouteParams } from "./getGameFromParams";
 import { LOADING_IN_DEV_MODE, SearchProvider } from "../search/SearchProvider";
 import { generateSearchJsonHash } from "./search-data.json/generateSearchJsonHash";
-import { SuspenseIfServer } from "../components/SuspenseIfServer";
 import styles from './GameLayout.module.scss';
 import { NavBar } from "../components/nav-bar/NavBar";
+import { SuspenseIfDevelopment } from "../components/SuspenseIfDevelopment";
 
 export async function generateMetadata({params}: {readonly params: Promise<GameRouteParams>}): Promise<Metadata> {
     const { game } = getGameFromParams(await params);
@@ -38,7 +38,7 @@ export default async function GameLayout({children, params}: {readonly children:
             loading="lazy" decoding="async"
         />
 
-        <SuspenseIfServer fallback={
+        <SuspenseIfDevelopment fallback={
             <SearchProvider game={game} searchIndexHash={LOADING_IN_DEV_MODE}>
                 {searchProviderChildren}
             </SearchProvider>
@@ -46,7 +46,7 @@ export default async function GameLayout({children, params}: {readonly children:
             {generateSearchJsonHash(game).then((hash) => <SearchProvider game={game} searchIndexHash={hash}>
                 {searchProviderChildren}
             </SearchProvider>)}
-        </SuspenseIfServer>
+        </SuspenseIfDevelopment>
 
 
     </>;

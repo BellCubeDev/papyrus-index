@@ -37,7 +37,7 @@ export function InheritanceDisplay<TGame extends PapyrusGame>({game, data, isSub
                 <td>
                     {
                         Object.keys(value.extendedBy).length > 5
-                            ? <details>
+                            ? <details suppressHydrationWarning>
                                 <summary>{Object.keys(value.extendedBy).length} scripts</summary>
                                 <InheritanceDisplay isSubTable game={game} data={value.extendedBy} />
                             </details>

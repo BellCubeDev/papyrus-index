@@ -140,7 +140,6 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
     // It assumes all scripts are valid Papyrus scripts, exactly as Bethesda's compiler would accept them.
 
 
-    // eslint-disable-next-line no-empty-function
     private constructor(public readonly game: TGame) {}
 
     /** The original text of the source code. Used to get the names of identifiers. */

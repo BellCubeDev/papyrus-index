@@ -9,6 +9,8 @@ postbuild
 predev
 recentchanges
 redist
+recalc
+recalced
 rightsinfo
 schemagen
 visualeditor
