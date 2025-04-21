@@ -111,11 +111,19 @@ export async function wikiFetchGet(wiki: PapyrusWiki, path: `/${string}`): Promi
 }
 
 async function wikiFetchGetInternalWithParseJsonAndHandleErrors(wiki: PapyrusWiki, path: `/${string}`, retriesSoFar: number, url: URL): Promise<{}|null|typeof WIKI_FETCH_403FORBIDDEN> {
+    const waitingInternalFetchInterval = setInterval(() => {
+        Log.trace(`wikiFetchGetInternalWithParseJsonAndHandleErrors: still waiting for internal, low-level fetch to complete for ${url}`);
+    }, 60000);
     const [retries, res] = await wikiFetchGetInternalFetch(url, retriesSoFar);
+    clearInterval(waitingInternalFetchInterval);
     retriesSoFar = retries;
     if (!res) return null;
     if (res === WIKI_FETCH_403FORBIDDEN) return WIKI_FETCH_403FORBIDDEN;
+    const waitingParseJsonInterval = setInterval(() => {
+        Log.trace(`wikiFetchGetInternalWithParseJsonAndHandleErrors: still waiting for JSON streaming and parsing to complete for ${url}`);
+    }, 60000);
     const json = await res.json() as {};
+    clearInterval(waitingParseJsonInterval);
     if ('error' in json && json.error) {
         if (typeof json.error === 'object' && 'info' in json.error && typeof json.error.info === 'string') {
             if (json.error.info.match(/\btimeout\b/iu)) {
@@ -149,12 +157,17 @@ async function wikiFetchGetInternalFetch(originalUrl: URL, retriesSoFar: number)
     noCacheUrl.searchParams.set('__nextjs__nocache_timestamp', Date.now().toString());
 
     Log.wait(`Fetching ${noCacheUrl}${retriesSoFar > 0 ? ` (retry #${retriesSoFar}/${MAX_RETRIES})` : ''}`);
-    const loggingInterval = setInterval(() => { Log.trace(`wikiFetchGetInternalFetch: stalled while fetching ${noCacheUrl}`) }, 60000 /* 60s */);
+    const loggingInterval = setInterval(() => { Log.trace(`wikiFetchGetInternalFetch: stalled while fetching ${noCacheUrl}`) }, 60000);
 
+    const timeoutController = new AbortController();
+    const timeout = setTimeout(() => {
+        timeoutController.abort();
+        Log.trace(`wikiFetchGetInternalFetch: timed out after 60s while fetching ${noCacheUrl}`);
+    }, 60000);
 
     try {
         response = await fetch(noCacheUrl, {
-            signal: AbortSignal.timeout(30 * 1000),
+            signal: timeoutController.signal,
             headers: {
                 'User-Agent': 'Papyrus Index (https://papyrus.bellcube.dev/)',
             },
@@ -169,6 +182,7 @@ async function wikiFetchGetInternalFetch(originalUrl: URL, retriesSoFar: number)
             return await wikiFetchGetInternalFetch(originalUrl, retriesSoFar + 1);
         }
     } finally {
+        clearTimeout(timeout);
         clearInterval(loggingInterval);
         Log.event(`wikiFetchGetInternalFetch: finished fetching ${noCacheUrl}`);
     }
