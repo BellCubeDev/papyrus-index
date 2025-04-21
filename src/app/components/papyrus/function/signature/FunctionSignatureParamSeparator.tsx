@@ -80,6 +80,6 @@ export function PapyrusFunctionSignatureParamSeparator({isInWrapper, noComma = f
 
 
     return <span ref={sepRef} className={styles.functionParametersSeparator}>
-        {noComma ? '' : ', '}{isEndOfLine ? <span className={styles.functionParametersSeparatorBackslash + (isInWrapper ? '' : ` ${styles['functionParametersSeparatorBackslash--no-wrapper']}`) + (noComma ? ` ${styles['functionParametersSeparatorBackslash--no-comma']}` : '')}>\</span> : ''}
+        {noComma ? '' : ', '}{isEndOfLine ? <span aria-hidden className={styles.functionParametersSeparatorBackslash + (isInWrapper ? '' : ` ${styles['functionParametersSeparatorBackslash--no-wrapper']}`) + (noComma ? ` ${styles['functionParametersSeparatorBackslash--no-comma']}` : '')}>\</span> : ''}
     </span>;
 }
