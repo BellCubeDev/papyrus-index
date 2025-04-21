@@ -78,27 +78,26 @@ export async function wikiFetchGet(wiki: PapyrusWiki, path: `/${string}`): Promi
 
         const loggingIntervalWaitingForPreviousRequests = setInterval(() => {
             Log.trace(`wikiFetchGetInternalCreatedPromise: still waiting for previous fetches to complete before starting the queued fetch for ${url}`);
-        });
+        }, 60000);
 
         unfulfilledFetches.add(url.href);
         queuedFetches.delete(url.href);
         clearInterval(loggingIntervalQueued);
 
-        //const loggingIntervalUnfulfilled = setInterval(() => {
-        //    Log.log(`wikiFetchGetInternalCreatedPromise: still waiting for previous requests to finish before fetching ${url}`);
-        //}, 60000);
-
         const existingFetchQueuePromise = fetchQueuePromisesByHostname.get(url.hostname) || Promise.resolve();
         const newFetchQueuePromise = async function wikiFetchGetInternalCreatedFetchQueuePromise() {
             await existingFetchQueuePromise;
             clearInterval(loggingIntervalWaitingForPreviousRequests);
-            Log.trace('wikiFetchGetInternalCreatedFetchQueuePromise: previous fetches completed, adding rate limit throttle...');
+            Log.trace(`wikiFetchGetInternalCreatedFetchQueuePromise: previous fetches completed, adding rate limit throttle before fetching URL ${url}`);
             await new Promise(resolve => setTimeout(resolve, 50 * (process.env.NODE_ENV === 'development' ? 1 : nextConfig.experimental.cpus))); // since we spawn 6 workers in build mode, we need to wait an appropriate amount of time to avoid DOSing the server
-            Log.trace('wikiFetchGetInternalCreatedFetchQueuePromise: rate limit throttle complete, finally actually starting fetch...');
+            Log.trace(`wikiFetchGetInternalCreatedFetchQueuePromise: rate limit throttle complete, finally actually starting fetch for URL ${url}`);
+            const fetchingInterval = setInterval(() => {
+                Log.trace(`wikiFetchGetInternalCreatedPromise: still fetching URL ${url}`);
+            }, 60000);
             const res = await wikiFetchGetInternalWithParseJsonAndHandleErrors(wiki, path, 0, url);
+            Log.trace(`wikiFetchGetInternalCreatedPromise: finished fetching ${url}\n    This worker/process has ${unfulfilledFetches.size} unfulfilled fetches and ${queuedFetches.size} queued fetches remaining.`);
+            clearInterval(fetchingInterval);
             unfulfilledFetches.delete(url.href);
-            //Log.log(`wikiFetchGetInternalCreatedPromise: finished fetching ${url}\n    This worker/process has ${unfulfilledFetches.size} unfulfilled fetches and ${queuedFetches.size} queued fetches remaining.`);
-            //clearInterval(loggingIntervalUnfulfilled);
             return res;
         }();
         fetchQueuePromisesByHostname.set(url.hostname, newFetchQueuePromise);
