@@ -31,7 +31,6 @@
 
     min-width: min-content;
     max-width: max(87vw, 30em);
-    width: 100%;
 
     padding-left: 4ch;
     > :first-child {
@@ -83,8 +82,6 @@
 
 .functionName {
     color: hsl(60deg, 42%, 76%);
-
-    min-width: max-content;
 
     --link-txt-color-noncurrent-normal: hsl(60deg, 42%, 76%);
     --link-udl-color-noncurrent-normal: hsl(60, 22%, 44%);
