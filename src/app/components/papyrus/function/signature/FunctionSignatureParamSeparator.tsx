@@ -10,7 +10,7 @@ export function PapyrusFunctionSignatureParamWrapper({children}: {readonly child
 
 const CanceledNominalError = new Error('This is not a real error! This "error" object is used to cancel a task, be it through an AbortController or as an escape hatch');
 
-export function PapyrusFunctionSignatureParamSeparator({isInWrapper}: {readonly isInWrapper: boolean}) {
+export function PapyrusFunctionSignatureParamSeparator({isInWrapper, noComma = false}: {readonly isInWrapper: boolean, readonly noComma?: boolean}) {
     const [isEndOfLine, setIsEndOfLine] = useState(false);
     const sepRef = useRef<HTMLSpanElement>(null);
     const [storedWrapableSection, setStoredWrapableSection] = useState<Element | null>(null);
@@ -80,6 +80,6 @@ export function PapyrusFunctionSignatureParamSeparator({isInWrapper}: {readonly 
 
 
     return <span ref={sepRef} className={styles.functionParametersSeparator}>
-        {isInWrapper ? ', ' : ''}{isEndOfLine ? <span className={styles.functionParametersSeparatorBackslash + (isInWrapper ? '' : ` ${styles['functionParametersSeparatorBackslash--no-wrapper']}`)}>\</span> : ''}
+        {noComma ? '' : ', '}{isEndOfLine ? <span className={styles.functionParametersSeparatorBackslash + (isInWrapper ? '' : ` ${styles['functionParametersSeparatorBackslash--no-wrapper']}`) + (noComma ? ` ${styles['functionParametersSeparatorBackslash--no-comma']}` : '')}>\</span> : ''}
     </span>;
 }

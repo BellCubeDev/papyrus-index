@@ -49,6 +49,9 @@ $tooltipBGDefault: #171717;
     text-wrap: pretty;
     text-align: center;
     max-width: min(800px, min(95vw, 100vw - 60px));
+    width: min(800px, min(95vw, -60px + 100vw));
+    max-width: max-content;
+    min-width: min-content;
 
     opacity: 0;
     transition: opacity 0.25s ease-out; // prefers-reduced-motion is handled in JS

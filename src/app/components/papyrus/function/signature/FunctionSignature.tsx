@@ -18,13 +18,15 @@ export function PapyrusFunctionSignature<TGame extends PapyrusGame>({game, func,
             <PapyrusType game={game} type={func.returnType} inTooltip={inTooltip} />
             <span className={styles.functionKeyword}>function</span>
             <span className={styles.wrapableSection}>
-                {
-                    inTooltip
-                        ? <span className={styles.functionName}>{func.name}</span>
-                        : <Link className={styles.functionName} href={`/${toLowerCase(game)}/script/${toLowerCase(scriptName)}/function/${toLowerCase(func.name)}` as const}>{func.name}</Link>
-                }
-                <span className={styles.functionParametersStart}>(</span>
-                <PapyrusFunctionSignatureParamSeparator isInWrapper={false} />
+                <span className={styles.functionNameWrapper}>
+                    {
+                        inTooltip
+                            ? <span className={styles.functionName}>{func.name}</span>
+                            : <Link className={styles.functionName} href={`/${toLowerCase(game)}/script/${toLowerCase(scriptName)}/function/${toLowerCase(func.name)}` as const}>{func.name}</Link>
+                    }
+                    <span className={styles.functionParametersStart}>(</span>
+                    <PapyrusFunctionSignatureParamSeparator isInWrapper noComma />
+                </span>
                 {joinJSXWithElementByWrapping(PapyrusFunctionSignatureParamWrapper, func.parameters.map((param) => {
                     let el: React.ReactElement;
                     if (param.isRequired) el = <PapyrusTypeNamed game={game} name={param.name} type={param.value} inTooltip={inTooltip} />;
@@ -36,7 +38,7 @@ export function PapyrusFunctionSignature<TGame extends PapyrusGame>({game, func,
                         postSeparator: <PapyrusFunctionSignatureParamSeparator isInWrapper />
                     };
                 }))}
-                <PapyrusFunctionSignatureParamSeparator isInWrapper={false} />
+                <PapyrusFunctionSignatureParamSeparator isInWrapper={false} noComma />
                 <span className={styles.functionParametersEnd}>)</span>
                 {func.isNative ? <PapyrusFunctionSignatureFlagNative inTooltip={inTooltip} /> : null}
                 {func.isGlobal ? <PapyrusFunctionSignatureFlagGlobal inTooltip={inTooltip} /> : null}
