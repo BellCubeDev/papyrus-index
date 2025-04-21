@@ -2,11 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import styles from "./FunctionSignature.module.scss";
-
+import 'scheduler-polyfill';
 
 export function PapyrusFunctionSignatureParamWrapper({children}: {readonly children: React.ReactNode}) {
     return <span className={styles.functionParametersParamWrapper}>{children}</span>;
 }
+
+const CanceledNominalError = new Error('This is not a real error! This "error" object is used to cancel a task, be it through an AbortController or as an escape hatch');
 
 export function PapyrusFunctionSignatureParamSeparator({isInWrapper}: {readonly isInWrapper: boolean}) {
     const [isEndOfLine, setIsEndOfLine] = useState(false);
@@ -29,7 +31,14 @@ export function PapyrusFunctionSignatureParamSeparator({isInWrapper}: {readonly 
         });
         mutationObserver.observe(wrapableSection, {childList: true});
 
+        let hasRecalcedThisFrame = false;
         function recalc() {
+            if (hasRecalcedThisFrame) return;
+            requestAnimationFrame(() => {
+                hasRecalcedThisFrame = false;
+            });
+            hasRecalcedThisFrame = true;
+
             const nextSibling = wrapper.nextElementSibling;
             if (!nextSibling) {
                 console.warn('No next sibling found for wrapable section in function parameter separator component! This should... not be possible?');
@@ -43,14 +52,29 @@ export function PapyrusFunctionSignatureParamSeparator({isInWrapper}: {readonly 
 
             setIsEndOfLine(false);
         }
+        let resizeObserver: ResizeObserver | null = null;
 
-        const resizeObserver = new ResizeObserver(recalc);
-        resizeObserver.observe(wrapableSection);
-        recalc();
+        const abortController = new AbortController();
+        const signal = abortController.signal;
+
+        scheduler.postTask(() => {
+            if (signal.aborted) return;
+            resizeObserver = new ResizeObserver(recalc);
+            resizeObserver.observe(wrapableSection);
+            recalc();
+        }, {
+            signal,
+            priority: 'user-visible',
+            delay: 20,
+        }).catch((err) => {
+            if (err === CanceledNominalError) return;
+            throw err;
+        });
 
         return () => {
+            abortController.abort(CanceledNominalError);
             mutationObserver.disconnect();
-            resizeObserver.disconnect();
+            resizeObserver?.disconnect();
         };
     }, [sepRef, storedWrapableSection, isInWrapper]);
 
