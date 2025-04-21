@@ -56,15 +56,15 @@ export default async function ScriptPage({params}: {readonly params: Promise<Scr
             <div className={styles.extendsList}>
             </div>
         </div>
-        <details>
+        <details suppressHydrationWarning>
             <summary>Inheritance Tree</summary>
             <InheritanceDisplay game={game} data={scriptBySources[AllSourcesCombined].extendedBy} />
         </details>
-        <details>
+        <details suppressHydrationWarning>
             <summary>Structs</summary>
             <div className={styles.structs}></div>
         </details>
-        <details>
+        <details suppressHydrationWarning>
             {/* Include property groups here too! */}
             <summary>Properties</summary>
             {Object.entries(scriptBySources[AllSourcesCombined].propertyGroups).map(([groupName, group]) => <div key={groupName}>
@@ -80,11 +80,11 @@ export default async function ScriptPage({params}: {readonly params: Promise<Scr
 
             <div className={styles.properties}></div>
         </details>
-        <details>
+        <details suppressHydrationWarning>
             <summary>Events</summary>
             <div className={styles.events}></div>
         </details>
-        <details>
+        <details suppressHydrationWarning>
             <summary>Functions</summary>
             <div className={styles.functions}>
                 <GuardEmptyList replacement={<p>No functions found.</p>}>
