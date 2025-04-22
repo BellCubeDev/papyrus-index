@@ -96,6 +96,18 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
 
+      - name: '[Debug] Print Wiki Cache Indexes Before Build'
+        run: |
+          find cache/wiki-storage -type f -name index.json | while read -r file; do
+            echo ""
+            echo ""
+            echo "File: $file"
+            echo ""
+            cat "$file"
+            echo ""
+            echo ""
+          done
+
       - name: Generate Build Markdown
         id: build-source-md
         run: |
@@ -126,6 +138,19 @@ jobs:
             data/*/*/download/**/*.psc
             data/*/*/download/.nexusFileId
           key: custom-cache-${{ hashFiles('cache/**/index.json', 'src/papyrus/scraping/download/BSArch.exe', 'data/*/*/download/.nexusFileId') }} # only need to save a new version of the cache if something updated
+
+      - name: '[Debug] Print Wiki Cache Indexes After Build'
+        if: always() && steps.build-source-md.outcome == 'success'
+        run: |
+          find cache/wiki-storage -type f -name index.json | while read -r file; do
+            echo ""
+            echo ""
+            echo "File: $file"
+            echo ""
+            cat "$file"
+            echo ""
+            echo ""
+          done
 
       - name: Save Composer Package Cache
         uses: actions/cache/save@v4
