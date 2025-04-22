@@ -6,6 +6,7 @@ import { WIKI_FETCH_403FORBIDDEN, wikiFetchGet } from './wikiFetch';
 import lockfileUtil from 'proper-lockfile';
 import { memoizeDevServerConst } from '../../utils/memoizeDevServerConst';
 import { parsoidGetPageHTML } from './parsoid';
+import { isCI } from 'next/dist/server/ci-info';
 
 export interface WikiStorageIndex {
     /** ISO timestamp of the latest change indexed */
@@ -170,7 +171,7 @@ async function getStorageIndex_(wiki: PapyrusWiki): Promise<WikiStorageIndex> {
         if (stats.mtimeMs <= storedMTime) return data;
     }
 
-    //console.log(`Getting the storage index for the ${wiki.wikiTrueGame} wiki! Should we ingest the latest changes?`, cached === undefined);
+    if (isCI) console.log(`::debug::[WIKI STORAGE] Getting the storage index for the ${wiki.wikiTrueGame} wiki! Should we ingest the latest changes?`, cached === undefined);
     const data = await getStorageIndexRaw(wiki, cached === undefined);
     storageIndexCache.set(wiki.wikiTrueGame, [data, Date.now()]);
     return data;
@@ -258,7 +259,7 @@ function getQueuedWritePromise<T = void>(then: ()=>Promise<T>): Promise<T> {
 
 export async function getWikiPageHTMLString(wiki: PapyrusWiki, pageTitle: string): Promise<string | null> {
     const htmlFilePath = path.join(getWikiStorageDirPath(wiki), `${pageTitle}.html`);
-
+    if (isCI) console.debug(`::debug::[WIKI STORAGE] Attempting to get ${wiki.wikiTrueGame} wiki page ${pageTitle} from disk cache at ${htmlFilePath}`);
     const storageIndex = await getStorageIndex(wiki);
 
 
@@ -268,7 +269,9 @@ export async function getWikiPageHTMLString(wiki: PapyrusWiki, pageTitle: string
         const releaseHTMLFileLock = await getLock(htmlFilePath);
         try {
             const res = await fs.readFile(path.join(getWikiStorageDirPath(wiki), `${pageTitle}.html`), 'utf8');
+
             if (res.trim() === '') {
+                if (isCI) console.debug(`::debug::[WIKI STORAGE] File is empty; marking ${wiki.wikiTrueGame} wiki page ${pageTitle} as nonexistent.`);
                 changeIndexEntry(wiki, pageTitle, {
                     exists: false,
                     needsRedownloaded: page.needsRedownloaded,
@@ -277,9 +280,12 @@ export async function getWikiPageHTMLString(wiki: PapyrusWiki, pageTitle: string
                 await fs.rm(htmlFilePath);
                 return null;
             }
+
+            if (isCI) console.debug(`::debug::[WIKI STORAGE] Successfully read ${wiki.wikiTrueGame} wiki page ${pageTitle} from ${htmlFilePath}`);
             return res;
         } catch (err) {
             if (err instanceof Error && 'code' in err && err.code === 'ENOENT') {
+                if (isCI) console.debug(`::debug::[WIKI STORAGE] File for ${wiki.wikiTrueGame} wiki page ${pageTitle} does not exist. Will redownload.`);
                 changeIndexEntry(wiki, pageTitle, {
                     exists: false,
                     needsRedownloaded: page.needsRedownloaded,
@@ -299,11 +305,13 @@ export async function getWikiPageHTMLString(wiki: PapyrusWiki, pageTitle: string
 }
 
 async function downloadWikiPageHTMLString(wiki: PapyrusWiki, pageTitle: string, htmlFilePath: string): Promise<string | null> {
+    if (isCI) console.debug(`::debug::[WIKI STORAGE] Downloading ${wiki.wikiTrueGame} wiki page ${pageTitle} to ${htmlFilePath} ...`);
     const releaseHTMLFileLock = await getLock(htmlFilePath);
     try {
         const startDateISO = new Date().toISOString();
         const pageContent = await parsoidGetPageHTML(wiki.wikiBaseUrl, pageTitle);
         if (!pageContent) {
+            if (isCI) console.debug(`::debug::[WIKI STORAGE] Page does not exist; failed to download ${wiki.wikiTrueGame} wiki page ${pageTitle} to ${htmlFilePath}`);
             changeIndexEntry(wiki, pageTitle, {
                 exists: false,
                 needsRedownloaded: false,
@@ -311,6 +319,7 @@ async function downloadWikiPageHTMLString(wiki: PapyrusWiki, pageTitle: string, 
             });
         } else {
             await fs.writeFile(htmlFilePath, pageContent);
+            if (isCI) console.debug(`::debug::[WIKI STORAGE] Successfully downloaded ${wiki.wikiTrueGame} wiki page ${pageTitle} to ${htmlFilePath}`);
             changeIndexEntry(wiki, pageTitle, {
                 exists: true,
                 needsRedownloaded: false,
