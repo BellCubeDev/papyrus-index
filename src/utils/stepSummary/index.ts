@@ -22,14 +22,26 @@ export interface StepSummaryWorkerMessageAppendToSection extends StepSummaryWork
     type: StepSummaryWorkerMessageType.AppendToSection;
     message: string;
     section: StepSummarySection;
+    uniqueIdentifier: string;
 }
 
 export type StepSummaryWorkerMessage = StepSummaryWorkerMessageAppendToSection;
 
 
-export async function appendToStepSummarySection(message: string, section: StepSummarySection) {
+/**
+ * Appends a message to the step summary section when running in a CI environment.
+ * This function is a no-op when running in a non-CI environment.
+ *
+ * Messages will be deduped based on the `uniqueIdentifier` parameter.
+ * The longest version of the message with a given unique identifier will be kept.
+ *
+ * @param message The message to append to the step summary section.
+ * @param section The section to append the message to.
+ * @param uniqueIdentifier A unique identifier for the message. This is used to deduplicate messages. If not provided, the message itself will be used as the identifier.
+ */
+export async function appendToStepSummarySection(message: string, section: StepSummarySection, uniqueIdentifier: string = message) {
     const buildtimeSafetyFile = await import(typeof window === 'undefined' ? './appendToStepSummarySectionInternal' : '@/empty') as typeof import('./appendToStepSummarySectionInternal') | typeof import('@/empty');
 
     if (!('appendToStepSummarySectionInternal' in buildtimeSafetyFile)) return console.debug('Not in a buildtime context; attempted to append to job summary:', {section: StepSummarySection[section], message});
-    buildtimeSafetyFile.appendToStepSummarySectionInternal(message, section);
+    buildtimeSafetyFile.appendToStepSummarySectionInternal(message, section, uniqueIdentifier);
 }

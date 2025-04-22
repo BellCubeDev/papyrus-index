@@ -35,10 +35,10 @@ const filePromise = fs.promises.open(stepSummaryFile, "w");
 
 /** A string that supports Markdown formatting, GitHub-flavor */
 type gfm_markdown_string = string & {};
-const StepSummary: Record<StepSummarySection, Set<gfm_markdown_string>> = {
-    [StepSummarySection.MediaWikiFormattingWarnings]: new Set(),
-    [StepSummarySection.DownloadedMods]: new Set(),
-    [StepSummarySection.UnimplementedFeatures]: new Set(),
+const StepSummary: Record<StepSummarySection, Map<string, gfm_markdown_string>> = {
+    [StepSummarySection.MediaWikiFormattingWarnings]: new Map(),
+    [StepSummarySection.DownloadedMods]: new Map(),
+    [StepSummarySection.UnimplementedFeatures]: new Map(),
 };
 
 const SectionHeaders = {
@@ -91,36 +91,38 @@ server.on('connection', (socket) => {
                 buffer = buffer.subarray(4);
             }
 
-            if (buffer.length >= expectedLength) {
-                const messageBuffer = buffer.subarray(0, expectedLength);
-                buffer = buffer.subarray(expectedLength);
+            if (buffer.length < expectedLength) break; // Don't have the full message yet
 
-                const messageStr = messageBuffer.toString('utf8');
-                console.log('::debug::[STEP SUMMARY WORKER] Processing message:', messageStr);
+            const messageBuffer = buffer.subarray(0, expectedLength);
+            buffer = buffer.subarray(expectedLength);
 
-                try {
-                    const obj = JSON.parse(messageStr) as StepSummaryWorkerMessage;
-                    switch (obj.type) {
-                        case StepSummaryWorkerMessageType.AppendToSection: {
-                            const message = obj.message;
-                            StepSummary[obj.section].add(message);
-                            dumpFile();
-                            break;
-                        }
-                        default:
-                            throw new Error('[STEP SUMMARY WORKER] Unknown message type:', obj.type);
+            const messageStr = messageBuffer.toString('utf8');
+            console.log('::debug::[STEP SUMMARY WORKER] Processing message:', messageStr);
+
+            try {
+                const obj = JSON.parse(messageStr) as StepSummaryWorkerMessage;
+                switch (obj.type) {
+
+                    case StepSummaryWorkerMessageType.AppendToSection: {
+
+                        const existingMessage = StepSummary[obj.section].get(obj.uniqueIdentifier);
+                        if (!existingMessage || existingMessage.length < obj.message.length)
+                            StepSummary[obj.section].set(obj.uniqueIdentifier, obj.message);
+
+                        dumpFile();
+                        break;
                     }
-                } catch (e) {
-                    console.error('[STEP SUMMARY WORKER] Failed to parse message:', e, {
-                        data: messageStr,
-                    });
-                }
 
-                expectedLength = -1;
-            } else {
-                // Don't have the full message yet
-                break;
+                    default:
+                        throw new Error('[STEP SUMMARY WORKER] Unknown message type:', obj.type);
+                }
+            } catch (e) {
+                console.error('[STEP SUMMARY WORKER] Failed to parse message:', e, {
+                    data: messageStr,
+                });
             }
+
+            expectedLength = -1;
         }
     });
 });

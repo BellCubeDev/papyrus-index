@@ -155,7 +155,7 @@ ${
 }
 - **Edit Link:** [${document.location.href}?action=edit&summary=${encodeURIComponent(editSummary)}](${document.location.href}?action=edit&summary=${encodeURIComponent(editSummary)})
 - **Edit Message:** ${editSummary}
-`.trim(), StepSummarySection.MediaWikiFormattingWarnings);
+`.trim(), StepSummarySection.MediaWikiFormattingWarnings, `invalid-param-name-${game}-${scriptName}-${functionName}-${name}`);
             return null;
         }
         name = !Array.isArray(param) ? param.name : getBestName(param.map(p => p.name))[1];
