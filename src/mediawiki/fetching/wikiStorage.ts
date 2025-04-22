@@ -107,23 +107,24 @@ function getLock(filePath: string): Promise<() => Promise<void>> {
 async function ingestLatestChanges(wiki: PapyrusWiki, storageIndex: WikiStorageIndex): Promise<void> {
     let changeList;
 
-    let hasChanges = false;
+    let indexHasChanged = false;
 
     do { // eslint-disable-next-line no-await-in-loop
-        changeList = await wikiFetchGet(wiki, `/w/api.php?action=query&format=json&prop=&list=recentchanges&rcstart=${encodeURIComponent(storageIndex.lastKnownChange)}&rcdir=newer&rcprop=title%7Ctimestamp&rclimit=2&rctype=edit%7Cnew&rctoponly=1`);
+        changeList = await wikiFetchGet(wiki, `/w/api.php?action=query&format=json&prop=&list=recentchanges&rcstart=${encodeURIComponent(storageIndex.lastKnownChange)}&rcdir=newer&rcprop=title%7Ctimestamp&rclimit=20&rctype=edit%7Cnew&rctoponly=1`);
         if (!changeList) throw new Error('Fetching the change list failed!');
         if (changeList === WIKI_FETCH_403FORBIDDEN) {
             if (process.env.NODE_ENV === 'development') return;
             throw new Error(`The ${wiki.wikiTrueGame} wiki returned a 403 Forbidden error when trying to fetch the change list. This is likely due to the wiki's rate limiting settings, and is not an error on our end.`);
         }
 
-        console.log(`Got a change list from the ${wiki.wikiTrueGame} wiki!`, {changeList});
+        console.log(`Got a change list response from the ${wiki.wikiTrueGame} wiki!`, changeList);
 
         if (!('query' in changeList) || !changeList.query || typeof changeList.query !== 'object') throw new Error('The returned change list from the MediaWiki API is missing the "query" results object!');
         if (!('recentchanges' in changeList.query) || !changeList.query.recentchanges || !Array.isArray(changeList.query.recentchanges)) throw new Error('The returned change list from the MediaWiki API is missing the "recentchanges" array!');
         if (changeList.query.recentchanges.length === 0) break;
 
-        hasChanges = true;
+        console.log(`Got a filled change list from the ${wiki.wikiTrueGame} wiki!`, changeList.query.recentchanges);
+
         const recentChanges: [MediaWikiRecentChange, ...MediaWikiRecentChange[]] = changeList.query.recentchanges as [any, ...any[]];
 
         let latestChangeDate: Date|null = null;
@@ -133,14 +134,11 @@ async function ingestLatestChanges(wiki: PapyrusWiki, storageIndex: WikiStorageI
             if (!latestChangeDate || changeDate > latestChangeDate) latestChangeDate = changeDate;
 
             const page = storageIndex.pages[change.title];
-            if (!page) {
-                storageIndex.pages[change.title] = {
-                    needsRedownloaded: true,
-                    exists: false,
-                    lastDownloaded: null,
-                };
-            } else if (page.lastDownloaded && (changeDate.getTime() - new Date(page.lastDownloaded).getTime()) < 60000) {
+            if (!page) continue;
+
+            if (page.lastDownloaded && (changeDate.getTime() - new Date(page.lastDownloaded).getTime()) < 60000) {
                 page.needsRedownloaded = true;
+                indexHasChanged = true;
             }
         }
 
@@ -148,7 +146,7 @@ async function ingestLatestChanges(wiki: PapyrusWiki, storageIndex: WikiStorageI
 
     } while ('continue' in changeList);
 
-    if (!hasChanges) return;
+    if (!indexHasChanged) return;
 
     const storageIndexPath = getWikiIndexPath(wiki);
     await fs.writeFile(storageIndexPath, JSON.stringify(storageIndex));
