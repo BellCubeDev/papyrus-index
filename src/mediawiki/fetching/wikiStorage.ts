@@ -167,7 +167,7 @@ async function getStorageIndex_(wiki: PapyrusWiki): Promise<WikiStorageIndex> {
     if (cached) {
         const [data, storedMTime] = cached;
         const stats = await fs.stat(getWikiIndexPath(wiki));
-        if (stats.mtimeMs > storedMTime) return data;
+        if (stats.mtimeMs <= storedMTime) return data;
     }
 
     //console.log(`Getting the storage index for the ${wiki.wikiTrueGame} wiki! Should we ingest the latest changes?`, cached === undefined);
