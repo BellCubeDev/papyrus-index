@@ -152,7 +152,7 @@ ${wiki.wikiTrueGame !== game ? `[93m|[0m [101mCAUTION: The wiki page is for $
             appendToStepSummarySection(`
 ### Invalid Function Parameter Name
 
-${game !== wiki.wikiTrueGame ? `***CAUTION: The wiki page is for ${wiki.wikiTrueGame}, but the function is for ${game}!***` : ''}
+${game !== wiki.wikiTrueGame ? `***⛔️ CAUTION: The wiki page is for ${wiki.wikiTrueGame}, but the function is for ${game}!***` : ''}
 - **Wiki**: [${wiki.wikiName}](${wiki.wikiBaseUrl}) (for ${wiki.wikiTrueGame})
 - **Wiki Page:** [${pageName}](${document.location.href})
 - **Function:** ${scriptName}.${functionName}
