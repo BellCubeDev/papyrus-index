@@ -1,6 +1,12 @@
 name: Build Next.js App
 on:
   workflow_dispatch:
+    inputs:
+      rebuild_cache:
+        description: 'Ignore any existing cache and fetch everything from scratch?'
+        required: false
+        default: false
+        type: boolean
   push:
     branches:
       - production
@@ -49,7 +55,7 @@ jobs:
           submodules: recursive
 
       - name: Restore Custom Caches
-        id: cache-restore-custom
+        if: github.event_name != 'workflow_dispatch' || github.event.inputs.rebuild_cache == 'false'
         uses: actions/cache/restore@v4
         with:
           path: |
