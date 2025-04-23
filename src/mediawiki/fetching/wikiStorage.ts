@@ -29,7 +29,7 @@ export interface WikiStorageEntry {
     exists: boolean;
     /** When this page was last downloaded. Will likely be newer than the index's lastKnownChange date.
      *
-     * If this is less than one minute newer than the latest change, this page should be marked for redownload.
+     * Used to be stored for a flawed reason, but is now stored for debugging purposes.
     */
     lastDownloaded: string|null;
 }
@@ -104,7 +104,6 @@ function getLock(filePath: string): Promise<() => Promise<void>> {
 /**
  * MUST BE CALLED WITH THE STORAGE INDEX LOCKED
  */
-// eslint-disable-next-line complexity
 async function ingestLatestChanges(wiki: PapyrusWiki, storageIndex: WikiStorageIndex): Promise<void> {
     let changeList;
 
@@ -137,10 +136,8 @@ async function ingestLatestChanges(wiki: PapyrusWiki, storageIndex: WikiStorageI
             const page = storageIndex.pages[change.title];
             if (!page) continue;
 
-            if (page.lastDownloaded && (changeDate.getTime() - new Date(page.lastDownloaded).getTime()) < 60000) {
-                page.needsRedownloaded = true;
-                indexHasChanged = true;
-            }
+            page.needsRedownloaded = true;
+            indexHasChanged = true;
         }
 
         storageIndex.lastKnownChange = latestChangeDate?.toISOString() ?? storageIndex.lastKnownChange;
