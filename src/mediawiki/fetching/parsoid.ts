@@ -87,6 +87,16 @@ export async function parsoidGetPageHTML(wikiURL: string, pageTitle: string, att
                     }
                 }
 
+                if ([stdout, stderr].some((data) => data.includes('ApiHelper.php: HTTP request failed: Connection timed out after'))) {
+                    if (attemptNumber >= PARSOID_ATTEMPT_LIMIT) {
+                        Log.error(`[95mparsoidGetPageHTML[0m() child child process got an HTTP timeout error while querying "${wikiURL}" for "${pageTitle}". Giving up.`);
+                        return reject(new Error(`Failed to get page HTML from Parsoid after ${PARSOID_ATTEMPT_LIMIT} attempts.`));
+                    } else {
+                        Log.warn(`[95mparsoidGetPageHTML[0m() child child process got an HTTP timeout error while querying "${wikiURL}" for "${pageTitle}". Retrying in 60s...`);
+                        return resolve(new Promise(r => setTimeout(r, 60_000)).then(()=>parsoidGetPageHTML(wikiURL, pageTitle, attemptNumber + 1)));
+                    }
+                }
+
                 if (!stderr) {
                     if (typeof code === 'number' && code !== 0) Log.error(`[95mparsoidGetPageHTML[0m() child process exited with code ${code}`);
                     else return resolve(stdout);
