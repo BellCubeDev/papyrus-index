@@ -49,7 +49,7 @@ const nextConfig = {
 
     },
 
-    staticPageGenerationTimeout: 45 * 60,
+    staticPageGenerationTimeout: 75 * 60,
 
     trailingSlash: true,
 
