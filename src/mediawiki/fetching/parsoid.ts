@@ -25,7 +25,7 @@ export async function parsoidGetPageHTML(wikiURL: string, pageTitle: string, att
  * its results in the form of an STDOUT string.
  */
 export async function parsoidGetPageHTML(wikiURL: string, pageTitle: string, attemptNumber = 1): Promise<string|null> {
-    lastParsoidDelayPromise = lastParsoidDelayPromise.then(()=>new Promise(resolve => setTimeout(resolve, 60 * (process.env.NODE_ENV === 'development' ? 1 : nextConfig.experimental.cpus))));
+    lastParsoidDelayPromise = lastParsoidDelayPromise.then(()=>new Promise(resolve => setTimeout(resolve, 1000 * (process.env.NODE_ENV === 'development' ? 1 : nextConfig.experimental.cpus))));
     await lastParsoidDelayPromise;
     let gotPage = false;
     let hasError = false;
