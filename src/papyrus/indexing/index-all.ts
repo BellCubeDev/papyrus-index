@@ -11,7 +11,7 @@ function getAllScriptsIndexed()
  {
     return Object.fromEntries(Object.values(PapyrusGame).map((game) =>
         [game, getAllScriptsIndexedForGame(game)]
-    )) as {[K in PapyrusGame]: ReturnType<typeof indexGame>};
+    )) as {[K in PapyrusGame]: ReturnType<typeof indexGame<K>>};
 }
 
 function getAllScriptsIndexedForGame<TGame extends PapyrusGame>(game: TGame) {

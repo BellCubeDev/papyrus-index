@@ -131,6 +131,7 @@ export async function parseAllScriptsForGame<TGame extends PapyrusGame>(game: TG
         return {
             ...sourceMetadata,
             sourceIdentifier: toLowerCase(sourceIdentifier.name),
+            game,
             scripts
         };
     }))).filter((x): x is Exclude<typeof x, null> => x !== null);

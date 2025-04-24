@@ -3,12 +3,14 @@ import type { Metadata } from "next";
 import React from "react";
 import { UnreachableError } from "../../../../UnreachableError";
 import type { PapyrusGame } from "../../../../papyrus/data-structures/pure/game";
-import { PapyrusSourceType, type PapyrusScriptSourceMetadata, type PapyrusScriptSourceMetadataVanilla, type PapyrusScriptSourceMetadataWithGitHub, type PapyrusScriptSourceMetadataXSE } from "../../../../papyrus/data-structures/pure/scriptSource";
+import { PapyrusSourceType, type PapyrusScriptSourceMetadata, type PapyrusScriptSourceMetadataVanilla } from "../../../../papyrus/data-structures/pure/scriptSource";
 import { getGameName } from "../../../../utils/getGameName";
 import { SourceName } from "../../../components/papyrus/SourceName";
 import { getGameAndSourceFromParams, type SourceRouteParams } from "./getGameAndSourceFromParams";
 import { AllScripts } from "../../../../papyrus/parsing/parse-or-load-all";
 import { toLowerCase } from "../../../../utils/toLowerCase";
+import { AllScriptsIndexed } from "../../../../papyrus/indexing/index-all";
+import { PapyrusScriptReference } from "../../../components/papyrus/script/PapyrusScriptReference";
 
 export function generateStaticParams(): SourceRouteParams[] {
     const params = [];
@@ -30,22 +32,33 @@ export async function generateMetadata({params}: {params: Promise<SourceRoutePar
 
 export default async function SourcePage({params}: {readonly params: Promise<SourceRouteParams>}) {
     const {game, source} = getGameAndSourceFromParams(await params);
+    const gameData = AllScriptsIndexed[game];
 
-    return <>
+    return <main>
         <SourcePageSourceData game={game} sourceData={source} />
-
-    </>;
-
+        <h2>Scripts In This Source</h2>
+        <ul>
+            {Object.entries(gameData.scriptSources[source.sourceIdentifier]!.scripts).map(([scriptIdentifier, script]) =>
+                <li key={scriptIdentifier}>
+                    <PapyrusScriptReference
+                        game={game}
+                        script={script}
+                        inTooltip={false}
+                    />
+                </li>
+            )}
+        </ul>
+    </main>;
 }
 
 function SourcePageVanillaGameData<TGame extends PapyrusGame>({game, sourceData}: {readonly game: TGame, readonly sourceData: PapyrusScriptSourceMetadataVanilla<TGame>}) {
     return <>
-        <h1>{getGameName(game)} - <SourceName source={sourceData} long /></h1>
+        <h1>{getGameName(game)} (the vanilla game)</h1>
         <p>Scripts included in the vanilla game. Users will not need to download anything.</p>
     </>;
 }
 
-function SourcePageScriptExtenderData<TGame extends PapyrusGame>({game, sourceData}: {readonly game: TGame, readonly sourceData: PapyrusScriptSourceMetadataXSE<TGame>}) {
+function SourcePageScriptExtenderData<TGame extends PapyrusGame>({game, sourceData}: {readonly game: TGame, readonly sourceData: PapyrusScriptSourceMetadata<TGame> & {type: PapyrusSourceType.xSE}}) {
     return <>
         <h1>{getGameName(game)} - <SourceName source={sourceData} long /></h1>
         <p>
@@ -60,7 +73,7 @@ function SourcePageScriptExtenderData<TGame extends PapyrusGame>({game, sourceDa
     </>;
 }
 
-function SourcePageExternalSourceData<TGame extends PapyrusGame>({game, sourceData}: {readonly game: TGame, readonly sourceData: PapyrusScriptSourceMetadataWithGitHub<TGame>}) {
+function SourcePageExternalSourceData<TGame extends PapyrusGame>({game, sourceData}: {readonly game: TGame, readonly sourceData: PapyrusScriptSourceMetadata<TGame> & {type: Exclude<PapyrusSourceType, PapyrusSourceType.xSE|PapyrusSourceType.Vanilla>}}) {
     return <>
         <h1>{getGameName(game)} - <SourceName source={sourceData} long /></h1>
         <p>This source is a mod and will need to be downloaded & installed separately by users. {sourceData.type !== PapyrusSourceType.PapyrusLib ? null : <>
