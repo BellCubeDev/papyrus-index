@@ -10,6 +10,8 @@ import { appendToStepSummarySection, StepSummarySection } from "../../utils/step
 import { getBestName, getBestNameVariant } from "../../utils/getBestName";
 import { extractLinearWikiPageData } from "./parsoidToPageData";
 import { memoizeDevServerConst } from "../../utils/memoizeDevServerConst";
+import { AllScriptsIndexed } from "../../papyrus/indexing/index-all";
+import { AllSourcesCombined } from "../../papyrus/data-structures/indexing/game";
 
 export type PotentialFunction<TGame extends PapyrusGame> = PapyrusScriptFunctionIndexedAggregate<TGame>| PapyrusScriptFunction<TGame> | PapyrusScriptFunctionIndexed<TGame>;
 
@@ -71,7 +73,60 @@ async function getMediaWikiFunctionDataInternal<TGame extends PapyrusGame, TFunc
     const document = await getWikiPageHTMLDocument(wiki, pageName);
     if (!document) return null;
 
+    // example redirect: <link rel="mw:PageProp/redirect" href="./GetReference_-_ReferenceAlias"
+    //                      data-parsoid='{"src":"#REDIRECT ","a":{"href":"./GetReference_-_ReferenceAlias"},"sa":{"href":"GetReference - ReferenceAlias"},"dsr":[0,43,null,null]}' />
+    const redirectElement = document.documentElement.querySelector('link[rel="mw:PageProp/redirect"');
+    if (redirectElement) {
+        const redirectHref = redirectElement.getAttribute('href');
+        if (!redirectHref) {
+            console.warn(`[MediaWiki Scraping - getWikiDataFunctionPage()] redirect for function page "${pageName}" on wiki "${wiki.wikiName}" (${document.location.href}) has no href attribute!`);
+            appendToStepSummarySection(`
+### Function Page w/ Invalid Redirect (No href attribute)
+- **Wiki**: [${wiki.wikiName}](${wiki.wikiBaseUrl})
+- **Wiki Page:** [${pageName}](${document.location.href})
+- **Function:** ${scriptName}.${functionName}
+`.trim(), StepSummarySection.MediaWikiFormattingWarnings);
+            return null;
+        }
+
+        const redirectedUrl = new URL(redirectHref, document.location.href);
+
+        const match = redirectedUrl.pathname.match(/^\/wiki\/(?<redirectedFunctionName>\w+)_-_(?<redirectedScriptName>\w+)$/u);
+        const {redirectedFunctionName, redirectedScriptName} = match?.groups ?? {};
+
+        if (!redirectedFunctionName || !redirectedScriptName) {
+            console.warn(`[MediaWiki Scraping - getWikiDataFunctionPage()] redirect for function page "${pageName}" on wiki "${wiki.wikiName}" (${document.location.href}) redirects to a page that does not fit the expected function page name format!`, {redirectedFunctionName, redirectedScriptName, redirectedUrl, match});
+            appendToStepSummarySection(`
+### Function Page w/ Invalid Redirect (Invalid Page Name Format)
+- **Wiki**: [${wiki.wikiName}](${wiki.wikiBaseUrl})
+- **Wiki Page:** [${pageName}](${document.location.href})
+- **Redirected To:** [${redirectHref}](${redirectedUrl})
+- **Function:** ${scriptName}.${functionName}
+- **Redirected Function:** ${redirectedScriptName}.${redirectedFunctionName}
+`.trim(), StepSummarySection.MediaWikiFormattingWarnings);
+            return null;
+        }
+
+        const redirectedFunction = AllScriptsIndexed[game].scripts[toLowerCase(redirectedScriptName)]?.[AllSourcesCombined].functions[toLowerCase(redirectedFunctionName)];
+        if (!redirectedFunction) {
+            console.warn(`[MediaWiki Scraping - getWikiDataFunctionPage()] redirect for function page "${pageName}" on wiki "${wiki.wikiName}" (${document.location.href}) redirects to a function that does not exist in the index! Redirected URL is ${redirectHref}, and the function should be ${redirectedScriptName}.${redirectedFunctionName}`, {redirectedFunctionName, redirectedScriptName, redirectedUrl, match});
+            appendToStepSummarySection(`
+### Function Page w/ Invalid Redirect (Function Not Found in Index)
+- **Wiki**: [${wiki.wikiName}](${wiki.wikiBaseUrl})
+- **Wiki Page:** [${pageName}](${document.location.href})
+- **Redirected To:** [${redirectHref}](${redirectedUrl})
+- **Function:** ${scriptName}.${functionName}
+- **Redirected Function:** ${redirectedScriptName}.${redirectedFunctionName}
+`.trim(), StepSummarySection.MediaWikiFormattingWarnings);
+            return null;
+        }
+
+        return getMediaWikiFunctionData(game, redirectedFunction, redirectedScriptName);
+    }
+
     const pageData = extractLinearWikiPageData(document);
+
+    //console.log(pageData);
 
     // TODO: Better support the formatting on display in the Skyrim CK wiki's ColorComponent script,
     //       especially the parameters section. That, or contribute to the wiki and standardize it.
