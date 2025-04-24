@@ -9,6 +9,8 @@ import { SourceName } from "../../../components/papyrus/SourceName";
 import { getGameAndSourceFromParams, type SourceRouteParams } from "./getGameAndSourceFromParams";
 import { AllScripts } from "../../../../papyrus/parsing/parse-or-load-all";
 import { toLowerCase } from "../../../../utils/toLowerCase";
+import { AllScriptsIndexed } from "../../../../papyrus/indexing/index-all";
+import { PapyrusScriptReference } from "../../../components/papyrus/script/PapyrusScriptReference";
 
 export function generateStaticParams(): SourceRouteParams[] {
     const params = [];
@@ -30,17 +32,28 @@ export async function generateMetadata({params}: {params: Promise<SourceRoutePar
 
 export default async function SourcePage({params}: {readonly params: Promise<SourceRouteParams>}) {
     const {game, source} = getGameAndSourceFromParams(await params);
+    const gameData = AllScriptsIndexed[game];
 
-    return <>
+    return <main>
         <SourcePageSourceData game={game} sourceData={source} />
-
-    </>;
-
+        <h2>Scripts In This Source</h2>
+        <ul>
+            {Object.entries(gameData.scriptSources[source.sourceIdentifier]!.scripts).map(([scriptIdentifier, script]) =>
+                <li key={scriptIdentifier}>
+                    <PapyrusScriptReference
+                        game={game}
+                        script={script}
+                        inTooltip={false}
+                    />
+                </li>
+            )}
+        </ul>
+    </main>;
 }
 
 function SourcePageVanillaGameData<TGame extends PapyrusGame>({game, sourceData}: {readonly game: TGame, readonly sourceData: PapyrusScriptSourceMetadataVanilla<TGame>}) {
     return <>
-        <h1>{getGameName(game)} - <SourceName source={sourceData} long /></h1>
+        <h1>{getGameName(game)} (the vanilla game)</h1>
         <p>Scripts included in the vanilla game. Users will not need to download anything.</p>
     </>;
 }
