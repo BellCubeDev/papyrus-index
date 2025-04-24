@@ -43,7 +43,7 @@ export function extractLinearWikiPageData(document: Document): LinearMediaWikiPa
     let isIncomplete = false;
     let minimumXSEVersion: string | null = null;
 
-    // data-mw='{"parts":[{"template":{"target":{"wt":"Template:Incomplete Article","href":"./Template:Incomplete_Article"},"params":{},"i":0}}]}'
+    // example: data-mw='{"parts":[{"template":{"target":{"wt":"Template:Incomplete Article","href":"./Template:Incomplete_Article"},"params":{},"i":0}}]}'
     const transclusions = document.body.querySelectorAll('[typeof="mw:Transclusion"]');
     for (const el of transclusions) {
         removeElement(el); // so we don't include this data when we don't mean to
