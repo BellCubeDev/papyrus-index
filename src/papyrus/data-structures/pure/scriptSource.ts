@@ -58,9 +58,9 @@ export interface PapyrusScriptSourceScriptData<TGame extends PapyrusGame> {
     scripts: Record<Lowercase<string>, PapyrusScript<TGame>>;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- may be used later
 export interface PapyrusScriptSourceMetadataBase<TGame extends PapyrusGame> {
     type: PapyrusSourceType;
+    game: TGame;
 
     /** The latest applicable version of this source being indexed. If the source provides an SDK and the version differs from the main download, prefer the SDK version. */
     indexedVersion: string;
