@@ -58,15 +58,19 @@ export interface PapyrusScriptSourceScriptData<TGame extends PapyrusGame> {
     scripts: Record<Lowercase<string>, PapyrusScript<TGame>>;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface PapyrusScriptSourceMetadataBase<TGame extends PapyrusGame> {
     type: PapyrusSourceType;
-    game: TGame;
 
     /** The latest applicable version of this source being indexed. If the source provides an SDK and the version differs from the main download, prefer the SDK version. */
     indexedVersion: string;
 
     /** Scripts to be parsed for this source. Intended to be used by auto-downloaded sources which may include many uninteresting scripts. */
     allowedScripts?: string[];
+}
+
+export interface PapyrusScriptSourceMetadataDynamicAdditions<TGame extends PapyrusGame> {
+    game: TGame;
 }
 
 export interface PapyrusScriptSourceMetadataVanilla<TGame extends PapyrusGame> extends PapyrusScriptSourceMetadataBase<TGame> {
@@ -115,5 +119,6 @@ export interface PapyrusScriptSourceMetadataWithGitHub<TGame extends PapyrusGame
 }
 
 export type PapyrusScriptSourceMetadataExternal<TGame extends PapyrusGame> = PapyrusScriptSourceMetadataXSE<TGame> | PapyrusScriptSourceMetadataWithGitHub<TGame>;
-export type PapyrusScriptSourceMetadata<TGame extends PapyrusGame> = PapyrusScriptSourceMetadataVanilla<TGame> | PapyrusScriptSourceMetadataExternal<TGame>;
+export type PapyrusScriptSourceMetadataForSchema<TGame extends PapyrusGame> =PapyrusScriptSourceMetadataVanilla<TGame> | PapyrusScriptSourceMetadataExternal<TGame>;
+export type PapyrusScriptSourceMetadata<TGame extends PapyrusGame> = PapyrusScriptSourceMetadataDynamicAdditions<TGame> & PapyrusScriptSourceMetadataForSchema<TGame>;
 export type PapyrusScriptSource<TGame extends PapyrusGame> = PapyrusScriptSourceScriptData<TGame> & PapyrusScriptSourceMetadata<TGame>;

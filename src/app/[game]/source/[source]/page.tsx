@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import React from "react";
 import { UnreachableError } from "../../../../UnreachableError";
 import type { PapyrusGame } from "../../../../papyrus/data-structures/pure/game";
-import { PapyrusSourceType, type PapyrusScriptSourceMetadata, type PapyrusScriptSourceMetadataVanilla, type PapyrusScriptSourceMetadataWithGitHub, type PapyrusScriptSourceMetadataXSE } from "../../../../papyrus/data-structures/pure/scriptSource";
+import { PapyrusSourceType, type PapyrusScriptSourceMetadata, type PapyrusScriptSourceMetadataVanilla } from "../../../../papyrus/data-structures/pure/scriptSource";
 import { getGameName } from "../../../../utils/getGameName";
 import { SourceName } from "../../../components/papyrus/SourceName";
 import { getGameAndSourceFromParams, type SourceRouteParams } from "./getGameAndSourceFromParams";
@@ -58,7 +58,7 @@ function SourcePageVanillaGameData<TGame extends PapyrusGame>({game, sourceData}
     </>;
 }
 
-function SourcePageScriptExtenderData<TGame extends PapyrusGame>({game, sourceData}: {readonly game: TGame, readonly sourceData: PapyrusScriptSourceMetadataXSE<TGame>}) {
+function SourcePageScriptExtenderData<TGame extends PapyrusGame>({game, sourceData}: {readonly game: TGame, readonly sourceData: PapyrusScriptSourceMetadata<TGame> & {type: PapyrusSourceType.xSE}}) {
     return <>
         <h1>{getGameName(game)} - <SourceName source={sourceData} long /></h1>
         <p>
@@ -73,7 +73,7 @@ function SourcePageScriptExtenderData<TGame extends PapyrusGame>({game, sourceDa
     </>;
 }
 
-function SourcePageExternalSourceData<TGame extends PapyrusGame>({game, sourceData}: {readonly game: TGame, readonly sourceData: PapyrusScriptSourceMetadataWithGitHub<TGame>}) {
+function SourcePageExternalSourceData<TGame extends PapyrusGame>({game, sourceData}: {readonly game: TGame, readonly sourceData: PapyrusScriptSourceMetadata<TGame> & {type: Exclude<PapyrusSourceType, PapyrusSourceType.xSE|PapyrusSourceType.Vanilla>}}) {
     return <>
         <h1>{getGameName(game)} - <SourceName source={sourceData} long /></h1>
         <p>This source is a mod and will need to be downloaded & installed separately by users. {sourceData.type !== PapyrusSourceType.PapyrusLib ? null : <>
