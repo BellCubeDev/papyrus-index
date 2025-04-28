@@ -147,7 +147,7 @@ async function getMediaWikiFunctionDataInternal<TGame extends PapyrusGame, TFunc
         }
         shortDescriptionElements.shift();
     }
-    const shortDescriptionMarkdown = shortDescriptionElements.length === 0 ? null : await parsoidElementsToMarkdown(shortDescriptionElements, document.location.href);
+    let shortDescriptionMarkdown = shortDescriptionElements.length === 0 ? null : await parsoidElementsToMarkdown(shortDescriptionElements, document.location.href);
     if (shortDescriptionMarkdown === null) {
         console.warn(`[MediaWiki Scraping - getWikiDataFunctionPage()] Short description is null for page "${pageName}" on wiki "${wiki.wikiName}" (${document.location.href})!`);
         appendToStepSummarySection(`
@@ -157,7 +157,24 @@ async function getMediaWikiFunctionDataInternal<TGame extends PapyrusGame, TFunc
 - **Wiki Page:** [${pageName}](${document.location.href})
 - **Function:** ${scriptName}.${functionName}
 `.trim(), StepSummarySection.MediaWikiFormattingWarnings);
+
+    // Counteract "Placeholder Description."
+    } else if (shortDescriptionMarkdown.match(/^\s*placeholder description[.!?]?\s*$/iu)) {
+        console.warn(`[MediaWiki Scraping - getWikiDataFunctionPage()] Encountered placeholder short description on page "${pageName}" on wiki "${wiki.wikiName}" (${document.location.href})!`);
+        appendToStepSummarySection(`
+### Encountered placeholder short description
+
+- **Wiki**: [${wiki.wikiName}](${wiki.wikiBaseUrl})
+- **Wiki Page:** [${pageName}](${document.location.href})
+- **Function:** ${scriptName}.${functionName}
+\`\`\`md
+${shortDescriptionMarkdown}
+\`\`\`
+`.trim(), StepSummarySection.MediaWikiFormattingWarnings);
+        shortDescriptionMarkdown = null;
     }
+
+
 
     const exampleCodeElements = pageData.sectionsById.examples?.contents.filter(el=>el.getAttribute('typeof') === 'mw:Extension/source') ?? [];
     const examplesData = exampleCodeElements.map(e => ({code: e.textContent || ''}));
