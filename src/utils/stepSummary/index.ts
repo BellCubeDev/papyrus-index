@@ -12,6 +12,9 @@ export enum StepSummarySection {
 
     /** Section for warnings about features that aren't implemented yet */
     UnimplementedFeatures,
+
+    /** Sections for warnings produced by the Sass compiler */
+    SassWarnings,
 }
 
 export interface StepSummaryWorkerMessageBase {

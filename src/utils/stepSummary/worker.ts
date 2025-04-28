@@ -39,12 +39,14 @@ const StepSummary: Record<StepSummarySection, Map<string, gfm_markdown_string>> 
     [StepSummarySection.MediaWikiFormattingWarnings]: new Map(),
     [StepSummarySection.DownloadedMods]: new Map(),
     [StepSummarySection.UnimplementedFeatures]: new Map(),
+    [StepSummarySection.SassWarnings]: new Map(),
 };
 
-const SectionHeaders = {
+const SectionHeaders: Record<StepSummarySection, string> = {
     [StepSummarySection.MediaWikiFormattingWarnings]: "⚠️ MediaWiki Formatting Warnings",
     [StepSummarySection.UnimplementedFeatures]: "🚧 Unimplemented Features",
     [StepSummarySection.DownloadedMods]: "⬇️ Downloaded Mods",
+    [StepSummarySection.SassWarnings]: "⚠️ Sass Warnings",
 };
 
 let previousDumpData: [AbortController, Promise<void>] | null = null;

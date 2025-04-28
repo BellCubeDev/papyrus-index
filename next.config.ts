@@ -1,6 +1,7 @@
 import type { NextConfig } from 'next';
 import { cpus } from 'node:os';
 import { isCI } from 'next/dist/server/ci-info';
+import { appendToStepSummarySection, StepSummarySection } from './src/utils/stepSummary';
 
 //if (process.env.NODE_ENV === 'production') {
 //    process.env.DEBUG = '*';
@@ -31,6 +32,7 @@ const nextConfig = {
         logger: {
             warn(message, _options) {
                 console.warn(`⚠️  Sass Warning:\n${['',...message.split('\n')].join('\n  [96m|[0m ')}\n`);
+                appendToStepSummarySection(message, StepSummarySection.SassWarnings);
             },
         }
     } satisfies NextConfig['sassOptions'] & import('sass').Options<'sync' | 'async'>,
