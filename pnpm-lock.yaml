@@ -58,6 +58,9 @@ importers:
       '@nexusmods/nexus-api':
         specifier: github:Nexus-Mods/node-nexus-api
         version: https://codeload.github.com/Nexus-Mods/node-nexus-api/tar.gz/85d47998d7cfb05ed289b6c2cc167b9646b27ab4
+      '@nimpl/classnames-minifier':
+        specifier: ^4.0.0
+        version: 4.0.0(css-loader@7.1.2)
       '@types/7zip-min':
         specifier: ^1.3.3
         version: 1.3.3
@@ -984,6 +987,11 @@ packages:
   '@nexusmods/nexus-api@https://codeload.github.com/Nexus-Mods/node-nexus-api/tar.gz/85d47998d7cfb05ed289b6c2cc167b9646b27ab4':
     resolution: {tarball: https://codeload.github.com/Nexus-Mods/node-nexus-api/tar.gz/85d47998d7cfb05ed289b6c2cc167b9646b27ab4}
     version: 1.4.26
+
+  '@nimpl/classnames-minifier@4.0.0':
+    resolution: {integrity: sha512-KNwSeG6UIOtKUDmW04tc5SDS/Nkeck0ioNzf3vg92NWtutN8OHjZNIofJriev600+FRK+RD8eOY1wZ8eK6Rl3w==}
+    peerDependencies:
+      css-loader: '>=4.0.0'
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -1917,6 +1925,11 @@ packages:
     resolution: {integrity: sha512-Qgzu8kfBvo+cA4962jnP1KkS6Dop5NS6g7R5LFYJr4b8Ub94PPQXUksCw9PvXoeXPRRddRNC5C1JQUR2SMGtnA==}
     engines: {node: '>= 14.16.0'}
 
+  classnames-minifier@1.0.0:
+    resolution: {integrity: sha512-f+oH54ka5SGsY2PB30/ztd74xhPC395anKTszSrKouZx3YQd+EEtfmFIOtOsdhmKkN9vCiuAvTEV78kdUUkVww==}
+    peerDependencies:
+      css-loader: '>=4.0.0'
+
   cli-boxes@3.0.0:
     resolution: {integrity: sha512-/lzGpEWL/8PfI0BmBOPRwp0c/wFNX1RdUML3jK/RcSBA9T8mZDdQpqYBKtCFTOfQbwPqWEOpjqW+Fnayc0969g==}
     engines: {node: '>=10'}
@@ -2015,11 +2028,28 @@ packages:
     resolution: {integrity: sha512-3O5QdqgFRUbXvK1x5INf1YkBz1UKSWqrd63vWsum8MNHDBYD5urm3QtxZbKU259OrEXNM26lP/MPY3d1IGkBgA==}
     engines: {node: '>=16'}
 
+  css-loader@7.1.2:
+    resolution: {integrity: sha512-6WvYYn7l/XEGN8Xu2vWFt9nVzrCn39vKyTEFf/ExEyoksJjjSZV/0/35XPlMbpnr6VGhZIUg5yJrL8tGfes/FA==}
+    engines: {node: '>= 18.12.0'}
+    peerDependencies:
+      '@rspack/core': 0.x || 1.x
+      webpack: ^5.27.0
+    peerDependenciesMeta:
+      '@rspack/core':
+        optional: true
+      webpack:
+        optional: true
+
   css-selector-parser@3.0.5:
     resolution: {integrity: sha512-3itoDFbKUNx1eKmVpYMFyqKX04Ww9osZ+dLgrk6GEv6KMVeXUhUnp4I5X+evw+u3ZxVU6RFXSSRxlTeMh8bA+g==}
 
   css-to-react-native@3.2.0:
     resolution: {integrity: sha512-e8RKaLXMOFii+02mOlqwjbD00KSEKqblnpO9e++1aXS1fPQOpS1YoqdVHBqPjHNoxeF2mimzVqawm2KCbEdtHQ==}
+
+  cssesc@3.0.0:
+    resolution: {integrity: sha512-/Tb/JcjK111nNScGob5MNtsntNM1aCNUDipB/TkwZFhyDrrE47SOx/18wF2bbjgc3ZzCSKW1T5nt5EbFoAz/Vg==}
+    engines: {node: '>=4'}
+    hasBin: true
 
   cssstyle@4.2.1:
     resolution: {integrity: sha512-9+vem03dMXG7gDmZ62uqmRiMRNtinIZ9ZyuF6BdxzfOD+FdN5hretzynkn0ReS2DO2GSw76RWHs0UmJPI2zUjw==}
@@ -2721,6 +2751,12 @@ packages:
   iconv-lite@0.6.3:
     resolution: {integrity: sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw==}
     engines: {node: '>=0.10.0'}
+
+  icss-utils@5.1.0:
+    resolution: {integrity: sha512-soFhflCVWLfRNOPU3iv5Z9VUdT44xFRbzjLsEzSr5AQmgqPMTHdU3PMT1Cf1ssx8fLNJDA1juftYl+PUcv3MqA==}
+    engines: {node: ^10 || ^12 || >= 14}
+    peerDependencies:
+      postcss: ^8.1.0
 
   ignore@5.3.2:
     resolution: {integrity: sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==}
@@ -3494,6 +3530,34 @@ packages:
     resolution: {integrity: sha512-d7Uw+eZoloe0EHDIYoe+bQ5WXnGMOpmiZFTuMWCwpjzzkL2nTjcKiAk4hh8TjnGye2TwWOk3UXucZ+3rbmBa8Q==}
     engines: {node: '>= 0.4'}
 
+  postcss-modules-extract-imports@3.1.0:
+    resolution: {integrity: sha512-k3kNe0aNFQDAZGbin48pL2VNidTF0w4/eASDsxlyspobzU3wZQLOGj7L9gfRe0Jo9/4uud09DsjFNH7winGv8Q==}
+    engines: {node: ^10 || ^12 || >= 14}
+    peerDependencies:
+      postcss: ^8.1.0
+
+  postcss-modules-local-by-default@4.2.0:
+    resolution: {integrity: sha512-5kcJm/zk+GJDSfw+V/42fJ5fhjL5YbFDl8nVdXkJPLLW+Vf9mTD5Xe0wqIaDnLuL2U6cDNpTr+UQ+v2HWIBhzw==}
+    engines: {node: ^10 || ^12 || >= 14}
+    peerDependencies:
+      postcss: ^8.1.0
+
+  postcss-modules-scope@3.2.1:
+    resolution: {integrity: sha512-m9jZstCVaqGjTAuny8MdgE88scJnCiQSlSrOWcTQgM2t32UBe+MUmFSO5t7VMSfAf/FJKImAxBav8ooCHJXCJA==}
+    engines: {node: ^10 || ^12 || >= 14}
+    peerDependencies:
+      postcss: ^8.1.0
+
+  postcss-modules-values@4.0.0:
+    resolution: {integrity: sha512-RDxHkAiEGI78gS2ofyvCsu7iycRv7oqw5xMWn9iMoR0N/7mf9D50ecQqUo5BZ9Zh2vH4bCUR/ktCqbB9m8vJjQ==}
+    engines: {node: ^10 || ^12 || >= 14}
+    peerDependencies:
+      postcss: ^8.1.0
+
+  postcss-selector-parser@7.1.0:
+    resolution: {integrity: sha512-8sLjZwK0R+JlxlYcTuVnyT2v+htpdrjDOKuMcOVdYjt52Lh8hWRYpxBPoKx/Zg+bcjc3wx6fmQevMmUztS/ccA==}
+    engines: {node: '>=4'}
+
   postcss-value-parser@4.2.0:
     resolution: {integrity: sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==}
 
@@ -4204,9 +4268,20 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
+  util-deprecate@1.0.2:
+    resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
+
+  uuid@10.0.0:
+    resolution: {integrity: sha512-8XkAphELsDnEGrDxUOHB3RGvXz6TeuYSGEZBOjtTtPm2lwhGBjLgOzLHB63IUWfBpNucQjND6d3AOudO+H3RWQ==}
+    hasBin: true
+
   uuid@3.4.0:
     resolution: {integrity: sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==}
     deprecated: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+    hasBin: true
+
+  uuid@9.0.1:
+    resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
     hasBin: true
 
   v8-compile-cache-lib@3.0.1:
@@ -5089,6 +5164,12 @@ snapshots:
       set-cookie-parser: 2.7.1
       string-template: 1.0.0
       typed-emitter: 1.4.0
+
+  '@nimpl/classnames-minifier@4.0.0(css-loader@7.1.2)':
+    dependencies:
+      classnames-minifier: 1.0.0(css-loader@7.1.2)
+      css-loader: 7.1.2
+      uuid: 10.0.0
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
@@ -6118,6 +6199,11 @@ snapshots:
     dependencies:
       readdirp: 4.0.2
 
+  classnames-minifier@1.0.0(css-loader@7.1.2):
+    dependencies:
+      css-loader: 7.1.2
+      uuid: 9.0.1
+
   cli-boxes@3.0.0: {}
 
   client-only@0.0.1: {}
@@ -6215,6 +6301,17 @@ snapshots:
 
   css-gradient-parser@0.0.16: {}
 
+  css-loader@7.1.2:
+    dependencies:
+      icss-utils: 5.1.0(postcss@8.4.49)
+      postcss: 8.4.49
+      postcss-modules-extract-imports: 3.1.0(postcss@8.4.49)
+      postcss-modules-local-by-default: 4.2.0(postcss@8.4.49)
+      postcss-modules-scope: 3.2.1(postcss@8.4.49)
+      postcss-modules-values: 4.0.0(postcss@8.4.49)
+      postcss-value-parser: 4.2.0
+      semver: 7.7.1
+
   css-selector-parser@3.0.5: {}
 
   css-to-react-native@3.2.0:
@@ -6222,6 +6319,8 @@ snapshots:
       camelize: 1.0.1
       css-color-keywords: 1.0.0
       postcss-value-parser: 4.2.0
+
+  cssesc@3.0.0: {}
 
   cssstyle@4.2.1:
     dependencies:
@@ -7210,6 +7309,10 @@ snapshots:
   iconv-lite@0.6.3:
     dependencies:
       safer-buffer: 2.1.2
+
+  icss-utils@5.1.0(postcss@8.4.49):
+    dependencies:
+      postcss: 8.4.49
 
   ignore@5.3.2: {}
 
@@ -8220,6 +8323,32 @@ snapshots:
 
   possible-typed-array-names@1.0.0: {}
 
+  postcss-modules-extract-imports@3.1.0(postcss@8.4.49):
+    dependencies:
+      postcss: 8.4.49
+
+  postcss-modules-local-by-default@4.2.0(postcss@8.4.49):
+    dependencies:
+      icss-utils: 5.1.0(postcss@8.4.49)
+      postcss: 8.4.49
+      postcss-selector-parser: 7.1.0
+      postcss-value-parser: 4.2.0
+
+  postcss-modules-scope@3.2.1(postcss@8.4.49):
+    dependencies:
+      postcss: 8.4.49
+      postcss-selector-parser: 7.1.0
+
+  postcss-modules-values@4.0.0(postcss@8.4.49):
+    dependencies:
+      icss-utils: 5.1.0(postcss@8.4.49)
+      postcss: 8.4.49
+
+  postcss-selector-parser@7.1.0:
+    dependencies:
+      cssesc: 3.0.0
+      util-deprecate: 1.0.2
+
   postcss-value-parser@4.2.0: {}
 
   postcss@8.4.31:
@@ -9148,7 +9277,13 @@ snapshots:
     dependencies:
       react: 19.0.0
 
+  util-deprecate@1.0.2: {}
+
+  uuid@10.0.0: {}
+
   uuid@3.4.0: {}
+
+  uuid@9.0.1: {}
 
   v8-compile-cache-lib@3.0.1: {}
 

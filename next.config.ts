@@ -1,6 +1,7 @@
 import type { NextConfig } from 'next';
 import { cpus } from 'node:os';
 import { isCI } from 'next/dist/server/ci-info';
+import classnamesMinifier from '@nimpl/classnames-minifier';
 import { appendToStepSummarySection, StepSummarySection } from './src/utils/stepSummary';
 
 //if (process.env.NODE_ENV === 'production') {
@@ -10,7 +11,12 @@ import { appendToStepSummarySection, StepSummarySection } from './src/utils/step
 //    process.env.DEBUG_SHOW_HIDDEN = 'true';
 //}
 
-const nextConfig = {
+const nextConfig = classnamesMinifier({
+  prefix: '',
+  reservedNames: [],
+  disabled: process.env.NODE_ENV === 'development', // doesn't apply in dev anyway since we use Turbopack for dev, and this doesn't apply to Turbopack (yet?)
+  distDeletionPolicy: 'auto', // will remove the Next.js cache if it the current cache doesn't properly accommodate classnames-minifier
+})({
     poweredByHeader: true,
     reactStrictMode: true,
 
@@ -69,6 +75,6 @@ const nextConfig = {
     },
 
     transpilePackages: ['@wooorm/starry-night']
-} as const satisfies RestoreLegacyOptionalKeys<NextConfig>;
+} as const satisfies RestoreLegacyOptionalKeys<NextConfig>);
 
 export default nextConfig;

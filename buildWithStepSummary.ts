@@ -40,7 +40,7 @@ try {
 
     console.log('\n\n');
 
-    await execa("next",  ["build", "--turbo"], {
+    await execa("next",  ["build"],{//, "--turbo"], {
         stdio: ["inherit", "inherit", "inherit"],
     });
 

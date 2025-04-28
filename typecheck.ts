@@ -202,7 +202,7 @@ build.default(
     //appDirOnly = false,
     false,
     //isTurbopack = false,
-    true,
+    false,
     //experimentalBuildMode: 'default' | 'compile' | 'generate',
     'default',
     //traceUploadUrl: string | undefined})
