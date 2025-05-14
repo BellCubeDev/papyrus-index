@@ -1,13 +1,23 @@
 'use client';
 
-import dynamic from "next/dynamic";
-import { memo } from "react";
+import { lazy, memo, Suspense } from "react";
 import { memoizeDevServerConst } from "../../../utils/memoizeDevServerConst";
 
+type Props = React.ComponentProps<typeof import('./TooltipInternal').default>
+function TOOLTIP_WRAPPER_ONLY({children, wrapperClassName}: Props) {
+    return <span className={wrapperClassName}>
+        {children}
+    </span>;
+}
+
 const tooltipImport = memoizeDevServerConst('TOOLTIP_IMPORT_DYNAMIC',
-    () => dynamic(() => import('./TooltipInternal'), {
-        loading: () => null,
-    })
+    () => lazy(() => import('./TooltipInternal'))
 );
 
-export const Tooltip = memo(tooltipImport);
+const TooltipComponentNoSuspense = typeof window === 'undefined' ? TOOLTIP_WRAPPER_ONLY : memo(tooltipImport);
+
+export function Tooltip(props: Props) {
+    return <Suspense fallback={<TOOLTIP_WRAPPER_ONLY {...props} />}>
+        <TooltipComponentNoSuspense {...props} />
+    </Suspense>;
+}
