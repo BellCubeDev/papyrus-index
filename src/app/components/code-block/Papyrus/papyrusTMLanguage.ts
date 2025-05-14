@@ -9,11 +9,10 @@
 import PapyrusTMLanguageRaw from "./papyrus.tmlanguage.json" assert { type: "json" };
 
 import { Grammar } from "@wooorm/starry-night";
-import type { Rule } from "@wooorm/starry-night/lib/types";
 
 export const PapyrusTMLanguage = {
     ...PapyrusTMLanguageRaw,
-    patterns: PapyrusTMLanguageRaw.patterns as Rule[],
+    patterns: PapyrusTMLanguageRaw.patterns as Grammar['patterns'],
     extensions: ["psc"],
     names: ["Papyrus"],
 } satisfies Grammar;
