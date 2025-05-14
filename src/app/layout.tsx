@@ -15,7 +15,6 @@ import { Link } from './components/Link';
 import { ThePapyrusIndexLogo } from './components/logo/ThePapyrusIndexLogo';
 import { PostHogProvider } from './components/posthog/posthog-provider';
 
-
 const roboto = Roboto({
     display: 'block',
     weight: ['400', '500', '700'],
@@ -203,6 +202,7 @@ export default function RootLayout({ children }: { readonly children: React.Reac
                     </div>
                 </footer>
             </div>
+            <div id='progress-bar-container' />
         </PostHogProvider></body>
     </html>;
 }

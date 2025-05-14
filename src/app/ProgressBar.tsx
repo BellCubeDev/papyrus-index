@@ -1,10 +1,10 @@
 'use client';
 
-import { AppProgressBar } from 'next-nprogress-bar';
+import { ProgressProvider } from '@bprogress/next/app';
 
 export function ProgressBar() {
-    return <AppProgressBar
-        color="#bb5cff" height='8px'
+    return <ProgressProvider
+        color="var(--link-udl-color-noncurrent-hover)" height='8px'
         delay={50}
         stopDelay={1}
         shallowRouting
@@ -15,9 +15,12 @@ export function ProgressBar() {
             //trickleSpeed: 200,
             showSpinner: true,
             direction: 'ltr',
-            minimum: 0.9,
-            //maximum: 0.85,
+            minimum: 0.6,
+            maximum: 1,
+            parent: typeof document === 'undefined' ? '' : document.getElementById('progress-bar-container')!,
+
         }}
         spinnerPosition="bottom-right"
+        startOnLoad={false}
     />;
 }
