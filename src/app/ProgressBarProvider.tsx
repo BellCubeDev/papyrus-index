@@ -2,7 +2,7 @@
 
 import { ProgressProvider } from '@bprogress/next/app';
 
-export function ProgressBar() {
+export function ProgressBarProvider({children}: {readonly children: React.ReactNode}) {
     return <ProgressProvider
         color="var(--link-udl-color-noncurrent-hover)" height='8px'
         delay={50}
@@ -22,5 +22,7 @@ export function ProgressBar() {
         }}
         spinnerPosition="bottom-right"
         startOnLoad={false}
-    />;
+    >
+        {children}
+    </ProgressProvider>;
 }

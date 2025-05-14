@@ -7,7 +7,7 @@ import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headless
 import styles from './NavBar.module.scss';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChess, faChevronDown } from "@fortawesome/free-solid-svg-icons";
-import { useRouter } from 'next/navigation';
+import { useRouter } from '@bprogress/next/app';
 import { toLowerCase } from "../../../utils/toLowerCase";
 import Link from "next/link";
 import { PrefetchKind } from "next/dist/client/components/router-reducer/router-reducer-types";
@@ -28,7 +28,8 @@ export function GameDropdown({currentGame}: {readonly currentGame: PapyrusGame |
         setDesiredGame(newGame);
 
         posthog?.capture('Game dropdown selection', { game: newGame });
-    }, [desiredGameRef, posthog]);
+        router.push(`/${toLowerCase(newGame)}/`);
+    }, [desiredGameRef, posthog, router]);
 
     useEffect(() => {
         for (const game of games) router.prefetch(`/${toLowerCase(game)}`, { kind: PrefetchKind.FULL });

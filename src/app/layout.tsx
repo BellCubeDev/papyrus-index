@@ -10,7 +10,7 @@ import { SourceCodePro } from './SourceCodePro';
 //import { ApolloWrapper } from '@/nexus-api/GraphQLClientClient';
 import Image from 'next/image';
 import Markdown from 'react-markdown';
-import { ProgressBar } from './ProgressBar';
+import { ProgressBarProvider } from './ProgressBarProvider';
 import { Link } from './components/Link';
 import { ThePapyrusIndexLogo } from './components/logo/ThePapyrusIndexLogo';
 import { PostHogProvider } from './components/posthog/posthog-provider';
@@ -170,38 +170,39 @@ export default function RootLayout({ children }: { readonly children: React.Reac
 
         </head>
         <body className={`${roboto.className} ${roboto.variable} ${SourceCodePro.variable}`} suppressHydrationWarning><PostHogProvider>
-            <ProgressBar />
-            <div>
-                {children}
-            </div>
-            <div>
-                <footer>
-                    <div>
-                        <Link href='/' data-no-link-style>
-                            <ThePapyrusIndexLogo />
-                        </Link>
-                    </div>
-                    <div>
-                        <p>
-                            &copy; {new Date().getUTCFullYear()} BellCube. Source code <a href="https://github.com/BellCubeDev/papyrus-index">available on GitHub</a>.
-                        </p>
-                        <p>
-                            Website code <a href="https://github.com/BellCubeDev/papyrus-index/blob/development/LICENSE.md">available for free under the MIT license</a>.
-                            Papyrus source files are not covered by this license. Wiki&nbsp;data is covered by the respective licenses of the wikis, disclosed on individual pages where such data is used.
-                        </p>
-                        <Markdown skipHtml>{process.env.NEXT_PUBLIC_BUILD_SOURCE_MD}</Markdown>
-                    </div>
-                    <div>
-                        <a href='https://bellcube.dev' data-no-link-style target="_blank" rel="noopener noreferrer">
-                            <Image alt='BellCube Logo'
-                                src='/logo/logo.webp'
-                                width={96} height={96}
-                                loading='lazy'
-                            />
-                        </a>
-                    </div>
-                </footer>
-            </div>
+            <ProgressBarProvider>
+                <div>
+                    {children}
+                </div>
+                <div>
+                    <footer>
+                        <div>
+                            <Link href='/' data-no-link-style>
+                                <ThePapyrusIndexLogo />
+                            </Link>
+                        </div>
+                        <div>
+                            <p>
+                                &copy; {new Date().getUTCFullYear()} BellCube. Source code <a href="https://github.com/BellCubeDev/papyrus-index">available on GitHub</a>.
+                            </p>
+                            <p>
+                                Website code <a href="https://github.com/BellCubeDev/papyrus-index/blob/development/LICENSE.md">available for free under the MIT license</a>.
+                                Papyrus source files are not covered by this license. Wiki&nbsp;data is covered by the respective licenses of the wikis, disclosed on individual pages where such data is used.
+                            </p>
+                            <Markdown skipHtml>{process.env.NEXT_PUBLIC_BUILD_SOURCE_MD}</Markdown>
+                        </div>
+                        <div>
+                            <a href='https://bellcube.dev' data-no-link-style target="_blank" rel="noopener noreferrer">
+                                <Image alt='BellCube Logo'
+                                    src='/logo/logo.webp'
+                                    width={96} height={96}
+                                    loading='lazy'
+                                />
+                            </a>
+                        </div>
+                    </footer>
+                </div>
+            </ProgressBarProvider>
             <div id='progress-bar-container' />
         </PostHogProvider></body>
     </html>;
