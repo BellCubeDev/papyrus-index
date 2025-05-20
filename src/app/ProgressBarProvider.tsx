@@ -17,8 +17,7 @@ export function ProgressBarProvider({children}: {readonly children: React.ReactN
             direction: 'ltr',
             minimum: 0.6,
             maximum: 1,
-            parent: typeof document === 'undefined' ? '' : document.getElementById('progress-bar-container')!,
-
+            parent: '#progress-bar-container',
         }}
         spinnerPosition="bottom-right"
         startOnLoad={false}
