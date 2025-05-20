@@ -10,18 +10,52 @@ import { SourceListUser } from '../components/papyrus/SourcesList';
 import { usePostHog } from 'posthog-js/react';
 import { useUpdatedRef } from '../hooks/useUpdatedRef';
 
+type SearchWorker =  Omit<Worker, 'postMessage'> & {
+    postMessage(message: Exclude<WorkerMessageInput, WorkerMessageInputInit>): void;
+    addEventListener(type: 'message', listener: (this: Worker, ev: MessageEvent<WorkerMessageOutput>) => any, options?: boolean | AddEventListenerOptions): void;
+    readyPromise: Promise<WorkerMessageOutputSearchIndexReady|null>;
+    searchIndexGame: PapyrusGame;
+    searchIndexHash: string;
+}
+
+let lastWorker: SearchWorker | null = null;
 function generateWorker(game: PapyrusGame, searchIndexHash: string) {
-    console.log('Creating search worker...');
+    if (lastWorker && lastWorker.searchIndexGame === game && lastWorker.searchIndexHash === searchIndexHash) return lastWorker;
+
+    console.log('[generateWorker] Creating search worker...', {game, searchIndexHash});
+
     const newWorker = new Worker(new URL('./SEARCH.worker.ts', import.meta.url));
-    newWorker.postMessage({type: 'INIT', game, searchIndexHash} satisfies WorkerMessageInputInit);
-    return newWorker as Omit<typeof newWorker, 'postMessage'> & {
-        postMessage(message: Exclude<WorkerMessageInput, WorkerMessageInputInit>): void;
-        addEventListener(type: 'message', listener: (this: Worker, ev: MessageEvent<WorkerMessageOutput>) => any, options?: boolean | AddEventListenerOptions): void;
-    };
+
+    const readyPromise = new Promise<WorkerMessageOutputSearchIndexReady|null>(resolve => {
+        const readyListener = (e: MessageEvent<WorkerMessageOutput>) => {
+            if (e.data.type !== 'SEARCH_INDEX_READY') return;
+            newWorker.removeEventListener('message', readyListener);
+            resolve(e.data);
+            console.log('[generateWorker] Search index loaded for', game, {e, searchIndexHash});
+        };
+        newWorker.addEventListener('message', readyListener);
+
+        newWorker.postMessage({type: 'INIT', game, searchIndexHash} satisfies WorkerMessageInputInit);
+
+        const oldTerminate = newWorker.terminate.bind(newWorker);
+        newWorker.terminate = function terminate() {
+            resolve(null);
+            if (lastWorker === newWorker) lastWorker = null;
+            oldTerminate();
+        };
+    });
+
+    const returnValue = newWorker as SearchWorker;
+    returnValue.searchIndexGame = game;
+    returnValue.searchIndexHash = searchIndexHash;
+    lastWorker = returnValue;
+
+    returnValue.readyPromise = readyPromise;
+    return returnValue;
 }
 
 export type SearchContextLoaded = {
-    worker: Worker;
+    worker: SearchWorker;
     sources: Promise<WorkerMessageOutputSearchIndexReady['sources']>;
     DEVELOPMENT__LOADING_HASH: false;
     LOADING_FROM_SSR: false;
@@ -56,34 +90,36 @@ export function SearchProvider({children, game, searchIndexHash}: {readonly chil
 
     const isLoadingHash = searchIndexHash === LOADING_IN_DEV_MODE;
     const typeofWorker = typeof Worker;
-    const worker = React.useMemo(() => (isLoadingHash || typeofWorker === 'undefined') ? null : generateWorker(game, searchIndexHash), [game, searchIndexHash, typeofWorker, isLoadingHash]);
-    const sources = React.useMemo(() => new Promise<WorkerMessageOutputSearchIndexReady['sources']>(resolve => {
-        if (!worker) return resolve(null as never);
+    const {worker, sources} = React.useMemo(() => {
+        if (isLoadingHash) return {worker: null, sources: Promise.resolve(null as never)};
+        if (typeofWorker === 'undefined') return {worker: null, sources: Promise.resolve(null as never)};
+
         const startLoad = performance.now();
-        const takingTooLongInterval = setInterval(() => {
+        const takingTooLongInterval = setInterval(function takingTooLongLogger() {
             const debugObj = {
                 game,
                 searchIndexHash,
                 time: performance.now() - startLoad,
             };
-            console.warn('SearchIndex taking too long to load', debugObj);
+            console.warn('SearchIndex taking too long to load', {...debugObj, worker, startLoad});
             posthogRef.current?.capture('SearchIndex taking too long to load', debugObj);
         }, 2000);
-        const listener = (e: MessageEvent<WorkerMessageOutput>) => {
-            if (e.data.type !== 'SEARCH_INDEX_READY') return;
-                worker.removeEventListener('message', listener);
-                clearInterval(takingTooLongInterval);
-                resolve(e.data.sources);
-                console.log('Search index loaded for', game);
-                posthogRef.current?.capture('Search index loaded', {
-                    search_index_hash: searchIndexHash,
-                    game,
-                });
 
-            };
-            worker.addEventListener('message', listener);
-        }
-    ), [game, posthogRef, searchIndexHash, worker]);
+        // eslint-disable-next-line no-shadow
+        const worker = generateWorker(game, searchIndexHash);
+
+        worker.readyPromise.then((e) => {
+            clearInterval(takingTooLongInterval);
+            if (!e) return; // worker was terminated before it was ready
+            console.log('[SearchProvider] Search index loaded for', game, {e, searchIndexHash});
+            posthogRef.current?.capture('Search index loaded', {
+                search_index_hash: searchIndexHash,
+                game,
+            });
+        });
+
+        return {worker, sources: worker.readyPromise.then((e) => e?.sources )};
+    }, [game, isLoadingHash, posthogRef, searchIndexHash, typeofWorker]);
 
     React.useEffect(() => {
         const previousWorker = worker;

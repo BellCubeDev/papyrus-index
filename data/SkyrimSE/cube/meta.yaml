@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Only An Extender)
+nameProper: CUBE Papyrus Extender
+nameShort: CUBE
+indexedVersion: "8.3.11"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/56196
+gitRepo: null
+preferredModPage: https://duck.bellcube.dev/
+nexusIndexedFileId: 231719
