@@ -110,6 +110,7 @@ export function SearchProvider({children, game, searchIndexHash}: {readonly chil
 
         worker.readyPromise.then((e) => {
             clearInterval(takingTooLongInterval);
+            if (!e) return; // worker was terminated before it was ready
             console.log('[SearchProvider] Search index loaded for', game, {e, searchIndexHash});
             posthogRef.current?.capture('Search index loaded', {
                 search_index_hash: searchIndexHash,
