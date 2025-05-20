@@ -51,7 +51,7 @@ function generateWorker(game: PapyrusGame, searchIndexHash: string) {
     lastWorker = returnValue;
 
     returnValue.readyPromise = readyPromise;
-    return returnValue as typeof returnValue;
+    return returnValue;
 }
 
 export type SearchContextLoaded = {
