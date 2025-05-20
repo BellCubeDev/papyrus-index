@@ -42,6 +42,7 @@ function generateWorker(game: PapyrusGame, searchIndexHash: string) {
         const oldTerminate = newWorker.terminate.bind(newWorker);
         newWorker.terminate = function terminate() {
             resolve(null);
+            if (lastWorker === newWorker) lastWorker = null;
             oldTerminate();
         };
     });
