@@ -14,19 +14,17 @@ type SearchWorker =  Omit<Worker, 'postMessage'> & {
     postMessage(message: Exclude<WorkerMessageInput, WorkerMessageInputInit>): void;
     addEventListener(type: 'message', listener: (this: Worker, ev: MessageEvent<WorkerMessageOutput>) => any, options?: boolean | AddEventListenerOptions): void;
     readyPromise: Promise<WorkerMessageOutputSearchIndexReady|null>;
+    searchIndexGame: PapyrusGame;
+    searchIndexHash: string;
 }
 
-let lastWorkerGame: PapyrusGame | null = null;
-let lastWorkerHash: string | null = null;
 let lastWorker: SearchWorker | null = null;
 function generateWorker(game: PapyrusGame, searchIndexHash: string) {
-    if (lastWorkerGame === game && lastWorkerHash === searchIndexHash && lastWorker) return lastWorker;
+    if (lastWorker && lastWorker.searchIndexGame === game && lastWorker.searchIndexHash === searchIndexHash) return lastWorker;
 
     console.log('[generateWorker] Creating search worker...', {game, searchIndexHash});
 
     const newWorker = new Worker(new URL('./SEARCH.worker.ts', import.meta.url));
-    lastWorkerGame = game;
-    lastWorkerHash = searchIndexHash;
 
     const readyPromise = new Promise<WorkerMessageOutputSearchIndexReady|null>(resolve => {
         const readyListener = (e: MessageEvent<WorkerMessageOutput>) => {
@@ -47,7 +45,9 @@ function generateWorker(game: PapyrusGame, searchIndexHash: string) {
         };
     });
 
-    const returnValue =  newWorker as SearchWorker;
+    const returnValue = newWorker as SearchWorker;
+    returnValue.searchIndexGame = game;
+    returnValue.searchIndexHash = searchIndexHash;
     lastWorker = returnValue;
 
     returnValue.readyPromise = readyPromise;
@@ -55,7 +55,7 @@ function generateWorker(game: PapyrusGame, searchIndexHash: string) {
 }
 
 export type SearchContextLoaded = {
-    worker: Worker;
+    worker: SearchWorker;
     sources: Promise<WorkerMessageOutputSearchIndexReady['sources']>;
     DEVELOPMENT__LOADING_HASH: false;
     LOADING_FROM_SSR: false;
