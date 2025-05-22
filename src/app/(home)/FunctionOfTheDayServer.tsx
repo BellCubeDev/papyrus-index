@@ -38,8 +38,8 @@ const allFunctions: FunctionOfTheDayFunction[] = Object.entries(AllScriptsIndexe
         }))
     )
 ).sort((a, b) => {
-    const aHash = calculateFunctionNamePseudoRandom(a.functionNameLowercase);
-    const bHash = calculateFunctionNamePseudoRandom(b.functionNameLowercase);
+    const aHash = calculateFunctionNamePseudoRandom(a.game + a.scriptNamespaceNameLowercase + a.functionNameLowercase);
+    const bHash = calculateFunctionNamePseudoRandom(b.game + b.scriptNamespaceNameLowercase + b.functionNameLowercase);
     return aHash - bHash;
 });
 
