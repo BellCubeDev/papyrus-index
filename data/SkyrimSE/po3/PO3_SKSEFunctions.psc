@@ -6,14 +6,18 @@ Scriptname PO3_SKSEFunctions Hidden
 ;ACTIVE EFFECT
 ;----------------------------------------------------------------------------------------------------------
 
+	;-------
+	;GETTERS
+	;-------
+	
 	string[] Function GetScriptsAttachedToActiveEffect(ActiveMagicEffect akActiveEffect) global native
-
+	
 	Bool Function IsScriptAttachedToActiveEffect(ActiveMagicEffect akActiveEffect, string asScriptName) global native
-
+	
 	Form Function GetActiveEffectSpell(ActiveMagicEffect akActiveEffect)  global native
 
 ;----------------------------------------------------------------------------------------------------------
-;ACTORS
+;ACTOR
 ;----------------------------------------------------------------------------------------------------------
 
 	;-------
@@ -33,7 +37,7 @@ Scriptname PO3_SKSEFunctions Hidden
 	int Function GetActorSoulSize(Actor akActor) global native
 
 	float Function GetActorValueModifier(Actor akActor, int aiModifier, string asActorValue) global native
-
+	
 	Spell[] Function GetAllActorPlayableSpells(Actor akActor) global native
 
 	int Function GetCriticalStage(Actor akActor) global native
@@ -47,7 +51,7 @@ Scriptname PO3_SKSEFunctions Hidden
 	Actor Function GetCommandingActor(Actor akActor) global native
 
 	Ammo Function GetEquippedAmmo(Actor akActor) global native
-
+	
 	Enchantment Function GetEquippedAmmoEnchantment(Actor akActor) global native
 
 	Bool Function GetEquippedWeaponIsPoisoned(Actor akActor, bool abLeftHand) global native
@@ -55,10 +59,13 @@ Scriptname PO3_SKSEFunctions Hidden
 	Potion Function GetEquippedWeaponPoison(Actor akActor, bool abLeftHand) global native
 
 	int Function GetEquippedWeaponPoisonCount(Actor akActor, bool abLeftHand) global native
-
+	
 	float Function GetEquippedWeight(Actor akActor) global native
 
+	;DEPRECATED
 	ColorForm Function GetHairColor(Actor akActor) global native
+	
+	int[] Function GetHairRGB(Actor akActor) global native
 
 	TextureSet Function GetHeadPartTextureSet(Actor akActor, int aiType) global native
 
@@ -74,14 +81,17 @@ Scriptname PO3_SKSEFunctions Hidden
 
 	Package Function GetRunningPackage(Actor akActor) global native
 
+	;DEPRECATED
 	ColorForm Function GetSkinColor(Actor akActor) global native
+	
+	int[] Function GetSkinRGB(Actor akActor) global native
 
 	float Function GetTimeDead(Actor akActor) global native
 
 	float Function GetTimeOfDeath(Actor akActor) global native
 
 	Faction Function GetVendorFaction(Actor akActor) global native
-
+	
 	Bool Function HasActiveMagicEffect(Actor akActor, MagicEffect akEffect) global native
 
 	Bool Function HasActiveSpell(Actor akActor, Spell akSpell) global native
@@ -97,7 +107,7 @@ Scriptname PO3_SKSEFunctions Hidden
 	Bool Function IsActorUnderwater(Actor akActor) global native
 
 	Bool Function IsLimbGone(Actor akActor, int aiLimb) global native
-
+	
 	Bool Function IsPowerAttacking(Actor akActor) global native
 
 	Bool Function IsQuadruped(Actor akActor) global native
@@ -111,28 +121,32 @@ Scriptname PO3_SKSEFunctions Hidden
 	Bool Function ApplyPoisonToEquippedWeapon(Actor akActor, Potion akPoison, int aiCount, bool abLeftHand) global native
 
 	Form[] Function AddAllEquippedItemsToArray(Actor akActor) global native
+	
+	Form[] Function AddAllEquippedItemsBySlotToArray(Actor akActor, int[] aiSlots) global native
 
 	Bool Function AddBasePerk(Actor akActor, Perk akPerk) global native
 
 	Bool Function AddBaseSpell(Actor akActor, Spell akSpell) global native
 
 	Function BlendColorWithSkinTone(Actor akActor, ColorForm akColor, int aiBlendMode, bool abAutoLuminance, float afOpacity) global native
+	
+	Bool Function DamageActorHealth(Actor akActor, float afHealthDamage, Actor akSource) global native
 
 	Function DecapitateActor(Actor akActor) global native
 
 	Function FreezeActor(Actor akActor, int type, bool abFreeze) global native
 
 	Function KillNoWait(Actor akActor) global native
-
+	
 	Function LaunchArrow(Actor akActor, Ammo akAmmo, Weapon akWeapon, string asNodeName = "", int aiSource = -1, ObjectReference akTarget = None, Potion akPoison = None) global native
-
+	
 	Function LaunchSpell(Actor akActor, Spell akSpell, int aiSource) global native
 
-	;DEPRECIATED
+	;DEPRECATED
 	Function MixColorWithSkinTone(Actor akActor, ColorForm akColor, bool abManualMode, float afPercentage) global native
 
 	Function RemoveAddedSpells(Actor akActor, string modName, Keyword[] keywords, bool abMatchAll) global native
-
+	
 	Function RemoveArmorOfType(Actor akActor, int afArmorType, int[] aiSlotsToSkip, bool abEquippedOnly) global native
 
 	Bool Function RemoveBasePerk(Actor akActor, Perk akPerk) global native
@@ -196,7 +210,7 @@ Scriptname PO3_SKSEFunctions Hidden
 	;-------
 
 	Function SetDeathItem(Actorbase akBase, LeveledItem akLeveledItem) global native
-
+	
 ;----------------------------------------------------------------------------------------------------------
 ;AMMO
 ;----------------------------------------------------------------------------------------------------------
@@ -204,22 +218,33 @@ Scriptname PO3_SKSEFunctions Hidden
 	;-------
 	;GETTERS
 	;-------
-
+	
 	Enchantment Function GetBaseAmmoEnchantment(Ammo akAmmo) global native
 
 ;----------------------------------------------------------------------------------------------------------
 ;ALIAS
 ;----------------------------------------------------------------------------------------------------------
 
+	;-------
+	;GETTERS
+	;-------
+	
 	string[] Function GetScriptsAttachedToAlias(Alias akAlias) global native
-
+	
 	Bool Function IsScriptAttachedToAlias(Alias akAlias, string asScriptName) global native
 
 ;----------------------------------------------------------------------------------------------------------
 ;ARMOR/ADDONS
 ;----------------------------------------------------------------------------------------------------------
-
+	;-------
+	;GETTERS
+	;-------
+	
 	FootstepSet Function GetFootstepSet(ArmorAddon akArma) global native
+	
+	;-------
+	;SETTERS
+	;-------
 
 	Function SetFootstepSet(ArmorAddon akArma, FootstepSet akFootstepSet) global native
 
@@ -227,6 +252,18 @@ Scriptname PO3_SKSEFunctions Hidden
 ;ARRAYS
 ;----------------------------------------------------------------------------------------------------------
 
+	;-------
+	;GETTERS
+	;-------
+	
+	string[] Function GetSortedActorNames(Keyword akKeyword, string asPlural = "(s)", bool abInvertKeyword) global native
+
+	string[] Function GetSortedNPCNames(ActorBase[] aiActorBases, string asPlural = "(s)") global native
+	
+	;-------
+	;SETTERS
+	;-------	
+	
 	Bool Function AddActorToArray(Actor akActor, Actor[] actorArray) global native
 
 	Bool Function AddStringToArray(string asString, string[] asStrings) global native
@@ -235,15 +272,19 @@ Scriptname PO3_SKSEFunctions Hidden
 
 	string[] Function SortArrayString(string[] asStrings) global native
 
-	string[] Function GetSortedActorNames(Keyword akKeyword, string asPlural = "(s)", bool abInvertKeyword) global native
-
-	string[] Function GetSortedNPCNames(ActorBase[] aiActorBases, string asPlural = "(s)") global native
-
 ;----------------------------------------------------------------------------------------------------------
 ;BOOK
 ;----------------------------------------------------------------------------------------------------------
 
+	;-------
+	;SETTERS
+	;-------
+
+	Function ClearBookCantBeTakenFlag(Book akBook) global native
+
 	Function ClearReadFlag(Book akBook) global native
+	
+	Function SetBookCantBeTakenFlag(Book akBook) global native	
 
 	Function SetReadFlag(Book akBook) global native
 
@@ -251,9 +292,17 @@ Scriptname PO3_SKSEFunctions Hidden
 ;CELL
 ;----------------------------------------------------------------------------------------------------------
 
+	;-------
+	;GETTERS
+	;-------
+	
 	float Function GetCellNorthRotation(Cell akCell) global native
 
 	LightingTemplate Function GetLightingTemplate(Cell akCell) global native
+	
+	;-------
+	;SETTERS
+	;-------
 
 	Function SetLightingTemplate(Cell akCell, LightingTemplate akLightingTemplate) global native
 
@@ -263,6 +312,10 @@ Scriptname PO3_SKSEFunctions Hidden
 ;DEBUG
 ;----------------------------------------------------------------------------------------------------------
 
+	;-------
+	;SETTERS
+	;-------
+	
 	Function GivePlayerSpellBook() global native
 
 	Function DumpAnimationVariables(Actor akActor, string asAnimationVarPrefix) global native
@@ -271,15 +324,23 @@ Scriptname PO3_SKSEFunctions Hidden
 ;DETECTION
 ;----------------------------------------------------------------------------------------------------------
 
+	;-------
+	;GETTERS
+	;-------
+	
 	int Function CanActorBeDetected(Actor akActor) global native
 
 	int Function CanActorDetect(Actor akActor) global native
 
+	Bool Function IsDetectedByAnyone(Actor akActor) global native
+	
+	;-------
+	;SETTERS
+	;-------	
+	
 	Function ForceActorDetection(Actor akActor) global native
 
 	Function ForceActorDetecting(Actor akActor) global native
-
-	Bool Function IsDetectedByAnyone(Actor akActor) global native
 
 	Function PreventActorDetection(Actor akActor) global native
 
@@ -365,7 +426,7 @@ Scriptname PO3_SKSEFunctions Hidden
 	Function RemoveMagicEffectFromEnchantment(Enchantment akEnchantment, MagicEffect akMagicEffect, float afMagnitude, int aiArea, int aiDuration, float afCost = 0.0) global native
 
 	Function RemoveEffectItemFromEnchantment(Enchantment akEnchantment, Enchantment akEnchantmentToMatchFrom, int aiIndex) global native
-
+	
 	Function SetEnchantmentMagicEffect(Enchantment akEnchantment, MagicEffect akMagicEffect, int aiIndex) global native
 
 ;----------------------------------------------------------------------------------------------------------
@@ -375,23 +436,27 @@ Scriptname PO3_SKSEFunctions Hidden
 	;--------
 	;GETTERS
 	;--------
-
+	
 	ObjectReference Function GetVendorFactionContainer(Faction akVendorFaction)  global native
-
+	
 	Actor[] Function GetAllActorsInFaction(Faction akFaction) global native
 
 ;----------------------------------------------------------------------------------------------------------
 ;FASTTRAVEL
 ;----------------------------------------------------------------------------------------------------------
 
+	;--------
+	;SETTERS
+	;--------
+	
 	Bool Function SetFastTravelDisabled(bool abDisable) global native
-
+	
 	Bool Function SetFastTravelTargetFormID(int aiDestinationFormID) global native
-
+	
 	Bool Function SetFastTravelTargetRef(ObjectReference akDestination) global native
-
+	
 	Bool Function SetFastTravelTargetString(string asDestination) global native
-
+	
 	float Function SetFastTravelWaitTimeout(float afTimeout) global native
 
 ;----------------------------------------------------------------------------------------------------------
@@ -413,7 +478,7 @@ Scriptname PO3_SKSEFunctions Hidden
 	string Function GetFormEditorID(Form akForm) global native
 
 	string Function GetFormModName(Form akForm, bool abLastModified) global native
-
+	
 	string[] Function GetScriptsAttachedToForm(Form akForm) global native
 
 	Bool Function IsFormInMod(Form akForm, string asModName) global native
@@ -435,11 +500,11 @@ Scriptname PO3_SKSEFunctions Hidden
 	Function MarkItemAsFavorite(Form akForm) global native
 
 	Function RemoveConditionList(Form akForm, int aiIndex, string[] asConditionList) global native
-
+	
 	Function ReplaceKeywordOnForm(Form akForm, Keyword akKeywordAdd, Keyword akKeywordRemove) global native
 
 	Bool Function RemoveKeywordOnForm(Form akForm, Keyword akKeyword) global native
-
+	
 	Function SetConditionList(Form akForm, int aiIndex, string[] asConditionList) global native
 
 	Function UnmarkItemAsFavorite(Form akForm) global native
@@ -448,6 +513,10 @@ Scriptname PO3_SKSEFunctions Hidden
 ;FURNITURE
 ;----------------------------------------------------------------------------------------------------------
 
+	;-------
+	;GETTERS
+	;-------
+	
 	int Function GetFurnitureType(Furniture akFurniture) global native
 
 ;----------------------------------------------------------------------------------------------------------
@@ -483,9 +552,9 @@ Scriptname PO3_SKSEFunctions Hidden
 	int Function GetGameSettingBool(string asGameSetting) global native
 
 	Bool Function GetGodMode() global native
-
+	
 	float Function GetLandHeight(float afPosX, float afPosY, float afPosZ) global native
-
+	
 	string Function GetLandMaterialType(float afPosX, float afPosY, float afPosZ) global native
 
 	float[] Function GetLocalGravity() global native
@@ -507,13 +576,17 @@ Scriptname PO3_SKSEFunctions Hidden
 	Function ClearCachedFactionFightReactions() global native
 
 	Function SetLocalGravity(float afXAxis, float afYAxis, float afZAxis) global native
-
+	
 	Function UpdateCrosshairs()  global native
 
 ;----------------------------------------------------------------------------------------------------------
 ;HAZARD
 ;----------------------------------------------------------------------------------------------------------
 
+	;-------
+	;GETTERS
+	;-------
+	
 	string Function GetHazardArt(Hazard akHazard) global native
 
 	ImageSpaceModifier Function GetHazardIMOD(Hazard akHazard) global native
@@ -567,6 +640,18 @@ Scriptname PO3_SKSEFunctions Hidden
 	Function SetHazardSpell(Hazard akHazard, Spell akspell) global native
 
 	Function SetHazardTargetInterval(Hazard akHazard, float afInterval) global native
+	
+;----------------------------------------------------------------------------------------------------------
+;IDLE
+;----------------------------------------------------------------------------------------------------------
+
+	;-------
+	;GETTERS
+	;-------
+	
+	string Function GetAnimationEventName(Idle akIdle) global native
+	
+	string Function GetAnimationFileName(Idle akIdle) global native
 
 ;----------------------------------------------------------------------------------------------------------
 ;LIGHT
@@ -607,7 +692,7 @@ Scriptname PO3_SKSEFunctions Hidden
 	Function SetLightShadowDepthBias(ObjectReference akLightObject, float afDepthBias) global native
 
 	Function SetLightType(Light akLight, int aiLightType) global native
-
+	
 ;----------------------------------------------------------------------------------------------------------
 ;LEVELED ITEM
 ;----------------------------------------------------------------------------------------------------------
@@ -615,8 +700,28 @@ Scriptname PO3_SKSEFunctions Hidden
 	;-------
 	;GETTERS
 	;-------
-
+	
 	Form[] Function GetContentFromLeveledItem(LeveledItem akLeveledItem, ObjectReference akRef) global native
+	
+;----------------------------------------------------------------------------------------------------------
+;LEVELED NPC
+;----------------------------------------------------------------------------------------------------------
+
+	;-------
+	;GETTERS
+	;-------
+	
+	Form[] Function GetContentFromLeveledActor(LeveledActor akLeveledActor, ObjectReference akRef) global native
+	
+;----------------------------------------------------------------------------------------------------------
+;LEVELED SPELL
+;----------------------------------------------------------------------------------------------------------
+
+	;-------
+	;GETTERS
+	;-------
+	
+	Form[] Function GetContentFromLeveledSpell(LeveledSpell akLeveledSpell, ObjectReference akRef) global native
 
 ;----------------------------------------------------------------------------------------------------------
 ;LOCATION
@@ -669,7 +774,7 @@ Scriptname PO3_SKSEFunctions Hidden
 	;--------
 	;GETTERS
 	;--------
-
+	
 	Bool Function ActorInRangeHasEffect(ObjectReference akRef, float afRadius, MagicEffect akEffect, bool abIgnorePlayer) global native
 
 	Form[] Function AddAllItemsToArray(ObjectReference akRef, bool abNoEquipped = true, bool abNoFavorited = false, bool abNoQuestItem = false) global native
@@ -691,7 +796,7 @@ Scriptname PO3_SKSEFunctions Hidden
 	ObjectReference[] Function GetActivateChildren(ObjectReference akRef) global native
 
 	string Function GetActiveGamebryoAnimation(ObjectReference akRef) global native
-
+	
 	ActiveMagicEffect[] Function GetActiveMagicEffects(ObjectReference akRef, MagicEffect akMagicEffect) global native
 
 	Actor Function GetActorCause(ObjectReference akRef) global native
@@ -713,7 +818,7 @@ Scriptname PO3_SKSEFunctions Hidden
 	string[] Function GetMaterialType(ObjectReference akRef, string asNodeName = "") global native
 
 	int Function GetMotionType(ObjectReference akRef) global native
-
+	
 	int Function GetNumActorsWithEffectInRange(ObjectReference akRef, float afRadius, MagicEffect akEffect, bool abignorePlayer) global native
 
 	Actor Function GetRandomActorFromRef(ObjectReference akRef, float afRadius, bool abIgnorePlayer) global native
@@ -739,7 +844,9 @@ Scriptname PO3_SKSEFunctions Hidden
 	Bool Function IsQuestItem(ObjectReference akRef) global native
 
 	Bool Function IsRefInWater(ObjectReference akRef) global native
-
+	
+	Bool Function IsRefNodeInWater(ObjectReference akRef, String asNodeName) global native
+	
 	Bool Function IsRefUnderwater(ObjectReference akRef) global native
 
 	Bool Function IsVIP(ObjectReference akRef) global native
@@ -751,13 +858,13 @@ Scriptname PO3_SKSEFunctions Hidden
 	Function ApplyMaterialShader(ObjectReference akRef, MaterialObject akMatObject, float directionalThresholdAngle) global native
 
 	Function AddKeywordToRef(ObjectReference akRef, Keyword akKeyword) global native
-
+	
 	Function CastEx(ObjectReference akRef, Form akSpell, ObjectReference akTarget, Actor akBlameActor, int aiSource) global native
 
 	Function MoveToNearestNavmeshLocation(ObjectReference akRef) global native
 
 	Function RemoveAllModItems(ObjectReference akRef, string asModName, bool abOnlyUnequip = false) global native
-
+	
 	Function RemoveListFromContainer(ObjectReference akRef, FormList akList, bool abNoEquipped = false, bool abNoFavorited = false, bool abNoQuestItem = false, ObjectReference akDestination = None)  global native
 
 	Bool Function RemoveKeywordFromRef(ObjectReference akRef, Keyword akKeyword) global native
@@ -775,7 +882,7 @@ Scriptname PO3_SKSEFunctions Hidden
 	Bool Function SetDoorDestination(ObjectReference akRef, ObjectReference akDoor) global native
 
 	Function SetEffectShaderDuration(ObjectReference akRef, EffectShader akShader, float afTime, bool abAbsolute) global native
-
+	
 	Function SetKey(ObjectReference akRef, Key akKey) global native
 
 	Function SetLinkedRef(ObjectReference akRef, ObjectReference akTargetRef, Keyword akKeyword = None) global native
@@ -818,13 +925,17 @@ Scriptname PO3_SKSEFunctions Hidden
 ;PAPYRUS EXTENDER
 ;----------------------------------------------------------------------------------------------------------
 
-	;(major,minor,patch / 5,9,0)
+	;(major,minor,patch / 5,10,0)
 	int[] Function GetPapyrusExtenderVersion() global native
 
 ;-----------------------------------------------------------------------------------------------------------
 ;POTION
 ;-----------------------------------------------------------------------------------------------------------
 
+	;-------
+	;SETTERS
+	;-------
+	
 	Function AddMagicEffectToPotion(Potion akPotion, MagicEffect akMagicEffect, float afMagnitude, int aiArea, int aiDuration, float afCost = 0.0, string[] asConditionList) global native
 
 	Function AddEffectItemToPotion(Potion akPotion, Potion akPotionToCopyFrom, int aiIndex, float afCost = -1.0) global native
@@ -832,7 +943,7 @@ Scriptname PO3_SKSEFunctions Hidden
 	Function RemoveMagicEffectFromPotion(Potion akPotion, MagicEffect akMagicEffect, float afMagnitude, int aiArea, int aiDuration, float afCost = 0.0) global native
 
 	Function RemoveEffectItemFromPotion(Potion akPotion, Potion akPotionToMatchFrom, int aiIndex) global native
-
+	
 	Function SetPotionMagicEffect(Potion akPotion, MagicEffect akMagicEffect, int aiIndex) global native
 
 ;----------------------------------------------------------------------------------------------------------
@@ -869,14 +980,40 @@ Scriptname PO3_SKSEFunctions Hidden
 ;QUEST
 ;-----------------------------------------------------------------------------------------------------------
 
+	;-------
+	;GETTERS
+	;-------
+	
 	int[] Function GetAllQuestObjectives(Quest akQuest) global native
-
+	
+	int[] Function GetAllQuestStages(Quest akQuest) global native
+	
+	;-------
+	;SETTERS
+	;-------
+	
 	Function SetObjectiveText(Quest akQuest, string asText, int aiIndex) global native
+	
+;-----------------------------------------------------------------------------------------------------------
+;SCENE
+;-----------------------------------------------------------------------------------------------------------
+
+	;-------
+	;GETTERS
+	;-------
+	
+	Actor[] Function GetActorsInScene(Scene akScene) global native
+	
+	bool Function IsActorInScene(Scene akScene, Actor akActor) global native
 
 ;-----------------------------------------------------------------------------------------------------------
 ;SCROLL
 ;-----------------------------------------------------------------------------------------------------------
 
+	;-------
+	;GETTERS
+	;-------
+	
 	Function AddMagicEffectToScroll(Scroll akScroll, MagicEffect akMagicEffect, float afMagnitude, int aiArea, int aiDuration, float afCost = 0.0, string[] asConditionList) global native
 
 	Function AddEffectItemToScroll(Scroll akScroll, Scroll akScrollToCopyFrom, int aiIndex, float afCost = -1.0) global native
@@ -884,13 +1021,17 @@ Scriptname PO3_SKSEFunctions Hidden
 	Function RemoveMagicEffectFromScroll(Scroll akScroll, MagicEffect akMagicEffect, float afMagnitude, int aiArea, int aiDuration, float afCost = 0.0) global native
 
 	Function RemoveEffectItemFromScroll(Scroll akScroll, Scroll akScrollToMatchFrom, int aiIndex) global native
-
+	
 	Function SetScrollMagicEffect(Scroll akScroll, MagicEffect akMagicEffect, int aiIndex) global native
 
 ;-----------------------------------------------------------------------------------------------------------
 ;SOUND
 ;-----------------------------------------------------------------------------------------------------------
 
+	;-------
+	;SETTERS
+	;-------
+	
 	Function SetSoundDescriptor(Sound akSound, SoundDescriptor akSoundDescriptor) global native
 
 ;-----------------------------------------------------------------------------------------------------------
@@ -917,15 +1058,19 @@ Scriptname PO3_SKSEFunctions Hidden
 	Function SetSpellCastingType(Spell akSpell, int aiType) global native
 
 	Function SetSpellDeliveryType(Spell akSpell, int aiType) global native
-
+	
 	Function SetSpellType(Spell akSpell, int aiType) global native
-
+	
 	Function SetSpellMagicEffect(Spell akSpell, MagicEffect akMagicEffect, int aiIndex) global native
 
 ;----------------------------------------------------------------------------------------------------------
 ;STRINGS
 ;----------------------------------------------------------------------------------------------------------
 
+	;-------
+	;SETTERS
+	;-------
+	
 	string Function IntToString(int aiValue, bool abHex) global native
 
 	int Function StringToInt(string asString) global native
@@ -934,20 +1079,30 @@ Scriptname PO3_SKSEFunctions Hidden
 ;UI
 ;----------------------------------------------------------------------------------------------------------
 
+	;-------
+	;GETTERS
+	;-------
+	
 	ObjectReference Function GetMenuContainer() global native
-
+	
+	Function HideMenu(string asMenuName) global native	
+	
 	Bool Function IsShowingMenus() global native
-
+		
+	Function ShowBookMenu(Book akBook) global native
+	
 	Function ShowMenu(string asMenuName) global native
-
-	Function HideMenu(string asMenuName) global native
-
+	
 	Function ToggleOpenSleepWaitMenu(bool abOpenSleepMenu) global native
 
 ;----------------------------------------------------------------------------------------------------------
 ;UTILITY
 ;----------------------------------------------------------------------------------------------------------
 
+	;-------
+	;GETTERS
+	;-------
+	
 	float Function GenerateRandomFloat(float afMin, float afMax) global native
 
 	int Function GenerateRandomInt(int afMin, int afMax) global native
@@ -976,6 +1131,10 @@ Scriptname PO3_SKSEFunctions Hidden
 ;WEATHER
 ;----------------------------------------------------------------------------------------------------------
 
+	;-------
+	;GETTERS
+	;-------
+	
 	float Function GetWindSpeedAsFloat(Weather akWeather) global native
 
 	int Function GetWindSpeedAsInt(Weather akWeather) global native

@@ -105,7 +105,7 @@ Scriptname PO3_Events_Alias  Hidden
 
 	Event OnFastTravelPrompt(ObjectReference asMarkerReference)
 	EndEvent
-
+	
 ;FURNITURE EVENT
 
 	Function RegisterForFurnitureEvent(ReferenceAlias akRefAlias) global native
@@ -113,7 +113,7 @@ Scriptname PO3_Events_Alias  Hidden
 
 	Event OnEnterFurniture(ObjectReference akRef)
 	EndEvent
-
+	
 	Event OnExitFurniture(ObjectReference akRef)
 	EndEvent
 
@@ -184,7 +184,7 @@ Scriptname PO3_Events_Alias  Hidden
 
 	Event OnObjectUnloaded(ObjectReference akRef, int aiFormType)
 	EndEvent
-
+	
 ;OBJECT POISONED
 
 	Function RegisterForObjectPoisoned(Alias akAlias) global native
@@ -245,7 +245,7 @@ Scriptname PO3_Events_Alias  Hidden
 
 	Event OnSpellLearned(Spell akSpell)
 	EndEvent
-
+	
 ;WEATHER CHANGE
 
 	Function RegisterForWeatherChange(Alias akAlias) global native
