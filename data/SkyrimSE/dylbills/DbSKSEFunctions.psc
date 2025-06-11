@@ -382,10 +382,12 @@ string[] function GetProjectileCollidedLayerNames(ObjectReference projectileRef)
 ; DroppingPick = 46
 string function GetCollisionLayerName(int layer) Global Native
 
-;get the last object reference that the player activated
+;Get the last object reference that the player activated
+;Requires the bActivateEventSinkEnabledByDefault setting in the DbSkseFunctions.ini file to be enabled.
 ObjectReference function GetLastPlayerActivatedRef() Global Native
 
-;get the last object reference that the player activated after a menu was opened
+;Get the last object reference that the player activated after a menu was opened
+;Requires the bMenuOpenCloseEventSinkEnabled and bActivateEventSinkEnabledByDefault settings in the DbSkseFunctions.ini file to be enabled.
 ObjectReference function GetLastPlayerMenuActivatedRef() Global Native
 
 ;If the ref is an ashpile, gets the actor linked to it, if any. If the ref is an actor, gets the ashpile linked to it, if any. 
@@ -685,10 +687,10 @@ Form Function GetActiveEffectSource(ActiveMagicEffect akEffect) Global Native
 int Function GetActiveMagicEffectConditionStatus(ActiveMagicEffect akEffect) Global Native
 
 ;Get casting source that the ActiveMagicEffect came from
-;kLeftHand = 0,
-;kRightHand = 1,
-;kOther = 2, (most likely shout) 
-;kInstant = 3
+;LeftHand = 0,
+;RightHand = 1,
+;Other = 2, (most likely shout) 
+;Instant = 3
 int Function GetActiveEffectCastingSource(ActiveMagicEffect akEffect) Global Native
 
 ;get magic effects for akForm, assuming akForm is a magic item such as a spell, potion, shout, enchantment, scroll ect...
@@ -727,6 +729,17 @@ int Function GetDetectionLevel(actor akActor, actor akTarget) Global Native
 
 ;ward states are 0 = none, 1 = absorbing, 2 = break  
 int Function GetActorWardState(actor akActor) Global Native
+
+;Same as the IsPCSleeping condition. Returns true if the player is sleeping
+bool function IsPCSleeping() Global Native
+
+function UpdateActor3DModel(Actor akActor) global native
+function UpdateActor3DPosition(Actor akActor, bool warp = false) global native
+
+function UpdateRefLight(ObjectReference ref) global native
+
+;[0] = x, [1] = y, [2] = z
+float[] function GetRefLinearVelocity(ObjectReference ref) global native
 
 String Function GetKeywordString(keyword akKeyword) Global Native
 
@@ -920,6 +933,9 @@ String function GetFormWorldModelNth3dName(form akForm, int n) Global Native
 ;If modName != "", only gets forms from that mod, otherwise gets all forms in game that use the textureset
 form[] function GetAllFormsThatUseTextureSet(TextureSet akTextureSet, string modName = "") Global Native
 
+;get all enable children for the ref. See also objectReference.GetEnableParentRef()
+ObjectReference[] Function GetEnableChildrenRefs(ObjectReference ref) Global Native
+
 ;get all container refs, including actors, that have at least 1 of the akForm in their inventory.
 ObjectReference[] Function GetAllContainerRefsThatContainForm(form akForm) Global Native
 
@@ -1012,6 +1028,8 @@ Race[] function GetArmorAddonRaces(armorAddon akArmorAddon) global native
 bool function ArmorAddonHasRace(armorAddon akArmorAddon, race akRace) global native
 function AddAdditionalRaceToArmorAddon(armorAddon akArmorAddon, race akRace) global native
 function RemoveAdditionalRaceFromArmorAddon(armorAddon akArmorAddon, race akRace) global native
+
+int function TestCv() global native
 
 Function Guard()
     Debug.MessageBox("DbSkseFunctions: Don't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")

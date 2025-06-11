@@ -1,12 +1,18 @@
 Scriptname DbSkseEvents hidden
 ;/
-These are global events. The eventreceiver is what receives the event.  
+These are global events. Any script can register for any of these events. 
+The eventreceiver is the the form, alias or activeMagicEffect that's being registered to recieve the event.
+The eventreceiver should have a script attached that contains the event that's being registered.
+Most of the time you'll want to use 'self' for this parameter.
 
 Filters:
 You can pass in one form paramFilter to compare with the event. 
-the paramFilterIndex chooses which parameter to compare. 0 is the first form param, 1 is the second ect.
+the paramFilterIndex chooses which parameter to compare, from left to right in the event. 0 is the first form param, 1 is the second ect...
+If the parameter in the event matches the filter, the event is sent to your script. 
+Multiple filters can be registered for each event, or no filters to recieve all events.
 
 example script: 
+===================================================================================================================================================================================================================================================================================
 Scriptname MyQuestScript extends Quest
 
 Weapon Property IronSword Auto
@@ -14,8 +20,8 @@ Ammo Property IronArrow Auto
 Projectile Property ArrowIronProjectile Auto
 
 Event Oninit()
-	DbSkseEvents.RegisterFormForGlobalEvent("OnHitGlobal", Self, game.GetPlayer(), 0) 	 ;compare player with 'Attacker'. Registers for when the player hits anything
-	DbSkseEvents.RegisterFormForGlobalEvent("OnHitGlobal", Self, game.GetPlayer(), 1) 	 ;compare player with 'Target'. Registers for when the player is hit by anything
+	DbSkseEvents.RegisterFormForGlobalEvent("OnHitGlobal", Self, game.GetPlayer(), 0) 	 ;compare player with 'Attacker'.  Registers for when the player hits anything
+	DbSkseEvents.RegisterFormForGlobalEvent("OnHitGlobal", Self, game.GetPlayer(), 1) 	 ;compare player with 'Target'.    Registers for when the player is hit by anything
 	DbSkseEvents.RegisterFormForGlobalEvent("OnHitGlobal", Self, IronSword, 2) 		  	 ;compare IronSword with 'Source'. Register for when anything is hit with an IronSword.
 	DbSkseEvents.RegisterFormForGlobalEvent("OnHitGlobal", Self, IronArrow, 3) 		  	 ;compare IronArrow with 'akAmmo'. Register for when anything is hit with an IronArrow.
 	DbSkseEvents.RegisterFormForGlobalEvent("OnHitGlobal", Self, ArrowIronProjectile, 4) ;compare ArrowIronProjectile with 'akProjectile'. Register for when anything is hit with an ArrowIronProjectile. (this is unreliable, better to compare akAmmo when possible.)
@@ -27,11 +33,30 @@ Event OnHitGlobal(ObjectReference Attacker, ObjectReference Target, Form Source,
 	Debug.MessageBox("Attacker = " + Attacker.getDisplayName() + "\nTarget = " + Target.GetDisplayName() + "\nSource = " + Source.GetName() + "\nAmmo = " + akAmmo.getName() + "\nProjectile = " + akProjectile.getName())
 	
 EndEvent
+===================================================================================================================================================================================================================================================================================
 
+As of version 9.5, event paramFilters now check for baseobjects if the event param you're comparing is an objectreference or an actor. 
+Example:
+===================================================================================================================================================================================================================================================================================
+scriptname myQuestScript extends quest
+
+Container Property BarrelFish01 Auto
+
+Event OnInit()
+	;compare the ActivatedRef's base object with BarrelFish01
+	DbSkseEvents.registerFormForGlobalEvent("OnActivateGlobal", self, BarrelFish01, 1)
+EndEvent
+
+;this event now fires when any objectReference whose base object is BarrelFish01 is activated by any reference or actor in game.
+Event OnActivateGlobal(ObjectReference ActivatorRef, ObjectReference ActivatedRef)
+	Debug.MessageBox(ActivatorRef.GetDisplayName() + " activated " + ActivatedRef.GetDisplayName())
+EndEvent 
+===================================================================================================================================================================================================================================================================================
 
 Note that scripts attached to ReferenceAlias's or ActiveMagicEffects will receive the event if the reference they're filled with is registered for the event. 
 Example:
 
+===================================================================================================================================================================================================================================================================================
 Scriptname MyRefAliasScript extends ReferenceAlias 
 
 Event OnInit()
@@ -39,15 +64,18 @@ Event OnInit()
     DbSkseEvents.RegisterAliasForGlobalEvent("OnWaitStartGlobal", self)
     DbSkseEvents.RegisterFormForGlobalEvent("OnWaitStartGlobal", self.GetReference())
 EndEvent
+===================================================================================================================================================================================================================================================================================
 
 Same goes for ActiveMagicEffects:
-Scriptname MyRefAliasScript extends ReferenceAlias 
+===================================================================================================================================================================================================================================================================================
+Scriptname MyMagicEffectScript extends ActiveMagicEffect 
 
 Event OnEffectStart(Actor akTarget, Actor akCaster)
 	;these two lines achieve the same thing
     DbSkseEvents.RegisterAliasForGlobalEvent("OnWaitStartGlobal", self)
     DbSkseEvents.RegisterFormForGlobalEvent("OnWaitStartGlobal", akTarget)
 EndEvent
+===================================================================================================================================================================================================================================================================================
 /;
 
 ;form ==================================================================================================================================================
@@ -140,11 +168,33 @@ Event OnProjectileImpactGlobal(ObjectReference shooter, ObjectReference target, 
 	float distanceTraveled, string damagedNodeName, ObjectReference projectileMarker, float[] projectileHitTranslation)
 EndEvent
 
+;Like OnMagicEffectApplied. Is triggered when the magicEffect is added to a target.
+;Is trigged regardless if the MagicEffect or spell conditions evaluate to true.
 Event OnMagicEffectAppliedGlobal(ObjectReference Caster, ObjectReference Target, MagicEffect akEffect)
 Endevent
 
-Event OnActiveMagicEffectAppliedGlobal(ObjectReference Caster, ObjectReference Target, Form akSource, MagicEffect akEffect, \
-	ActiveMagicEffect akActiveEffect, int castringSource, int conditionStatus)
+;Like ActiveMagicEffect OnEffectStart 
+;Triggers when the akEffect becomes active on the Target, meaning the conditions for the effect or spell evaluate to true.
+;Source could be a spell, enchantment, potion, ingredient ect. The magic item that applied the akEffect.
+;For castingSource:
+;;LeftHand = 0,
+;RightHand = 1,
+;Other = 2, (most likely shout) 
+;Instant = 3
+Event OnEffectStartGlobal(Actor Caster, Actor Target, MagicEffect akEffect, form source, int castingSource) 
+EndEvent
+
+;Like ActiveMagicEffect OnEffectFinish
+;Triggers when the akEffect becomes inactive or finishes on the Target.
+;Source could be a spell, enchantment, potion, ingredient ect. The magic item that applied the akEffect.
+;For castingSource:
+;;LeftHand = 0,
+;RightHand = 1,
+;Other = 2, (most likely shout) 
+;Instant = 3
+;elapsedSeconds is that amount real time seconds since the effect was last started on the Target. Time spent in menus is counted. 
+;elapsedGameHours is the amount of game hours elapsed since the effect was last started on the Target.
+Event OnEffectFinishGlobal(Actor Caster, Actor Target, MagicEffect akEffect, form source, int castingSource, float elapsedSeconds, float elapsedGameHours)
 EndEvent
 
 ;Event sent when an ObjectReference casts a spell. Source could be a spell, enchantment, potion or ingredient.
@@ -269,6 +319,47 @@ EndEvent
 ;This happens when the player fast travels to a new worldspace 
 ;or when the player moves outside of the current cell grid and the previous cell is unloaded.
 Event OnPlayerChangeCellGlobal(Cell akNewCell, Cell akPreviousCell)
+EndEvent
+
+;This triggers the same as adding a script fragment to a perk entry point in the creation kit.
+;Not sure what the flag is for, but it's in the TESPerkEntryRunEvent so I included it here.
+Event OnPerkEntryRunGlobal(perk akPerk, ObjectReference akTarget, ObjectReference owner, Int flag)
+EndEvent
+
+Event OnTriggerEnterGlobal(ObjectReference akTriggerBox, ObjectReference akTarget)
+EndEvent
+
+Event OnTriggerLeaveGlobal(ObjectReference akTriggerBox, ObjectReference akTarget)
+EndEvent
+
+Event OnPackageStartGlobal(Actor akActor, Package akPackage)
+EndEvent
+
+Event OnPackageChangeGlobal(Actor akActor, Package akPackage)
+EndEvent
+
+Event OnPackageEndGlobal(Actor akActor, Package akPackage)
+EndEvent
+
+Event OnDestructionStageChangedGlobal(ObjectReference ref, Int oldStage, Int newStage)
+EndEvent
+
+Event OnTranslationFailedGlobal(ObjectReference ref)
+EndEvent
+
+Event OnTranslationAlmostCompleteGlobal(ObjectReference ref)
+EndEvent
+
+Event OnTranslationCompleteGlobal(ObjectReference ref)
+EndEvent
+
+;Uses frame update function to detect change. Interval determined by the iFrameUpdateInterval setting in Data/SKSE/Plugins/DbSkseFunctions.ini
+Event OnMusicTypeChangeGlobal(MusicType newMusicType, MusicType oldMusicType)
+EndEvent
+
+;Be aware that weather changes when going in and out of the map menu.
+;Uses frame update function to detect change. Interval determined by the iFrameUpdateInterval setting in Data/SKSE/Plugins/DbSkseFunctions.ini
+Event OnWeatherChangeGlobal(weather newWeather, weather oldWeather)
 EndEvent
 
 ;UI Item Menu Events ========================================================================================================================
@@ -401,6 +492,113 @@ EndEvent
 ;selectedEntry.description
 ;selectedEntry.stats
 
+
+;/ Range Events =============================================================================================================================================
+Events for when an objectReference moves in range or out of range of another objectReference.
+
+IsRegistered, Register and Unregister functions are unique to the akTarget, akCenterRef and distance. 
+So if you do this: 
+DbSkseEvents.RegisterFormForRangeEvents(self, RefA, RefB, 500.0)
+DbSkseEvents.RegisterFormForRangeEvents(self, RefA, RefB, 1000.0)
+Your script will receive events for when RefA moves in or out of range of 500.0 units AND 1000.0 units from refB, so keep track of the distances you are registering. 
+Can use eg UnregisterFormForRangeEvents_All(self) to unregister your script for all range events.
+
+Registers aren't saved to the save file, so use the OnLoadGameGlobal to re-register if necessary.
+
+===================================================================================================================================================================================================================================================================================
+-----------------------------------------------------!!! IMPORTANT !!!----------------------------------------------------------------------------------------------------------------------------------------------------
+===================================================================================================================================================================================================================================================================================
+The akTarget and akCenterRef MUST be persistent refs.
+If they aren't persistent, it will cause ctds if they are unloaded by the game, 
+usually when their parent cell is unloaded when the player moves to a different space.
+You can make any objectReference persistent by simply saving it to a property in the global scope (outside of any events or functions)
+
+Example script:
+===================================================================================================================================================================================================================================================================================
+Scriptname MyQuestScript extends Quest
+
+ObjectReference consoleRef 
+
+function someFunction() 
+	if DbSkseEvents.IsFormRegisteredForRangeEvents(self, game.GetPlayer(), consoleRef, 1000.0)
+		;current saved consoleRef is already registered. 
+		;Unregister first as changing the property value will potentially make it non persistent.
+		DbSkseEvents.UnRegisterFormForRangeEvents(self, game.GetPlayer(), consoleRef, 1000.0)
+	endif
+
+	consoleRef = consoleUtil.GetSelectedReference() 
+	;this is fine to do as the consoleRef is now persistent, there is no danger of it ctds;
+	DbSkseEvents.RegisterFormForRangeEvents(self, game.GetPlayer(), consoleRef, 1000.0) 
+
+	ObjectReference ref = consoleUtil.GetSelectedReference()
+	;this is NOT fine as the ref is defined in a function, which means it's not necessarily persistent and will likely cause ctds.
+	DbSkseEvents.RegisterFormForRangeEvents(self, game.GetPlayer(), ref, 1000.0) 
+EndFunction
+
+;Event triggered when the player gets closer than 1000.0 units to the consoleRef.
+Event OnEnterRange(ObjectReference akTarget, ObjectReference akCenterRef, float distance)
+	float currentDistance = akTarget.GetDistance(akCenterRef)
+	Utility.wait(Utility.randomFloat(0.1, 1.1))
+	debug.MessageBox(\
+	"OnEnterRange" + "\n" +\
+	"Target = " + akTarget.GetDisplayName() + "\n" + \
+	"akCenterRef = " + akCenterRef.GetDisplayName() + "\n" + \
+	"registered distance = " + distance + "\n" + \
+	"current distance = " + currentDistance + "\n" \
+	)
+Endevent 
+
+;Event triggered when the player gets farther away than 1000.0 units from the consoleRef.
+Event OnLeaveRange(ObjectReference akTarget, ObjectReference akCenterRef, float distance)
+	float currentDistance = akTarget.GetDistance(akCenterRef)
+	Utility.wait(Utility.randomFloat(0.1, 1.1))
+	debug.MessageBox(\
+	"OnLeaveRange" + "\n" +\
+	"Target = " + akTarget.GetDisplayName() + "\n" + \
+	"akCenterRef = " + akCenterRef.GetDisplayName() + "\n" + \
+	"registered distance = " + distance + "\n" + \
+	"current distance = " + currentDistance + "\n" \
+	)
+Endevent
+===================================================================================================================================================================================================================================================================================
+ /;
+
+;form ===================================================================================================================================================================================================================================================================================
+int function GetNumRangeEventsRegisteredOnForm(Form eventReceiver) Global Native 
+bool function IsFormRegisteredForRangeEvents(Form eventReceiver, ObjectReference akTarget, ObjectReference akCenterRef, float distance) Global Native 
+bool function RegisterFormForRangeEvents(Form eventReceiver, ObjectReference akTarget, ObjectReference akCenterRef, float distance) Global Native 
+bool function UnregisterFormForRangeEvents(Form eventReceiver, ObjectReference akTarget, ObjectReference akCenterRef, float distance) Global Native 
+int function UnregisterFormForRangeEvents_All(Form eventReceiver) Global Native 
+
+;Alias ===================================================================================================================================================================================================================================================================================
+int function GetNumRangeEventsRegisteredOnAlias(Alias eventReceiver) Global Native 
+bool function IsAliasRegisteredForRangeEvents(Alias eventReceiver, ObjectReference akTarget, ObjectReference akCenterRef, float distance) Global Native 
+bool function RegisterAliasForRangeEvents(Alias eventReceiver, ObjectReference akTarget, ObjectReference akCenterRef, float distance) Global Native 
+bool function UnregisterAliasForRangeEvents(Alias eventReceiver, ObjectReference akTarget, ObjectReference akCenterRef, float distance) Global Native 
+int function UnregisterAliasForRangeEvents_All(Alias eventReceiver) Global Native 
+
+;ActiveMagicEffect ===================================================================================================================================================================================================================================================================================
+int function GetNumRangeEventsRegisteredOnActiveMagicEffect(ActiveMagicEffect eventReceiver) Global Native 
+bool function IsActiveMagicEffectRegisteredForRangeEvents(ActiveMagicEffect eventReceiver, ObjectReference akTarget, ObjectReference akCenterRef, float distance) Global Native 
+bool function RegisterActiveMagicEffectForRangeEvents(ActiveMagicEffect eventReceiver, ObjectReference akTarget, ObjectReference akCenterRef, float distance) Global Native 
+bool function UnregisterActiveMagicEffectForRangeEvents(ActiveMagicEffect eventReceiver, ObjectReference akTarget, ObjectReference akCenterRef, float distance) Global Native 
+int function UnregisterActiveMagicEffectForRangeEvents_All(ActiveMagicEffect eventReceiver) Global Native 
+
+;Triggered when the akTarget enters the previously registered distance range of akCenterRef.
+;Distance is the distance that was registered, not the current distance from akTarget to akCenterRef. 
+;Use akTarget.GetDistance(akCenterRef) for current distance.
+;This is because this event uses polling and not triggered immediately when the target enters the range.
+;Polling interval determined by the fEventPollingInterval setting in Data/SKSE/Plugins/DbSkseFunctions.ini
+Event OnEnterRange(ObjectReference akTarget, ObjectReference akCenterRef, float distance)
+Endevent 
+
+;Triggered when the akTarget leaves previously registered distance range of akCenterRef.
+;Distance is the distance that was registered, not the current distance from akTarget to akCenterRef. 
+;Use akTarget.GetDistance(akCenterRef) for current distance.
+;This is because this event uses polling and not triggered immediatly when the target enters the range.
+;Polling interval determined by the fEventPollingInterval setting in Data/SKSE/Plugins/DbSkseFunctions.ini
+Event OnLeaveRange(ObjectReference akTarget, ObjectReference akCenterRef, float distance)
+Endevent
 
 Function Guard()
     Debug.MessageBox("DbSkseEvents: Don't recompile scripts from the Papyrus Index! Please use the scripts provided by the mod author.")
