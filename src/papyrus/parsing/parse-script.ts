@@ -1396,8 +1396,7 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
         }
     }
 
-
-    parseScript(document: PapyrusScriptDiscoveredDocument): PapyrusScript<TGame> {
+    parseScriptBase(document: PapyrusScriptDiscoveredDocument): void {
         this.document = {...document, isModified: false};
         this.sourceCodeCased = document.sourceCode;
         this.sourceCodeLowercase = toLowerCase(document.sourceCode);
@@ -1408,6 +1407,10 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
             this.parseNextToken();
 
         if (Object.keys(this.result.propertyGroups['']!.properties).length === 0) delete this.result.propertyGroups[''];
+    }
+
+    parseScript(document: PapyrusScriptDiscoveredDocument): PapyrusScript<TGame> {
+        this.parseScriptBase(document);
 
         return {
             namespace: (this.result.namespace as (TGame extends PapyrusGame.Fallout4 | PapyrusGame.Fallout76 | PapyrusGame.Starfield ? string : never) | null) ?? null,
@@ -1431,10 +1434,42 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
         };
     }
 
+
+    parsePartialScript(sourceCode: string): PapyrusScript<TGame> {
+        this.parseScriptBase({absolutePath: '[[PARTIAL SCRIPT]]', sourceCode});
+
+        return {
+            namespace: (this.result.namespace as (TGame extends PapyrusGame.Fallout4 | PapyrusGame.Fallout76 | PapyrusGame.Starfield ? string : never) | null) ?? null,
+            namespaceName: this.result.namespaceName ?? '[[PARTIAL SCRIPT]]',
+            nameWithoutNamespace: this.result.nameWithoutNamespace ?? '[[PARTIAL SCRIPT]]',
+            isBetaOnly: this.result.isBetaOnly ?? false,
+            isDebugOnly: this.result.isDebugOnly ?? false,
+            isHidden: this.result.isHidden ?? false,
+            default: (this.result.default ?? null) as (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? boolean : never) | (TGame extends PapyrusGame.SkyrimSE ? null : never),
+            isNative: this.result.isNative as (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? boolean : never) | (TGame extends PapyrusGame.SkyrimSE ? null : never),
+            isConditional: this.result.isConditional ?? false,
+            isConst: (this.result.isConst ?? false) as (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? boolean : never) | false,
+            documentationComment: this.result.documentationComment ?? null,
+            documentationString: this.result.documentationString ?? null,
+            extends: this.result.extends ?? null,
+            imports: this.result.imports,
+            propertyGroups: this.result.propertyGroups,
+            structs: this.result.structs as (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? Record<Lowercase<string>, PapyrusScriptStruct<TGame>> : never) | (TGame extends PapyrusGame.SkyrimSE ? null : never),
+            events: this.result.events,
+            functions: this.result.functions,
+        };
+    }
+
     // eslint-disable-next-line no-shadow
     static parseScript<TGame extends PapyrusGame>(game: TGame, document: PapyrusScriptDiscoveredDocument): PapyrusScript<TGame> {
         const parser = new PapyrusScriptParser(game);
         return parser.parseScript(document);
+    }
+
+    // eslint-disable-next-line no-shadow
+    static parsePartialScript<TGame extends PapyrusGame>(game: TGame, sourceCode: string): PapyrusScript<TGame> {
+        const parser = new PapyrusScriptParser(game);
+        return parser.parsePartialScript(sourceCode);
     }
 
     replaceFunctionImplementationWithGuard(script: PapyrusScriptDiscoveredDocument){
