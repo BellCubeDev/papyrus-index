@@ -67,6 +67,7 @@
     "next": "^15.3.1",
     "node-fetch": "^3.3.2",
     "octokit": "^4.1.3",
+    "papyrus-index-typescript-plugin": "file:typescript-plugin",
     "parsoid-service": "file:./cache/parsoid-service",
     "posthog-js": "^1.236.3",
     "proper-lockfile": "^4.1.2",
@@ -95,7 +96,8 @@
       "scheduler-polyfill": "patches/scheduler-polyfill.patch"
     },
     "onlyBuiltDependencies": [
-      "esbuild"
+      "esbuild",
+      "papyrus-index-typescript-plugin"
     ],
     "overrides": {
       "@types/node": "^22.14.1"

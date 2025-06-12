@@ -4,6 +4,11 @@ import * as Log from 'next/dist/build/output/log';
 //import { writeFileSync } from 'node:fs';
 import fs, { type FileHandle } from 'node:fs/promises';
 
+// Ensures that data/*/*/wiki.ts files are not malformed
+import './src/wiki-data-extraction/individual-github-wikis/wikisBySource';
+
+
+
 let interval: ReturnType<typeof setInterval> | null = null;
 
 const writeLogToFile = process.env.CI_WRITE_LOG_TO_FILE === 'true';

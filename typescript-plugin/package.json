@@ -1,0 +1,21 @@
+{
+  "name": "papyrus-index-typescript-plugin",
+  "version": "1.0.0",
+  "description": "TypeScript plugin to enforce that data/*/*/wiki.ts files extend GitHubWiki class",
+  "main": "dist/index.js",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+	"sideEffects": false,
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "postinstall": "pnpm run build"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  },
+  "peerDependencies": {
+    "typescript": ">=4.0.0"
+  }
+}

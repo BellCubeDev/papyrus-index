@@ -32,6 +32,11 @@
     "plugins": [
       {
         "name": "next"
+      },
+      {
+        "name": "papyrus-index-typescript-plugin",
+        "filePattern": "data/*/*/wiki.ts",
+        "baseClassName": "GitHubWiki"
       }
     ],
     "noImplicitAny": true,
@@ -56,5 +61,6 @@
     "out",
     "node_modules",
     "cache",
+    "typescript-plugin"
   ],
 }

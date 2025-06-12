@@ -148,6 +148,9 @@ importers:
       octokit:
         specifier: ^4.1.3
         version: 4.1.3
+      papyrus-index-typescript-plugin:
+        specifier: file:typescript-plugin
+        version: file:typescript-plugin(typescript@5.8.3(patch_hash=b268284a738ba2396549bdbe068af5a4c07ff0f3604f2a2f7412412f2c826b6a))
       parsoid-service:
         specifier: file:./cache/parsoid-service
         version: file:cache/parsoid-service
@@ -3460,6 +3463,11 @@ packages:
 
   pako@0.2.9:
     resolution: {integrity: sha512-NUcwaKxUxWrZLpDG+z/xZaCgQITkA/Dv4V/T6bw7VON6l1Xz/VnrBqrYjZQ12TamKHzITTfOEIYUj48y2KXImA==}
+
+  papyrus-index-typescript-plugin@file:typescript-plugin:
+    resolution: {directory: typescript-plugin, type: directory}
+    peerDependencies:
+      typescript: '>=4.0.0'
 
   parent-module@1.0.1:
     resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}
@@ -8263,6 +8271,10 @@ snapshots:
       p-limit: 3.1.0
 
   pako@0.2.9: {}
+
+  papyrus-index-typescript-plugin@file:typescript-plugin(typescript@5.8.3(patch_hash=b268284a738ba2396549bdbe068af5a4c07ff0f3604f2a2f7412412f2c826b6a)):
+    dependencies:
+      typescript: 5.8.3(patch_hash=b268284a738ba2396549bdbe068af5a4c07ff0f3604f2a2f7412412f2c826b6a)
 
   parent-module@1.0.1:
     dependencies:
