@@ -1,5 +1,5 @@
-import { PapyrusGame } from "../papyrus/data-structures/pure/game";
-import { UnreachableError } from "../UnreachableError";
+import { PapyrusGame } from "../../papyrus/data-structures/pure/game";
+import { UnreachableError } from "../../UnreachableError";
 
 export type GameWithWiki = Extract<PapyrusGame, PapyrusGame.SkyrimSE | PapyrusGame.Fallout4>;
 

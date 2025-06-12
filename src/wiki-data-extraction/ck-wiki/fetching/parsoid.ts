@@ -1,7 +1,7 @@
 import { exec } from "node:child_process";
 import path from "node:path";
 import url from "node:url";
-import nextConfig from "../../../next.config";
+import nextConfig from "../../../../next.config";
 import * as Log from 'next/dist/build/output/log';
 
 const thisFilePath = url.fileURLToPath(import.meta.url);

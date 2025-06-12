@@ -14,6 +14,7 @@ import { PapyrusGame } from "../../data-structures/pure/game";
 import { PapyrusScriptSourceMetadata, PapyrusSourceType } from "../../data-structures/pure/scriptSource";
 import { bsArch } from "./BSArch";
 import { appendToStepSummarySection, StepSummarySection } from "../../../utils/stepSummary";
+import { dataDir, getGameDir } from "../../../data-folder";
 
 if (typeof window !== 'undefined') throw new Error('This module is not meant to be used in the browser!');
 
@@ -22,23 +23,12 @@ const thisDir = path.dirname(thisFile);
 const tempDownloadDir = path.join(thisDir, 'tmp');
 const createTempDownloadDirPromise = fs.mkdir(tempDownloadDir, {recursive: true});
 
-const papyrusDir = path.join(thisDir, '../../');
-if (path.basename(papyrusDir) !== 'papyrus') throw new Error('Expected papyrusDir to be the `papyrus` directory, but got a different name!');
-
-const srcDir = path.join(papyrusDir, '../');
-if (path.basename(srcDir) !== 'src') throw new Error('Expected srcDir to be the `src` directory, but got a different name!');
-
-const scriptsDir = path.join(srcDir, '../data');
-function getGameDir(game: PapyrusGame) {
-    return path.join(scriptsDir, game);
-}
-
 const ajv = new Ajv({
     loadSchema(uri) {
         throw new Error(`Schema loading not implemented intentionally! URI: ${uri}`);
     },
 });
-const metadataSchemaPromise = fs.readFile(path.resolve(scriptsDir, 'SourceMetadata.schema.json'), 'utf8').then(raw => ajv.compileAsync<PapyrusScriptSourceMetadata<PapyrusGame>>(JSON.parse(raw)));
+const metadataSchemaPromise = fs.readFile(path.resolve(dataDir, 'SourceMetadata.schema.json'), 'utf8').then(raw => ajv.compileAsync<PapyrusScriptSourceMetadata<PapyrusGame>>(JSON.parse(raw)));
 
 async function maybeDownloadMod(folder: string) {
     const downloadMarkerPath = path.join(folder, '.download');

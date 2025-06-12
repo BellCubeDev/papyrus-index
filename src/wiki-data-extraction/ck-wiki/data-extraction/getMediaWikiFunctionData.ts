@@ -1,17 +1,17 @@
 /* eslint-disable complexity */
-import type { PapyrusScriptFunctionIndexed, PapyrusScriptFunctionIndexedAggregate } from "../../papyrus/data-structures/indexing/function";
-import type { PapyrusScriptFunction } from "../../papyrus/data-structures/pure/function";
-import { PapyrusGame } from "../../papyrus/data-structures/pure/game";
+import type { PapyrusScriptFunctionIndexed, PapyrusScriptFunctionIndexedAggregate } from "../../../papyrus/data-structures/indexing/function";
+import type { PapyrusScriptFunction } from "../../../papyrus/data-structures/pure/function";
+import { PapyrusGame } from "../../../papyrus/data-structures/pure/game";
 import { getWiki, type PapyrusWiki } from "../getWiki";
 import { getWikiPageHTMLDocument } from "../fetching/GetWikiPageHTML";
 import { parsoidElementsToMarkdown, parsoidToMarkdown } from "./parsoidToMarkdown";
-import { toLowerCase } from "../../utils/toLowerCase";
-import { appendToStepSummarySection, StepSummarySection } from "../../utils/stepSummary";
-import { getBestName, getBestNameVariant } from "../../utils/getBestName";
+import { toLowerCase } from "../../../utils/toLowerCase";
+import { appendToStepSummarySection, StepSummarySection } from "../../../utils/stepSummary";
+import { getBestName, getBestNameVariant } from "../../../utils/getBestName";
 import { extractLinearWikiPageData } from "./parsoidToPageData";
-import { memoizeDevServerConst } from "../../utils/memoizeDevServerConst";
-import { AllScriptsIndexed } from "../../papyrus/indexing/index-all";
-import { AllSourcesCombined } from "../../papyrus/data-structures/indexing/game";
+import { memoizeDevServerConst } from "../../../utils/memoizeDevServerConst";
+import { AllScriptsIndexed } from "../../../papyrus/indexing/index-all";
+import { AllSourcesCombined } from "../../../papyrus/data-structures/indexing/game";
 
 export type PotentialFunction<TGame extends PapyrusGame> = PapyrusScriptFunctionIndexedAggregate<TGame>| PapyrusScriptFunction<TGame> | PapyrusScriptFunctionIndexed<TGame>;
 

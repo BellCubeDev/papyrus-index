@@ -4,7 +4,7 @@ import type { SearchEntityFunction } from "../../../../search/Entity";
 
 // eslint-disable-next-line camelcase
 async function getWikiFunctionShortDescriptionMD__Server<TGame extends PapyrusGame>(game: TGame, func: (SearchEntityFunction<TGame>|PapyrusScriptFunctionIndexedAggregate<TGame>|PapyrusScriptFunctionIndexed<TGame>) & {ckWikiDescription?: string|null|undefined}, scriptName: string): Promise<string | null> {
-    const getWikiDataFunctionPage = (await import(typeof window === 'undefined' ? "../../../../../mediawiki/data-extraction/getMediaWikiFunctionData" : '@/empty') as typeof import("../../../../../mediawiki/data-extraction/getMediaWikiFunctionData")).getMediaWikiFunctionData;
+    const getWikiDataFunctionPage = (await import(typeof window === 'undefined' ? "../../../../../wiki-data-extraction/ck-wiki/data-extraction/getMediaWikiFunctionData" : '@/empty') as typeof import("../../../../../wiki-data-extraction/ck-wiki/data-extraction/getMediaWikiFunctionData")).getMediaWikiFunctionData;
     const wikiData = await getWikiDataFunctionPage(game, func, scriptName);
     if (!wikiData) return null;
     return wikiData.shortDescriptionMarkdown;
