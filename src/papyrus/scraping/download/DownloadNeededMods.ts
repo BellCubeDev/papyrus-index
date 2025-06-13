@@ -14,7 +14,7 @@ import { PapyrusGame } from "../../data-structures/pure/game";
 import { PapyrusScriptSourceMetadata, PapyrusSourceType } from "../../data-structures/pure/scriptSource";
 import { bsArch } from "./BSArch";
 import { appendToStepSummarySection, StepSummarySection } from "../../../utils/stepSummary";
-import { dataDir, getGameDir } from "../../../data-folder";
+import { dataDir, getGameDir } from "../../../folders";
 
 if (typeof window !== 'undefined') throw new Error('This module is not meant to be used in the browser!');
 

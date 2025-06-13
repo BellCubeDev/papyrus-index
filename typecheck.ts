@@ -5,7 +5,7 @@ import * as Log from 'next/dist/build/output/log';
 import fs, { type FileHandle } from 'node:fs/promises';
 
 // Ensures that data/*/*/wiki.ts files are not malformed
-import './src/wiki-data-extraction/individual-github-wikis/wikisBySource';
+import './src/wiki-data-extraction/individual-github-wikis/wikisBySourceRaw';
 
 
 

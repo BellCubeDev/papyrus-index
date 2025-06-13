@@ -7,7 +7,7 @@ import lockfileUtil from 'proper-lockfile';
 import { memoizeDevServerConst } from '../../../utils/memoizeDevServerConst';
 import { parsoidGetPageHTML } from './parsoid';
 import { isCI } from 'next/dist/server/ci-info';
-import { srcDir } from '../../../data-folder';
+import { srcDir } from '../../../folders';
 
 export interface WikiStorageIndex {
     /** ISO timestamp of the latest change indexed */

@@ -9,7 +9,7 @@ import type { PapyrusScript } from "../data-structures/pure/script";
 import { PapyrusParserError } from "./PapyrusParserError";
 import type { IgnoreYaml } from "../data-structures/ignore-yaml";
 import { toLowerCase } from "../../utils/toLowerCase";
-import { dataDir, getGameDir } from "../../data-folder";
+import { dataDir, getGameDir } from "../../folders";
 
 const ajv = new Ajv({
     loadSchema(uri) {
@@ -26,6 +26,14 @@ export interface PapyrusScriptDiscoveredDocument {
     sourceCode: string;
     /** The absolute file path to the script */
     absolutePath: string;
+    partialOffset?: {
+        /** For partial scripts, the total character offset (all characters, including newlines) */
+        characterOffset: number;
+        /** For partial scripts, the line offset */
+        lineOffset: number;
+        /** For partial scripts, the column offset */
+        columnOffset: number;
+    }
 }
 export interface PapyrusScriptDiscoveredSources<TGame extends PapyrusGame> {
     /** Identifier (folder name) for the source of this script (e.g. `po3` or `vanilla`) */

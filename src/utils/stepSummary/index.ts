@@ -4,8 +4,11 @@ export enum StepSummaryWorkerMessageType {
 }
 
 export enum StepSummarySection {
-    /** Section for warnings about the MediaWiki data's formatting (e.g. there's a misnamed function parameter) */
+    /** Section for warnings about a MediaWiki's formatting (e.g. there's a misnamed function parameter) */
     MediaWikiFormattingWarnings,
+
+    /** Section for warnings about a GitHub Wiki's formatting (e.g. required markdown headers are missing) */
+    GitHubWikiFormattingWarnings,
 
     /** Section for listing which mods were downloaded */
     DownloadedMods,

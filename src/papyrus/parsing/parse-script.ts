@@ -1031,7 +1031,7 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
                         nextTokenCased = tokenCased;
                         nextTokenLowercase = tokenLowercase;
                     } else {
-                        //console.debug('Found function body; skipping to end of function');
+                        //console.debug(`Found function body; skipping to end of function (token: ${tokenCased})`);
                     }
                     break loop;
             }
@@ -1435,8 +1435,8 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
     }
 
 
-    parsePartialScript(sourceCode: string): PapyrusScript<TGame> {
-        this.parseScriptBase({absolutePath: '[[PARTIAL SCRIPT]]', sourceCode});
+    parsePartialScript(document: PapyrusScriptDiscoveredDocument): PapyrusScript<TGame> {
+        this.parseScriptBase(document);
 
         return {
             namespace: (this.result.namespace as (TGame extends PapyrusGame.Fallout4 | PapyrusGame.Fallout76 | PapyrusGame.Starfield ? string : never) | null) ?? null,
@@ -1467,9 +1467,9 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
     }
 
     // eslint-disable-next-line no-shadow
-    static parsePartialScript<TGame extends PapyrusGame>(game: TGame, sourceCode: string): PapyrusScript<TGame> {
+    static parsePartialScript<TGame extends PapyrusGame>(game: TGame, document: PapyrusScriptDiscoveredDocument): PapyrusScript<TGame> {
         const parser = new PapyrusScriptParser(game);
-        return parser.parsePartialScript(sourceCode);
+        return parser.parsePartialScript(document);
     }
 
     replaceFunctionImplementationWithGuard(script: PapyrusScriptDiscoveredDocument){

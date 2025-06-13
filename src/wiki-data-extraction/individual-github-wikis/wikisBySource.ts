@@ -1,29 +1,20 @@
-import { PapyrusGame } from '../../papyrus/data-structures/pure/game';
-import path from 'node:path';
-import fs from 'node:fs/promises';
-import { toLowerCase } from "../../utils/toLowerCase";
-import { GitHubWiki } from './GitHubWiki';
-import { dataDir } from '../../data-folder';
+import { AllScriptsIndexed } from "../../papyrus/indexing/index-all";
+import type { GitHubWiki, GitHubWikiWithConcreteConstructor } from "./GitHubWiki";
+import { wikisBySourceRaw } from "./wikisBySourceRaw";
 
-
-export const wikisBySource = Object.fromEntries(await Promise.all(Object.values(PapyrusGame)
-    .map(async (game)=>[
+export const wikisBySource = Object.fromEntries(
+    Object.entries(wikisBySourceRaw).map(([game, wikis]) => [
         game,
         new Map(
-            await fs.readdir(path.join(dataDir, game), {withFileTypes: true}).catch(()=>[]).then(async entries => (await Promise.all(
-                entries.map(async entry => {
-                    if (!entry.isDirectory()) return null;
+            wikis.entries().map(([sourceId, WikiClass]) => {
+                const source = AllScriptsIndexed[game].scriptSources[sourceId];
+                if (!source) throw new Error(`Source ${sourceId} not found in AllScriptsIndexed for game ${game}, but was found in wikisBySourceRaw. This likely means you have a wiki.ts file WITHOUT a corresponding meta.yaml file.`);
 
-                    const wikiPath = path.join(dataDir, game, entry.name, 'wiki.ts');
-                    if (!(await fs.access(wikiPath).then(() => true).catch(() => false))) return null;
-
-                    return await import(wikiPath).then(wikiModule => {
-                        const isXExtendedByY = Object.prototype.isPrototypeOf.call.bind(Object.prototype.isPrototypeOf);
-                        if (!isXExtendedByY(GitHubWiki, wikiModule.default)) throw new Error(`Invalid wiki module: ${wikiPath} (default export does not extend GitHubWiki)`);
-                        return [toLowerCase(entry.name), wikiModule.default as typeof GitHubWiki<typeof game>] as const;
-                    });
-
-                })
-            )).filter((wiki): wiki is NonNullable<typeof wiki> => wiki !== null))
+                return [
+                    sourceId,
+                    new (WikiClass as GitHubWikiWithConcreteConstructor<typeof game>)(source)
+                ];
+            })
         )
-    ] as const))) as {[TGame in PapyrusGame]: Map<Lowercase<string>, typeof GitHubWiki<TGame>>};
+    ])
+) as { [TGame in keyof typeof wikisBySourceRaw]: Map<Lowercase<string>, GitHubWiki<TGame>> };
