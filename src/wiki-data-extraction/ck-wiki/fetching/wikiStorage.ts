@@ -121,17 +121,21 @@ async function ingestLatestChanges(wiki: PapyrusWiki, storageIndex: WikiStorageI
 
         const recentChanges: [MediaWikiRecentChange, ...MediaWikiRecentChange[]] = changeList.query.recentchanges as [any, ...any[]];
 
-        let latestChangeDate: Date|null = null;
+        let latestChangeDate: Date|null = new Date(storageIndex.lastKnownChange);
         for (const change of recentChanges) {
+
             const changeDate = new Date(change.timestamp);
             if (changeDate.toISOString() === storageIndex.lastKnownChange) continue; // Skip the last known change, as it's already indexed.
-            if (!latestChangeDate || changeDate > latestChangeDate) latestChangeDate = changeDate;
+            if (changeDate > latestChangeDate) {
+                indexHasChanged = true;
+                latestChangeDate = changeDate;
+            }
 
             const page = storageIndex.pages[change.title];
-            if (!page) continue;
-
-            page.needsRedownloaded = true;
-            indexHasChanged = true;
+            if (page) {
+                page.needsRedownloaded = true;
+                indexHasChanged = true;
+            }
         }
 
         storageIndex.lastKnownChange = latestChangeDate?.toISOString() ?? storageIndex.lastKnownChange;
