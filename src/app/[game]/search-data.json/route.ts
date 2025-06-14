@@ -62,6 +62,7 @@ export function generateStaticParams() {
 }
 
 async function getExtraEntityDataForScript(script: PapyrusScriptIndexedAggregate<PapyrusGame>): Promise<[number, SingleExtraEntityDataRecord[SearchIndexEntityType.Script]]> {
+    // TODO: Implement getExtraEntityDataForScript()
     return [script.$entityId, {
         ckWikiData: null,
         githubWikiData: null,
@@ -81,6 +82,7 @@ async function getExtraEntityDataForFunction(game: PapyrusGame, func: PapyrusScr
 }
 
 async function getExtraEntityDataForEvent(event: PapyrusScriptEventOrBaseFunctionIndexedAggregate<PapyrusGame>): Promise<[number, SingleExtraEntityDataRecord[SearchIndexEntityType.Event]]> {
+    // TODO: Implement getExtraEntityDataForEvent()
     return [event.$entityId, {
         ckWikiData: null,
         githubWikiData: null,
@@ -88,12 +90,14 @@ async function getExtraEntityDataForEvent(event: PapyrusScriptEventOrBaseFunctio
 }
 
 async function getExtraEntityDataForProperty(prop: PapyrusScriptPropertyIndexedAggregate<PapyrusGame>): Promise<[number, SingleExtraEntityDataRecord[SearchIndexEntityType.Property]]> {
+    // TODO: Implement getExtraEntityDataForProperty()
     return [prop.$entityId, {
         ckWikiData: null,
         githubWikiData: null,
     }];
 }
 async function getExtraEntityDataForStruct(struct: PapyrusScriptStructIndexedAggregate<Exclude<PapyrusGame, PapyrusGame.SkyrimSE>>): Promise<[number, SingleExtraEntityDataRecord[SearchIndexEntityType.Struct]]> {
+    // TODO: Implement getExtraEntityDataForStruct()
     return [struct.$entityId, {
         ckWikiData: null,
         githubWikiData: null,

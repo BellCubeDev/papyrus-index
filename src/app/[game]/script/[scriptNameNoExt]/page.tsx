@@ -53,8 +53,7 @@ export default async function ScriptPage({params}: {readonly params: Promise<Scr
     return <main>
         <div className={styles.scriptHeader}>
             <h1>{scriptNamespaceName}</h1>
-            <div className={styles.extendsList}>
-            </div>
+            <div className={styles.extendsList}></div> { /* TODO: Add the scripts that this script extends to the script page */ }
         </div>
         <details suppressHydrationWarning>
             <summary>Inheritance Tree</summary>
@@ -62,7 +61,7 @@ export default async function ScriptPage({params}: {readonly params: Promise<Scr
         </details>
         <details suppressHydrationWarning>
             <summary>Structs</summary>
-            <div className={styles.structs}></div>
+            <div className={styles.structs}></div> { /* TODO: Add structs to the script page */ }
         </details>
         <details suppressHydrationWarning>
             {/* Include property groups here too! */}
@@ -78,11 +77,11 @@ export default async function ScriptPage({params}: {readonly params: Promise<Scr
                 </div>
             </div>)}
 
-            <div className={styles.properties}></div>
+            <div className={styles.properties}></div> { /* TODO: Add properties to the script page */ }
         </details>
         <details suppressHydrationWarning>
             <summary>Events</summary>
-            <div className={styles.events}></div>
+            <div className={styles.events}></div> { /* TODO: Add events to the script page */ }
         </details>
         <details suppressHydrationWarning>
             <summary>Functions</summary>
