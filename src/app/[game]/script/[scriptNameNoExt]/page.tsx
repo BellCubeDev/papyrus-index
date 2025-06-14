@@ -37,9 +37,11 @@ export async function generateMetadata({params}: {readonly params: Promise<Scrip
     if (sourceNamespaceNames.length === 0) throw new Error('A script should have at least one source! Makes no sense for it to not have a source! Something is VERY wrong here.');
     const sourcesList = sourceNamespaceNames.length === 1 ? sourceNamespaceNames[0] : sourceNamespaceNames.length === 2 ? sourceNamespaceNames.join(' and ') : `${sourceNamespaceNames.slice(0, -1).join(', ')}, and ${sourceNamespaceNames.at(-1)}`;
 
+    const scriptName = getBestStringVariant(scriptBySources[AllSourcesCombined].namespaceName)![1];
+
     return {
-        title: getBestStringVariant(scriptBySources[AllSourcesCombined].namespaceName)![1],
-        description: `Reference page for the ${getBestStringVariant(scriptBySources[AllSourcesCombined].namespaceName)![1]} script in ${getGameName(game)}. This script is provided by ${sourcesList}.`,
+        title: scriptName,
+        description: `Reference page for the ${scriptName} script in ${getGameName(game)}. This script is provided by ${sourcesList}.`,
     };
 }
 

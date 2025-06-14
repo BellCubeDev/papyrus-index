@@ -24,9 +24,11 @@ export function generateStaticParams(): SourceRouteParams[] {
 export async function generateMetadata({params}: {params: Promise<SourceRouteParams>}): Promise<Metadata> {
     const {game, source} = getGameAndSourceFromParams(await params);
 
+    const sourceName = SourceName({source, long: true});
+
     return {
-        title: `Source: ${SourceName({source, long: false})}`,
-        description: `Reference page for the ${getGameName(game)} Papyrus source, ${SourceName({source, long: true})}`,
+        title: `Source: ${sourceName}`,
+        description: `Reference page for the ${getGameName(game)} Papyrus source, ${sourceName}`,
     };
 }
 

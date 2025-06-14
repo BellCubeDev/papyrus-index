@@ -41,9 +41,12 @@ export async function generateMetadata({params}: {readonly params: Promise<Funct
 
     const scriptNamespaceName = getBestStringVariant(scriptBySources[AllSourcesCombined].namespaceName)![1];
     const description = await FunctionDocumentationStringRaw({game, func, scriptName: scriptNamespaceName});
+
+    const functionName = getBestStringVariant(func.name)![1];
+
     return {
-        title: getBestStringVariant(func.name)![1],
-        description: `Reference page for the ${func.isGlobal.some(v=>v[1]) ? 'Global (static)' : 'Member'} function ${scriptNamespaceName}.${getBestStringVariant(func.name)![1]} for the game ${getGameName(game)}. This script is provided by ${sourcesList}.${description ? `\n\n${description}` : ''}`,
+        title: functionName,
+        description: `Reference page for the ${func.isGlobal.some(v=>v[1]) ? 'Global (static)' : 'Member'} function ${scriptNamespaceName}.${functionName} for the game ${getGameName(game)}. This script is provided by ${sourcesList}.${description ? `\n\n${description}` : ''}`,
         // TODO: Add keywords relevant to the function.
         // Possibly break its name down into parts, take its parameters into account, return type, parent script, and all that fun stuff.
     };
