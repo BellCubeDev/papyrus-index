@@ -1,7 +1,7 @@
 /* eslint-disable no-await-in-loop */
 import * as Log from 'next/dist/build/output/log';
-import nextConfig from "../../../next.config";
-import { memoizeDevServerConst } from "../../utils/memoizeDevServerConst";
+import nextConfig from "../../../../next.config";
+import { memoizeDevServerConst } from "../../../utils/memoizeDevServerConst";
 import type { PapyrusWiki } from "../getWiki";
 
 const wikiFetchPromisesByURL = memoizeDevServerConst('wikiFetchCache', ()=>{

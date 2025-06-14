@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getGameName } from "../../utils/getGameName";
-import { getWiki } from "../../mediawiki/getWiki";
+import { getWiki } from "../../wiki-data-extraction/ck-wiki/getWiki";
 import { WikiAttribution } from "../components/wiki-attribution/WikiAttribution";
 import { getGameFromParams, type GameRouteParams } from "./getGameFromParams";
 import { LOADING_IN_DEV_MODE, SearchProvider } from "../search/SearchProvider";

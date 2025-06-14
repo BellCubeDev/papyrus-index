@@ -2,7 +2,7 @@ import { type ComponentProps } from "react";
 import type { PapyrusScriptFunctionIndexed, PapyrusScriptFunctionIndexedAggregate } from "../../../../../papyrus/data-structures/indexing/function";
 import type { PapyrusGame } from "../../../../../papyrus/data-structures/pure/game";
 import { UnreachableError } from "../../../../../UnreachableError";
-import { getBestNameVariant } from "../../../../../utils/getBestName";
+import { getBestStringVariant } from "../../../../../utils/getBestName";
 import { toLowerCase } from "../../../../../utils/toLowerCase";
 import { Link } from "../../../Link";
 import { Tooltip } from "../../../tooltip/Tooltip";
@@ -30,7 +30,7 @@ export function PapyrusScriptFunctionReference<TGame extends PapyrusGame>(propsO
             ()
         </>;
     } else if (funcAggregate) {
-        const funcName = getBestNameVariant(funcAggregate.name)[1];
+        const funcName = getBestStringVariant(funcAggregate.name)![1];
         return <>
             <PapyrusScriptReference {...propsObj} />
             .

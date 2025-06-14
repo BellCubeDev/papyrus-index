@@ -5,7 +5,7 @@ import type { PapyrusScriptFunctionIndexedAggregate } from "../../papyrus/data-s
 import { AllSourcesCombined } from "../../papyrus/data-structures/indexing/game";
 import type { PapyrusGame } from "../../papyrus/data-structures/pure/game";
 import { AllScriptsIndexed } from "../../papyrus/indexing/index-all";
-import { getBestNameVariant } from "../../utils/getBestName";
+import { getBestStringVariant } from "../../utils/getBestName";
 import { getGameName } from "../../utils/getGameName";
 import { PapyrusScriptFunctionReference } from "../components/papyrus/function/reference/PapyrusScriptFunctionReference";
 import { PapyrusFunctionSignatureVariants } from "../components/papyrus/function/signature/FunctionSignatureVariants";
@@ -57,7 +57,7 @@ export const FunctionOfTheDayOptionsWithRendered = functionOfTheDayOptions.map(F
 function FunctionOfTheDay({dayNum, game, scriptNamespaceNameLowercase, functionNameLowercase, func}: FunctionOfTheDayOption) {
     const script = AllScriptsIndexed[game].scripts[scriptNamespaceNameLowercase]!;
     if (!script) throw new Error(`Script ${scriptNamespaceNameLowercase} not found in game ${game} for Function of the Day! This should not be possible!`);
-    const scriptName = getBestNameVariant(script[AllSourcesCombined].namespaceName)[1];
+    const scriptName = getBestStringVariant(script[AllSourcesCombined].namespaceName)![1];
 
     return [dayNum, <Fragment key={`${game}/${scriptNamespaceNameLowercase}/${functionNameLowercase}`}>
         <h2>

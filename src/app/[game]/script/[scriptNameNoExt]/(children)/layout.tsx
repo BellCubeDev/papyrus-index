@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getGameName } from "../../../../../utils/getGameName";
-import { getBestNameVariant } from "../../../../../utils/getBestName";
+import { getBestStringVariant } from "../../../../../utils/getBestName";
 import { AllSourcesCombined } from "../../../../../papyrus/data-structures/indexing/game";
 import { getGameAndScriptFromParams, type ScriptRouteParams } from "../getGameAndScriptFromParams";
 import styles from './ScriptLayout.module.scss';
@@ -11,7 +11,7 @@ import { faScroll } from "@fortawesome/free-solid-svg-icons";
 export async function generateMetadata({params}: {readonly params: Promise<ScriptRouteParams>}): Promise<Metadata> {
     const {game, scriptBySources} = getGameAndScriptFromParams(await params);
     const gameName = getGameName(game);
-    const scriptNamespaceName = getBestNameVariant(scriptBySources[AllSourcesCombined].namespaceName)[1];
+    const scriptNamespaceName = getBestStringVariant(scriptBySources[AllSourcesCombined].namespaceName)![1];
     return {
         title: {
             template: `%s - ${scriptNamespaceName} | ${gameName} - Papyrus Index`,

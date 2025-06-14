@@ -1,6 +1,5 @@
 import { PapyrusGame } from "../data-structures/pure/game";
 import type { PapyrusScriptSource, PapyrusScriptSourceMetadata } from "../data-structures/pure/scriptSource";
-import url from 'node:url';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import { parse as parseYaml } from 'yaml';
@@ -10,29 +9,15 @@ import type { PapyrusScript } from "../data-structures/pure/script";
 import { PapyrusParserError } from "./PapyrusParserError";
 import type { IgnoreYaml } from "../data-structures/ignore-yaml";
 import { toLowerCase } from "../../utils/toLowerCase";
-
-const thisFile = url.fileURLToPath(import.meta.url);
-
-const thisDir = path.dirname(thisFile);
-
-const papyrusDir = path.join(thisDir, '../');
-if (path.basename(papyrusDir) !== 'papyrus') throw new Error('Expected papyrusDir to be the `papyrus` directory, but got a different name!');
-
-const srcDir = path.join(papyrusDir, '../');
-if (path.basename(srcDir) !== 'src') throw new Error('Expected srcDir to be the `src` directory, but got a different name!');
-
-const scriptsDir = path.join(srcDir, '../data');
-function getGameDir(game: PapyrusGame) {
-    return path.join(scriptsDir, game);
-}
+import { dataDir, getGameDir } from "../../folders";
 
 const ajv = new Ajv({
     loadSchema(uri) {
         throw new Error(`Schema loading not implemented intentionally! URI: ${uri}`);
     },
 });
-const metadataSchemaPromise = fs.readFile(path.resolve(scriptsDir, 'SourceMetadata.schema.json'), 'utf8').then(raw => ajv.compileAsync<PapyrusScriptSourceMetadata<PapyrusGame>>(JSON.parse(raw)));
-const ignoreYamlSchemaPromise = fs.readFile(path.resolve(scriptsDir, 'IgnoreYaml.schema.json'), 'utf8').then(raw => ajv.compileAsync<IgnoreYaml>(JSON.parse(raw)));
+const metadataSchemaPromise = fs.readFile(path.resolve(dataDir, 'SourceMetadata.schema.json'), 'utf8').then(raw => ajv.compileAsync<PapyrusScriptSourceMetadata<PapyrusGame>>(JSON.parse(raw)));
+const ignoreYamlSchemaPromise = fs.readFile(path.resolve(dataDir, 'IgnoreYaml.schema.json'), 'utf8').then(raw => ajv.compileAsync<IgnoreYaml>(JSON.parse(raw)));
 
 if (typeof window !== 'undefined') throw new Error('This module is not meant to be used in the browser!');
 
@@ -41,6 +26,14 @@ export interface PapyrusScriptDiscoveredDocument {
     sourceCode: string;
     /** The absolute file path to the script */
     absolutePath: string;
+    partialOffset?: {
+        /** For partial scripts, the total character offset (all characters, including newlines) */
+        characterOffset: number;
+        /** For partial scripts, the line offset */
+        lineOffset: number;
+        /** For partial scripts, the column offset */
+        columnOffset: number;
+    }
 }
 export interface PapyrusScriptDiscoveredSources<TGame extends PapyrusGame> {
     /** Identifier (folder name) for the source of this script (e.g. `po3` or `vanilla`) */

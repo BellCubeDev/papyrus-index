@@ -1,5 +1,5 @@
-import type { PapyrusWiki } from "../../../mediawiki/getWiki";
-import { getWikiLicense } from "../../../mediawiki/fetching/getWikiLicense";
+import type { PapyrusWiki } from "../../../wiki-data-extraction/ck-wiki/getWiki";
+import { getWikiLicense } from "../../../wiki-data-extraction/ck-wiki/fetching/getWikiLicense";
 import styles from './WikiAttribution.module.scss';
 
 const licenseWordRegex = /\blicense\b/iu;

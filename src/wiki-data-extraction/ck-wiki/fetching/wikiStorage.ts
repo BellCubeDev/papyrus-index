@@ -1,12 +1,12 @@
 import fs from 'fs/promises';
 import path from 'path';
-import url from 'url';
 import type { GameWithWiki, PapyrusWiki } from '../getWiki';
 import { WIKI_FETCH_403FORBIDDEN, wikiFetchGet } from './wikiFetch';
 import lockfileUtil from 'proper-lockfile';
-import { memoizeDevServerConst } from '../../utils/memoizeDevServerConst';
+import { memoizeDevServerConst } from '../../../utils/memoizeDevServerConst';
 import { parsoidGetPageHTML } from './parsoid';
 import { isCI } from 'next/dist/server/ci-info';
+import { srcDir } from '../../../folders';
 
 export interface WikiStorageIndex {
     /** ISO timestamp of the latest change indexed */
@@ -34,13 +34,6 @@ export interface WikiStorageEntry {
     lastDownloaded: string|null;
 }
 
-const thisFilePath = url.fileURLToPath(import.meta.url);
-const thisDirPath = path.dirname(thisFilePath);
-if (path.basename(thisDirPath) !== 'fetching') throw new Error(`Expected wikiStorage.ts to be in the mediawiki/fetching directory, but found ${thisDirPath}`);
-const mediaWikiDir = path.join(thisDirPath, '..');
-if (path.basename(mediaWikiDir) !== 'mediawiki') throw new Error(`Expected the parent of the 'fetching' folder to be in the mediawiki directory, but found ${mediaWikiDir}`);
-const srcDir = path.join(mediaWikiDir, '..');
-if (path.basename(srcDir) !== 'src') throw new Error(`Expected the parent of the 'mediawiki' folder to be in the src directory, but found ${srcDir}`);
 const wikiStoragePath = path.join(srcDir, '../cache/wiki-storage');
 function getWikiStorageDirPath(wiki: PapyrusWiki): string {
     return path.join(wikiStoragePath, wiki.wikiTrueGame);
@@ -127,17 +120,21 @@ async function ingestLatestChanges(wiki: PapyrusWiki, storageIndex: WikiStorageI
 
         const recentChanges: [MediaWikiRecentChange, ...MediaWikiRecentChange[]] = changeList.query.recentchanges as [any, ...any[]];
 
-        let latestChangeDate: Date|null = null;
+        let latestChangeDate: Date|null = new Date(storageIndex.lastKnownChange);
         for (const change of recentChanges) {
+
             const changeDate = new Date(change.timestamp);
             if (changeDate.toISOString() === storageIndex.lastKnownChange) continue; // Skip the last known change, as it's already indexed.
-            if (!latestChangeDate || changeDate > latestChangeDate) latestChangeDate = changeDate;
+            if (changeDate > latestChangeDate) {
+                indexHasChanged = true;
+                latestChangeDate = changeDate;
+            }
 
             const page = storageIndex.pages[change.title];
-            if (!page) continue;
-
-            page.needsRedownloaded = true;
-            indexHasChanged = true;
+            if (page) {
+                page.needsRedownloaded = true;
+                indexHasChanged = true;
+            }
         }
 
         storageIndex.lastKnownChange = latestChangeDate?.toISOString() ?? storageIndex.lastKnownChange;

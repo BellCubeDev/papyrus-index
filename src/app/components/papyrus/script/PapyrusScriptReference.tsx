@@ -2,22 +2,22 @@ import type { ComponentProps } from "react";
 import { UnknownPapyrusScript } from "../../../../papyrus/data-structures/indexing/type";
 import type { PapyrusGame } from "../../../../papyrus/data-structures/pure/game";
 import { UnreachableError } from "../../../../UnreachableError";
-import { getBestName, getBestNameVariant } from "../../../../utils/getBestName";
+import { getBestString, getBestStringVariant } from "../../../../utils/getBestName";
 import { toLowerCase } from "../../../../utils/toLowerCase";
 import { Link } from "../../Link";
 import { Tooltip } from "../../tooltip/Tooltip";
 import styles from './PapyrusScriptReference.module.scss';
 import { PapyrusScriptReferenceTooltip } from "./PapyrusScriptReferenceTooltip";
 
-export function getScriptNameFromProps(propsObj: ComponentProps<typeof PapyrusScriptReferenceTooltip> & {missingName?: string | null|undefined}): string {
+export function getScriptNameFromProps<TGame extends PapyrusGame>(propsObj: ComponentProps<typeof PapyrusScriptReferenceTooltip<TGame>> & {missingName?: string | null|undefined}): string {
     const {script, scriptAggregate, possibleScripts, missingName} = propsObj;
     if (script) {
         return script.namespaceName;
     } else if (scriptAggregate) {
-        return getBestNameVariant(scriptAggregate.namespaceName)[1];
+        return getBestStringVariant(scriptAggregate.namespaceName)![1];
     } else if (possibleScripts) {
         if (possibleScripts === UnknownPapyrusScript) return missingName ? `<UNKNOWN_SCRIPT: ${missingName}>` : `<UNKNOWN_SCRIPT>`;
-        else return getBestName(Object.values(possibleScripts).map(s=>s.namespaceName))!;
+        else return getBestString(Object.values(possibleScripts).map(s=>s.namespaceName))!;
     } else {
         throw new UnreachableError(propsObj, 'Unknown Papyrus script reference type passed to <PapyrusScriptReference> component!');
     }

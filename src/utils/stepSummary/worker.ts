@@ -37,6 +37,7 @@ const filePromise = fs.promises.open(stepSummaryFile, "w");
 type gfm_markdown_string = string & {};
 const StepSummary: Record<StepSummarySection, Map<string, gfm_markdown_string>> = {
     [StepSummarySection.MediaWikiFormattingWarnings]: new Map(),
+    [StepSummarySection.GitHubWikiFormattingWarnings]: new Map(),
     [StepSummarySection.DownloadedMods]: new Map(),
     [StepSummarySection.UnimplementedFeatures]: new Map(),
     [StepSummarySection.SassWarnings]: new Map(),
@@ -44,6 +45,7 @@ const StepSummary: Record<StepSummarySection, Map<string, gfm_markdown_string>> 
 
 const SectionHeaders: Record<StepSummarySection, string> = {
     [StepSummarySection.MediaWikiFormattingWarnings]: "⚠️ MediaWiki Formatting Warnings",
+    [StepSummarySection.GitHubWikiFormattingWarnings]: "⚠️ GitHub Wiki Formatting Warnings",
     [StepSummarySection.UnimplementedFeatures]: "🚧 Unimplemented Features",
     [StepSummarySection.DownloadedMods]: "⬇️ Downloaded Mods",
     [StepSummarySection.SassWarnings]: "⚠️ Sass Warnings",

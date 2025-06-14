@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { AllSourcesCombined } from "../../../../papyrus/data-structures/indexing/game";
 import { AllScriptsIndexed } from "../../../../papyrus/indexing/index-all";
-import { getBestNameVariant } from "../../../../utils/getBestName";
+import { getBestStringVariant } from "../../../../utils/getBestName";
 import { getGameName } from "../../../../utils/getGameName";
 import { GuardEmptyList } from "../../../components/GuardEmptyList";
 import { InheritanceDisplay } from "../../../components/inheritance-display/InheritanceDisplay";
@@ -37,9 +37,11 @@ export async function generateMetadata({params}: {readonly params: Promise<Scrip
     if (sourceNamespaceNames.length === 0) throw new Error('A script should have at least one source! Makes no sense for it to not have a source! Something is VERY wrong here.');
     const sourcesList = sourceNamespaceNames.length === 1 ? sourceNamespaceNames[0] : sourceNamespaceNames.length === 2 ? sourceNamespaceNames.join(' and ') : `${sourceNamespaceNames.slice(0, -1).join(', ')}, and ${sourceNamespaceNames.at(-1)}`;
 
+    const scriptName = getBestStringVariant(scriptBySources[AllSourcesCombined].namespaceName)![1];
+
     return {
-        title: getBestNameVariant(scriptBySources[AllSourcesCombined].namespaceName)[1],
-        description: `Reference page for the ${getBestNameVariant(scriptBySources[AllSourcesCombined].namespaceName)[1]} script in ${getGameName(game)}. This script is provided by ${sourcesList}.`,
+        title: scriptName,
+        description: `Reference page for the ${scriptName} script in ${getGameName(game)}. This script is provided by ${sourcesList}.`,
     };
 }
 
@@ -48,13 +50,12 @@ export default async function ScriptPage({params}: {readonly params: Promise<Scr
 
     const _sourceIDs = Object.keys(scriptBySources);
 
-    const scriptNamespaceName = getBestNameVariant(scriptBySources[AllSourcesCombined].namespaceName)[1];
+    const scriptNamespaceName = getBestStringVariant(scriptBySources[AllSourcesCombined].namespaceName)![1];
 
     return <main>
         <div className={styles.scriptHeader}>
             <h1>{scriptNamespaceName}</h1>
-            <div className={styles.extendsList}>
-            </div>
+            <div className={styles.extendsList}></div> { /* TODO: Add the scripts that this script extends to the script page */ }
         </div>
         <details suppressHydrationWarning>
             <summary>Inheritance Tree</summary>
@@ -62,7 +63,7 @@ export default async function ScriptPage({params}: {readonly params: Promise<Scr
         </details>
         <details suppressHydrationWarning>
             <summary>Structs</summary>
-            <div className={styles.structs}></div>
+            <div className={styles.structs}></div> { /* TODO: Add structs to the script page */ }
         </details>
         <details suppressHydrationWarning>
             {/* Include property groups here too! */}
@@ -78,11 +79,11 @@ export default async function ScriptPage({params}: {readonly params: Promise<Scr
                 </div>
             </div>)}
 
-            <div className={styles.properties}></div>
+            <div className={styles.properties}></div> { /* TODO: Add properties to the script page */ }
         </details>
         <details suppressHydrationWarning>
             <summary>Events</summary>
-            <div className={styles.events}></div>
+            <div className={styles.events}></div> { /* TODO: Add events to the script page */ }
         </details>
         <details suppressHydrationWarning>
             <summary>Functions</summary>

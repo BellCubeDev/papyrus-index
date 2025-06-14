@@ -5,12 +5,16 @@ import type { PapyrusScriptStructIndexed, PapyrusScriptStructIndexedAggregate } 
 import type { UnknownPapyrusScript } from "./type";
 import type { PapyrusScriptOnlyProps } from "../pure/script";
 import type { PapyrusGameDataIndexed } from "./game";
+import type { PapyrusScriptSourceIndexed } from "./scriptSource";
 
 export interface PapyrusScriptIndexed<TGame extends PapyrusGame> extends PapyrusScriptOnlyProps<TGame> {
     nameWithoutNamespace: string;
     namespaceName: string;
     isHidden: boolean;
     isConditional: boolean;
+
+    game: PapyrusGameDataIndexed<TGame>;
+    source: PapyrusScriptSourceIndexed<TGame>;
 
     /** The script this script derives from, if any */
     extends: PapyrusPossibleScripts<TGame> | typeof UnknownPapyrusScript | null;
@@ -77,7 +81,7 @@ type PapyrusScriptIndexedAggregateSpecialKeys<TGame extends PapyrusGame> = {
     structs: (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? Record<Lowercase<string>, PapyrusScriptStructIndexedAggregate<TGame>> : never) | (TGame extends PapyrusGame.SkyrimSE ? null : never);
 } & Pick<PapyrusScriptIndexed<TGame>, 'extendedBy'>
 
-export type PapyrusScriptIndexedAggregate<TGame extends PapyrusGame> = PapyrusScriptIndexedAggregateSpecialKeys<TGame> & Omit<PapyrusScriptIndexedAggregateBase<TGame>, keyof PapyrusScriptIndexedAggregateSpecialKeys<TGame>>;
+export type PapyrusScriptIndexedAggregate<TGame extends PapyrusGame> = PapyrusScriptIndexedAggregateSpecialKeys<TGame> & Omit<PapyrusScriptIndexedAggregateBase<TGame>, 'source'|keyof PapyrusScriptIndexedAggregateSpecialKeys<TGame>>;
 
 /** Represents a single script. Maps potential sources to those scripts. */
 export type PapyrusPossibleScripts<TGame extends PapyrusGame> = Record<Lowercase<string>, PapyrusScriptIndexed<TGame>>;

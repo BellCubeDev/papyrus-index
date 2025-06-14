@@ -3,6 +3,8 @@ import type { PapyrusScriptPropertyIndexedAggregate } from "../../papyrus/data-s
 import type { PapyrusScriptIndexedAggregate } from "../../papyrus/data-structures/indexing/script";
 import type { PapyrusScriptStructIndexedAggregate } from "../../papyrus/data-structures/indexing/struct";
 import type { PapyrusGame } from "../../papyrus/data-structures/pure/game";
+import type { CKWikiDataFunctionPage } from "../../wiki-data-extraction/ck-wiki/data-extraction/getMediaWikiFunctionData";
+import type { GitHubWikiFunctionData } from "../../wiki-data-extraction/individual-github-wikis/GitHubWiki";
 
 export enum SearchIndexEntityType {
     Script,
@@ -20,28 +22,28 @@ export interface SearchEntityBase<TEntityType extends SearchIndexEntityType> {
 }
 
 export interface SearchEntityScriptAdditions extends SearchEntityBase<SearchIndexEntityType.Script>  {
-    ckWikiDescription: string | null;
-    githubWikiDescription: string | null;
+    ckWikiData: null;
+    githubWikiData: null;
 }
 
 export interface SearchEntityFunctionAdditions extends SearchEntityBase<SearchIndexEntityType.Function>  {
-    ckWikiDescription: string | null;
-    githubWikiDescription: string | null;
+    ckWikiData: CKWikiDataFunctionPage | null;
+    githubWikiData: [Lowercase<string>, GitHubWikiFunctionData][];
 }
 
 export interface SearchEntityEventAdditions extends SearchEntityBase<SearchIndexEntityType.Event>  {
-    ckWikiDescription: string | null;
-    githubWikiDescription: string | null;
+    ckWikiData: null;
+    githubWikiData: null;
 }
 
 export interface SearchEntityPropertyAdditions extends SearchEntityBase<SearchIndexEntityType.Property>  {
-    ckWikiDescription: string | null;
-    githubWikiDescription: string | null;
+    ckWikiData: null;
+    githubWikiData: null;
 }
 
 export interface SearchEntityStructAdditions extends SearchEntityBase<SearchIndexEntityType.Struct> {
-    ckWikiDescription: string | null;
-    githubWikiDescription: string | null;
+    ckWikiData: null;
+    githubWikiData: null;
 }
 
 

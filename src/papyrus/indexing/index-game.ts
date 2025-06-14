@@ -26,6 +26,7 @@ export interface IndexingContextGame<TGame extends PapyrusGame> {
 }
 export interface IndexingContextSource<TGame extends PapyrusGame> extends IndexingContextGame<TGame> {
     sourceIdentifier: Lowercase<string>
+    unfinishedSourceRef: PapyrusGameDataIndexed<TGame>['scriptSources'][Lowercase<string>];
 }
 
 export interface IndexingContextScript<TGame extends PapyrusGame> extends IndexingContextSource<TGame> {
@@ -58,7 +59,7 @@ export function indexGame<TGame extends PapyrusGame>({game, scriptSources}: Papy
 
     for (const [scriptNameLowercase, possibleScripts] of Object.entries(scriptsByNameThenSource)) {
         for (const [sourceIdentifier, script] of Object.entries(possibleScripts)) {
-            const indexed = indexScript(script, {...ctx, sourceIdentifier});
+            const indexed = indexScript(script, {...ctx, sourceIdentifier, unfinishedSourceRef: scriptSources[sourceIdentifier] as any,} satisfies IndexingContextSource<TGame>);
             (resultScripts[scriptNameLowercase] ??= {})[sourceIdentifier] = indexed;
         }
     }
@@ -114,7 +115,7 @@ function indexScript<TGame extends PapyrusGame>(script: AnyScript<TGame>, ctx: I
             members: Object.fromEntries(Object.entries(struct.members).map(([memberName, member]) => [
                 memberName,
                 Object.assign(member, {
-                    value: indexTypeValue(member.value, scriptCtx),
+                    value: indexTypeValue(member.value, scriptCtx) as  PapyrusScriptValueIndexed<false, false, Exclude<TGame, PapyrusGame.SkyrimSE>>,
                     script: script as any as PapyrusScriptIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>,
                     struct: struct as any as PapyrusScriptStructIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>,
                     game: ctx.unfinishedGameRef as PapyrusGameDataIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>,
@@ -124,6 +125,8 @@ function indexScript<TGame extends PapyrusGame>(script: AnyScript<TGame>, ctx: I
     ] as const)) satisfies Record<Lowercase<string>, PapyrusScriptStructIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>>;
 
     const res: PapyrusScriptIndexed<TGame> = Object.assign(script, {
+        game: ctx.unfinishedGameRef,
+        source: ctx.unfinishedSourceRef,
         functions: Object.fromEntries(Object.entries(script.functions).map(([funcNameLowercase, func]) => [funcNameLowercase, Object.assign(func, {
             game: ctx.unfinishedGameRef,
             returnType: indexType(func.returnType, scriptCtx),
@@ -264,7 +267,7 @@ function getAllDownstreamScripts<TGame extends PapyrusGame>(thisScript: AnyScrip
 /**
  * Modifies the parsed Papyrus type in-place to exchange all references to script/struct _names_ into references to their actual objects.
  */
-function indexType<TGame extends PapyrusGame, TIsArray extends boolean, TIsParameter extends boolean>($type: PapyrusScriptTypeIndexed<TIsArray, TIsParameter, TGame> | PapyrusScriptType<TIsArray, TIsParameter>, ctx: IndexingContextScript<PapyrusGame>): PapyrusScriptTypeIndexed<TIsArray, TIsParameter, TGame> {
+function indexType<TGame extends PapyrusGame, TIsArray extends boolean, TIsParameter extends boolean>($type: PapyrusScriptTypeIndexed<TIsArray, TIsParameter, TGame> | PapyrusScriptType<TIsArray, TIsParameter>, ctx: IndexingContextScript<TGame>): PapyrusScriptTypeIndexed<TIsArray, TIsParameter, TGame> {
     const type = $type as PapyrusScriptTypeIndexed<TIsArray, true, TGame> | PapyrusScriptType<TIsArray, true>;
     const scriptsByNameThenSource = ctx.scriptsByNameThenSource as Record<Lowercase<string>, Record<Lowercase<string>, PapyrusScriptIndexed<TGame>>>;
     switch (type.type) {
@@ -391,6 +394,6 @@ function indexType<TGame extends PapyrusGame, TIsArray extends boolean, TIsParam
  *
  * Could potentially accomplish this with generics rather than a case, but we'll see.
  */
-function indexTypeValue<TGame extends PapyrusGame, TIsArray extends boolean, TIsParameter extends boolean>(value: PapyrusScriptValue<TIsArray, TIsParameter>, ctx: IndexingContextScript<PapyrusGame>): PapyrusScriptValueIndexed<TIsArray, TIsParameter, TGame> {
+function indexTypeValue<TGame extends PapyrusGame, TIsArray extends boolean, TIsParameter extends boolean>(value: PapyrusScriptValue<TIsArray, TIsParameter>, ctx: IndexingContextScript<TGame>): PapyrusScriptValueIndexed<TIsArray, TIsParameter, TGame> {
     return indexType(value, ctx) as PapyrusScriptValueIndexed<TIsArray, TIsParameter, TGame>;
 }

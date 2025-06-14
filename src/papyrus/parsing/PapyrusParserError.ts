@@ -23,7 +23,12 @@ export class PapyrusParserError extends Error /* not SyntaxError because it's no
 
     constructor(message: string, public readonly index: number, document: PapyrusScriptDiscoveredDocument & {isModified?: boolean}) {
         index--; // The index is one character further than the actual position of the problem
-        const { line, column } = PapyrusParserError.computeLineAndColumn(document, index);
+        let { line, column } = PapyrusParserError.computeLineAndColumn(document, index);
+        if (document.partialOffset) {
+            line += document.partialOffset.lineOffset;
+            column += document.partialOffset.columnOffset;
+            index += document.partialOffset.characterOffset;
+        }
         if (document.isModified) {
             document = {...document, absolutePath: `${document.absolutePath}.reference`};
             fs.writeFileSync(document.absolutePath, document.sourceCode, 'utf8');
