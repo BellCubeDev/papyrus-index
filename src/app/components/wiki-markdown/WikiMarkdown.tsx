@@ -19,7 +19,12 @@ export const AUTOMATIC_BASE_URL: unique symbol = memoizeDevServerConst('AUTOMATI
 function WikiMarkdownLink(gameData: PapyrusGameDataIndexed<PapyrusGame>, inTooltip: boolean|undefined, baseUrl: typeof AUTOMATIC_BASE_URL | URL | string | null, {href: rawHref, children}: ComponentProps<'a'> & ExtraProps): React.ReactElement {
     if (!rawHref) return <>{children}</>;
     if (!baseUrl) throw new Error(`WikiMarkdownLink: No base URL provided for link: ${rawHref}`);
-    let url = new URL(rawHref, baseUrl !== AUTOMATIC_BASE_URL ? baseUrl : (typeof window === 'undefined' ? 'https://papyrus.bellcube.dev' : window.location.href));
+    const resolvedBaseUrl =
+        baseUrl !== AUTOMATIC_BASE_URL
+            ? baseUrl
+            : (typeof window === 'undefined' ? 'https://papyrus.bellcube.dev' : window.location.href);
+            
+    let url = new URL(rawHref, resolvedBaseUrl);
 
     if (url.host === 'www.creationkit.com') {
         // http://www.creationkit.com/GetType_-_Form --> https://ck.uesp.net/wiki/GetType_-_Form
