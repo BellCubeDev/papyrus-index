@@ -8,9 +8,6 @@ import { dataDir } from '../../folders';
 
 const thisFile = url.fileURLToPath(import.meta.url);
 
-const dataDirTestPath = '../../../../data';
-if (path.resolve(thisFile, dataDirTestPath) !== path.resolve(dataDir)) throw new Error(`Expected dataDir to be at ${dataDirTestPath} relative to this file, but that path is ${path.resolve(thisFile, dataDirTestPath)}!`);
-
 export const wikisBySourceRaw = Object.fromEntries(await Promise.all(Object.values(PapyrusGame)
     .map(async (game)=>[
         game,
