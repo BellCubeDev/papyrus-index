@@ -28,15 +28,16 @@ export const wikisBySourceRaw = Object.fromEntries(await Promise.all(Object.valu
                     // This also means we have to have two copies of the template literal, since we have to pass the literal directly to import()
                     //
 
-                    const wikiPath = `../../../../data/${game}/${entry.name}/wiki.ts`;
+                    const wikiPath =                         `../../../data/${game}/${entry.name}/wiki.ts`;
+                    function dynamicImport() { return import(`../../../data/${game}/${entry.name}/wiki.ts`) };
 
-                    const wikiPathResolved = path.resolve(thisFile, wikiPath);
+                    const wikiPathResolved = path.resolve(path.dirname(thisFile), wikiPath); // use path.dirname() here since dynamic import() goes relative to the current directory
                     const expectedWikiPath = path.resolve(dataDir, game, entry.name, 'wiki.ts');
                     if (wikiPathResolved !== expectedWikiPath) throw new Error(`Mismatch between path.join() and template literal path for wiki.ts: ${wikiPathResolved} vs ${expectedWikiPath}`);
 
                     if (!(await fs.access(wikiPathResolved, fs.constants.R_OK).then(() => true).catch((e) => {if (!(e instanceof Error) || !('code' in e) || e.code !== 'ENOENT') throw e; return false}))) return null;
 
-                    const res =  await import(`../../../data/${game}/${entry.name}/wiki.ts`).then(wikiModule => {
+                    const res =  await dynamicImport().then(wikiModule => {
                         const isXExtendedByY = Object.prototype.isPrototypeOf.call.bind(Object.prototype.isPrototypeOf);
                         if (!isXExtendedByY(GitHubWiki, wikiModule.default)) throw new Error(`Invalid wiki module: ${wikiPath} (default export does not extend GitHubWiki)`);
                         return [toLowerCase(entry.name), wikiModule.default as GitHubWikiWithConcreteConstructor<typeof game>] as const;
