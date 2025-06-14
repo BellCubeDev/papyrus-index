@@ -1,7 +1,6 @@
 import type { PapyrusScriptSourceIndexed } from "../../papyrus/data-structures/indexing/scriptSource";
 import type { PapyrusGame } from "../../papyrus/data-structures/pure/game";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface GitHubWikiDataPiece {
     linkToWikiData: string;
 }

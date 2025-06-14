@@ -51,7 +51,7 @@ export default async function SourcePage({params}: {readonly params: Promise<Sou
     </main>;
 }
 
-function SourcePageVanillaGameData<TGame extends PapyrusGame>({game, sourceData}: {readonly game: TGame, readonly sourceData: PapyrusScriptSourceMetadataVanilla<TGame>}) {
+function SourcePageVanillaGameData<TGame extends PapyrusGame>({game, sourceData: _sourceData}: {readonly game: TGame, readonly sourceData: PapyrusScriptSourceMetadataVanilla<TGame>}) {
     return <>
         <h1>{getGameName(game)} (the vanilla game)</h1>
         <p>Scripts included in the vanilla game. Users will not need to download anything.</p>

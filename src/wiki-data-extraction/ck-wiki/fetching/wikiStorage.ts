@@ -1,6 +1,5 @@
 import fs from 'fs/promises';
 import path from 'path';
-import url from 'url';
 import type { GameWithWiki, PapyrusWiki } from '../getWiki';
 import { WIKI_FETCH_403FORBIDDEN, wikiFetchGet } from './wikiFetch';
 import lockfileUtil from 'proper-lockfile';
