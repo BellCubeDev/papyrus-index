@@ -65,7 +65,7 @@ export function FunctionDocumentationStringBest<TGame extends PapyrusGame>({game
     const githubWikisWithDescriptions = githubWikiData.filter(v => v[1].descriptionMD !== null);
     const bestVariant = getBestStringVariant(githubWikisWithDescriptions.map(v => [[v[0]], v[1].descriptionMD!]));
     if (githubWikisWithDescriptions.length > 0)
-        return <WikiMarkdown gameData={func.game} md={getBestString(githubWikiData.map(v=>v[1].descriptionMD!))!} inTooltip={inTooltip} baseURL={githubWikisWithDescriptions.find(v => v[0] === bestVariant![0][0])![1].linkToWikiData} />;
+        return <WikiMarkdown gameData={func.game} md={getBestString(githubWikisWithDescriptions.map(v=>v[1].descriptionMD!))!} inTooltip={inTooltip} baseURL={githubWikisWithDescriptions.find(v => v[0] === bestVariant![0][0])![1].linkToWikiData} />;
 
     const documentationString = getBestStringFromMaybeArray(func.documentationString);
     const documentationComment = getBestStringFromMaybeArray(func.documentationComment);
