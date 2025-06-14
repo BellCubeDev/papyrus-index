@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
-import { AllSourcesCombined } from "../../../../../../../papyrus/data-structures/indexing/game";
+import { Suspense, use } from "react";
+import { AllSourcesCombined, type PapyrusGameDataIndexed } from "../../../../../../../papyrus/data-structures/indexing/game";
 import { AllScriptsIndexed } from "../../../../../../../papyrus/indexing/index-all";
 import { getBestStringVariant } from "../../../../../../../utils/getBestName";
 import { getGameName } from "../../../../../../../utils/getGameName";
@@ -16,6 +16,7 @@ import { TextWithTooltip } from "../../../../../../components/text-with-tooltip/
 import { getGameAndScriptAndFunctionFromParams, type FunctionRouteParams } from "./getGameAndScriptAndFunctionFromParams";
 import { WikiMarkdown } from "../../../../../../components/wiki-markdown/WikiMarkdown";
 import { getGitHubWikiFunctionData } from "../../../../../../components/papyrus/function/signature/getGitHubWikiFunctionDescription";
+import type { PapyrusGame } from "../../../../../../../papyrus/data-structures/pure/game";
 
 export function generateStaticParams(): FunctionRouteParams[] {
     const params: FunctionRouteParams[] = [];
@@ -85,29 +86,55 @@ export default async function FunctionPage({params}: {readonly params: Promise<F
 
         <br />
 
-        <h2>Related Pages</h2>
-        <div data-analytics-id="docs-related"><Suspense fallback={<p>[Development] Loading related pages...</p>}>
-            {ckWikiDataPromise.then(wikiData =>
-                wikiData?.seeAlsoMarkdown && <WikiMarkdown gameData={func.game} md={wikiData.seeAlsoMarkdown} baseURL={wikiData.wikiPageUrl} />
-            )}
-        </Suspense></div>
+        <Suspense fallback={<p>[Development] Loading related pages...</p>}>
+            <RelatedPages gameData={func.game} ckWikiDataPromise={ckWikiDataPromise} />
+        </Suspense>
 
         <br />
 
-        <GuardEmptyList replacement={null} children={<>
-            {ckWikiDataPromise.then(wikiData =>
-                wikiData?.wikiPageUrl && <p><a href={wikiData.wikiPageUrl} target="_blank" rel="noopener noreferrer">View this function&rsquo;s page on the {wikiData.wikiName}</a></p>
-            )}
-            {githubWikiDataPromise.then(githubWikisData => githubWikisData.map(([sourceIdentifier, wikiData])=>
-                <p key={wikiData.linkToWikiData}>
-                    <a href={wikiData.linkToWikiData} target="_blank" rel="noopener noreferrer">View this on the GitHub Wiki for <SourceName long source={AllScriptsIndexed[game].scriptSources[sourceIdentifier]!} /></a>
-                </p>
-            ))}
-        </>} Wrapper={({children})=> <>
-            <h2>Additional References</h2>
-            <div data-analytics-id="docs-additional-references"><Suspense fallback={<p>[Development] Loading wiki link...</p>}>
-                {children}
-            </Suspense></div>
-        </>} />
+        <Suspense fallback={<p>[Development] Loading wiki link...</p>}>
+            <AdditionalReferences
+                game={game}
+                ckWikiDataPromise={ckWikiDataPromise}
+                githubWikiDataPromise={githubWikiDataPromise}
+            />
+        </Suspense>
     </main>;
+}
+
+function RelatedPages({gameData, ckWikiDataPromise}: {readonly gameData: PapyrusGameDataIndexed<PapyrusGame>, readonly ckWikiDataPromise: ReturnType<typeof getMediaWikiFunctionData>}) {
+    const ckWikiData = use(ckWikiDataPromise);
+
+    // eslint-disable-next-line react/jsx-no-bind, react/no-unstable-nested-components -- these components are server components, so we don't really care
+    return <GuardEmptyList replacement={null} Wrapper={({children}) =>
+        <div data-analytics-id="docs-related">
+            <h2>Related Pages</h2>
+            {children}
+        </div>}
+    >
+        {ckWikiData?.seeAlsoMarkdown ? <WikiMarkdown gameData={gameData} md={ckWikiData.seeAlsoMarkdown} baseURL={ckWikiData.wikiPageUrl} /> : []}
+    </GuardEmptyList>;
+}
+
+function AdditionalReferences({game, ckWikiDataPromise, githubWikiDataPromise}: {readonly game: PapyrusGame, readonly ckWikiDataPromise: ReturnType<typeof getMediaWikiFunctionData>, readonly githubWikiDataPromise:Promise<Awaited<ReturnType<typeof getGitHubWikiFunctionData>>>}) {
+    const ckWikiData = use(ckWikiDataPromise);
+    const githubWikiData = use(githubWikiDataPromise);
+
+    // eslint-disable-next-line react/jsx-no-bind, react/no-unstable-nested-components -- these components are server components, so we don't really care
+    return <GuardEmptyList replacement={null} Wrapper={({children}) =>
+        <div data-analytics-id="docs-additional-references">
+            <h2>Additional References</h2>
+            {children}
+        </div>}
+    >
+        {...[
+            ckWikiData?.wikiPageUrl && <p key="ck-wiki-link"><a href={ckWikiData.wikiPageUrl} target="_blank" rel="noopener noreferrer">View this function&rsquo;s page on the {ckWikiData.wikiName}</a></p>,
+            ...githubWikiData.map(([sourceIdentifier, wikiData]) =>
+                <p key={wikiData.linkToWikiData}>
+                    <a href={wikiData.linkToWikiData} target="_blank" rel="noopener noreferrer">View this function on the GitHub Wiki for <SourceName long source={AllScriptsIndexed[game].scriptSources[sourceIdentifier]!} /></a>
+                </p>
+            )
+        ].filter(Boolean)}
+    </GuardEmptyList>;
+
 }
