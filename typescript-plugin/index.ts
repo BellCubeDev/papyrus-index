@@ -1,8 +1,11 @@
 import ts from "typescript";
 import fs from "fs";
+import os from "os";
+import path from "path";
 
 const doDebugLogging = false as boolean;
-const logFile = '/home/bellcube/papyrus-index-plugin.log';
+const logFile = process.env.PAPYRUS_PLUGIN_LOG || path.join(os.tmpdir(), "papyrus-index-plugin.log");
+
 function writeLog(message: string): void {
     if (!doDebugLogging) return;
 
