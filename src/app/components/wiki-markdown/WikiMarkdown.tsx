@@ -22,8 +22,9 @@ function WikiMarkdownLink(gameData: PapyrusGameDataIndexed<PapyrusGame>, inToolt
     let url = new URL(rawHref, baseUrl !== AUTOMATIC_BASE_URL ? baseUrl : (typeof window === 'undefined' ? 'https://papyrus.bellcube.dev' : window.location.href));
 
     if (url.host === 'www.creationkit.com') {
-        const pageTitle = url.searchParams.get('title');
-        if (!pageTitle) throw new Error(`WikiMarkdownLink: Found outdated Creation Kit wiki link without a title: ${rawHref}`);
+        // http://www.creationkit.com/GetType_-_Form --> https://ck.uesp.net/wiki/GetType_-_Form
+        // https://www.creationkit.com/index.php?title=GetType_-_Form --> https://ck.uesp.net/wiki/GetType_-_Form
+        const pageTitle = url.searchParams.get('title') || decodeURI(url.pathname.replace(/^\/(?:fallout4\/)?/u, ''));
 
         // SKYRIM: https://www.creationkit.com/index.php?title=Main_Page --> https://ck.uesp.net/wiki/Main_Page
         // FALLOUT 4: https://www.creationkit.com/fallout4/index.php?title=Main_Page --> https://falloutck.uesp.net/wiki/Main_Page
