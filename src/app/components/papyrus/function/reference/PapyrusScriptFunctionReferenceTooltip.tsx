@@ -6,8 +6,9 @@ import { PapyrusFunctionSignatureVariants } from "../signature/FunctionSignature
 import type { PapyrusScriptFunctionReference } from "./PapyrusScriptFunctionReference";
 import styles from './PapyrusScriptFunctionReference.module.scss';
 import { SuspenseIfDevelopment } from "../../../SuspenseIfDevelopment";
+import type { PapyrusGame } from "../../../../../papyrus/data-structures/pure/game";
 
-export function PapyrusScriptFunctionReferenceTooltip(propsObj: ComponentProps<typeof PapyrusScriptFunctionReference>) {
+export function PapyrusScriptFunctionReferenceTooltip(propsObj: ComponentProps<typeof PapyrusScriptFunctionReference<PapyrusGame>>) {
     const {game, func, funcAggregate} = propsObj;
     const scriptName = getScriptNameFromProps(propsObj);
     if (func) {

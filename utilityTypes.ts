@@ -46,5 +46,5 @@ type OptionalKeyof<T extends object> = Exclude<{
 }[keyof T], undefined>
 
 type RestoreLegacyOptionalKeys<T extends object> = Omit<T, OptionalKeyof<T>> & {
-    [K in OptionalKeyof<T>]: T[K] | undefined
+    [K in OptionalKeyof<T>]?: T[K] | undefined
 }

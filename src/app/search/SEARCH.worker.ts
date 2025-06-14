@@ -236,9 +236,8 @@ const searchIndexPromise = getSearchIndexOnWorkerLoad();
 
 const keys: ((obj: SelectEntityGroups<PapyrusGame, DeepPreparedObject<SearchIndexEntityGroupRecord<PapyrusGame>>, SearchIndexEntityType> extends (infer T)[] ? T : never) => string | Fuzzysort.Prepared)[] = [
     (en) => en.$entityType === SearchIndexEntityType.Script ? en.namespaceName[0]![1] ?? '' : '',
-    (en) => en.$entityType === SearchIndexEntityType.Script ? en.ckWikiDescription ?? '' : '',
-    (en) => 'ckWikiDescription' in en ? en.ckWikiDescription ?? '' : '',
-    (en) => 'githubWikiDescription' in en ? en.githubWikiDescription ?? '' : '',
+    (en) => 'ckWikiData' in en ? en.ckWikiData?.descriptionMarkdown ?? '' : '',
+    (en) => 'githubWikiData' in en && en.githubWikiData ? en.githubWikiData.map(v=>v[1].descriptionMD).join(' ') ?? '' : '',
     (en) => 'documentationComment' in en ? en.documentationComment[0]![1] ?? '' : '',
     (en) => 'documentationString' in en ? en.documentationString[0]![1] ?? '' : '',
     (en) => 'script' in en ? en.script.namespaceName[0]![1] ?? '' : '',

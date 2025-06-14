@@ -1,38 +1,39 @@
 import type { PapyrusScriptSourceIndexed } from "../../papyrus/data-structures/indexing/scriptSource";
-import type { PapyrusScriptFunction } from "../../papyrus/data-structures/pure/function";
 import type { PapyrusGame } from "../../papyrus/data-structures/pure/game";
 
-export interface GitHubWikiDataPiece<TGame extends PapyrusGame> {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export interface GitHubWikiDataPiece {
     linkToWikiData: string;
 }
 
-export interface GitHubWikiScriptDataPiece<TGame extends PapyrusGame> extends GitHubWikiDataPiece<TGame> {
+export interface GitHubWikiScriptDataPiece extends GitHubWikiDataPiece {
     name: Lowercase<string>;
 }
 
 
-export interface GitHubWikiFunctionData<TGame extends PapyrusGame> extends GitHubWikiScriptDataPiece<TGame> {
-    description: string | null;
+export interface GitHubWikiFunctionData extends GitHubWikiScriptDataPiece {
+    descriptionMD: string | null;
     isFunctionDeprecated: boolean | null;
+    deprecatedFor: Lowercase<string> | null;
     /** The name of the event, in this same file, that this function controls registration for */
     controlsEventRegistrationFor: Lowercase<string>[] | null;
 }
 
-export interface GitHubWikiEventData<TGame extends PapyrusGame> extends GitHubWikiScriptDataPiece<TGame> {
-    description: string | null;
+export interface GitHubWikiEventData extends GitHubWikiScriptDataPiece {
+    descriptionMD: string | null;
     /** The names of any functions, in this same file, that control registration for this event */
     registrationControlFunctions: Lowercase<string>[] | null;
 }
 
-export interface GitHubWikiDataScript<TGame extends PapyrusGame> extends GitHubWikiDataPiece<TGame> {
-    functions: Record<Lowercase<string>, GitHubWikiFunctionData<TGame>>;
-    events: Record<Lowercase<string>, GitHubWikiEventData<TGame>>;
+export interface GitHubWikiDataScript extends GitHubWikiDataPiece {
+    functions: Record<Lowercase<string>, GitHubWikiFunctionData>;
+    events: Record<Lowercase<string>, GitHubWikiEventData>;
 }
 
-export interface GitHubWikiData<TGame extends PapyrusGame> extends GitHubWikiDataPiece<TGame> {
+export interface GitHubWikiData extends GitHubWikiDataPiece {
     isPubliclyEditable: boolean;
-    scripts: Record<Lowercase<string>, GitHubWikiDataScript<TGame>>;
-    sourceDescription: string | null;
+    scripts: Record<Lowercase<string>, GitHubWikiDataScript>;
+    sourceDescriptionMD: string | null;
 }
 
 export abstract class GitHubWiki<TGame extends PapyrusGame> {
@@ -40,26 +41,30 @@ export abstract class GitHubWiki<TGame extends PapyrusGame> {
 
     }
 
-    private __dataPromise: Promise<GitHubWikiData<TGame>> | null = null;
-    protected abstract getDataDirect(): Promise<GitHubWikiData<TGame>>
+    private __dataPromise: Promise<GitHubWikiData> | null = null;
+    protected abstract getDataDirect(): Promise<GitHubWikiData>
 
     async getData() {
         return await (this.__dataPromise ??= this.getDataDirect());
     }
 
-    async getFunction(script: Lowercase<string>, name: Lowercase<string>): Promise<GitHubWikiFunctionData<TGame> | null> {
+    async getFunction(scriptNamespaceName: Lowercase<string>, funcName: Lowercase<string>): Promise<GitHubWikiFunctionData | null> {
         const data = await this.getData();
 
-        const scriptData = data.scripts[script];
+        //console.log(`Getting function ${funcName} in script ${scriptNamespaceName} from wiki ${this.source.sourceIdentifier}`);
+
+        const scriptData = data.scripts[scriptNamespaceName];
+        //console.log(`Script data for ${scriptNamespaceName} from wiki ${this.source.sourceIdentifier}:`, scriptData);
         if (!scriptData) return null;
 
-        const functionData = scriptData.functions[name];
+        const functionData = scriptData.functions[funcName];
+        //console.log(`Function data for ${funcName} in script ${scriptNamespaceName} from wiki ${this.source.sourceIdentifier}:`, functionData);
         if (!functionData) return null;
 
         return functionData;
     }
 
-    async getEvent(script: Lowercase<string>, name: Lowercase<string>): Promise<GitHubWikiEventData<TGame> | null> {
+    async getEvent(script: Lowercase<string>, name: Lowercase<string>): Promise<GitHubWikiEventData | null> {
         const data = await this.getData();
 
         const scriptData = data.scripts[script];

@@ -1,10 +1,15 @@
 import { PapyrusGame } from '../../papyrus/data-structures/pure/game';
 import path from 'node:path';
+import url from 'node:url';
 import fs from 'node:fs/promises';
 import { toLowerCase } from "../../utils/toLowerCase";
 import { GitHubWiki, type GitHubWikiWithConcreteConstructor } from './GitHubWiki';
 import { dataDir } from '../../folders';
 
+const thisFile = url.fileURLToPath(import.meta.url);
+
+const dataDirTestPath = '../../../../data';
+if (path.resolve(thisFile, dataDirTestPath) !== path.resolve(dataDir)) throw new Error(`Expected dataDir to be at ${dataDirTestPath} relative to this file, but that path is ${path.resolve(thisFile, dataDirTestPath)}!`);
 
 export const wikisBySourceRaw = Object.fromEntries(await Promise.all(Object.values(PapyrusGame)
     .map(async (game)=>[
@@ -14,14 +19,29 @@ export const wikisBySourceRaw = Object.fromEntries(await Promise.all(Object.valu
                 entries.map(async entry => {
                     if (!entry.isDirectory()) return null;
 
-                    const wikiPath = path.join(dataDir, game, entry.name, 'wiki.ts');
-                    if (!(await fs.access(wikiPath).then(() => true).catch(() => false))) return null;
+                    //
+                    // Because of bundlers, we can't just construct the paths as a non-statically-analyzable string. That'd be too easy.
+                    // So, we must use a template literal to construct the path to the wiki.ts file.
+                    //
+                    // But, for sanity's sake, we also check that the path constructed with path.join() matches the template literal path.
+                    //
+                    // This also means we have to have two copies of the template literal, since we have to pass the literal directly to import()
+                    //
 
-                    return await import(wikiPath).then(wikiModule => {
+                    const wikiPath = `../../../../data/${game}/${entry.name}/wiki.ts`;
+
+                    const wikiPathResolved = path.resolve(thisFile, wikiPath);
+                    const expectedWikiPath = path.resolve(dataDir, game, entry.name, 'wiki.ts');
+                    if (wikiPathResolved !== expectedWikiPath) throw new Error(`Mismatch between path.join() and template literal path for wiki.ts: ${wikiPathResolved} vs ${expectedWikiPath}`);
+
+                    if (!(await fs.access(wikiPathResolved, fs.constants.R_OK).then(() => true).catch((e) => {if (!(e instanceof Error) || !('code' in e) || e.code !== 'ENOENT') throw e; return false}))) return null;
+
+                    const res =  await import(`../../../data/${game}/${entry.name}/wiki.ts`).then(wikiModule => {
                         const isXExtendedByY = Object.prototype.isPrototypeOf.call.bind(Object.prototype.isPrototypeOf);
                         if (!isXExtendedByY(GitHubWiki, wikiModule.default)) throw new Error(`Invalid wiki module: ${wikiPath} (default export does not extend GitHubWiki)`);
                         return [toLowerCase(entry.name), wikiModule.default as GitHubWikiWithConcreteConstructor<typeof game>] as const;
                     });
+                    return res;
 
                 })
             )).filter((wiki): wiki is NonNullable<typeof wiki> => wiki !== null))

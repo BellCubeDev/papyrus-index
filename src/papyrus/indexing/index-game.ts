@@ -267,7 +267,7 @@ function getAllDownstreamScripts<TGame extends PapyrusGame>(thisScript: AnyScrip
 /**
  * Modifies the parsed Papyrus type in-place to exchange all references to script/struct _names_ into references to their actual objects.
  */
-function indexType<TGame extends PapyrusGame, TIsArray extends boolean, TIsParameter extends boolean>($type: PapyrusScriptTypeIndexed<TIsArray, TIsParameter, TGame> | PapyrusScriptType<TIsArray, TIsParameter>, ctx: IndexingContextScript<PapyrusGame>): PapyrusScriptTypeIndexed<TIsArray, TIsParameter, TGame> {
+function indexType<TGame extends PapyrusGame, TIsArray extends boolean, TIsParameter extends boolean>($type: PapyrusScriptTypeIndexed<TIsArray, TIsParameter, TGame> | PapyrusScriptType<TIsArray, TIsParameter>, ctx: IndexingContextScript<TGame>): PapyrusScriptTypeIndexed<TIsArray, TIsParameter, TGame> {
     const type = $type as PapyrusScriptTypeIndexed<TIsArray, true, TGame> | PapyrusScriptType<TIsArray, true>;
     const scriptsByNameThenSource = ctx.scriptsByNameThenSource as Record<Lowercase<string>, Record<Lowercase<string>, PapyrusScriptIndexed<TGame>>>;
     switch (type.type) {
@@ -394,6 +394,6 @@ function indexType<TGame extends PapyrusGame, TIsArray extends boolean, TIsParam
  *
  * Could potentially accomplish this with generics rather than a case, but we'll see.
  */
-function indexTypeValue<TGame extends PapyrusGame, TIsArray extends boolean, TIsParameter extends boolean>(value: PapyrusScriptValue<TIsArray, TIsParameter>, ctx: IndexingContextScript<PapyrusGame>): PapyrusScriptValueIndexed<TIsArray, TIsParameter, TGame> {
+function indexTypeValue<TGame extends PapyrusGame, TIsArray extends boolean, TIsParameter extends boolean>(value: PapyrusScriptValue<TIsArray, TIsParameter>, ctx: IndexingContextScript<TGame>): PapyrusScriptValueIndexed<TIsArray, TIsParameter, TGame> {
     return indexType(value, ctx) as PapyrusScriptValueIndexed<TIsArray, TIsParameter, TGame>;
 }

@@ -2,7 +2,7 @@ import { UnknownPapyrusScript, UnknownPapyrusScriptStruct, type PapyrusScriptTyp
 import type { PapyrusGame } from "../../../../papyrus/data-structures/pure/game";
 import { PapyrusScriptTypeArchetype, type PapyrusScriptType } from "../../../../papyrus/data-structures/pure/type";
 import { UnreachableError } from "../../../../UnreachableError";
-import { getBestName } from "../../../../utils/getBestName";
+import { getBestString } from "../../../../utils/getBestName";
 import { TextWithTooltip } from "../../text-with-tooltip/TooltipText";
 import { PapyrusScriptReference } from "../script/PapyrusScriptReference";
 import { PapyrusStructReference } from "../struct/PapyrusStructReference";
@@ -21,7 +21,7 @@ export function papyrusTypeToString(type: PapyrusScriptType<boolean, true>|Papyr
             return `none${arrString}`;
         case PapyrusScriptTypeArchetype.ScriptInstance:
             if ('script' in type) {
-                const scriptName = type.script === UnknownPapyrusScript ? type.scriptName : getBestName(Object.values(type.script).map(script => script.namespaceName));
+                const scriptName = type.script === UnknownPapyrusScript ? type.scriptName : getBestString(Object.values(type.script).map(script => script.namespaceName));
                 return `${scriptName}${arrString}`;
             } else {
                 return `${type.scriptName}${arrString}`;
@@ -30,8 +30,8 @@ export function papyrusTypeToString(type: PapyrusScriptType<boolean, true>|Papyr
             return `string${arrString}`;
         case PapyrusScriptTypeArchetype.Struct:
             if ('script' in type) {
-                const scriptName = type.script === UnknownPapyrusScript ? type.scriptName : getBestName(Object.values(type.script).map(script => script.namespaceName));
-                const structName = type.struct === UnknownPapyrusScriptStruct ? type.structName : getBestName(Object.values(type.struct).map(struct => struct.name));
+                const scriptName = type.script === UnknownPapyrusScript ? type.scriptName : getBestString(Object.values(type.script).map(script => script.namespaceName));
+                const structName = type.struct === UnknownPapyrusScriptStruct ? type.structName : getBestString(Object.values(type.struct).map(struct => struct.name));
                 return `${scriptName}:${structName}${arrString}`;
             } else {
                 return `${type.scriptName}:${type.structName}${arrString}`;

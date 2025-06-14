@@ -2,12 +2,12 @@
 import type { PapyrusScriptFunctionIndexed, PapyrusScriptFunctionIndexedAggregate } from "../../../papyrus/data-structures/indexing/function";
 import type { PapyrusScriptFunction } from "../../../papyrus/data-structures/pure/function";
 import { PapyrusGame } from "../../../papyrus/data-structures/pure/game";
-import { getWiki, type PapyrusWiki } from "../getWiki";
+import { getWiki, type PapyrusWiki as CKPapyrusWiki } from "../getWiki";
 import { getWikiPageHTMLDocument } from "../fetching/GetWikiPageHTML";
 import { parsoidElementsToMarkdown, parsoidToMarkdown } from "./parsoidToMarkdown";
 import { toLowerCase } from "../../../utils/toLowerCase";
 import { appendToStepSummarySection, StepSummarySection } from "../../../utils/stepSummary";
-import { getBestName, getBestNameVariant } from "../../../utils/getBestName";
+import { getBestString, getBestStringVariant } from "../../../utils/getBestName";
 import { extractLinearWikiPageData } from "./parsoidToPageData";
 import { memoizeDevServerConst } from "../../../utils/memoizeDevServerConst";
 import { AllScriptsIndexed } from "../../../papyrus/indexing/index-all";
@@ -15,15 +15,15 @@ import { AllSourcesCombined } from "../../../papyrus/data-structures/indexing/ga
 
 export type PotentialFunction<TGame extends PapyrusGame> = PapyrusScriptFunctionIndexedAggregate<TGame>| PapyrusScriptFunction<TGame> | PapyrusScriptFunctionIndexed<TGame>;
 
-export interface WikiDataFunctionPage extends PapyrusWiki {
+export interface CKWikiDataFunctionPage extends CKPapyrusWiki {
     /** Whether this function is marked as "latent" by the wiki. Will have the "Latent Functions" category. */
     isMarkedLatent: boolean;
 
     /** Whether this function is marked as "non-delayed" by the wiki. Will have the "Non-delayed Native Function" category */
     isMarkedNonDelayed: boolean;
 
-    /** HTML elements representing the wiki's short description of this element. */
-    shortDescriptionMarkdown: string | null;
+    /** Markdown description of this function, as found on the function's dedicated page. */
+    descriptionMarkdown: string | null;
 
     /** Examples from the wiki page designed to demonstrate the usage of this function */
     examplesData: Array<{
@@ -31,7 +31,7 @@ export interface WikiDataFunctionPage extends PapyrusWiki {
         code: string;
     }>
 
-    /** Elements describing this function's return value */
+    /** Description of this function's return value */
     returnValueDescriptionMarkdown: string;
 
     /** Notes (typically in the form of bullet points) provided by the wiki. */
@@ -54,9 +54,9 @@ export interface WikiDataFunctionPage extends PapyrusWiki {
     wikiPageUrl: string;
 }
 
-const wikiFunctionDataMemoization = memoizeDevServerConst('wikiFunctionDataMemoization', () => new WeakMap<PotentialFunction<PapyrusGame>, WikiDataFunctionPage | null>());
+const wikiFunctionDataMemoization = memoizeDevServerConst('wikiFunctionDataMemoization', () => new WeakMap<PotentialFunction<PapyrusGame>, CKWikiDataFunctionPage | null>());
 
-export async function getMediaWikiFunctionData<TGame extends PapyrusGame, TFunc extends PotentialFunction<TGame>>(game: TGame, func: TFunc, scriptName: string): Promise<WikiDataFunctionPage | null> {
+export async function getMediaWikiFunctionData<TGame extends PapyrusGame, TFunc extends PotentialFunction<TGame>>(game: TGame, func: TFunc, scriptName: string): Promise<CKWikiDataFunctionPage | null> {
     const wikiFunctionData = wikiFunctionDataMemoization.get(func);
     if (wikiFunctionData) return wikiFunctionData;
 
@@ -65,10 +65,10 @@ export async function getMediaWikiFunctionData<TGame extends PapyrusGame, TFunc 
     return wikiFunctionDataNew;
 }
 
-async function getMediaWikiFunctionDataInternal<TGame extends PapyrusGame, TFunc extends PotentialFunction<TGame>>(game: TGame, func: TFunc, scriptName: string): Promise<WikiDataFunctionPage | null> {
+async function getMediaWikiFunctionDataInternal<TGame extends PapyrusGame, TFunc extends PotentialFunction<TGame>>(game: TGame, func: TFunc, scriptName: string): Promise<CKWikiDataFunctionPage | null> {
     const wiki = getWiki(game);
 
-    const functionName = Array.isArray(func.name) ? getBestNameVariant(func.name)[1] : func.name;
+    const functionName = Array.isArray(func.name) ? getBestStringVariant(func.name)![1] : func.name;
     const pageName = `${functionName} - ${scriptName}`;
     const document = await getWikiPageHTMLDocument(wiki, pageName);
     if (!document) return null;
@@ -188,7 +188,7 @@ ${shortDescriptionMarkdown}
     const parametersListElements = pageData.sectionsById.parameters?.contents ?? [];
     const parametersListItems = parametersListElements.filter((el): el is HTMLUListElement => el.tagName.toLowerCase() === 'ul').map(ul => Array.from(ul.children).filter((li): li is HTMLLIElement => li.tagName.toLowerCase() === 'li')).flat(1);
 
-    const parameters: WikiDataFunctionPage['parameters'] = await Promise.all(parametersListItems.map(async li => {
+    const parameters: CKWikiDataFunctionPage['parameters'] = await Promise.all(parametersListItems.map(async li => {
         const asMarkdown = await parsoidToMarkdown(li.innerHTML, document.location.href);
         const [nameMarkdown, descriptionMarkdown] = asMarkdown.split(':', 2).map(s => s.trim());
         if (!descriptionMarkdown) return null;
@@ -239,7 +239,7 @@ ${
 `.trim(), StepSummarySection.MediaWikiFormattingWarnings, `invalid-param-name-${game}-${scriptName}-${functionName}-${name}`);
             return null;
         }
-        name = !Array.isArray(param) ? param.name : getBestName(param.map(p => p.name))[1];
+        name = !Array.isArray(param) ? param.name : getBestString(param.map(p => p.name))[1];
         return {name, nameMarkdown, descriptionMarkdown};
     })).then(a => a.filter((obj): obj is NonNullable<typeof obj> => obj !== null));
 
@@ -251,7 +251,7 @@ ${
         isMarkedLatent,
         isMarkedNonDelayed,
         returnValueDescriptionMarkdown,
-        shortDescriptionMarkdown,
+        descriptionMarkdown: shortDescriptionMarkdown,
         examplesData,
         notesMarkdown,
         parameters,

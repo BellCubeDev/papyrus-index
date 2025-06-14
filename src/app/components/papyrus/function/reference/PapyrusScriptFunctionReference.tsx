@@ -2,7 +2,7 @@ import { type ComponentProps } from "react";
 import type { PapyrusScriptFunctionIndexed, PapyrusScriptFunctionIndexedAggregate } from "../../../../../papyrus/data-structures/indexing/function";
 import type { PapyrusGame } from "../../../../../papyrus/data-structures/pure/game";
 import { UnreachableError } from "../../../../../UnreachableError";
-import { getBestNameVariant } from "../../../../../utils/getBestName";
+import { getBestStringVariant } from "../../../../../utils/getBestName";
 import { toLowerCase } from "../../../../../utils/toLowerCase";
 import { Link } from "../../../Link";
 import { Tooltip } from "../../../tooltip/Tooltip";
@@ -30,13 +30,13 @@ export function PapyrusScriptFunctionReference<TGame extends PapyrusGame>(propsO
             ()
         </>;
     } else if (funcAggregate) {
-        const funcName = getBestNameVariant(funcAggregate.name)[1];
+        const funcName = getBestStringVariant(funcAggregate.name)![1];
         return <>
             <PapyrusScriptReference {...propsObj} />
             .
             { inTooltip
                 ? <span className={styles.reference}>{funcName}</span>
-                : <Tooltip role='tooltip' wrapperClassName={styles.reference} tooltipContents={<PapyrusScriptFunctionReferenceTooltip {...propsObj} />}>
+                : <Tooltip role='tooltip' wrapperClassName={styles.reference} tooltipContents={<PapyrusScriptFunctionReferenceTooltip {...propsObj as ComponentProps<typeof PapyrusScriptFunctionReferenceTooltip>} />}>
                     <Link href={`/${toLowerCase(game)}/script/${toLowerCase(scriptName)}/function/${toLowerCase(funcName)}` as const} data-ref=''>
                         {funcName}
                     </Link>

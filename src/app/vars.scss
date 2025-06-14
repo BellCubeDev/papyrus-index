@@ -23,3 +23,7 @@ $themehue: 275deg;
 }
 
 $codeBG: #5f5f5f52;
+
+$navbar-content-height: 3.5rem;
+$navbar-vertical-padding: .3rem;
+$navbar-height-total: $navbar-content-height + (2 * $navbar-vertical-padding);

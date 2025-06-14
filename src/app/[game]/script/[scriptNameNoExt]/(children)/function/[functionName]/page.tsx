@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { AllSourcesCombined } from "../../../../../../../papyrus/data-structures/indexing/game";
 import { AllScriptsIndexed } from "../../../../../../../papyrus/indexing/index-all";
-import { getBestNameVariant } from "../../../../../../../utils/getBestName";
+import { getBestStringVariant } from "../../../../../../../utils/getBestName";
 import { getGameName } from "../../../../../../../utils/getGameName";
 import { toLowerCase } from "../../../../../../../utils/toLowerCase";
 import { getMediaWikiFunctionData } from "../../../../../../../wiki-data-extraction/ck-wiki/data-extraction/getMediaWikiFunctionData";
@@ -15,6 +15,7 @@ import { SourceName } from "../../../../../../components/papyrus/SourceName";
 import { TextWithTooltip } from "../../../../../../components/text-with-tooltip/TooltipText";
 import { getGameAndScriptAndFunctionFromParams, type FunctionRouteParams } from "./getGameAndScriptAndFunctionFromParams";
 import { WikiMarkdown } from "../../../../../../components/wiki-markdown/WikiMarkdown";
+import { getGitHubWikiFunctionData } from "../../../../../../components/papyrus/function/signature/getGitHubWikiFunctionDescription";
 
 export function generateStaticParams(): FunctionRouteParams[] {
     const params: FunctionRouteParams[] = [];
@@ -37,11 +38,11 @@ export async function generateMetadata({params}: {readonly params: Promise<Funct
     if (sourceNames.length === 0) throw new Error('A script should have at least one source! Makes no sense for it to not have a source! Something is VERY wrong here.');
     const sourcesList = sourceNames.length === 1 ? sourceNames[0] : sourceNames.length === 2 ? sourceNames.join(' and ') : `${sourceNames.slice(0, -1).join(', ')}, and ${sourceNames.at(-1)}`;
 
-    const scriptNamespaceName = getBestNameVariant(scriptBySources[AllSourcesCombined].namespaceName)[1];
+    const scriptNamespaceName = getBestStringVariant(scriptBySources[AllSourcesCombined].namespaceName)![1];
     const description = await FunctionDocumentationStringRaw({game, func, scriptName: scriptNamespaceName});
     return {
-        title: getBestNameVariant(func.name)[1],
-        description: `Reference page for the ${func.isGlobal.some(v=>v[1]) ? 'Global (static)' : 'Member'} function ${scriptNamespaceName}.${getBestNameVariant(func.name)[1]} for the game ${getGameName(game)}. This script is provided by ${sourcesList}.${description ? `\n\n${description}` : ''}`,
+        title: getBestStringVariant(func.name)![1],
+        description: `Reference page for the ${func.isGlobal.some(v=>v[1]) ? 'Global (static)' : 'Member'} function ${scriptNamespaceName}.${getBestStringVariant(func.name)![1]} for the game ${getGameName(game)}. This script is provided by ${sourcesList}.${description ? `\n\n${description}` : ''}`,
         // TODO: Add keywords relevant to the function.
         // Possibly break its name down into parts, take its parameters into account, return type, parent script, and all that fun stuff.
     };
@@ -50,9 +51,10 @@ export async function generateMetadata({params}: {readonly params: Promise<Funct
 export default async function FunctionPage({params}: {readonly params: Promise<FunctionRouteParams>}) {
     const {game, scriptBySources, func} = getGameAndScriptAndFunctionFromParams(await params);
 
-    const scriptNamespaceName = getBestNameVariant(scriptBySources[AllSourcesCombined].namespaceName)[1];
+    const scriptNamespaceName = getBestStringVariant(scriptBySources[AllSourcesCombined].namespaceName)![1];
 
-    const wikiDataPromise = getMediaWikiFunctionData(game, func, scriptNamespaceName);
+    const ckWikiDataPromise = getMediaWikiFunctionData(game, func, scriptNamespaceName);
+    const githubWikiDataPromise = Promise.resolve(getGitHubWikiFunctionData(func));
 
     return <main>
         <GuardEmptyList replacement={<p>No variants of this function found.</p>}>
@@ -63,7 +65,7 @@ export default async function FunctionPage({params}: {readonly params: Promise<F
 
         <h2>Examples</h2>
         <Suspense fallback={<p>[Development] Loading examples...</p>}>
-            {wikiDataPromise.then(wikiData =>
+            {ckWikiDataPromise.then(wikiData =>
                 <GuardEmptyList replacement={<p>No human-generated examples found for this function.</p>}>
                     {wikiData?.examplesData.map((example)=><div key={example.code}>
                         <CodeBlock language={CodeBlockLanguage.Papyrus} code={example.code} />
@@ -85,18 +87,27 @@ export default async function FunctionPage({params}: {readonly params: Promise<F
 
         <h2>Related Pages</h2>
         <div data-analytics-id="docs-related"><Suspense fallback={<p>[Development] Loading related pages...</p>}>
-            {wikiDataPromise.then(wikiData =>
-                wikiData?.seeAlsoMarkdown && <WikiMarkdown gameData={func.game} md={wikiData.seeAlsoMarkdown} />
+            {ckWikiDataPromise.then(wikiData =>
+                wikiData?.seeAlsoMarkdown && <WikiMarkdown gameData={func.game} md={wikiData.seeAlsoMarkdown} baseURL={wikiData.wikiPageUrl} />
             )}
         </Suspense></div>
 
         <br />
 
-        <h2>Additional References</h2>
-        <div data-analytics-id="docs-additional-references"><Suspense fallback={<p>[Development] Loading wiki link...</p>}>
-            {wikiDataPromise.then(wikiData =>
-                wikiData?.wikiPageUrl && <p className="text-center"><a href={wikiData.wikiPageUrl} target="_blank" rel="noopener noreferrer">View this function&rsquo;s page on the {wikiData.wikiName}</a></p>
+        <GuardEmptyList replacement={null} children={<>
+            {ckWikiDataPromise.then(wikiData =>
+                wikiData?.wikiPageUrl && <p><a href={wikiData.wikiPageUrl} target="_blank" rel="noopener noreferrer">View this function&rsquo;s page on the {wikiData.wikiName}</a></p>
             )}
-        </Suspense></div>
+            {githubWikiDataPromise.then(githubWikisData => githubWikisData.map(([sourceIdentifier, wikiData])=>
+                <p key={wikiData.linkToWikiData}>
+                    <a href={wikiData.linkToWikiData} target="_blank" rel="noopener noreferrer">View this on the GitHub Wiki for <SourceName long source={AllScriptsIndexed[game].scriptSources[sourceIdentifier]!} /></a>
+                </p>
+            ))}
+        </>} Wrapper={({children})=> <>
+            <h2>Additional References</h2>
+            <div data-analytics-id="docs-additional-references"><Suspense fallback={<p>[Development] Loading wiki link...</p>}>
+                {children}
+            </Suspense></div>
+        </>} />
     </main>;
 }

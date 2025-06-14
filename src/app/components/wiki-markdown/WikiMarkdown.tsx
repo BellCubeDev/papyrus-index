@@ -7,11 +7,19 @@ import type { ComponentProps } from "react";
 import { PapyrusScriptReference } from "../papyrus/script/PapyrusScriptReference";
 import { PapyrusScriptFunctionReference } from "../papyrus/function/reference/PapyrusScriptFunctionReference";
 import { appendToStepSummarySection, StepSummarySection } from "../../../utils/stepSummary";
+import { memoizeDevServerConst } from "../../../utils/memoizeDevServerConst";
+import remarkGFM from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
+import {defaultSchema, default as rehypeSanitize, type Options} from 'rehype-sanitize';
+import styles from './WikiMarkdown.module.scss';
+
+export const AUTOMATIC_BASE_URL: unique symbol = memoizeDevServerConst('AUTOMATIC_BASE_URL', () => Symbol.for('PAPYRUS_INDEX_AUTOMATIC_BASE_URL')) as any;
 
 // eslint-disable-next-line complexity
-function WikiMarkdownLink(gameData: PapyrusGameDataIndexed<PapyrusGame>, inTooltip: boolean|undefined, {href: rawHref, children}: ComponentProps<'a'> & ExtraProps): React.ReactElement {
+function WikiMarkdownLink(gameData: PapyrusGameDataIndexed<PapyrusGame>, inTooltip: boolean|undefined, baseUrl: typeof AUTOMATIC_BASE_URL | URL | string | null, {href: rawHref, children}: ComponentProps<'a'> & ExtraProps): React.ReactElement {
     if (!rawHref) return <>{children}</>;
-    let url = new URL(rawHref, typeof window === 'undefined' ? 'https://localhost' : window.location.href);
+    if (!baseUrl) throw new Error(`WikiMarkdownLink: No base URL provided for link: ${rawHref}`);
+    let url = new URL(rawHref, baseUrl !== AUTOMATIC_BASE_URL ? baseUrl : (typeof window === 'undefined' ? 'https://papyrus.bellcube.dev' : window.location.href));
 
     if (url.host === 'www.creationkit.com') {
         const pageTitle = url.searchParams.get('title');
@@ -83,8 +91,32 @@ function WikiMarkdownLink(gameData: PapyrusGameDataIndexed<PapyrusGame>, inToolt
     return <a href={url.href}>{children}</a>;
 }
 
-export function WikiMarkdown({md, gameData, inTooltip, ...dataAttributes}: {readonly md: string, readonly gameData: PapyrusGameDataIndexed<PapyrusGame>, readonly inTooltip?: boolean | undefined} & Record<`data-${string}`, string|boolean>): React.ReactElement {
-    return <div {...dataAttributes} data-is-md=''><Markdown skipHtml remarkPlugins={[remarkBreaks]} components={{a: WikiMarkdownLink.bind(null, gameData, inTooltip)}}>
+export function WikiMarkdown({md, gameData, baseURL, inTooltip, ...dataAttributes}: {readonly md: string, readonly gameData: PapyrusGameDataIndexed<PapyrusGame>, readonly inTooltip?: boolean | undefined, readonly baseURL: typeof AUTOMATIC_BASE_URL | URL | string | null} & Record<`data-${string}`, string|boolean>): React.ReactElement {
+    return <div {...dataAttributes} className={styles.md} data-is-md=''><Markdown
+        unwrapDisallowed
+        skipHtml={false}
+        remarkPlugins={[
+            remarkBreaks,
+            remarkGFM,
+        ]}
+        components={{
+            a: WikiMarkdownLink.bind(null, gameData, inTooltip, baseURL)
+        }}
+        remarkRehypeOptions={{
+            clobberPrefix: 'md-',
+            allowDangerousHtml: true,
+        }}
+        rehypePlugins={[
+            rehypeRaw,
+            rehypeSanitize.bind(null, {
+                clobberPrefix: 'md-html-',
+                ancestors: {
+                    ...defaultSchema.ancestors ?? {},
+                    summary: ['details'],
+                }
+            } satisfies Options)
+        ]}
+    >
         {md}
     </Markdown></div>;
 }

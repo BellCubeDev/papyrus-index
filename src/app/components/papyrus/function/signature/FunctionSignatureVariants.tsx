@@ -35,11 +35,11 @@ function getVariantProfileStringForSource(variant: PapyrusScriptFunctionIndexed<
     return profile;
 }
 
-function splitFunctionVariants(funcAggregate: PapyrusScriptFunctionIndexedAggregate<PapyrusGame>): (PapyrusScriptFunctionIndexed<PapyrusGame> & {profile: string, ckWikiDescription: string|null|undefined})[] {
-    const variantMap = new Map<string, PapyrusScriptFunctionIndexed<PapyrusGame> & {profile: string, ckWikiDescription: string|null|undefined}>;
+function splitFunctionVariants<TGame extends PapyrusGame>(funcAggregate: PapyrusScriptFunctionIndexedAggregate<TGame>): (PapyrusScriptFunctionIndexed<TGame> & {profile: string} & RestoreLegacyOptionalKeys<Partial<Pick<SearchEntityFunction<TGame>, 'ckWikiData'>>>)[] {
+    const variantMap = new Map<string, PapyrusScriptFunctionIndexed<TGame> & {profile: string} & RestoreLegacyOptionalKeys<Partial<Pick<SearchEntityFunction<TGame>, 'ckWikiData'>>>>;
     for (const variant of Object.values(funcAggregate.$sources)) {
         const profile = getVariantProfileStringForSource(variant);
-        variantMap.set(profile, Object.assign(variant, {profile, ckWikiDescription: (funcAggregate as SearchEntityFunction<PapyrusGame>).ckWikiDescription}));
+        variantMap.set(profile, Object.assign(variant, {profile, ckWikiData: (funcAggregate as SearchEntityFunction<TGame>).ckWikiData}));
     }
 
     return Array.from(variantMap.values());

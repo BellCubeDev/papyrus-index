@@ -2,7 +2,7 @@
 
 .nav {
     width: calc(100% - css-min(4rem, 8vw));
-    height: 3.5rem;
+    height: $navbar-content-height;
     justify-content: space-between;
     background: #000;
     position: sticky;
@@ -11,8 +11,8 @@
     overflow-y: hidden;
     overflow-x: auto;
     z-index: 100;
-    padding: .3rem 2rem;
-    padding: .3rem css-min(2rem, 4vw);
+    padding: $navbar-vertical-padding 2rem;
+    padding: $navbar-vertical-padding css-min(2rem, 4vw);
 
 
     display: grid;

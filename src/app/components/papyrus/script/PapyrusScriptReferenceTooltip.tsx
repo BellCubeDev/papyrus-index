@@ -6,7 +6,7 @@ import type { PapyrusScriptBySources } from "../../../../papyrus/data-structures
 import { UnreachableError } from "../../../../UnreachableError";
 import { getScriptNameFromProps, PapyrusScriptReference } from "./PapyrusScriptReference";
 import { joinJSX } from "../../../../utils/joinJSX";
-import { getBestName } from "../../../../utils/getBestName";
+import { getBestString } from "../../../../utils/getBestName";
 
 export function PapyrusScriptReferenceTooltip<TGame extends PapyrusGame>(propsObj:
     {
@@ -55,7 +55,7 @@ export function PapyrusScriptReferenceTooltip<TGame extends PapyrusGame>(propsOb
         }
         const possibleScriptsEntries = Object.entries(possibleScripts);
         return <div className={styles.tooltip}>
-            {getBestName(possibleScriptsEntries.map(v => v[1].namespaceName))} (
+            {getBestString(possibleScriptsEntries.map(v => v[1].namespaceName))} (
             {
                 possibleScriptsEntries.some(([,s])=>s.isNative === null)
                     ? Object.values(possibleScripts).some(s=>s.extendsName)
