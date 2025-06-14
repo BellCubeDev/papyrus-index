@@ -160,7 +160,7 @@ async function getMediaWikiFunctionDataInternal<TGame extends PapyrusGame, TFunc
 
     // Counteract "Placeholder Description."
     } else if (shortDescriptionMarkdown.match(/^\s*placeholder description[.!?]?\s*$/iu)) {
-        console.warn(`[MediaWiki Scraping - getWikiDataFunctionPage()] Encountered placeholder short description on page "${pageName}" on wiki "${wiki.wikiName}" (${document.location.href})!`);
+        if (process.env.SKIP_HIGH_LEVEL_DIAGNOSTIC_LOGS !== 'true') console.warn(`[MediaWiki Scraping - getWikiDataFunctionPage()] Encountered placeholder short description on page "${pageName}" on wiki "${wiki.wikiName}" (${document.location.href})!`);
         appendToStepSummarySection(`
 ### Encountered placeholder short description
 
