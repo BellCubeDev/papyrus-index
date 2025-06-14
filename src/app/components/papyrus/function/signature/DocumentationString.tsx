@@ -92,7 +92,7 @@ export function FunctionDocumentationStringBest<TGame extends PapyrusGame>({game
  * A component that displays all forms of a function's documentation strings
  * in an intuitive manner.
  */
-export function FunctionDocumentationStringAll<TGame extends PapyrusGame>({game, func, scriptName, inTooltip}: {readonly game: TGame, readonly func: PapyrusScriptFunctionIndexed<TGame> & {ckWikiDescription?: string|null|undefined}, readonly scriptName: string, readonly inTooltip?: boolean|undefined}): null|React.ReactElement {
+export function FunctionDocumentationStringAll<TGame extends PapyrusGame>({game, func, scriptName, inTooltip}: {readonly game: TGame, readonly func: PapyrusScriptFunctionIndexed<TGame>, readonly scriptName: string, readonly inTooltip?: boolean|undefined}): null|React.ReactElement {
     const elements = [];
 
     const ckWikiData = onlyUseIfUsable(getCKWikiFunctionShortDescriptionMD(game, func, scriptName));
@@ -109,7 +109,7 @@ export function FunctionDocumentationStringAll<TGame extends PapyrusGame>({game,
     const githubWikisWithDescriptions = githubWikiData.filter(v => v[1].descriptionMD !== null);
     elements.push(...githubWikisWithDescriptions.map(([source, data]) =>
         <Fragment key={`githubWiki-${source}`}>
-            <h3>GitHub Wiki Description (<SourceName source={func.script.source} />)</h3>
+            <h3>GitHub Wiki Description (<SourceName source={func.game.scriptSources[source]!} />)</h3>
             <WikiMarkdown data-analytics-id="docs-description-githubwiki"
                 gameData={func.game} inTooltip={inTooltip}
                 md={data.descriptionMD!} baseURL={data.linkToWikiData} />
