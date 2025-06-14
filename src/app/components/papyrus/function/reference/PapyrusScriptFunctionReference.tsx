@@ -36,7 +36,7 @@ export function PapyrusScriptFunctionReference<TGame extends PapyrusGame>(propsO
             .
             { inTooltip
                 ? <span className={styles.reference}>{funcName}</span>
-                : <Tooltip role='tooltip' wrapperClassName={styles.reference} tooltipContents={<PapyrusScriptFunctionReferenceTooltip {...propsObj as ComponentProps<typeof PapyrusScriptFunctionReferenceTooltip>} />}>
+                : <Tooltip role='tooltip' wrapperClassName={styles.reference} tooltipContents={<PapyrusScriptFunctionReferenceTooltip {...propsObj} />}>
                     <Link href={`/${toLowerCase(game)}/script/${toLowerCase(scriptName)}/function/${toLowerCase(funcName)}` as const} data-ref=''>
                         {funcName}
                     </Link>
