@@ -12,6 +12,7 @@ import remarkGFM from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import {defaultSchema, default as rehypeSanitize, type Options} from 'rehype-sanitize';
 import styles from './WikiMarkdown.module.scss';
+import { CodeBlock, CodeBlockLanguage } from "../code-block/CodeBlock";
 
 export const AUTOMATIC_BASE_URL: unique symbol = memoizeDevServerConst('AUTOMATIC_BASE_URL', () => Symbol.for('PAPYRUS_INDEX_AUTOMATIC_BASE_URL')) as any;
 
