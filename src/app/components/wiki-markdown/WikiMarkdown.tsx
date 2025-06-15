@@ -237,6 +237,7 @@ function MarkdownCodeBlock({children, node, ...props}: ComponentProps<'pre'> & E
     if (!codeElement || codeElement.type !== 'element' || codeElement.tagName !== 'code') throw new Error('MarkdownCodeBlock: Expected the first child of the <pre> element to be a <code> element.');
 
     const className = Array.isArray(codeElement.properties.className) ? codeElement.properties.className.join(' ') : codeElement.properties.className;
+    if (!className) return <pre {...props}>{children}</pre>;
     if (typeof className !== 'string') throw new Error(`MarkdownCodeBlock: Expected the \`className\` property of the <code> element to be a string or an array of strings, but got ${typeof className}.`);
     const language = className.match(/(?:\s*|^)language-(?<language>\w+)/u)?.groups?.language;
     if (language !== 'papyrus') return <pre {...props}>{children}</pre>;
