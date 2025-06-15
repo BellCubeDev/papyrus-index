@@ -201,13 +201,14 @@ Processing was aborted.
             const node = eventUnderConstruction.headerNode;
             if (!eventUnderConstruction.name) panic(`Event under construction has no name: ${JSON.stringify(eventUnderConstruction)}`, node);
             if (events[eventUnderConstruction.name]) panic(`Duplicate events with name ${eventUnderConstruction.name} in MCM API Reference: ${JSON.stringify({old: events[eventUnderConstruction.name], new: eventUnderConstruction}, null, 4)}`, node);
+            if (!eventUnderConstruction.linkToWikiData) panic(`Event under construction has no link to wiki data: ${JSON.stringify(eventUnderConstruction)}`, node);
 
             events[eventUnderConstruction.name] = {
                 name: eventUnderConstruction.name,
                 descriptionMD: eventUnderConstruction.descriptionMD ?? null,
                 registrationControlFunctions: eventUnderConstruction.registrationControlFunctions ?? null,
                 parameters: eventUnderConstruction.parameters ?? {},
-                linkToWikiData: 'https://example.com',
+                linkToWikiData: eventUnderConstruction.linkToWikiData,
                 exampleMDs: eventUnderConstruction.exampleMDs,
                 notesMD: eventUnderConstruction.notesMD ?? null,
             };
@@ -364,7 +365,7 @@ Processing was aborted.
                         eventUnderConstruction.parameters[parameterNameLowercase] = {
                             descriptionMD: descriptionMD || null,
                             name: parameterNameLowercase,
-                            linkToWikiData: 'https://example.com',
+                            linkToWikiData: eventUnderConstruction.linkToWikiData,
                             notesMD: null,
                             exampleMDs: [],
                         };
