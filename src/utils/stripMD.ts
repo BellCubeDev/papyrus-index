@@ -1,10 +1,12 @@
-import removeMd from "remove-markdown";
+import {remark} from 'remark';
+import remarkGFM from 'remark-gfm';
+import strip from 'strip-markdown';
+
 
 export function stripMD(md: string): string {
-    return removeMd(md, {
-        useImgAltText: false,
-        gfm /* GitHub-Flavored Markdown*/: false,
-        replaceLinksWithURL: false,
-        stripListLeaders: false,
-    });
+    const remarkProcessor = remark()
+        .use(remarkGFM)
+        .use(strip);
+
+    return remarkProcessor.processSync(md).toString().trim();
 }
