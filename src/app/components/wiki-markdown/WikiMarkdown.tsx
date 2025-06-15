@@ -1,6 +1,7 @@
+/* eslint-disable max-depth */
 import Markdown, { type ExtraProps } from "react-markdown";
 import remarkBreaks from "remark-breaks";
-import type { PapyrusGame } from "../../../papyrus/data-structures/pure/game";
+import { PapyrusGame } from "../../../papyrus/data-structures/pure/game";
 import { AllSourcesCombined, PapyrusGameDataIndexed } from "../../../papyrus/data-structures/indexing/game";
 import { toLowerCase } from "../../../utils/toLowerCase";
 import type { ComponentProps } from "react";
@@ -12,6 +13,7 @@ import remarkGFM from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import {defaultSchema, default as rehypeSanitize, type Options} from 'rehype-sanitize';
 import styles from './WikiMarkdown.module.scss';
+import { ValidPapyrusGames } from "../../../utils/ValidPapyrusGames";
 import { CodeBlock, CodeBlockLanguage } from "../code-block/CodeBlock";
 
 export const AUTOMATIC_BASE_URL: unique symbol = memoizeDevServerConst('AUTOMATIC_BASE_URL', () => Symbol.for('PAPYRUS_INDEX_AUTOMATIC_BASE_URL')) as any;
@@ -19,6 +21,75 @@ export const AUTOMATIC_BASE_URL: unique symbol = memoizeDevServerConst('AUTOMATI
 // eslint-disable-next-line complexity
 function WikiMarkdownLink(gameData: PapyrusGameDataIndexed<PapyrusGame>, inTooltip: boolean|undefined, baseUrl: typeof AUTOMATIC_BASE_URL | URL | string | null, {href: rawHref, children}: ComponentProps<'a'> & ExtraProps): React.ReactElement {
     if (!rawHref) return <>{children}</>;
+
+    if (rawHref.startsWith('papyrus-index:')) {
+        const url = new URL(rawHref);
+        if (url.protocol  !== 'papyrus-index:') throw new Error(`WikiMarkdownLink: 'papyrus-index:' protocol expected, but got: ${url.protocol}`);
+        const pathnameParts = url.pathname.split('/').filter(Boolean).map((s)=> toLowerCase(decodeURI(s)));
+
+        const [gameLowerCase, pathnameVariable1, ...remainingPathnameParts] = pathnameParts;
+
+        if (!gameLowerCase) throw new Error(`WikiMarkdownLink: 'papyrus-index:' protocol with pathname '${url.pathname}' is missing game name.`);
+        const game = ValidPapyrusGames.get(gameLowerCase as any);
+        if (!game) throw new Error(`WikiMarkdownLink: 'papyrus-index:' protocol with pathname '${url.pathname}' references an unsupported game: ${gameLowerCase}. Supported games are: ${Array.from(ValidPapyrusGames.keys()).join(', ')}.`);
+
+        if (game !== gameData.game) return <a href={url.pathname}>{children}</a>;
+
+        switch (pathnameVariable1) {
+            case 'source':
+                return <a href={url.pathname}>{children}</a>;
+
+            case 'script': {
+                const [scriptName, ...remainingScriptPathParts] = remainingPathnameParts;
+                if (!scriptName) throw new Error(`WikiMarkdownLink: 'papyrus-index:' protocol with pathname '${url.pathname}' is missing script name.`);
+                const script = gameData.scripts[toLowerCase(scriptName)];
+                if (!script) {
+                    if (process.env.SKIP_HIGH_LEVEL_DIAGNOSTIC_LOGS !== 'true') console.warn(`WikiMarkdownLink: 'papyrus-index:' protocol with pathname '${url.pathname}' references a script that does not exist: ${scriptName}.`);
+                    appendToStepSummarySection(`\`<WikiMarkdownLink>\` component references a script that does not exist: \`${scriptName}\`.`, StepSummarySection.UnimplementedFeatures);
+                    return <a href={url.pathname}>{children}</a>;
+                }
+                if (remainingScriptPathParts.length === 0) {
+                    return <PapyrusScriptReference
+                        game={gameData.game}
+                        possibleScripts={script} missingName={scriptName}
+                        inTooltip={inTooltip}
+                    />;
+                }
+
+                const [pathnameVariable2, identifier, ..._remainingPathnameParts2] = remainingScriptPathParts;
+                switch (pathnameVariable2) {
+                    case 'function': {
+                        if (!identifier) throw new Error(`WikiMarkdownLink: 'papyrus-index:' protocol with pathname '${url.pathname}' is missing function name.`);
+                        const funcAggregate = script[AllSourcesCombined].functions[toLowerCase(identifier)];
+                        if (!funcAggregate) {
+                            if (process.env.SKIP_HIGH_LEVEL_DIAGNOSTIC_LOGS !== 'true') console.warn(`WikiMarkdownLink: 'papyrus-index:' protocol with pathname '${url.pathname}' references a function that does not exist: ${identifier}.`);
+                            appendToStepSummarySection(`\`<WikiMarkdownLink>\` component references a function that does not exist: \`${identifier}\`.`, StepSummarySection.UnimplementedFeatures);
+                            return <a href={url.pathname}>{children}</a>;
+                        }
+                        return <PapyrusScriptFunctionReference
+                            game={gameData.game}
+                            possibleScripts={script}
+                            funcAggregate={funcAggregate} missingName={identifier}
+                            inTooltip={inTooltip}
+                        />;
+                    }
+
+                    default:
+                        appendToStepSummarySection(`\`<WikiMarkdownLink>\` component with 'papyrus-index:' protocol and pathname '${url.pathname}' has an unknown second part after the script name: '${pathnameVariable2}'.`, StepSummarySection.UnimplementedFeatures);
+                        if (process.env.SKIP_HIGH_LEVEL_DIAGNOSTIC_LOGS !== 'true') console.warn(`WikiMarkdownLink: 'papyrus-index:' protocol with pathname '${url.pathname}' has an unknown second part after the script name: '${pathnameVariable2}'.`);
+                        return <a href={url.pathname}>{children}</a>;
+                }
+
+            }
+
+            default:
+                throw new  Error(`WikiMarkdownLink: 'papyrus-index:' protocol with pathname '${url.pathname}' does not have a valid first part after the game name.`);
+        }
+
+        // eslint-disable-next-line no-unreachable -- leaving this here in case we change things up in the future and this is no longer unreachable.
+        throw new Error(`WikiMarkdownLink: 'papyrus-index:' could not be resolved to a link: ${rawHref}`);
+    }
+
     if (!baseUrl) throw new Error(`WikiMarkdownLink: No base URL provided for link: ${rawHref}`);
     const resolvedBaseUrl =
         baseUrl !== AUTOMATIC_BASE_URL
@@ -98,9 +169,12 @@ function WikiMarkdownLink(gameData: PapyrusGameDataIndexed<PapyrusGame>, inToolt
     return <a href={url.href}>{children}</a>;
 }
 
+const noOpURLTransform = (url: string): string => url;
+
 export function WikiMarkdown({md, gameData, baseURL, inTooltip, ...dataAttributes}: {readonly md: string, readonly gameData: PapyrusGameDataIndexed<PapyrusGame>, readonly inTooltip?: boolean | undefined, readonly baseURL: typeof AUTOMATIC_BASE_URL | URL | string | null} & Record<`data-${string}`, string|boolean>): React.ReactElement {
     return <div {...dataAttributes} className={styles.md} data-is-md=''><Markdown
         unwrapDisallowed
+        urlTransform={noOpURLTransform}
         skipHtml={false}
         remarkPlugins={[
             remarkBreaks,
@@ -121,7 +195,11 @@ export function WikiMarkdown({md, gameData, baseURL, inTooltip, ...dataAttribute
                 ancestors: {
                     ...defaultSchema.ancestors ?? {},
                     summary: ['details'],
-                }
+                },
+                protocols: {
+                    ...defaultSchema.protocols ?? {},
+                    href: [...defaultSchema.protocols?.href ?? [], 'papyrus-index'],
+                },
             } satisfies Options)
         ]}
     >
