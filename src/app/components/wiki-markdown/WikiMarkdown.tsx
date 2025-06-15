@@ -237,7 +237,7 @@ function MarkdownCodeBlock({children, node, ...props}: ComponentProps<'pre'> & E
     if (!codeElement || codeElement.type !== 'element' || codeElement.tagName !== 'code') throw new Error('MarkdownCodeBlock: Expected the first child of the <pre> element to be a <code> element.');
 
     const language = (codeElement.properties.className as string[])?.[0]?.replace(/^language-/u, '') ?? null;
-    if (language !== 'papyrus') return <pre {...props}>[children]</pre>;
+    if (language !== 'papyrus') return <pre {...props}>{children}</pre>;
 
     const code = codeElement.children.map((child) => {
         if (child.type === 'text') return child.value;
