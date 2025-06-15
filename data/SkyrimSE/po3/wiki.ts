@@ -2,18 +2,19 @@
 /* eslint-disable max-depth */
 /* eslint-disable max-classes-per-file */
 
-import path from "node:path";
-import fs from "node:fs/promises";
-import { githubWikisDir } from "../../../src/folders";
-import { PapyrusGame } from "../../../src/papyrus/data-structures/pure/game";
-import { GitHubWiki, type GitHubWikiData, type GitHubWikiEventData, type GitHubWikiFunctionData } from "../../../src/wiki-data-extraction/individual-github-wikis/GitHubWiki";
-import { remark } from 'remark';
 import type { Node, RootContent } from 'mdast';
+import fs from "node:fs/promises";
+import path from "node:path";
+import { remark } from 'remark';
+import remarkGfm from 'remark-gfm';
+import { githubWikisDir } from "../../../src/folders";
+import type { PapyrusScriptFunction } from "../../../src/papyrus/data-structures/pure/function";
+import { PapyrusGame } from "../../../src/papyrus/data-structures/pure/game";
+import { PapyrusScriptParser } from "../../../src/papyrus/parsing/parse-script";
 import { appendToStepSummarySection, StepSummarySection } from "../../../src/utils/stepSummary";
 import { toLowerCase } from "../../../src/utils/toLowerCase";
-import type { PapyrusScriptFunction } from "../../../src/papyrus/data-structures/pure/function";
-import { PapyrusScriptParser } from "../../../src/papyrus/parsing/parse-script";
-import remarkGfm from 'remark-gfm';
+import { GitHubWiki } from "../../../src/wiki-data-extraction/individual-github-wikis/GitHubWiki";
+import type { GitHubWikiData, GitHubWikiEventData, GitHubWikiFunctionData } from "../../../src/wiki-data-extraction/individual-github-wikis/types";
 
 const wikiPath = path.join(githubWikisDir, PapyrusGame.SkyrimSE, 'po3');
 
