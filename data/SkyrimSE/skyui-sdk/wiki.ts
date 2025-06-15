@@ -17,6 +17,17 @@ import { toLowerCase } from "../../../src/utils/toLowerCase";
 import { GitHubWiki } from "../../../src/wiki-data-extraction/individual-github-wikis/GitHubWiki";
 import type { GitHubWikiData, GitHubWikiEventData, GitHubWikiFunctionData, GitHubWikiPropertyData, GitHubWikiScriptData } from "../../../src/wiki-data-extraction/individual-github-wikis/types";
 
+/*
+ * Many decisions in this file were coupled closely with the structure of the SkyUI wiki.
+ *
+ * While normally a bad idea, the SkyUI wiki has not seen any noteworthy changes in 10 years.
+ * The only changes in the last decade were fixing a couple of broken links.
+ *
+ * As such, the structure of the wiki is considered stable enough to be hardcoded here.
+ * Otherwise strange-seeming assumptions have been made in this file as a result.
+*/
+
+
 const wikiPath = path.join(githubWikisDir, PapyrusGame.SkyrimSE, 'skyui-sdk');
 const remarkProcessor = remark().use(remarkGfm);
 
