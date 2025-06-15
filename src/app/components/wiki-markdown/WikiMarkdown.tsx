@@ -14,9 +14,16 @@ import rehypeRaw from 'rehype-raw';
 import {defaultSchema, default as rehypeSanitize, type Options} from 'rehype-sanitize';
 import styles from './WikiMarkdown.module.scss';
 import { ValidPapyrusGames } from "../../../utils/ValidPapyrusGames";
+import { getWiki } from "../../../wiki-data-extraction/ck-wiki/getWiki";
 import { CodeBlock, CodeBlockLanguage } from "../code-block/CodeBlock";
 
 export const AUTOMATIC_BASE_URL: unique symbol = memoizeDevServerConst('AUTOMATIC_BASE_URL', () => Symbol.for('PAPYRUS_INDEX_AUTOMATIC_BASE_URL')) as any;
+
+function ckWikiMatchesGame(game: PapyrusGame, url: URL): boolean {
+    const correctWikidata = getWiki(game);
+    const correctWikiHost = new URL(correctWikidata.wikiBaseUrl).host;
+    return url.host === correctWikiHost;
+}
 
 // eslint-disable-next-line complexity
 function WikiMarkdownLink(gameData: PapyrusGameDataIndexed<PapyrusGame>, inTooltip: boolean|undefined, baseUrl: typeof AUTOMATIC_BASE_URL | URL | string | null, {href: rawHref, children}: ComponentProps<'a'> & ExtraProps): React.ReactElement {
@@ -95,7 +102,7 @@ function WikiMarkdownLink(gameData: PapyrusGameDataIndexed<PapyrusGame>, inToolt
         baseUrl !== AUTOMATIC_BASE_URL
             ? baseUrl
             : (typeof window === 'undefined' ? 'https://papyrus.bellcube.dev' : window.location.href);
-            
+
     let url = new URL(rawHref, resolvedBaseUrl);
 
     if (url.host === 'www.creationkit.com') {
@@ -111,6 +118,8 @@ function WikiMarkdownLink(gameData: PapyrusGameDataIndexed<PapyrusGame>, inToolt
 
         if (process.env.SKIP_HIGH_LEVEL_DIAGNOSTIC_LOGS !== 'true') console.warn(`WikiMarkdownLink: Redirected Creation Kit wiki link to UESP: ${rawHref} -> ${url.href}`);
     }
+
+    if (!ckWikiMatchesGame(gameData.game, url)) return <a href={url.href}>{children}</a>;
 
     const wikiPageMatch = url.href.match(/\/wiki\/(?<page>[^?#/]+)/ui);
     if (!wikiPageMatch) return <a href={url.href}>{children}</a>;
