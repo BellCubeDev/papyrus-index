@@ -106,7 +106,8 @@ export function WikiMarkdown({md, gameData, baseURL, inTooltip, ...dataAttribute
             remarkGFM,
         ]}
         components={{
-            a: WikiMarkdownLink.bind(null, gameData, inTooltip, baseURL)
+            a: WikiMarkdownLink.bind(null, gameData, inTooltip, baseURL),
+            pre: MarkdownCodeBlock,
         }}
         remarkRehypeOptions={{
             clobberPrefix: 'md-',
@@ -125,4 +126,22 @@ export function WikiMarkdown({md, gameData, baseURL, inTooltip, ...dataAttribute
     >
         {md}
     </Markdown></div>;
+}
+
+function MarkdownCodeBlock({children, node, ...props}: ComponentProps<'pre'> & ExtraProps): React.ReactElement {
+    if (!node) throw new Error('MarkdownCodeBlock: No `node` prop provided! This is almost certainly a bug in the WikiMarkdown component.');
+
+    const codeElement = node.children[0];
+    if (!codeElement || codeElement.type !== 'element' || codeElement.tagName !== 'code') throw new Error('MarkdownCodeBlock: Expected the first child of the <pre> element to be a <code> element.');
+
+    const language = (codeElement.properties.className as string[])?.[0]?.replace(/^language-/u, '') ?? null;
+    if (language !== 'papyrus') return <pre {...props}>[children]</pre>;
+
+    const code = codeElement.children.map((child) => {
+        if (child.type === 'text') return child.value;
+        if (child.type === 'element' && child.tagName === 'br') return '\n';
+        throw new Error(`MarkdownCodeBlock: Unexpected child type in <code> element: ${child.type}. Expected 'text' or 'br'.`);
+    }).join('');
+
+    return <CodeBlock language={CodeBlockLanguage.Papyrus} code={code} doLineNumbers />;
 }
