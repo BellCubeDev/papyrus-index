@@ -30,8 +30,9 @@ function WikiMarkdownLink(gameData: PapyrusGameDataIndexed<PapyrusGame>, inToolt
     if (!rawHref) return <>{children}</>;
 
     if (rawHref.startsWith('papyrus-index:')) {
-        const url = new URL(rawHref);
+        let url = new URL(rawHref);
         if (url.protocol  !== 'papyrus-index:') throw new Error(`WikiMarkdownLink: 'papyrus-index:' protocol expected, but got: ${url.protocol}`);
+        if (url.pathname[0] !== '/') url = new URL(`papyrus-index:/${url.pathname}`); // Ensure pathname starts with a slash
         const pathnameParts = url.pathname.split('/').filter(Boolean).map((s)=> toLowerCase(decodeURI(s)));
 
         const [gameLowerCase, pathnameVariable1, ...remainingPathnameParts] = pathnameParts;
