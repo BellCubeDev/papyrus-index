@@ -4,7 +4,7 @@ import type { PapyrusScriptIndexedAggregate } from "../../papyrus/data-structure
 import type { PapyrusScriptStructIndexedAggregate } from "../../papyrus/data-structures/indexing/struct";
 import type { PapyrusGame } from "../../papyrus/data-structures/pure/game";
 import type { CKWikiDataFunctionPage } from "../../wiki-data-extraction/ck-wiki/data-extraction/getMediaWikiFunctionData";
-import type { GitHubWikiFunctionData } from "../../wiki-data-extraction/individual-github-wikis/GitHubWiki";
+import type { GitHubWikiFunctionData } from "../../wiki-data-extraction/individual-github-wikis/types";
 
 export enum SearchIndexEntityType {
     Script,
