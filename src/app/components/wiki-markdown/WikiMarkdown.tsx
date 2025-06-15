@@ -82,6 +82,19 @@ function WikiMarkdownLink(gameData: PapyrusGameDataIndexed<PapyrusGame>, inToolt
                         />;
                     }
 
+                    case 'event': {
+                        if (!identifier) throw new Error(`WikiMarkdownLink: 'papyrus-index:' protocol with pathname '${url.pathname}' is missing event name.`);
+                        const eventAggregate = script[AllSourcesCombined].events[toLowerCase(identifier)];
+                        if (!eventAggregate) {
+                            if (process.env.SKIP_HIGH_LEVEL_DIAGNOSTIC_LOGS !== 'true') console.warn(`WikiMarkdownLink: 'papyrus-index:' protocol with pathname '${url.pathname}' references an event that does not exist: ${identifier}.`);
+                            appendToStepSummarySection(`\`<WikiMarkdownLink>\` component references an event that does not exist: \`${identifier}\`.`, StepSummarySection.UnimplementedFeatures);
+                            return <a href={url.pathname}>{children}</a>;
+                        }
+                        if (process.env.SKIP_HIGH_LEVEL_DIAGNOSTIC_LOGS !== 'true') console.warn('<EventReference> component not implemented, but we needed it for a WikiMarkdownLink.');
+                        appendToStepSummarySection(`\`<EventReference>\` component not implemented, but we needed it for a WikiMarkdownLink.`, StepSummarySection.UnimplementedFeatures);
+                        return <>{children}</>; // TODO: Implement <EventReference> component
+                    }
+
                     default:
                         appendToStepSummarySection(`\`<WikiMarkdownLink>\` component with 'papyrus-index:' protocol and pathname '${url.pathname}' has an unknown second part after the script name: '${pathnameVariable2}'.`, StepSummarySection.UnimplementedFeatures);
                         if (process.env.SKIP_HIGH_LEVEL_DIAGNOSTIC_LOGS !== 'true') console.warn(`WikiMarkdownLink: 'papyrus-index:' protocol with pathname '${url.pathname}' has an unknown second part after the script name: '${pathnameVariable2}'.`);
