@@ -8,5 +8,7 @@ export function stripMD(md: string): string {
         .use(remarkGFM)
         .use(strip);
 
-    return remarkProcessor.processSync(md).toString().trim();
+
+    // eslint-disable-next-line prefer-named-capture-group
+    return remarkProcessor.processSync(md).toString().trim().replace(/\\(.)/gu, (_,c)=>c);
 }
