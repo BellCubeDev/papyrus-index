@@ -2,20 +2,28 @@
 /* eslint-disable max-depth */
 /* eslint-disable max-classes-per-file */
 
-import path from "node:path";
-import fs from "node:fs/promises";
-import { githubWikisDir } from "../../../src/folders";
-import { PapyrusGame } from "../../../src/papyrus/data-structures/pure/game";
-import { GitHubWiki, type GitHubWikiData, type GitHubWikiEventData, type GitHubWikiFunctionData } from "../../../src/wiki-data-extraction/individual-github-wikis/GitHubWiki";
-import { remark } from 'remark';
 import type { Node, RootContent } from 'mdast';
+import fs from "node:fs/promises";
+import path from "node:path";
+import { remark } from 'remark';
+import remarkGfm from 'remark-gfm';
+import { githubWikisDir } from "../../../src/folders";
+import type { PapyrusScriptFunction } from "../../../src/papyrus/data-structures/pure/function";
+import { PapyrusGame } from "../../../src/papyrus/data-structures/pure/game";
+import { PapyrusScriptParser } from "../../../src/papyrus/parsing/parse-script";
 import { appendToStepSummarySection, StepSummarySection } from "../../../src/utils/stepSummary";
 import { toLowerCase } from "../../../src/utils/toLowerCase";
-import type { PapyrusScriptFunction } from "../../../src/papyrus/data-structures/pure/function";
-import { PapyrusScriptParser } from "../../../src/papyrus/parsing/parse-script";
-import remarkGfm from 'remark-gfm';
+import { GitHubWiki } from "../../../src/wiki-data-extraction/individual-github-wikis/GitHubWiki";
+import type { GitHubWikiData, GitHubWikiEventData, GitHubWikiFunctionData } from "../../../src/wiki-data-extraction/individual-github-wikis/types";
 
 const wikiPath = path.join(githubWikisDir, PapyrusGame.SkyrimSE, 'po3');
+
+function stringifyNodes(nodes: RootContent[]): string | null {
+    return remarkProcessor.stringify({
+        type: 'root',
+        children: nodes,
+    }).trim() || null;
+}
 
 const remarkProcessor = remark().use(remarkGfm);
 
@@ -73,7 +81,7 @@ export default class SkyrimPO3PapyrusExtenderWiki extends GitHubWiki<PapyrusGame
 
         const firstHomePageHeaderIndex = homePage.ast.children.findIndex(node => node.type === 'heading');
         const descriptionAST = homePage.ast.children.slice(firstHomePageHeaderIndex);
-        const descriptionMd = remarkProcessor.stringify({type: 'root', children: descriptionAST });
+        const descriptionMd = stringifyNodes(descriptionAST);
 
         const events = Object.fromEntries(Object.values(EventRecipient).map(recipient => [recipient, {} as Record<Lowercase<string>, GitHubWikiEventData>]));
 
@@ -89,22 +97,26 @@ export default class SkyrimPO3PapyrusExtenderWiki extends GitHubWiki<PapyrusGame
                     linkToWikiData: this.wikiBase.href,
                     events: {},
                     functions: standaloneFunctions,
+                    properties: {},
                 },
 
                 po3_events_alias: {
                     linkToWikiData: this.wikiBase.href,
                     events: events[EventRecipient.Alias],
                     functions: registrationControlFunctions,
+                    properties: {},
                 },
                 po3_events_ame: {
                     linkToWikiData: this.wikiBase.href,
                     events: events[EventRecipient.AME],
                     functions: registrationControlFunctions,
+                    properties: {},
                 },
                 po3_events_form: {
                     linkToWikiData: this.wikiBase.href,
                     events: events[EventRecipient.Form],
                     functions: registrationControlFunctions,
+                    properties: {},
                 },
             },
         };
@@ -142,6 +154,8 @@ Processing was aborted.
                         if (acc.isFunctionDeprecated !== null && functionData.isFunctionDeprecated !== null && acc.isFunctionDeprecated !== functionData.isFunctionDeprecated) panic(`Merging function data with different, explicitly-defined deprecation statuses!\n${JSON.stringify({existing: acc, new: functionData}, null, 4)}`, file.ast, file.filePath);
                         if (acc.deprecatedFor !== null && functionData.deprecatedFor !== null && acc.deprecatedFor !== functionData.deprecatedFor) panic(`Merging function data with different, explicitly-defined deprecatedFor values!\n${JSON.stringify({existing: acc, new: functionData}, null, 4)}`, file.ast, file.filePath);
                         const mergedRegistrationControlFunctions = new Set([...acc.controlsEventRegistrationFor || [], ...(functionData.controlsEventRegistrationFor || [])]);
+                        const mergedExampleMDs = new Set([...acc.exampleMDs, ...functionData.exampleMDs]);
+                        if (Object.keys(acc.parameters).length > 0 || Object.keys(functionData.parameters).length > 0) throw new Error(`Merging function data with parameters is not supported, as there was no need to develop it!`);
                         return {
                             descriptionMD: acc.descriptionMD || functionData.descriptionMD,
                             linkToWikiData: acc.linkToWikiData || functionData.linkToWikiData,
@@ -149,6 +163,10 @@ Processing was aborted.
                             controlsEventRegistrationFor: mergedRegistrationControlFunctions.size > 0 ? Array.from(mergedRegistrationControlFunctions) : null,
                             isFunctionDeprecated: acc.isFunctionDeprecated ?? functionData.isFunctionDeprecated,
                             deprecatedFor: acc.deprecatedFor ?? functionData.deprecatedFor,
+                            parameters: {},
+                            returnValueDescriptionMD: acc.returnValueDescriptionMD || functionData.returnValueDescriptionMD,
+                            exampleMDs: mergedExampleMDs.size > 0 ? Array.from(mergedExampleMDs) : [],
+                            notesMD: [acc.notesMD, functionData.notesMD].filter(Boolean).join('\n\n') || null,
                         };
                     }, firstFunctionData);
                 }
@@ -163,12 +181,16 @@ Processing was aborted.
                     const linkToWikiData = new URL(`wiki/${file.name}#user-content-${anchorId}`, this.wikiBase).href;
 
                     const newObjBase: GitHubWikiFunctionData = {
-                        descriptionMD: functionUnderConstruction.description.length ? remarkProcessor.stringify({type: 'root', children: functionUnderConstruction.description}) : null,
+                        descriptionMD: stringifyNodes(functionUnderConstruction.description),
                         linkToWikiData,
                         name: 'replace_me',
                         controlsEventRegistrationFor: null,
                         isFunctionDeprecated: isInDeprecatedFunctionSection,
                         deprecatedFor: functionUnderConstruction.deprecatedFor ?? null,
+                        parameters: {},
+                        returnValueDescriptionMD: null,
+                        exampleMDs: [],
+                        notesMD: null,
                     };
 
                     for (const name of functionUnderConstruction.names) {
@@ -280,11 +302,15 @@ Processing was aborted.
                         if (acc.descriptionMD && eventData.descriptionMD && acc.descriptionMD !== eventData.descriptionMD) panic(`Merging event data with different descriptions:\n\n======\n${acc.descriptionMD.trim()}\n======\n${eventData.descriptionMD.trim()}\n======\n${JSON.stringify({existing: acc, new: eventData}, null, 4)}`, node, file.filePath);
                         if (acc.name !== eventData.name) panic(`Merging event data with different names: "${acc.name}" and "${eventData.name}"\n${JSON.stringify({existing: acc, new: eventData}, null, 4)}`, node, file.filePath);
                         const mergedRegistrationControlFunctions = new Set([...acc.registrationControlFunctions || [], ...(eventData.registrationControlFunctions || [])]);
+                        const mergedExampleMDs = new Set([...acc.exampleMDs, ...eventData.exampleMDs]);
                         return {
                             descriptionMD: acc.descriptionMD || eventData.descriptionMD,
                             linkToWikiData: acc.linkToWikiData || eventData.linkToWikiData,
                             name: acc.name || eventData.name,
                             registrationControlFunctions: mergedRegistrationControlFunctions.size > 0 ? Array.from(mergedRegistrationControlFunctions) : null,
+                            parameters: {},
+                            exampleMDs: mergedExampleMDs.size > 0 ? Array.from(mergedExampleMDs) : [],
+                            notesMD: [acc.notesMD, eventData.notesMD].filter(Boolean).join('\n\n') || null,
                         };
                     }, firstEventData);
                 }
@@ -299,10 +325,13 @@ Processing was aborted.
                     try {
                         for (const name of eventUnderConstruction.names) {
                             const newObj: GitHubWikiEventData = {
-                                descriptionMD: eventUnderConstruction.description.length ? remarkProcessor.stringify({type: 'root', children: eventUnderConstruction.description}) : null,
+                                descriptionMD: stringifyNodes(eventUnderConstruction.description),
                                 linkToWikiData,
                                 name,
                                 registrationControlFunctions: eventUnderConstruction.registrationControllerEntries.length === 0 ? null : eventUnderConstruction.registrationControllerEntries.map(registrationControllerEntry => registrationControllerEntry[0]),
+                                parameters: {},
+                                exampleMDs: [],
+                                notesMD: null,
                             };
                             const existingObj = events[recipient][name];
                             events[recipient][name] = existingObj ? mergeEventDataObjs(eventUnderConstruction.node, existingObj, newObj) : newObj;
@@ -316,6 +345,10 @@ Processing was aborted.
                                 controlsEventRegistrationFor: eventUnderConstruction.names,
                                 isFunctionDeprecated: null,
                                 deprecatedFor: null,
+                                parameters: {},
+                                returnValueDescriptionMD: null,
+                                exampleMDs: [],
+                                notesMD: null,
                             };
                             const existingObj = registrationControlFunctions[funcNameLowercase];
                             registrationControlFunctions[funcNameLowercase] = existingObj ? mergeFunctionDataObjs(existingObj, newObj) : newObj;

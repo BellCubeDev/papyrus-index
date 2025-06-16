@@ -1,6 +1,6 @@
 
 import type { Metadata } from "next";
-import React from "react";
+import React, { Suspense } from "react";
 import { UnreachableError } from "../../../../UnreachableError";
 import type { PapyrusGame } from "../../../../papyrus/data-structures/pure/game";
 import { PapyrusSourceType, type PapyrusScriptSourceMetadata, type PapyrusScriptSourceMetadataVanilla } from "../../../../papyrus/data-structures/pure/scriptSource";
@@ -11,6 +11,8 @@ import { AllScripts } from "../../../../papyrus/parsing/parse-or-load-all";
 import { toLowerCase } from "../../../../utils/toLowerCase";
 import { AllScriptsIndexed } from "../../../../papyrus/indexing/index-all";
 import { PapyrusScriptReference } from "../../../components/papyrus/script/PapyrusScriptReference";
+import { wikisBySource } from "../../../../wiki-data-extraction/individual-github-wikis/wikisBySource";
+import { WikiMarkdown } from "../../../components/wiki-markdown/WikiMarkdown";
 
 export function generateStaticParams(): SourceRouteParams[] {
     const params = [];
@@ -36,6 +38,8 @@ export default async function SourcePage({params}: {readonly params: Promise<Sou
     const {game, source} = getGameAndSourceFromParams(await params);
     const gameData = AllScriptsIndexed[game];
 
+    const githubWikiData = wikisBySource[game].get(source.sourceIdentifier)?.getData();
+
     return <main>
         <SourcePageSourceData game={game} sourceData={source} />
         <h2>Scripts In This Source</h2>
@@ -50,6 +54,12 @@ export default async function SourcePage({params}: {readonly params: Promise<Sou
                 </li>
             )}
         </ul>
+        <Suspense fallback={<p>Loading GitHub wiki data...</p>}>
+            {githubWikiData?.then(data => !data.sourceDescriptionMD ? null : <>
+                <h2>Description from <a href={data.linkToWikiData}>GitHub Wiki</a></h2>
+                <WikiMarkdown md={data.sourceDescriptionMD} baseURL={data.linkToWikiData} gameData={gameData} />
+            </>)}
+        </Suspense>
     </main>;
 }
 

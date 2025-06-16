@@ -214,6 +214,9 @@ importers:
       typescript-json-schema:
         specifier: ^0.65.1
         version: 0.65.1
+      unist-util-visit:
+        specifier: ^5.0.0
+        version: 5.0.0
       unplugin-auto-import:
         specifier: ^0.19.0
         version: 0.19.0(rollup@4.30.1)

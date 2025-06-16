@@ -1,7 +1,7 @@
 import type { PapyrusScriptFunctionIndexed, PapyrusScriptFunctionIndexedAggregate } from "../../../../../papyrus/data-structures/indexing/function";
 import type { PapyrusGame } from "../../../../../papyrus/data-structures/pure/game";
 import { toLowerCase } from "../../../../../utils/toLowerCase";
-import type { GitHubWikiFunctionData } from "../../../../../wiki-data-extraction/individual-github-wikis/GitHubWiki";
+import type { GitHubWikiFunctionData } from "../../../../../wiki-data-extraction/individual-github-wikis/types";
 import type { SearchEntityFunction } from "../../../../search/Entity";
 
 // eslint-disable-next-line camelcase
