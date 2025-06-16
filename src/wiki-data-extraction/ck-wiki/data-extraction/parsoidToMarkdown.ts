@@ -13,5 +13,12 @@ export async function parsoidToMarkdown(html: string, url: string): Promise<stri
             space: 'html',
             emitParseErrors: true,
         },
-    })).trim();
+    }))
+    .trim()
+     // When you have a link like `<a href="https://example.com">SomeFunction</a>()`,
+     // because we replace SomeFunction with Script.SomeFunction() during our rendering process,
+     // it results in a link like `Script.SomeFunction()()`, which is not valid Markdown.
+     // This simply and blindly removes the second `()`.
+    .replaceAll(')()', ')')
+    ;
 }
