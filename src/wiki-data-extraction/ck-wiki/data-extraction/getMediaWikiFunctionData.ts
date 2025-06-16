@@ -189,8 +189,13 @@ ${shortDescriptionMarkdown}
     const parametersListItems = parametersListElements.filter((el): el is HTMLUListElement => el.tagName.toLowerCase() === 'ul').map(ul => Array.from(ul.children).filter((li): li is HTMLLIElement => li.tagName.toLowerCase() === 'li')).flat(1);
 
     const parameters: CKWikiDataFunctionPage['parameters'] = await Promise.all(parametersListItems.map(async li => {
+
+        // Remove **Default:** lines, since we extract the default value from Papyrus directly.
+        Array.from(li.querySelectorAll('li:has(> b:first-child)')).filter(nestedLi => nestedLi.firstElementChild!.textContent?.toLowerCase() === 'default:').forEach(nestedLi => nestedLi.remove());
+
         const asMarkdown = await parsoidToMarkdown(li.innerHTML, document.location.href);
-        const [nameMarkdown, descriptionMarkdown] = asMarkdown.split(':', 2).map(s => s.trim());
+        const [nameMarkdown, ...descriptionMarkdownA] = asMarkdown.split(':', 2).map(s => s.trim());
+        const descriptionMarkdown = descriptionMarkdownA.join(':');
         if (!descriptionMarkdown) return null;
         if (!nameMarkdown) {
             console.warn(`[MediaWiki Scraping - getWikiDataFunctionPage()] Failed to parse parameter name from string "${asMarkdown}"! Skipping...`);
