@@ -52,6 +52,8 @@ export interface CKWikiDataFunctionPage extends CKPapyrusWiki {
 
     /** A link to the wiki page for this function */
     wikiPageUrl: string;
+
+    bugsMarkdown: string;
 }
 
 const wikiFunctionDataMemoization = memoizeDevServerConst('wikiFunctionDataMemoization', () => new WeakMap<PotentialFunction<PapyrusGame>, CKWikiDataFunctionPage | null>());
@@ -185,6 +187,9 @@ ${shortDescriptionMarkdown}
     const notesElements = pageData.sectionsById.notes?.contents ?? [];
     const notesMarkdown = await parsoidElementsToMarkdown(notesElements, document.location.href);
 
+    const bugsElements = pageData.sectionsById.bugs?.contents ?? [];
+    const bugsMarkdown = await parsoidElementsToMarkdown(bugsElements, document.location.href);
+
     const parametersListElements = pageData.sectionsById.parameters?.contents ?? [];
     const parametersListItems = parametersListElements.filter((el): el is HTMLUListElement => el.tagName.toLowerCase() === 'ul').map(ul => Array.from(ul.children).filter((li): li is HTMLLIElement => li.tagName.toLowerCase() === 'li')).flat(1);
 
@@ -261,6 +266,7 @@ ${
         notesMarkdown,
         parameters,
         seeAlsoMarkdown,
+        bugsMarkdown,
         wikiPageUrl: document.location.href,
     };
 }
