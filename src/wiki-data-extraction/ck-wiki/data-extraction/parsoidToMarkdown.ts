@@ -28,8 +28,12 @@ export async function parsoidToMarkdown(html: string, url: string): Promise<stri
     .trim()
      // When you have a link like `<a href="https://example.com">SomeFunction</a>()`,
      // because we replace SomeFunction with Script.SomeFunction() during our rendering process,
-     // it results in a link like `Script.SomeFunction()()`, which is not valid Markdown.
+     // it results in a link like `Script.SomeFunction()()`, which is not the intended result.
      // This simply and blindly removes the second `()`.
+     //
+     // It is worth noting that link formats vary, and I cannot guarantee that a more specific
+     // matcher would not cause more problems than it would solve, especially since double parentheses
+     // are not a common occurrence in the CK wiki.
     .replaceAll(')()', ')')
     ;
 }
