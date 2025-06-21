@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Only An Extender)
+nameProper: Currency Swapper
+nameShort: Currency Swapper
+indexedVersion: "2.0.0"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/127686
+gitRepo: https://github.com/SeaSparrowOG/CurrencySwapper
+nexusIndexedFileId: 640164
