@@ -803,6 +803,9 @@ ObjectReference Function MakeAliasedRefFromInventory(Form akObject, Alias akAlia
 ; Make this object a radio transmitter which will repeat all transmissions sent by akTransmitterToRepeat.
 Function MakeTransmitterRepeater(ObjectReference akTransmitterToRepeat, float afInnerRadius, float afOuterRadius, bool abUnlimitedRange = false) native
 
+; Match this object's outpost name (must be an outpost beacon) to the full display name of the passed in reference
+Function MatchOutpostName(ObjectReference akNewNameObject) native
+
 ; Modifies the specified actor value
 Function ModValue(ActorValue akAV, float afAmount) native
 
