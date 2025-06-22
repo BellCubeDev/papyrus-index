@@ -1,4 +1,6 @@
 import htmlToMarkdown from "@wcj/html-to-markdown";
+import remarkGfm from "remark-gfm";
+import { visit } from "unist-util-visit";
 
 export async function parsoidElementsToMarkdown(elements: Element[], url: string): Promise<string> {
     return await parsoidToMarkdown(elements.map(e => e.outerHTML).join(''), url);
@@ -13,5 +15,25 @@ export async function parsoidToMarkdown(html: string, url: string): Promise<stri
             space: 'html',
             emitParseErrors: true,
         },
-    })).trim();
+        remarkPlugins: [
+            remarkGfm,
+            ()=> (root) => {
+                // default all code blocks to language `papyrus` since the CK wiki doesn't really provide that data for us
+                visit(root, 'code', (node) => {
+                    node.lang ||= 'papyrus';
+                });
+            }
+        ]
+    }))
+    .trim()
+     // When you have a link like `<a href="https://example.com">SomeFunction</a>()`,
+     // because we replace SomeFunction with Script.SomeFunction() during our rendering process,
+     // it results in a link like `Script.SomeFunction()()`, which is not the intended result.
+     // This simply and blindly removes the second `()`.
+     //
+     // It is worth noting that link formats vary, and I cannot guarantee that a more specific
+     // matcher would not cause more problems than it would solve, especially since double parentheses
+     // are not a common occurrence in the CK wiki.
+    .replaceAll(')()', ')')
+    ;
 }
