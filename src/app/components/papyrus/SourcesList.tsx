@@ -30,16 +30,36 @@ export function SourceListUser({game}: {readonly game: PapyrusGame}) {
     return null;
 }
 
-export function SourcesList({sourceIDs, game}: {readonly sourceIDs: Lowercase<string>[], readonly game: PapyrusGame}) {
+export function SourcesList({sourceIDs, game}: {readonly sourceIDs: Lowercase<string> | Lowercase<string>[], readonly game: PapyrusGame}) {
+    sourceIDs = Array.isArray(sourceIDs) ? sourceIDs : [sourceIDs];
+
     const sources = useLoadSourceList(game);
     const sourceObjects = sourceIDs.map(sourceID => sources[sourceID]!).sort((a, b) => getSourceTypeMultiplier(b.type) - getSourceTypeMultiplier(a.type));
 
     return <ul className={styles.sourcesList}>
         {sourceObjects.map(source => <li key={source.sourceIdentifier}>
-            <Link href={`/${toLowerCase(game)}/source/${toLowerCase(source.sourceIdentifier)}` as const}>
-                <SourceIcon sourceType={source.type} />
-                <SourceName source={source} />
-            </Link>
+            <SourcePlate sourceId={source.sourceIdentifier} game={game} />
         </li>)}
     </ul>;
+}
+
+export function SourcePlate({sourceId, game, className, noLink}: {readonly sourceId: Lowercase<string>, readonly game: PapyrusGame, readonly className?: string, readonly noLink?: boolean}) {
+    const sources = useLoadSourceList(game);
+    const source = sources[sourceId];
+    if (!source) return null;
+
+    const children = <>
+        <SourceIcon sourceType={source.type} />
+        <SourceName source={source} />
+    </>;
+    const classNamesCombined = [styles.sourcePlate, className].filter(Boolean).join(' ');
+    if (noLink) {
+        return <div className={classNamesCombined}>
+            {children}
+        </div>;
+    } else {
+    return <Link href={`/${toLowerCase(game)}/source/${source.sourceIdentifier}` as const} className={classNamesCombined} data-no-link-style>
+        {children}
+    </Link>;
+    }
 }
