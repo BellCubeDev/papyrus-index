@@ -1,43 +1,91 @@
 .sourceGrid {
     display: flex;
     flex-direction: row;
-    gap: 32px;
+    margin: 2*48px 0 32px 0;
+    gap: 48px;
     flex-wrap: wrap;
     justify-content: space-evenly;
 }
 
 .source {
-    background-color: #17181a;
+    min-width: 25%;
     font-size: 1.25em;
 
-    padding: 32px;
+    > div {
+        background-color: #17181a;
 
-    min-width: 25%;
+        padding: 32px;
+        padding-top: 24px;
 
-    > .sourceTop {
-        color: #bbb;
+        transform: rotate3d(-0.5, 0.3, 0.6, calc(0.5deg * var(--random-tilt-direction) * var(--random-tilt-factor)));
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+        transition: none 0.23s ease-in-out;
+        transition-property: transform, box-shadow, background-color;
+    }
+    &:hover > div, &:focus > div {
+        background-color: #1a1c22;
+        transform: rotate3d(-1, 0.3, 0.6, calc(var(--random-tilt-direction) * (3deg + (1.4deg * var(--random-tilt-factor)))));
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+    }
+
+    &:active > div {
+        background-color: rgb(23, 25, 29);
+        transform: rotate3d(-0.6, 0.3, 1, calc((var(--random-tilt-direction) * (182deg + (1.4deg * var(--random-tilt-factor))))));
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .source {
+        transition: none !important;
+        transform: none !important;
+        box-shadow: none !important;
+    }
+}
+
+.sourceMiddle, .sourceTop {
+    color: #bbb;
+    font-size: 0.9em;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 24px;
+}
+
+.sourceTop {
+    justify-content: space-between;
+    align-items: start;
+    >:last-child {
         font-size: 0.9em;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: nowrap;
-        gap: 24px;
-        > :nth-child(2) {
-            flex-grow: 1;
-        }
-        >:last-child {
-            font-size: 0.9em;
-        }
+        position: relative;
+        top: 1px;
     }
+}
 
-    > .sourceBody {
-        margin-top: 16px;
-        color: #ddd;
-        font-size: 1em;
+.sourceMiddle {
+    align-items: center;
+    margin-left: 0.4 * 0.9em;
+}
 
-        > h3 {
-            margin: 0;
-        }
+.sourceBody {
+    margin-top: 16px;
+    color: #ddd;
+    font-size: 1em;
+
+    h3 {
+        margin: 0.3em 0;
     }
+}
+
+.sourceNameAndPlate {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+
+}
+
+.sourcePlate {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
 }

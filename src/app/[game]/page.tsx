@@ -11,6 +11,8 @@ import styles from "./GamePage.module.scss";
 import { getGameFromParams, type GameRouteParams } from "./getGameFromParams";
 import { PapyrusTypeValueToken } from "../components/papyrus/type/PapyrusType";
 import { PapyrusScriptTypeArchetype } from "../../papyrus/data-structures/pure/type";
+import { Link } from "../components/Link";
+import { SourcePlate, SourcesList } from "../components/papyrus/SourcesList";
 
 
 export function generateStaticParams() {
@@ -39,16 +41,32 @@ export default async function GamePage({params}: {readonly params: Promise<GameR
             <InheritanceDisplay game={game} data={gameData.topLevelScripts} />
         </div>
         <div className={styles.sourceGrid}>
-            {Object.values(gameData.scriptSources).map(source => <div className={styles.source} key={source.sourceIdentifier}>
+            {Object.values(gameData.scriptSources).map(source => <Link
+                key={source.sourceIdentifier}
+                href={`/${toLowerCase(game)}/source/${source.sourceIdentifier}` as const}
+                className={styles.source}
+                data-no-link-style
+            ><div
+                style={{
+                    // @ts-ignore I know this isn't a real prop, but I need my css variables
+                    "--random-tilt-factor": 2 ** (1.2 * Math.random()),
+                    "--random-tilt-direction": Math.random() >= 0.5 ? 1 : -1,
+                }}
+            >
                 <div className={styles.sourceTop}>
-                    <SourceIcon sourceType={source.type} />
-                    <span><SourceTypeString sourceType={source.type} /></span>
+                    <SourcePlate sourceId={source.sourceIdentifier} game={game} noLink className={styles.sourcePlate!} />
                     <PapyrusTypeValueToken game={game} type={{type: PapyrusScriptTypeArchetype.String, isArray: false, value: source.sourceIdentifier}} />
                 </div>
-                <div className={styles.sourceBody}>
-                    <h3><SourceName source={source} long /></h3>
+                <div className={styles.sourceMiddle}>
+                    <SourceIcon sourceType={source.type} />
+                    <span><SourceTypeString sourceType={source.type} /></span>
                 </div>
-            </div>)}
+                <div className={styles.sourceBody}>
+                    <span className={styles.sourceNameAndPlate}>
+                        <h3><SourceName source={source} long /></h3>
+                    </span>
+                </div>
+            </div></Link>)}
         </div>
     </main>;
 }
