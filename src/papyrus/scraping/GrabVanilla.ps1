@@ -153,7 +153,7 @@ if ($nativeScripts.Count -eq 0) {
 }
 
 
-$destinationFolder = "${PSScriptRoot}/../scripts/${gameId}/vanilla/"
+$destinationFolder = "${PSScriptRoot}/../../../data/${gameId}/vanilla/"
 
 if (-not (Test-Path -Path $destinationFolder)) {
     New-Item -ItemType Directory -Path $destinationFolder
