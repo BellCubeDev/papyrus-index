@@ -11,6 +11,7 @@ import { getGameAndScriptFromParams, type ScriptRouteParams } from "./getGameAnd
 import styles from './ScriptPage.module.scss';
 import { PapyrusTypeWithValue } from "../../../components/papyrus/type/PapyrusType";
 import { toLowerCase } from "../../../../utils/toLowerCase";
+import { SourcesList } from "../../../components/papyrus/SourcesList";
 
 export function generateStaticParams(): ScriptRouteParams[] {
     const params: [complexity: number, paramObj: ScriptRouteParams][] = [];
@@ -48,15 +49,17 @@ export async function generateMetadata({params}: {readonly params: Promise<Scrip
 export default async function ScriptPage({params}: {readonly params: Promise<ScriptRouteParams>}) {
     const {game, scriptBySources} = getGameAndScriptFromParams(await params);
 
-    const _sourceIDs = Object.keys(scriptBySources);
+    const sourceIDs = Object.keys(scriptBySources);
 
     const scriptNamespaceName = getBestStringVariant(scriptBySources[AllSourcesCombined].namespaceName)![1];
 
     return <main>
         <div className={styles.scriptHeader}>
             <h1>{scriptNamespaceName}</h1>
+            <SourcesList sourceIDs={sourceIDs} game={game} />
             <div className={styles.extendsList}></div> { /* TODO: Add the scripts that this script extends to the script page */ }
         </div>
+        <br />
         <details suppressHydrationWarning>
             <summary>Inheritance Tree</summary>
             <InheritanceDisplay game={game} data={scriptBySources[AllSourcesCombined].extendedBy} />
