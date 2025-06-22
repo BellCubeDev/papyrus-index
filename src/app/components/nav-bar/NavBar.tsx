@@ -6,6 +6,7 @@ import { useSearchContext } from '../../search/SearchProvider';
 import { ThePapyrusIndexLogo } from '../logo/ThePapyrusIndexLogo';
 import { GameDropdown } from './GameDropdown';
 import { SearchModalButton } from '../search/SearchModal';
+import Link from 'next/link';
 
 export function NavBar({game}: {
     readonly game: PapyrusGame | null,
@@ -17,7 +18,9 @@ export function NavBar({game}: {
 
         <GameDropdown currentGame={game} />
 
-        {game ? <span className={styles.logo} ><ThePapyrusIndexLogo /></span> : null}
+        {game ? <Link href='/' className={styles.logo} data-no-link-style>
+            <ThePapyrusIndexLogo />
+        </Link> : null}
 
         {game && searchContext ? <SearchModalButton game={game!} /> : null}
     </nav>;
