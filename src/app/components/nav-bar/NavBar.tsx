@@ -18,7 +18,7 @@ export function NavBar({game}: {
 
         <GameDropdown currentGame={game} />
 
-        {game ? <Link href='/' className={styles.logo} data-no-link-style>
+        {game ? <Link href='/' className={styles.logo} data-no-link-style aria-label="Go to homepage">
             <ThePapyrusIndexLogo />
         </Link> : null}
 
