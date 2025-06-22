@@ -6,7 +6,8 @@ import type { PapyrusScriptBySources } from "../../../../papyrus/data-structures
 import { UnreachableError } from "../../../../UnreachableError";
 import { getScriptNameFromProps, PapyrusScriptReference } from "./PapyrusScriptReference";
 import { joinJSX } from "../../../../utils/joinJSX";
-import { getBestString } from "../../../../utils/getBestName";
+import { getBestString, getBestStringVariant } from "../../../../utils/getBestName";
+import { SourcesList } from "../SourcesList";
 
 export function PapyrusScriptReferenceTooltip<TGame extends PapyrusGame>(propsObj:
     {
@@ -33,7 +34,8 @@ export function PapyrusScriptReferenceTooltip<TGame extends PapyrusGame>(propsOb
         </div>;
     } else if (scriptAggregate) {
         return <div className={styles.tooltip}>
-            {scriptAggregate.namespaceName.map(n=>n[1]).join(' | ')} (
+            <SourcesList sourceIDs={Object.keys(scriptAggregate.$sources)} game={game} />
+            {getBestStringVariant(scriptAggregate.namespaceName)![1]} (
             {
                 scriptAggregate.isNative.some(([, isNative]) => isNative === null)
                     ? scriptAggregate.extendsName.some(([, extendsName]) => extendsName)
@@ -55,6 +57,7 @@ export function PapyrusScriptReferenceTooltip<TGame extends PapyrusGame>(propsOb
         }
         const possibleScriptsEntries = Object.entries(possibleScripts);
         return <div className={styles.tooltip}>
+            <SourcesList sourceIDs={possibleScriptsEntries.map(([sourceIdentifier, _s]) => sourceIdentifier)} game={game} />
             {getBestString(possibleScriptsEntries.map(v => v[1].namespaceName))} (
             {
                 possibleScriptsEntries.some(([,s])=>s.isNative === null)
