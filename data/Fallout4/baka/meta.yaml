@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Only An Extender)
+nameProper: Baka Framework
+nameShort: Baka
+indexedVersion: "1.10.6"
+nexusPage: https://www.nexusmods.com/fallout4/mods/43627
+gitRepo: https://github.com/shad0wshayd3-FO4/BakaFramework
+nexusIndexedFileId: 315807
