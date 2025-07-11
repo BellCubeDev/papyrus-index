@@ -1,4 +1,4 @@
-import { useCallback, useRef, type RefObject } from "react";
+import { useCallback, useMemo, useRef, type RefObject } from "react";
 import { memoizeDevServerConst } from "../../utils/memoizeDevServerConst";
 
 type TimeoutIdentifier = ReturnType<typeof setTimeout>;
@@ -15,6 +15,13 @@ type UseTimerHookReturn<T, TCurrentStr extends string> = Record<`current${TCurre
 
 export const CLEAR_ANY_TIMER: unique symbol = memoizeDevServerConst('<useStoredTimeout/useStoredInterval> CLEAR_ANY_TIMER', () => Symbol('<useStoredTimeout/useStoredInterval> CLEAR_ANY_TIMER')) as any;
 
+/**
+ * @returns A stable object with the following properties:
+ * - `currentTimeoutRef`: A ref object that holds the current timeout identifier, or null if no timeout is set.
+ * - `start`: A function to start a new timeout. It clears any existing timeout before starting a new one.
+ * - `clear`: A function to clear a specific timeout (or any timeout if `CLEAR_ANY_TIMER` is passed). It returns true if a timeout was cleared, false otherwise.
+ * - `isCurrent`: A function to check if a given timeout identifier is the current one. It returns true if it is, false otherwise.
+ */
 export function useStoredTimeout(): UseTimerHookReturn<TimeoutIdentifier, 'Timeout'> {
     const currentTimeoutRef = useRef<TimeoutIdentifier>(null);
 
@@ -41,11 +48,18 @@ export function useStoredTimeout(): UseTimerHookReturn<TimeoutIdentifier, 'Timeo
         return true;
     }, []);
 
-    return { currentTimeoutRef, start, clear, isCurrent };
+    return useMemo(()=>({ currentTimeoutRef, start, clear, isCurrent }), [clear, isCurrent, start]);
 }
 
 type IntervalIdentifier = ReturnType<typeof setInterval>;
 
+/**
+ * @returns A stable object with the following properties:
+ * - `currentIntervalRef`: A ref object that holds the current interval identifier, or null if no interval is set.
+ * - `start`: A function to start a new interval. It clears any existing interval before starting a new one.
+ * - `clear`: A function to clear a specific interval (or any interval if `CLEAR_ANY_TIMER` is passed). It returns true if an interval was cleared, false otherwise.
+ * - `isCurrent`: A function to check if a given interval identifier is the current one. It returns true if it is, false otherwise.
+ */
 export function useStoredInterval(): UseTimerHookReturn<IntervalIdentifier, 'Interval'> {
     const currentIntervalRef = useRef<IntervalIdentifier>(null);
 
@@ -72,5 +86,5 @@ export function useStoredInterval(): UseTimerHookReturn<IntervalIdentifier, 'Int
         return true;
     }, []);
 
-    return { currentIntervalRef, start, clear, isCurrent };
+    return useMemo(() => ({ currentIntervalRef, start, clear, isCurrent }), [clear, isCurrent, start]);
 }

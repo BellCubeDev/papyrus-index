@@ -33,7 +33,7 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
 
     const [hasText, setHasText] = React.useState(false);
 
-    const {clear: clearTookTooLongInterval, start: startTookTooLongInterval, isCurrent: isCurrentTookTooLongInterval} = useStoredInterval();
+    const tookTooLongInterval = useStoredInterval();
 
     const searchProviderLoadedPromiseRef = React.useRef<{resolve?:null|((res:SearchContextLoaded)=>void),promise: Promise<SearchContextLoaded>}>(null);
     const isLoading = searchProvider.LOADING_FROM_SSR || searchProvider.DEVELOPMENT__LOADING_HASH;
@@ -63,7 +63,7 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
         const loadedSearchProvider = searchProviderLoadedPromiseRef.current!.resolve ? await searchProviderLoadedPromiseRef.current!.promise : searchProvider as SearchContextLoaded;
 
         const startTimeForSearch = performance.now();
-        const newTookTooLongInterval = startTookTooLongInterval(3000, () => {
+        const newTookTooLongInterval = tookTooLongInterval.start(3000, () => {
             const debugData = {
                 game,
                 query,
@@ -77,17 +77,17 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
 
         // debounce
         await new Promise(resolve => setTimeout(resolve, 250)); // this can sometimes be 3x as long as the search itself! The things we do to make the UI feel snappier...
-        if (!isCurrentTookTooLongInterval(newTookTooLongInterval)) return;
+        if (!tookTooLongInterval.isCurrent(newTookTooLongInterval)) return;
 
         const res = await loadedSearchProvider.search(query, [SearchIndexEntityType.Script, SearchIndexEntityType.Function]);
 
         hasResults = true;
 
-        const isCurrent = clearTookTooLongInterval(newTookTooLongInterval);
+        const isCurrent = tookTooLongInterval.clear(newTookTooLongInterval);
         if (!isCurrent) return;
 
         setResult(res);
-    }, [searchProvider, startTookTooLongInterval, isCurrentTookTooLongInterval, clearTookTooLongInterval, game, posthog]);
+    }, [searchProvider, tookTooLongInterval, game, posthog]);
 
     const onChange = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => search(e.target.value), [search]);
 
@@ -110,20 +110,20 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
         setHasText(false);
         const searchInput = searchInputRef.current;
         if (searchInput) searchInput.value = '';
-        clearTookTooLongInterval(CLEAR_ANY_TIMER);
-    }, [clearTookTooLongInterval]);
+        tookTooLongInterval.clear(CLEAR_ANY_TIMER);
+    }, [tookTooLongInterval]);
 
     useEffect(() => {
         if (isLoading) return;
         if (result === AWAITING_SEARCH) return;
-        clearTookTooLongInterval(CLEAR_ANY_TIMER);
+        tookTooLongInterval.clear(CLEAR_ANY_TIMER);
         if (result === EMPTY_QUERY) return;
         if (result instanceof Error) {
             posthog?.capture('SearchBar rendered error', {game, error: result, inputValue: searchInputRef.current?.value ?? null});
             return;
         }
         posthog?.capture('SearchBar rendered result', {game, result: result.map(res => res.obj.$entityId)});
-    }, [isLoading, game, posthog, result, clearTookTooLongInterval]);
+    }, [isLoading, game, posthog, result, tookTooLongInterval]);
 
     const searchResultsULRef = React.useRef<HTMLUListElement>(null);
 
