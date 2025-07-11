@@ -13,7 +13,7 @@ import { PapyrusScriptTypeArchetype, type PapyrusScriptType, type PapyrusScriptV
 import { PapyrusParserError } from './PapyrusParserError';
 import type { PapyrusScriptDiscoveredDocument } from './parse-all-for-game';
 
-/** Note that all keywords are case-insensitive. This enum will be modified at runtime to respect this. */
+/** Note that all keywords are case-insensitive. This enum's values must be lowercase. This is enforced by TypeScript in a declaration below this enum. */
 enum PapyrusKeyword {
     DocumentationStringBegin = '{',
     DocumentationStringEnd = '}',
@@ -550,7 +550,7 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
         if (groupNameLowercase in this.result.propertyGroups) throw new PapyrusParserError(`Property group "${groupName}" already exists in this script!`, groupNameIndex, this.document);
         if (PapyrusKeywords.has(groupNameLowercase)) throw new PapyrusParserError(`Property group name "${groupName}" is a reserved keyword!`, groupNameIndex, this.document);
 
-        const collapsed: PapyrusCollapsedSpecifier = PapyrusCollapsedSpecifier.Never;
+        let collapsed: PapyrusCollapsedSpecifier = PapyrusCollapsedSpecifier.Never; // TODO: Actually parse collapsing behaviors
 
         let [nextTokenIndex, nextTokenCased] = this.getNextToken(true);
         if (nextTokenCased === EOF) throw new PapyrusParserError('Expected group body, but got the end of the file (EOF)!', this.originalIndex, this.document);
