@@ -6,10 +6,10 @@ Scriptname DbActiveMagicEffectTimer hidden
 ;Time while the game is paused is discounted - like Utility.Wait
 ;Requires the bMenuOpenCloseEventSinkEnabled setting in Data/SKSE/Plugins/DbSkseFunctions.ini to be enabled.
 ;Uses frame update function to detect elapsed time. Interval determined by the iFrameUpdateInterval setting in Data/SKSE/Plugins/DbSkseFunctions.ini
-Function StartTimer(Form eventReceiver, float seconds, int aiTimerID = 0) Global Native 
-Function CancelTimer(Form eventReceiver, int aiTimerID = 0) Global Native 
-float Function GetTimeElapsedOnTimer(Form eventReceiver, int aiTimerID = 0) Global Native 
-float Function GetTimeLeftOnTimer(Form eventReceiver, int aiTimerID = 0) Global Native 
+Function StartTimer(ActiveMagicEffect eventReceiver, float seconds, int aiTimerID = 0) Global Native 
+Function CancelTimer(ActiveMagicEffect eventReceiver, int aiTimerID = 0) Global Native 
+float Function GetTimeElapsedOnTimer(ActiveMagicEffect eventReceiver, int aiTimerID = 0) Global Native 
+float Function GetTimeLeftOnTimer(ActiveMagicEffect eventReceiver, int aiTimerID = 0) Global Native 
 
 Event OnTimer(int aiTimerID)
 EndEvent
@@ -17,20 +17,20 @@ EndEvent
 ;NoMenuMode, time while any menu is open, regardless if the game is paused or not is discounted.
 ;Requires the bMenuOpenCloseEventSinkEnabled setting in Data/SKSE/Plugins/DbSkseFunctions.ini to be enabled.
 ;Uses frame update function to detect elapsed time. Interval determined by the iFrameUpdateInterval setting in Data/SKSE/Plugins/DbSkseFunctions.ini
-Function StartNoMenuModeTimer(Form eventReceiver, float seconds, int aiTimerID = 0) Global Native 
-Function CancelNoMenuModeTimer(Form eventReceiver, int aiTimerID = 0) Global Native 
-float Function GetTimeElapsedOnNoMenuModeTimer(Form eventReceiver, int aiTimerID = 0) Global Native 
-float Function GetTimeLeftOnNoMenuModeTimer(Form eventReceiver, int aiTimerID = 0) Global Native 
+Function StartNoMenuModeTimer(ActiveMagicEffect eventReceiver, float seconds, int aiTimerID = 0) Global Native 
+Function CancelNoMenuModeTimer(ActiveMagicEffect eventReceiver, int aiTimerID = 0) Global Native 
+float Function GetTimeElapsedOnNoMenuModeTimer(ActiveMagicEffect eventReceiver, int aiTimerID = 0) Global Native 
+float Function GetTimeLeftOnNoMenuModeTimer(ActiveMagicEffect eventReceiver, int aiTimerID = 0) Global Native 
 
 Event OnTimerNoMenuMode(int aiTimerID)
 EndEvent
 
 ;MenuMode, No restrictions on time. Time while the game is paused or a menu is open does count - like Utility.WaitMenuMode. 
 ;Does NOT require the bMenuOpenCloseEventSinkEnabled setting in Data/SKSE/Plugins/DbSkseFunctions.ini to be enabled.
-Function StartMenuModeTimer(Form eventReceiver, float seconds, int aiTimerID = 0) Global Native 
-Function CancelMenuModeTimer(Form eventReceiver, int aiTimerID = 0) Global Native 
-float Function GetTimeElapsedOnMenuModeTimer(Form eventReceiver, int aiTimerID = 0) Global Native 
-float Function GetTimeLeftOnMenuModeTimer(Form eventReceiver, int aiTimerID = 0) Global Native 
+Function StartMenuModeTimer(ActiveMagicEffect eventReceiver, float seconds, int aiTimerID = 0) Global Native 
+Function CancelMenuModeTimer(ActiveMagicEffect eventReceiver, int aiTimerID = 0) Global Native 
+float Function GetTimeElapsedOnMenuModeTimer(ActiveMagicEffect eventReceiver, int aiTimerID = 0) Global Native 
+float Function GetTimeLeftOnMenuModeTimer(ActiveMagicEffect eventReceiver, int aiTimerID = 0) Global Native 
 
 Event OnTimerMenuMode(int aiTimerID)
 EndEvent
@@ -38,10 +38,10 @@ EndEvent
 ;GameTime, like utility.waitGameTime
 ;Does NOT require the bMenuOpenCloseEventSinkEnabled setting in Data/SKSE/Plugins/DbSkseFunctions.ini to be enabled.
 ;Uses frame update function to detect elapsed time. Interval determined by the iFrameUpdateInterval setting in Data/SKSE/Plugins/DbSkseFunctions.ini
-Function StartGameTimer(Form eventReceiver, float gameHours, int aiTimerID = 0) Global Native 
-Function CancelGameTimer(Form eventReceiver, int aiTimerID = 0) Global Native 
-float Function GetTimeElapsedOnGameTimer(Form eventReceiver, int aiTimerID = 0) Global Native 
-float Function GetTimeLeftOnGameTimer(Form eventReceiver, int aiTimerID = 0) Global Native 
+Function StartGameTimer(ActiveMagicEffect eventReceiver, float gameHours, int aiTimerID = 0) Global Native 
+Function CancelGameTimer(ActiveMagicEffect eventReceiver, int aiTimerID = 0) Global Native 
+float Function GetTimeElapsedOnGameTimer(ActiveMagicEffect eventReceiver, int aiTimerID = 0) Global Native 
+float Function GetTimeLeftOnGameTimer(ActiveMagicEffect eventReceiver, int aiTimerID = 0) Global Native 
 
 Event OnTimerGameTime(int aiTimerID)
 EndEvent
