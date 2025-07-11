@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Only An Extender)
+nameProper: Steelfeathers' Papyrus Extensions
+nameShort: Steelfeathers
+indexedVersion: "1.0"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/154540
+gitRepo: https://github.com/Steelfeathers/SteelfeathersPapyrusExtensions
+nexusIndexedFileId: 645716
