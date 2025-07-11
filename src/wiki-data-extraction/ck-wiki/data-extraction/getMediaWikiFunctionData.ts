@@ -199,7 +199,7 @@ ${shortDescriptionMarkdown}
         Array.from(li.querySelectorAll('li:has(> b:first-child)')).filter(nestedLi => nestedLi.firstElementChild!.textContent?.toLowerCase() === 'default:').forEach(nestedLi => nestedLi.remove());
 
         const asMarkdown = await parsoidToMarkdown(li.innerHTML, document.location.href);
-        const [nameMarkdown, ...descriptionMarkdownA] = asMarkdown.split(':', 2).map(s => s.trim());
+        const [nameMarkdown, ...descriptionMarkdownA] = asMarkdown.split(':').map(s => s.trim());
         const descriptionMarkdown = descriptionMarkdownA.join(':');
         if (!descriptionMarkdown) return null;
         if (!nameMarkdown) {
