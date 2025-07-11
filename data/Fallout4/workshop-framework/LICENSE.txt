@@ -1,0 +1,34 @@
+## Mod Page Description Note - Open Source and Permissions
+
+While this is open-source, and anyone has permission to make use of pieces of code found inside of these scripts, please do not release new versions of the exact same named scripts, or release things based on the code that would interfere with what this mod is trying to achieve. The idea is that this framework will become a central staple we can all build on without compatibility issues.
+
+## Nexus Mods permission checkboxes
+
+### Other user's assets
+Some assets in this file belong to other authors. You will need to seek permission from these authors before you can use their assets
+
+### Upload permission
+You are not allowed to upload this file to other sites under any circumstances
+
+### Modification permission
+You are not allowed to modify my files, including creating bug fixes or improving on features under any circumstances
+
+### Conversion permission
+You are not allowed to convert this file to work on other games under any circumstances
+
+### Asset use permission
+You must get permission from me before you are allowed to use any of the assets in this file
+
+### Asset use permission in mods/files that are being sold
+You are not allowed to use assets from this file in any mods/files that are being sold, for money, on Steam Workshop or other platforms
+
+### Asset use permission in mods/files that earn donation points
+You are not allowed to earn Donation Points for your mods if they use my assets
+
+## Author notes
+You are free to reuse sections of code found in this framework, so long as it does not interfere with this framework. Please check the top of the file you are borrowing from for a list of contributors and credit the appropriate people. While much of this was written by kinggath, the basis of the WorkshopScripts was built upon the work of the Unofficial Fallout 4 Patch team, the core idea for the threading engine and much of the code for the locking system was created by 1000101 (yes that's his username...).
+
+Not to mention as this will be a community driven project it is likely to have many more contributors in the future - so please credit them!
+
+## File credits
+Arthmoor, Sclerocephalus, and the rest of the UFO4P team for the workshop scripts which the Workshop Framework core is based on (Permission received from Arthmoor)

@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Only An Extender)
+nameProper: Workshop Framework
+nameShort: Workshop Framework
+indexedVersion: "2.4.6"
+nexusPage: https://www.nexusmods.com/fallout4/mods/35004
+gitRepo: https://github.com/kinggath/WorkshopFramework/ # <--- GET PSCs FROM HERE
+nexusIndexedFileId: 353978 # Note that the file uploaded to Nexus does NOT include PSCs; those are in the GitHub repo
