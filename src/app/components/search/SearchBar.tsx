@@ -156,6 +156,7 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
                 ref={searchInputRef}
                 onChange={onChange}
                 onKeyUp={focusSearchResultsOnEnter}
+                data-autofocus
             />
             <FontAwesomeIcon icon={faMagnifyingGlass} className={styles.searchModalSearchIcon!} />
             <button type='reset' onClick={clearSearch} hidden={!hasText} className={styles.searchModalCancelButton!}><FontAwesomeIcon icon={faBan} /></button>
