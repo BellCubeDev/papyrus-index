@@ -792,12 +792,16 @@ Scriptname PO3_SKSEFunctions Hidden
 	ObjectReference[] Function FindAllReferencesOfType(ObjectReference akRef, Form akFormOrList, float afRadius) global native
 
 	Form Function FindFirstItemInList(ObjectReference akRef, FormList akList) global native
+	
+	Quest[] Function GetActiveAssociatedQuests(ObjectReference akRef, Bool abAllowEmptyStages = True) global native
 
 	ObjectReference[] Function GetActivateChildren(ObjectReference akRef) global native
-
+	
 	string Function GetActiveGamebryoAnimation(ObjectReference akRef) global native
 	
 	ActiveMagicEffect[] Function GetActiveMagicEffects(ObjectReference akRef, MagicEffect akMagicEffect) global native
+	
+	Quest[] Function GetAllAssociatedQuests(ObjectReference akRef, Bool abAllowEmptyStages = True) global native
 
 	Actor Function GetActorCause(ObjectReference akRef) global native
 
