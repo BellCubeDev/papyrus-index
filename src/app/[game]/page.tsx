@@ -12,7 +12,7 @@ import { getGameFromParams, type GameRouteParams } from "./getGameFromParams";
 import { PapyrusTypeValueToken } from "../components/papyrus/type/PapyrusType";
 import { PapyrusScriptTypeArchetype } from "../../papyrus/data-structures/pure/type";
 import { Link } from "../components/Link";
-import { SourcePlate, SourcesList } from "../components/papyrus/SourcesList";
+import { SourcePlate } from "../components/papyrus/SourcesList";
 
 
 export function generateStaticParams() {

@@ -6,7 +6,7 @@ declare global {
     interface Window {
         StarryNightInstance: ReturnType<typeof initStarryNightForReal>
     }
-    var StarryNightInstance: ReturnType<typeof initStarryNightForReal>; // eslint-disable-line vars-on-top, no-var
+    var StarryNightInstance: ReturnType<typeof initStarryNightForReal>; // eslint-disable-line vars-on-top
 }
 
 export function initStarryNightForReal() {

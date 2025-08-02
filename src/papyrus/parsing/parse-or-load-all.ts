@@ -32,7 +32,6 @@ async function parseOrLoadAllScripts() {
         console.log(`Finished loading previously-parsed scripts in ${performance.now() - now}ms`);
         return json;
     } else {
-        // eslint-disable-next-line no-shadow -- not a shadow if we're just importing the type above
         const { AllScriptsFreshlyParsed } = await import('../parsing/parse-all');
         await fs.writeFile(rawJsonPath, JSON.stringify(AllScriptsFreshlyParsed, null, 4));
         return AllScriptsFreshlyParsed;

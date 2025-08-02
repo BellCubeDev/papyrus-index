@@ -1460,13 +1460,11 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
         };
     }
 
-    // eslint-disable-next-line no-shadow
     static parseScript<TGame extends PapyrusGame>(game: TGame, document: PapyrusScriptDiscoveredDocument): PapyrusScript<TGame> {
         const parser = new PapyrusScriptParser(game);
         return parser.parseScript(document);
     }
 
-    // eslint-disable-next-line no-shadow
     static parsePartialScript<TGame extends PapyrusGame>(game: TGame, document: PapyrusScriptDiscoveredDocument): PapyrusScript<TGame> {
         const parser = new PapyrusScriptParser(game);
         return parser.parsePartialScript(document);
@@ -1491,7 +1489,6 @@ this.document.sourceCode = this.document.sourceCode.trimEnd() + '\n';
         return [this.document, result] as const;
     }
 
-    // eslint-disable-next-line no-shadow
     static replaceFunctionImplementationWithGuard<TGame extends PapyrusGame>(game: TGame, script: PapyrusScriptDiscoveredDocument) {
         const parser = new PapyrusScriptParser(game);
         return parser.replaceFunctionImplementationWithGuard(script);

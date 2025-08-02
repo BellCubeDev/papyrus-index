@@ -1,7 +1,7 @@
 /* eslint-disable no-multi-assign */
 
 declare global {
-    var ___MemoizedDevServerConsts: Record<string, unknown>; // eslint-disable-line vars-on-top, no-var
+    var ___MemoizedDevServerConsts: Record<string, unknown>; // eslint-disable-line vars-on-top
     interface Window {
         ___MemoizedDevServerConsts: Record<string, unknown>;
     }
