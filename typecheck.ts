@@ -200,6 +200,8 @@ build.default(
     false,
     //debugOutput = false,
     false,
+    //debugPrerender = false,
+    false,
     //runLint = true,
     false,
     //noMangling = false,
