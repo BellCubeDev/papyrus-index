@@ -4,4 +4,30 @@
     gap: 2em;
     display: flex;
     padding: 1em;
+    flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: space-between;
+
+    counter-set: index -1;
+    > div {
+
+        max-width: css-min(45em, calc(50vw - 9.1em));
+        &:last-child { max-width: unset; }
+
+        counter-increment: index;
+        background-color: #5552;
+        backdrop-filter: blur(15px) saturate(2);
+        padding: 1em 2em;
+        flex-grow: 1;
+
+        &::before {
+            content: counter(index) '. ';
+            font-weight: bold;
+            display: inline;
+        }
+
+        > :first-child {
+            display: inline-block
+        }
+    }
 }
