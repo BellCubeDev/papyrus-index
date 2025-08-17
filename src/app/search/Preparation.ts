@@ -243,9 +243,13 @@ export function deepUnprepareObject<T>(obj: T): DeepUnpreparedObject<T> {
         ownKeys(target) {
             const keys = new Set(Reflect.ownKeys(target));
             for (const k of Object.getOwnPropertyNames(obj)) {
-                const newKey = k.startsWith(SYMBOL_PREFIX)
-                    ? Symbol.for(k.slice(SYMBOL_PREFIX.length))
-                    : k;
+                if (!k.startsWith(SYMBOL_PREFIX)) {
+                    keys.add(k);
+                    continue;
+                }
+                
+                keys.delete(k); // just in case
+                const newKey = Symbol.for(k.slice(SYMBOL_PREFIX.length));
                 keys.add(newKey);
             }
             return Array.from(keys);
@@ -262,7 +266,7 @@ export function deepUnprepareObject<T>(obj: T): DeepUnpreparedObject<T> {
                 };
             }
             return undefined;
-        }
+        },
     });
 
     AlreadyUnpreparedObjects.set(obj, proxy);
@@ -315,7 +319,7 @@ function deepUnprepareArrayWithExtraProps<T extends any[]>(arr: T): DeepUnprepar
                     return proxy[key as never];
                 }
             };
-        }
+        },
     });
 
     AlreadyUnpreparedObjects.set(arr, proxy);
