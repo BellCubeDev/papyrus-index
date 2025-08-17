@@ -1,7 +1,9 @@
 .reference {
     font-family: var(--code-font);
     font-weight: 600;
+}
 
+.functionName {
     color: hsl(60deg, 42%, 76%);
 
     --link-txt-color-noncurrent-normal: hsl(60deg, 42%, 76%);
@@ -15,4 +17,13 @@
 
     --link-txt-color-current-hover: hsl(0, 0%, 100%);
     --link-udl-color-current-hover: #0000;
+}
+
+.paramsIndicator {
+    color: hsl(0, 0%, 60%);
+    position: relative;
+    top: -0.15lh;
+    letter-spacing: -0.16em;
+    margin-right: 0.24em;
+    margin-left: 0.08em;
 }

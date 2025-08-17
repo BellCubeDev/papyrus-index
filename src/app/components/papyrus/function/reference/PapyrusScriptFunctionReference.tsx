@@ -17,32 +17,41 @@ export function PapyrusScriptFunctionReference<TGame extends PapyrusGame>(propsO
     const {game, func, funcAggregate, inTooltip} = propsObj;
     const scriptName = getScriptNameFromProps(propsObj);
     if (func) {
-        return <>
+        const parameterElement = <>({func.parameters.length > 0 ? <span className={styles.paramsIndicator}>...</span>: ''})</>;
+        return <span className={styles.reference}>
             <PapyrusScriptReference {...propsObj} />
             .
             { inTooltip
-                ? <span className={styles.reference}>{func.name}</span>
-                : <Tooltip role='tooltip' wrapperClassName={styles.reference} tooltipContents={<PapyrusScriptFunctionReferenceTooltip {...propsObj} />}>
-                    <Link href={`/${toLowerCase(game)}/script/${toLowerCase(scriptName)}/function/${toLowerCase(func.name)}` as const} data-ref=''>
+                ? <>
+                    <span className={styles.functionName}>{func.name}</span>
+                    {parameterElement}
+                </>
+                : <Tooltip role='tooltip' tooltipContents={<PapyrusScriptFunctionReferenceTooltip {...propsObj} />}>
+                    <Link className={styles.functionName} href={`/${toLowerCase(game)}/script/${toLowerCase(scriptName)}/function/${toLowerCase(func.name)}` as const} data-ref=''>
                         {func.name}
                     </Link>
+                    {parameterElement}
                 </Tooltip> }
-            ()
-        </>;
+
+        </span>;
     } else if (funcAggregate) {
         const funcName = getBestStringVariant(funcAggregate.name)![1];
-        return <>
+        const parameterElement = <>({funcAggregate.parameters.length ? <span className={styles.paramsIndicator}>...</span>: ''})</>;
+        return <span className={styles.reference}>
             <PapyrusScriptReference {...propsObj} />
             .
             { inTooltip
-                ? <span className={styles.reference}>{funcName}</span>
-                : <Tooltip role='tooltip' wrapperClassName={styles.reference} tooltipContents={<PapyrusScriptFunctionReferenceTooltip {...propsObj} />}>
-                    <Link href={`/${toLowerCase(game)}/script/${toLowerCase(scriptName)}/function/${toLowerCase(funcName)}` as const} data-ref=''>
+                ? <>
+                    <span className={styles.functionName}>{funcName}</span>
+                    {parameterElement}
+                </>
+                : <Tooltip role='tooltip' tooltipContents={<PapyrusScriptFunctionReferenceTooltip {...propsObj} />}>
+                    <Link className={styles.functionName} href={`/${toLowerCase(game)}/script/${toLowerCase(scriptName)}/function/${toLowerCase(funcName)}` as const} data-ref=''>
                         {funcName}
                     </Link>
+                    {parameterElement}
                 </Tooltip> }
-            ()
-        </>;
+        </span>;
     } else {
         throw new UnreachableError(propsObj, 'Unknown Papyrus script reference type passed to <PapyrusScriptReference> component!');
     }
