@@ -13,6 +13,7 @@ import Link from "next/link";
 import { PrefetchKind } from "next/dist/client/components/router-reducer/router-reducer-types";
 import { useUpdatedRef } from "../../hooks/useUpdatedRef";
 import { usePostHog } from "posthog-js/react";
+import { preload } from "react-dom";
 
 const games = Object.values(PapyrusGame);
 
@@ -34,6 +35,8 @@ export function GameDropdown({currentGame}: {readonly currentGame: PapyrusGame |
     useEffect(() => {
         for (const game of games) router.prefetch(`/${toLowerCase(game)}`, { kind: PrefetchKind.FULL });
     }, [router]);
+
+    for (const game of games) preload(`/images/${game}/poster.jpg`, {as: 'image', fetchPriority: 'low'});
 
     return <span className={styles.gameDropdownWrapper!}>
         <div className={`${styles.gameDropdownContainer} js-only`}>
