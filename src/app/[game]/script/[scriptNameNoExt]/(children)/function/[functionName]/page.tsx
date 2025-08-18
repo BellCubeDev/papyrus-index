@@ -126,7 +126,7 @@ function Examples({func, ckWikiDataPromise, githubWikiDataPromise, scriptNamespa
             {githubWikiData?.filter(([,wikiData])=>wikiData.exampleMDs.length > 0).flatMap(([_sourceIdentifier, wikiData]) =>
                 wikiData.exampleMDs.map((exampleMd) =>
                     <div key={exampleMd}>
-                        <WikiMarkdown data-analytics-id="docs-parameter-description-githubwiki" gameData={func.game}
+                        <WikiMarkdown data-analytics-id="docs-examples-githubwiki" gameData={func.game}
                             md={exampleMd} baseURL={wikiData.linkToWikiData} />
                     </div>
                 )
@@ -236,7 +236,7 @@ function RelatedPages({gameData, ckWikiDataPromise}: {readonly gameData: Papyrus
             {children}
         </div>
     </>}>
-        {ckWikiData?.seeAlsoMarkdown ? <WikiMarkdown gameData={gameData} md={ckWikiData.seeAlsoMarkdown} baseURL={ckWikiData.wikiPageUrl} /> : []}
+        {ckWikiData?.seeAlsoMarkdown ? <WikiMarkdown gameData={gameData} md={ckWikiData.seeAlsoMarkdown} baseURL={ckWikiData.wikiPageUrl} /> : null}
     </GuardEmptyList>;
 }
 
