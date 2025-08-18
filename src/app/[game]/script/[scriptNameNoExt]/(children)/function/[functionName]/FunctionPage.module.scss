@@ -11,7 +11,7 @@
     counter-reset: index -1;
     > div {
 
-        max-width: css-min(100%, 50em, css-max(calc(50vw - 4em), 30em) );
+        max-width: css-min(100%, 50em, css-max(calc(50% - 1em), 30em) );
         &:last-child { max-width: 100%; }
         box-sizing: border-box;
 
