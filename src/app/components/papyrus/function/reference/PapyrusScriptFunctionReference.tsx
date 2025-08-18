@@ -38,7 +38,7 @@ export function PapyrusScriptFunctionReference<TGame extends PapyrusGame>(propsO
         </span>;
     } else if (funcAggregate) {
         const funcName = getBestStringVariant(funcAggregate.name)![1];
-        const parameterElement = <>({funcAggregate.parameters.length ? TAKES_PARAMETERS_INDICATOR: null})</>;
+        const parameterElement = <>({funcAggregate.parameters.length > 0 ? TAKES_PARAMETERS_INDICATOR: null})</>;
         return <span className={styles.reference}>
             <PapyrusScriptReference {...propsObj} />
             .
