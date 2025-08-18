@@ -8,7 +8,7 @@
     align-items: stretch;
     justify-content: space-between;
 
-    counter-set: index -1;
+    counter-reset: index -1;
     > div {
 
         max-width: css-min(100%, 50em, css-max(calc(50vw - 4em), 30em) );
