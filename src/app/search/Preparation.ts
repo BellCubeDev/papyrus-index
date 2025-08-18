@@ -256,17 +256,15 @@ export function deepUnprepareObject<T extends object>(preparedObj: T): DeepUnpre
         },
         ownKeys(unpreparedMapObj) {
             // Prepared symbol keys will appear in both objects, so we'll have to transform both sets of keys
-            const keys = new Set([...Reflect.ownKeys(preparedObj), ...Reflect.ownKeys(unpreparedMapObj)]);
+            const originalKeys = [...Reflect.ownKeys(preparedObj), ...Reflect.ownKeys(unpreparedMapObj)];
 
-            for (const k of keys) {
-                if (typeof k !== 'string') continue;
-                if (!isSymbolString(k)) continue;
-
-                keys.delete(k);
-                keys.add(getSymbolFromString(k));
+            const outKeys = new Set<string | symbol>();
+            for (const k of originalKeys) {
+                if (typeof k === 'string' && isSymbolString(k)) outKeys.add(getSymbolFromString(k));
+                else outKeys.add(k);
             }
 
-            return Array.from(keys);
+            return Array.from(outKeys);
         },
         getOwnPropertyDescriptor(unpreparedMapObj, key) {
             if (key in unpreparedMapObj) return Object.getOwnPropertyDescriptor(unpreparedMapObj, key);
