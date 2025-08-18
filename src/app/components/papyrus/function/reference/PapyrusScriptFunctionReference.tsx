@@ -10,6 +10,8 @@ import { getScriptNameFromProps, PapyrusScriptReference } from "../../script/Pap
 import styles from './PapyrusScriptFunctionReference.module.scss';
 import { PapyrusScriptFunctionReferenceTooltip } from "./PapyrusScriptFunctionReferenceTooltip";
 
+const TAKES_PARAMETERS_INDICATOR = <span className={styles.paramsIndicator} aria-label="takes parameters">...</span>;
+
 export function PapyrusScriptFunctionReference<TGame extends PapyrusGame>(propsObj: ComponentProps<typeof PapyrusScriptReference> & (
     | {readonly func: PapyrusScriptFunctionIndexed<TGame>, readonly funcAggregate?: undefined}
     | {readonly func?: undefined, readonly funcAggregate: PapyrusScriptFunctionIndexedAggregate<TGame>}
@@ -17,7 +19,7 @@ export function PapyrusScriptFunctionReference<TGame extends PapyrusGame>(propsO
     const {game, func, funcAggregate, inTooltip} = propsObj;
     const scriptName = getScriptNameFromProps(propsObj);
     if (func) {
-        const parameterElement = <>({func.parameters.length > 0 ? <span className={styles.paramsIndicator}>...</span>: ''})</>;
+        const parameterElement = <>({func.parameters.length > 0 ? TAKES_PARAMETERS_INDICATOR: null})</>;
         return <span className={styles.reference}>
             <PapyrusScriptReference {...propsObj} />
             .
@@ -36,7 +38,7 @@ export function PapyrusScriptFunctionReference<TGame extends PapyrusGame>(propsO
         </span>;
     } else if (funcAggregate) {
         const funcName = getBestStringVariant(funcAggregate.name)![1];
-        const parameterElement = <>({funcAggregate.parameters.length ? <span className={styles.paramsIndicator}>...</span>: ''})</>;
+        const parameterElement = <>({funcAggregate.parameters.length ? TAKES_PARAMETERS_INDICATOR: null})</>;
         return <span className={styles.reference}>
             <PapyrusScriptReference {...propsObj} />
             .
