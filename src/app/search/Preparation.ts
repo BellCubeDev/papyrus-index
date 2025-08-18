@@ -224,8 +224,9 @@ export function deepUnprepareObject<T extends object>(preparedObj: T): DeepUnpre
 
     // This object will hold computed, newly-unprepared values.
     const unpreparedMapObj_ = {} as DeepUnpreparedObject<T>;
-    // @ts-ignore -- this is only here so we can see the original target in the debugger
-    unpreparedMapObj_[ORIGINAL_TARGET] = preparedObj;
+
+    // so we can see the original target in the debugger
+    Object.defineProperty(unpreparedMapObj_, ORIGINAL_TARGET, { value: preparedObj, enumerable: false, writable: false, configurable: false });
 
     const proxy = new Proxy(unpreparedMapObj_, {
         get(unpreparedMapObj, key, receiver) {
@@ -290,8 +291,9 @@ function deepUnprepareArrayWithExtraProps<T extends any[]>(arr: T): DeepUnprepar
 
     // Use an array as the target for the proxy.
     const mapped = [] as DeepUnpreparedValue<T>;
-    // @ts-ignore -- this is only here so we can see the original target in the debugger
-    mapped[ORIGINAL_TARGET] = arr;
+
+    // so we can see the original target in the debugger
+    Object.defineProperty(arr, ORIGINAL_TARGET, { value: arr, enumerable: false, writable: false, configurable: false });
 
     const proxy = new Proxy(mapped, {
         get(target, key, receiver) {
