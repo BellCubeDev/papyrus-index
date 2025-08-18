@@ -11,8 +11,9 @@
     counter-set: index -1;
     > div {
 
-        max-width: css-min(45em, calc(50vw - 9.1em));
-        &:last-child { max-width: unset; }
+        max-width: css-min(100%, 50em, css-max(calc(50vw - 4em), 30em) );
+        &:last-child { max-width: 100%; }
+        box-sizing: border-box;
 
         counter-increment: index;
         background-color: #5552;

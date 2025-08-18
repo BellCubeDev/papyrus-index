@@ -1,3 +1,6 @@
+@use '../../../vars.scss' as *;
+
+
 .type {
     &--void {
         background: none !important;
@@ -62,9 +65,13 @@
 
 
 .typeWithName, .wrapableSection {
-    display: flex;
     align-items: center;
-    flex-wrap: nowrap;
+    display: inline-flex;
+    flex-wrap: wrap;
+
+    min-width: min-content;
+    max-width: css-min(100%, css-max(87vw, 30em));
+    box-sizing: border-box;
     flex-direction: row;
     gap: 1ch;
     width: max-content;
@@ -76,6 +83,7 @@
 
     .typeWithName {
         padding: 0;
+        width: 100%;
     }
 
     * { background: none; }
