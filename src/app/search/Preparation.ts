@@ -219,55 +219,55 @@ const ORIGINAL_TARGET = Symbol.for('ORIGINAL_TARGET');
 // Took initial search rendering from roughly 1.3s to about 0.4s.
 //
 
-export function deepUnprepareObject<T>(obj: T): DeepUnpreparedObject<T> {
-    if (AlreadyUnpreparedObjects.has(obj)) return AlreadyUnpreparedObjects.get(obj) as any;
+export function deepUnprepareObject<T extends object>(preparedObj: T): DeepUnpreparedObject<T> {
+    if (AlreadyUnpreparedObjects.has(preparedObj)) return AlreadyUnpreparedObjects.get(preparedObj) as any;
 
     // This object will hold computed, newly-unprepared values.
-    const mapped = {} as DeepUnpreparedObject<T>;
+    const unpreparedMapObj_ = {} as DeepUnpreparedObject<T>;
     // @ts-ignore -- this is only here so we can see the original target in the debugger
-    mapped[ORIGINAL_TARGET] = obj;
+    unpreparedMapObj_[ORIGINAL_TARGET] = preparedObj;
 
-    const proxy = new Proxy(mapped, {
-        get(target, key, receiver) {
-            if (key in target) return Reflect.get(target, key, receiver);
+    const proxy = new Proxy(unpreparedMapObj_, {
+        get(unpreparedMapObj, key, receiver) {
+            if (key in unpreparedMapObj) return Reflect.get(unpreparedMapObj, key, receiver);
 
             if (typeof key === "symbol")
-                return this.get!(target as any, `${SYMBOL_PREFIX}${String(key)}`, receiver);
+                return this.get!(unpreparedMapObj as any, getStringForSymbol(key), receiver);
 
             let hasError = true;
             try {
-                const mappedValue = deepUnprepare(obj[key as keyof T]);
-                (target as any)[key] = mappedValue;
+                const mappedValue = deepUnprepare(preparedObj[key as keyof T]);
+                (unpreparedMapObj as any)[key] = mappedValue;
                 hasError = false;
                 return mappedValue;
             } finally {
                 if (hasError)
-                    console.error('Error occurred while attempting to unprepare value', {obj, key});
+                    console.error('Error occurred while attempting to unprepare value', {obj: preparedObj, key});
             }
         },
-        has(target, key) {
-            if (key in target) return true;
-            if (key in (obj as {})) return true;
-            if (typeof key === 'symbol' && this.has!(target, getStringForSymbol(key))) return true;
+        has(unpreparedMapObj, key) {
+            if (key in unpreparedMapObj) return true;
+            if (key in (preparedObj as {})) return true;
+            if (typeof key === 'symbol' && this.has!(unpreparedMapObj, getStringForSymbol(key))) return true;
             return false;
         },
-        ownKeys(target) {
-            const keys = new Set(Reflect.ownKeys(target));
-            for (const k of Object.getOwnPropertyNames(obj)) {
-                if (!k.startsWith(SYMBOL_PREFIX)) {
-                    keys.add(k);
-                    continue;
-                }
-                
-                keys.delete(k); // just in case
-                const newKey = Symbol.for(k.slice(SYMBOL_PREFIX.length));
-                keys.add(newKey);
+        ownKeys(unpreparedMapObj) {
+            // Prepared symbol keys will appear in both objects, so we'll have to transform both sets of keys
+            const keys = new Set([...Reflect.ownKeys(preparedObj), ...Reflect.ownKeys(unpreparedMapObj)]);
+
+            for (const k of keys) {
+                if (typeof k !== 'string') continue;
+                if (!isSymbolString(k)) continue;
+
+                keys.delete(k);
+                keys.add(getSymbolFromString(k));
             }
+
             return Array.from(keys);
         },
-        getOwnPropertyDescriptor(target, key) {
-            if (key in target) return Object.getOwnPropertyDescriptor(target, key);
-            if (this.has!(target, key)) {
+        getOwnPropertyDescriptor(unpreparedMapObj, key) {
+            if (key in unpreparedMapObj) return Object.getOwnPropertyDescriptor(unpreparedMapObj, key);
+            if (this.has!(unpreparedMapObj, key)) {
                 return {
                     configurable: true,
                     enumerable: true,
@@ -280,7 +280,7 @@ export function deepUnprepareObject<T>(obj: T): DeepUnpreparedObject<T> {
         },
     });
 
-    AlreadyUnpreparedObjects.set(obj, proxy);
+    AlreadyUnpreparedObjects.set(preparedObj, proxy);
     return proxy;
 }
 
