@@ -194,7 +194,7 @@ function Parameters({func, ckWikiDataPromise, githubWikiDataPromise}: {readonly 
                 const firstPass = wikiData.parameters[lowercaseParamName];
                 if (firstPass) return [sourceIdentifier, firstPass] as const;
 
-                if (lowercaseParamName.startsWith('a_')) { // Some sources prefix all of their parameter with 'a_', but don't do so in the wiki
+                if (lowercaseParamName.startsWith('a_')) { // Some sources prefix all of their parameters with 'a_', but don't do so in the wiki
                     const withoutPrefix = lowercaseParamName.slice(2) as Lowercase<string>;
                     const secondPass = wikiData.parameters[withoutPrefix];
                     if (secondPass) return [sourceIdentifier, secondPass] as const;
