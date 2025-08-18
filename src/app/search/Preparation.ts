@@ -32,7 +32,7 @@ export function getSymbolFromString<T>(s: `${typeof SYMBOL_PREFIX}${string}` & P
 export function getSymbolFromString(s: `${typeof SYMBOL_PREFIX}${string}`): symbol;
 export function getSymbolFromString(s: `${typeof SYMBOL_PREFIX}${string}`): symbol {
     if (!s.startsWith(SYMBOL_PREFIX)) throw new Error(`String "${s}" does not start with the reserved symbol prefix "${SYMBOL_PREFIX}" and may introduce an exploitable vulnerability or conflict!`);
-    return Symbol.for(s.slice(SYMBOL_PREFIX.length + 'Symbol('.length - 1));
+    return Symbol.for(s.slice(SYMBOL_PREFIX.length + ('Symbol(').length, -((')').length)));
 }
 
 export function isSymbolString(s: string): s is `${typeof SYMBOL_PREFIX}${string}` {
