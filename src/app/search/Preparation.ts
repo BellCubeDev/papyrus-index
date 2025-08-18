@@ -293,7 +293,7 @@ function deepUnprepareArrayWithExtraProps<T extends any[]>(arr: T): DeepUnprepar
     const mapped = [] as DeepUnpreparedValue<T>;
 
     // so we can see the original target in the debugger
-    Object.defineProperty(arr, ORIGINAL_TARGET, { value: arr, enumerable: false, writable: false, configurable: false });
+    Object.defineProperty(mapped, ORIGINAL_TARGET, { value: arr, enumerable: false, writable: false, configurable: false });
 
     const proxy = new Proxy(mapped, {
         get(target, key, receiver) {
