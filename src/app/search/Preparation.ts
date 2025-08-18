@@ -364,8 +364,10 @@ export function deepUnprepare<T>(v: T): DeepUnpreparedValue<T> {
             : typeOfV === "symbol"
                 ? null as never // this should not be possible!
             : typeOfV === "string"
-                ? getSymbolFromString(v as `${typeof SYMBOL_PREFIX}${string}` & PreparedForMark<any>)
-            : v === null || typeOfV === "function" || typeOfV === "number" || typeOfV === "boolean" || typeOfV === "bigint" || typeOfV === "undefined"
+                ? isSymbolString(v as any)
+                    ? getSymbolFromString(v as `${typeof SYMBOL_PREFIX}${string}` & PreparedForMark<any>)
+                    : v
+            : v === null || v === undefined || typeOfV === "function" || typeOfV === "number" || typeOfV === "boolean" || typeOfV === "bigint" || typeOfV === "undefined"
                 ? v
             : deepUnprepareObject(v)
         ) as any;
