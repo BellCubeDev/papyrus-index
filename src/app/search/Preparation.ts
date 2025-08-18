@@ -24,8 +24,19 @@ type ReservedSymbol = typeof IS_PREPARED | typeof PREPARED_FOR;
 
 export const SYMBOL_PREFIX = '**&&^^%%$##@@!!PAPYRUS_INDEX_SYMBOL_______' as const;
 
-export function getStringForSymbol(s: symbol): `${typeof SYMBOL_PREFIX}${string}` {
-    return `${SYMBOL_PREFIX}${String(s)}`;
+export function getStringForSymbol(theSymbol: symbol): `${typeof SYMBOL_PREFIX}${string}` {
+    return `${SYMBOL_PREFIX}${String(theSymbol)}`;
+}
+
+export function getSymbolFromString<T>(s: `${typeof SYMBOL_PREFIX}${string}` & PreparedForMark<T>): T
+export function getSymbolFromString(s: `${typeof SYMBOL_PREFIX}${string}`): symbol;
+export function getSymbolFromString(s: `${typeof SYMBOL_PREFIX}${string}`): symbol {
+    if (!s.startsWith(SYMBOL_PREFIX)) throw new Error(`String "${s}" does not start with the reserved symbol prefix "${SYMBOL_PREFIX}" and may introduce an exploitable vulnerability or conflict!`);
+    return Symbol.for(s.slice(SYMBOL_PREFIX.length + 'Symbol('.length - 1));
+}
+
+export function isSymbolString(s: string): s is `${typeof SYMBOL_PREFIX}${string}` {
+    return s.startsWith(SYMBOL_PREFIX);
 }
 
 
@@ -338,11 +349,6 @@ export function isFuzzysortPrepared(obj: any): obj is Fuzzysort.Prepared {
             )
         )
     );
-}
-
-function getSymbolFromString<T>(s: `${typeof SYMBOL_PREFIX}${string}` & PreparedForMark<T>): T {
-    if (!s.startsWith(SYMBOL_PREFIX)) throw new Error(`String "${s}" does not start with the reserved symbol prefix "${SYMBOL_PREFIX}" and may introduce an exploitable vulnerability or conflict!`);
-    return Symbol.for(s.slice(SYMBOL_PREFIX.length + 'Symbol('.length - 1)) as T;
 }
 
 
