@@ -22,6 +22,7 @@
     font-size: css-clamp(.7em, 1.75svw, 1em);
 
     max-width: 100%;
+    box-sizing: border-box;
     overflow-x: auto;
 }
 
@@ -30,7 +31,8 @@
     flex-wrap: wrap;
 
     min-width: min-content;
-    max-width: max(87vw, 30em);
+    max-width: css-min(100%, css-max(87vw, 30em));
+    box-sizing: border-box;
 
     padding-left: 4ch;
     > :first-child {

@@ -1,0 +1,34 @@
+@use '../../../../../../vars.scss' as *;
+
+.parameters {
+    gap: 2em;
+    display: flex;
+    padding: 1em;
+    flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: space-between;
+
+    counter-reset: index -1;
+    > div {
+
+        max-width: css-min(100%, 50em, css-max(calc(50vw - 4em), 30em) );
+        &:last-child { max-width: 100%; }
+        box-sizing: border-box;
+
+        counter-increment: index;
+        background-color: #5552;
+        backdrop-filter: blur(15px) saturate(2);
+        padding: 1em 2em;
+        flex-grow: 1;
+
+        &::before {
+            content: counter(index) '. ';
+            font-weight: bold;
+            display: inline;
+        }
+
+        > :first-child {
+            display: inline-block
+        }
+    }
+}
