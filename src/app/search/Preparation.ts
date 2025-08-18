@@ -235,6 +235,8 @@ export function deepUnprepareObject<T extends object>(preparedObj: T): DeepUnpre
             if (typeof key === "symbol")
                 return this.get!(unpreparedMapObj as any, getStringForSymbol(key), receiver);
 
+            if (!(key in preparedObj)) return undefined;
+
             let hasError = true;
             try {
                 const mappedValue = deepUnprepare(preparedObj[key as keyof T]);
