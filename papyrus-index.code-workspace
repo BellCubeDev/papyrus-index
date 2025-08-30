@@ -44,6 +44,7 @@
 			"pnpm-lock.yaml"
 		],
 		"typescript.tsdk": "node_modules/typescript/lib",
-		"commentAnchors.workspace.excludeFiles": "**/{node_modules,.git,.idea,target,out,build,bin,obj,dist,vendor,src/external/xml.js}/**/*"
+		"commentAnchors.workspace.excludeFiles": "**/{node_modules,.git,.idea,target,out,build,bin,obj,dist,vendor,src/external/xml.js}/**/*",
+		"editor.insertSpaces": true,
 	},
 }
