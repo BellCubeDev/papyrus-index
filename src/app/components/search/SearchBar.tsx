@@ -96,8 +96,9 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
         console.log('Searching for', query);
         setHasText(query !== '');
 
-        if (!query) return setResult(query ? AWAITING_SEARCH : EMPTY_QUERY);
-        else setResult(AWAITING_SEARCH);
+        if (!query) return setResult(EMPTY_QUERY);
+
+        setResult(AWAITING_SEARCH);
 
         let hasResults = false;
 
