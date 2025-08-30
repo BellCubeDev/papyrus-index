@@ -190,21 +190,21 @@ async function getSearchIndexOnWorkerLoad(): Promise<[DeepPreparedObject<SearchI
             }
             for (const event of Object.values(scriptBySources[AllSourcesCombined].events)) {
                 const extraEntityData = searchData.extraEntityData[event.$entityId] as SingleExtraEntityDataRecord[SearchIndexEntityType.Event] | undefined;
-                if (!extraEntityData) throw new Error(`[SEARCH WORKER] Failed to find extra entity data for function ${event.name[0]![1]} in script ${scriptBySources[AllSourcesCombined].nameWithoutNamespace[0]![1]}!`);
+                if (!extraEntityData) throw new Error(`[SEARCH WORKER] Failed to find extra entity data for event ${event.name[0]![1]} in script ${scriptBySources[AllSourcesCombined].nameWithoutNamespace[0]![1]}!`);
                 entitiesPromises[SearchIndexEntityType.Event].push(Object.assign(event, {...extraEntityData, $entityType: SearchIndexEntityType.Event}));
             }
             for (const group of Object.values(scriptBySources[AllSourcesCombined].propertyGroups)) {
                 for (const prop of Object.values(group.properties)) {
                     const extraEntityData = searchData.extraEntityData[prop.$entityId] as SingleExtraEntityDataRecord[SearchIndexEntityType.Property] | undefined;
 
-                    if (!extraEntityData) throw new Error(`[SEARCH WORKER] Failed to find extra entity data for function ${prop.name[0]![1]} (from group ${prop.group.name[0]![1]}) in script ${scriptBySources[AllSourcesCombined].nameWithoutNamespace[0]![1]}!`); // eslint-disable-line max-depth
+                    if (!extraEntityData) throw new Error(`[SEARCH WORKER] Failed to find extra entity data for group ${prop.name[0]![1]} (from group ${prop.group.name[0]![1]}) in script ${scriptBySources[AllSourcesCombined].nameWithoutNamespace[0]![1]}!`); // eslint-disable-line max-depth
                     entitiesPromises[SearchIndexEntityType.Property].push(Object.assign(prop, {...extraEntityData, $entityType: SearchIndexEntityType.Property}));
                 }
             }
             if (scriptBySources[AllSourcesCombined].structs) {
                 for (const struct of Object.values(scriptBySources[AllSourcesCombined].structs)) {
                     const extraEntityData = searchData.extraEntityData[struct.$entityId] as SingleExtraEntityDataRecord[SearchIndexEntityType.Struct] | undefined;
-                    if (!extraEntityData) throw new Error(`[SEARCH WORKER] Failed to find extra entity data for function ${struct.name[0]![1]} in script ${scriptBySources[AllSourcesCombined].nameWithoutNamespace[0]![1]}!`); // eslint-disable-line max-depth
+                    if (!extraEntityData) throw new Error(`[SEARCH WORKER] Failed to find extra entity data for struct ${struct.name[0]![1]} in script ${scriptBySources[AllSourcesCombined].nameWithoutNamespace[0]![1]}!`); // eslint-disable-line max-depth
                     entitiesPromises[SearchIndexEntityType.Struct].push(Object.assign(struct, {...extraEntityData, $entityType: SearchIndexEntityType.Struct}));
                 }
             }
