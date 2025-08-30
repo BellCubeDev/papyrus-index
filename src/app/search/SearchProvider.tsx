@@ -164,7 +164,7 @@ export function SearchProvider({children, game, searchIndexHash}: {readonly chil
                 game,
                 query,
                 filter,
-                result_count: res ? Object.keys(res).length : 0,
+                result_count: res ? res.length : 0,
                 search_time: end - start,
                 search_id: searchId,
                 latest_search_id: searchIdRef.current,
