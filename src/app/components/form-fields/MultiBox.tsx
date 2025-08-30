@@ -37,6 +37,10 @@ export function MultiBox<T extends MultiBoxOption>({ options, onChange: parentOn
         }))
     , [options, deselectOption]);
 
+    useEffect(() => {
+        setSelected((prevSelected) => prevSelected.map((o) => optionsFilled.find((opt) => opt.key === o.key)).filter((o): o is NonNullable<typeof o> => Boolean(o)));
+    }, [optionsFilled]);
+
     return <div className={styles.listBoxWrapper}>
         <Listbox multiple value={selected} onChange={setSelected}>
             <ListboxButton className={styles.listBoxButton}>
