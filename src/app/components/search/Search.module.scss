@@ -242,7 +242,6 @@ div.searchModalFilters {
         &::before, &::after {
             content: '';
             display: inline-block;
-            width: fill-available;
             border-bottom: 3px solid #fff2;
             transform: translateY(-0.2em);
         }
