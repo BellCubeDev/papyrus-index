@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "$env:FORCE_COLOR = 'true'; pnpm run parse:reset; next dev --turbo",
     "start": "npx serve out",
-    "lint": "next lint",
+    "lint": "eslint .",
     "prepare": "husky; pnpm run '/^prepare:/'",
     "prepare:next-typegen": "next typegen",
     "prepare:parsoid-service": "cd ./node_modules/parsoid-service; composer install",
@@ -118,6 +118,7 @@
     }
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
     "serve": "^14.2.4"
   },
   "peerDependencies": {

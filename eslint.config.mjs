@@ -9,15 +9,23 @@ import reactHooks from "eslint-plugin-react-hooks";
 import { includeIgnoreFile } from "@eslint/compat";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { FlatCompat } from "@eslint/eslintrc";
 
-const filename = fileURLToPath(import.meta.url);
-const dirname = path.dirname(filename);
-const gitignorePath = path.resolve(dirname, ".gitignore");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const gitignorePath = path.resolve(__dirname, ".gitignore");
+const compat = new FlatCompat({
+  baseDirectory: __dirname
+});
 
 /** @type {import("eslint").Linter.Config[]}*/
 export default [
+  ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
     files: ["**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx}"],
+  },
+  {
+    ignores: ["node_modules/**", ".next/**", "out/**", "build/**", "next-env.d.ts"]
   },
   {
     languageOptions: { globals: { ...globals.browser, ...globals.node } },
@@ -54,22 +62,22 @@ export default [
   {
     rules: {
       // Style Guide Rules: Customized
-      "semi": ["warn", "always", {omitLastInOneLineBlock: true}],
+      "semi": ["warn", "always", { omitLastInOneLineBlock: true }],
       "one-var": ["warn", "never"],
-      "func-style": ["warn", "declaration", {allowArrowFunctions: true}],
+      "func-style": ["warn", "declaration", { allowArrowFunctions: true }],
       "curly": ["warn", "multi-or-nest", "consistent"],
-      "react/jsx-wrap-multilines": ["warn", {declaration: "never", assignment: "never", return: "never", arrow: "never", condition: "never", logical: "never", prop: "never"}],
+      "react/jsx-wrap-multilines": ["warn", { declaration: "never", assignment: "never", return: "never", arrow: "never", condition: "never", logical: "never", prop: "never" }],
       "react/no-multi-comp": ["warn", { "ignoreStateless": true }],
-      "max-lines": ["warn", {max: 400, skipBlankLines: true, skipComments: true}],
-      "camelcase": ["warn", {properties: "never", ignoreDestructuring: true, allow: ["__INTERNAL__"]}],
-      "react/jsx-pascal-case": ["warn", {allowAllCaps: true, ignore: ["*__INTERNAL__*"]}],
-      "prefer-const": ["warn", {destructuring: "all"}],
-      "react/jsx-no-useless-fragment": ["warn", {allowExpressions: true}],
-      "complexity": ["warn", {max: 20, variant: "modified"}], // switches are great! And don't create a lot of mental complexity!
-      "react/jsx-handler-names": ["warn", {eventHandlerPrefix: "handle", eventHandlerPropPrefix: "off"}], // so we can still use things like `auth.logOut` for our handlers
+      "max-lines": ["warn", { max: 400, skipBlankLines: true, skipComments: true }],
+      "camelcase": ["warn", { properties: "never", ignoreDestructuring: true, allow: ["__INTERNAL__"] }],
+      "react/jsx-pascal-case": ["warn", { allowAllCaps: true, ignore: ["*__INTERNAL__*"] }],
+      "prefer-const": ["warn", { destructuring: "all" }],
+      "react/jsx-no-useless-fragment": ["warn", { allowExpressions: true }],
+      "complexity": ["warn", { max: 20, variant: "modified" }], // switches are great! And don't create a lot of mental complexity!
+      "react/jsx-handler-names": ["warn", { eventHandlerPrefix: "handle", eventHandlerPropPrefix: "off" }], // so we can still use things like `auth.logOut` for our handlers
       "react/prefer-read-only-props": ["warn"],
-      "react/jsx-curly-newline": ["warn", {multiline: "consistent", singleline: "consistent"}],
-      "react/jsx-max-props-per-line": ["warn", {maximum: {single: 4, multi: 2} }],
+      "react/jsx-curly-newline": ["warn", { multiline: "consistent", singleline: "consistent" }],
+      "react/jsx-max-props-per-line": ["warn", { maximum: { single: 4, multi: 2 } }],
       "react/self-closing-comp": "warn",
       "@typescript-eslint/no-unused-vars": [
         "warn",
@@ -87,7 +95,7 @@ export default [
 
 
       // Logic Rules
-      "react/jsx-filename-extension": ["error", {extensions: [".jsx", ".tsx"]}],
+      "react/jsx-filename-extension": ["error", { extensions: [".jsx", ".tsx"] }],
       "react-compiler/react-compiler": "error",
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "error",
