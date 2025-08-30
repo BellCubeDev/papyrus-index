@@ -4,7 +4,7 @@ import React, { Suspense } from 'react';
 import type { PapyrusGame } from '../../papyrus/data-structures/pure/game';
 import type { SearchIndexEntityType } from './Entity';
 import { deepUnprepare, DeepUnpreparedValue } from './Preparation';
-import type { WorkerMessageInput, WorkerMessageInputInit, WorkerMessageOutput, WorkerMessageOutputSearchIndexReady, WorkerMessageOutputSearchResult } from './SEARCH.worker';
+import type { SearchFilter, WorkerMessageInput, WorkerMessageInputInit, WorkerMessageOutput, WorkerMessageOutputSearchIndexReady, WorkerMessageOutputSearchResult } from './SEARCH.worker';
 import { memoizeDevServerConst } from '../../utils/memoizeDevServerConst';
 import { SourceListUser } from '../components/papyrus/SourcesList';
 import { usePostHog } from 'posthog-js/react';
@@ -59,9 +59,14 @@ export type SearchContextLoaded = {
     sources: Promise<WorkerMessageOutputSearchIndexReady['sources']>;
     DEVELOPMENT__LOADING_HASH: false;
     LOADING_FROM_SSR: false;
-    search<TTypes extends SearchIndexEntityType>(query: string, types: TTypes[], signal?: undefined): Promise<DeepUnpreparedValue<WorkerMessageOutputSearchResult<PapyrusGame, TTypes>['results']>>;
-    search<TTypes extends SearchIndexEntityType>(query: string, types: TTypes[], signal?: AbortSignal | undefined): Promise<null | DeepUnpreparedValue<WorkerMessageOutputSearchResult<PapyrusGame, TTypes>['results']>>;
-    search<TTypes extends SearchIndexEntityType>(query: string, types: TTypes[], signal: AbortSignal | undefined): Promise<null | DeepUnpreparedValue<WorkerMessageOutputSearchResult<PapyrusGame, TTypes>['results']>>;
+    /**
+     * ⚠️ An empty array passed to any filter means "let nothing through"! ⚠️
+     *
+     * If you instead want "let everything through", use an array with all possible values!
+     */
+    search<TTypes extends SearchIndexEntityType>(query: string, filter: SearchFilter<TTypes>, signal?: undefined): Promise<DeepUnpreparedValue<WorkerMessageOutputSearchResult<PapyrusGame, TTypes>['results']>>;
+    search<TTypes extends SearchIndexEntityType>(query: string, filter: SearchFilter<TTypes>, signal?: AbortSignal | undefined): Promise<null | DeepUnpreparedValue<WorkerMessageOutputSearchResult<PapyrusGame, TTypes>['results']>>;
+    search<TTypes extends SearchIndexEntityType>(query: string, filter: SearchFilter<TTypes>, signal: AbortSignal | undefined): Promise<null | DeepUnpreparedValue<WorkerMessageOutputSearchResult<PapyrusGame, TTypes>['results']>>;
 }
 
 export type SearchContext = SearchContextLoaded | {
@@ -129,7 +134,7 @@ export function SearchProvider({children, game, searchIndexHash}: {readonly chil
     const searchIdRef = React.useRef(0);
 
     const search = React.useCallback<SearchContextLoaded['search']>(
-        async function search<TTypes extends SearchIndexEntityType>(query: string, types: TTypes[], signal?: AbortSignal): Promise<any> {
+        async function search<TTypes extends SearchIndexEntityType>(query: string, filter: SearchFilter<TTypes>, signal?: AbortSignal): Promise<any> {
             if (!worker) throw new Error('Cannot call search() from the server! Must be called on the client, with Web Workers enabled.');
             const start = performance.now();
             const searchId = ++searchIdRef.current;
@@ -149,7 +154,7 @@ export function SearchProvider({children, game, searchIndexHash}: {readonly chil
             worker.postMessage({
                 type: 'SEARCH',
                 query,
-                types,
+                filter,
                 id: searchIdRef.current
             });
             const res = await resultPromise;
@@ -158,8 +163,8 @@ export function SearchProvider({children, game, searchIndexHash}: {readonly chil
             posthog?.capture('Search query completed', {
                 game,
                 query,
-                types,
-                result_count: res ? Object.keys(res).length : 0,
+                filter,
+                result_count: res ? res.length : 0,
                 search_time: end - start,
                 search_id: searchId,
                 latest_search_id: searchIdRef.current,

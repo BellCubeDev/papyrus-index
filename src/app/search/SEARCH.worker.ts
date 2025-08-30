@@ -11,6 +11,7 @@ import { toLowerCase } from "../../utils/toLowerCase";
 import type { SearchDataGETResponse, SingleExtraEntityDataRecord } from "../[game]/search-data.json/route";
 import { SearchIndexEntityGroupRecord, SearchIndexEntityType, selectEntityGroups, type SearchIndexEntity, type SelectEntityGroups } from "./Entity";
 import { deepPrepareObject, getStringForSymbol, prepForBorderCrossing, SYMBOL_PREFIX, type DeepPreparedObject } from "./Preparation";
+import type { PapyrusSourceType } from "../../papyrus/data-structures/pure/scriptSource";
 
 export interface WorkerMessageBase {
     type: string;
@@ -25,7 +26,12 @@ export interface WorkerMessageInputInit extends WorkerMessageBase {
 export interface WorkerMessageInputSearch extends WorkerMessageBase {
     type: 'SEARCH';
     query: string;
-    types: SearchIndexEntityType[];
+    /**
+     * ⚠️ An array passed to any filter array means "let nothing through"! ⚠️
+     *
+     * If you instead want "let everything through", use an array with all possible values!
+     */
+    filter: SearchFilter<SearchIndexEntityType>;
     id: number;
 }
 
@@ -44,6 +50,16 @@ export interface WorkerMessageOutputSearchIndexReady extends WorkerMessageBase {
 }
 
 export type WorkerMessageOutput = WorkerMessageOutputSearchResult<PapyrusGame, SearchIndexEntityType> | WorkerMessageOutputSearchIndexReady;
+
+/**
+ * ⚠️ An empty array passed to any filter means "let nothing through"! ⚠️
+ *
+ * If you instead want "let everything through", use an array with all possible values!
+ */
+export interface SearchFilter<TEntityTypes extends SearchIndexEntityType> {
+    entityTypes: TEntityTypes[];
+    sourceTypes: PapyrusSourceType[];
+}
 
 const {game, searchIndexHash} = await new Promise<WorkerMessageInputInit>(resolve => {
     self.onmessage = (e: MessageEvent<WorkerMessageInput>) => {
@@ -303,8 +319,19 @@ self.addEventListener('message', async function searchWorkerMessageHandler(e: Me
         case 'SEARCH': {
             console.log('[SEARCH WORKER] Starting search:', message);
             performance.mark('startSearch');
+
+            const filter = {
+                sourceTypes: new Set(message.filter.sourceTypes),
+            } satisfies Record<Exclude<keyof typeof message.filter, 'entityTypes'>, any>;
+
             const [entities, sources] = await searchIndexPromise;
-            const entitiesToSearchFrom = selectEntityGroups(entities, ...message.types);
+
+            const entitiesToSearchFrom = selectEntityGroups(entities, ...message.filter.entityTypes).filter(entity => {
+                const entitySources = Object.keys(entity.$sources).map(v => sources[v]);
+                if (!entitySources.some(source => source && filter.sourceTypes.has(source.type))) return false;
+
+                return true;
+            });
 
             const results = prepForBorderCrossing(fuzzysort.go(message.query, entitiesToSearchFrom, {
                 limit: 50,
