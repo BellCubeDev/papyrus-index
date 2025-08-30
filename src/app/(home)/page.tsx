@@ -9,9 +9,7 @@ export const metadata: Metadata = {
     title: { absolute: 'The Papyrus Index' },
 };
 
-export default function RedirectToFilesByHashPage() {
-
-
+export default function HomePage() {
     return <>
         <NavBar game={null} // We have a NavBar in the home page so we can add it separately to the game layouts
         />
