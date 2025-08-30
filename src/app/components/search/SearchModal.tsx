@@ -24,7 +24,6 @@ export function SearchModalButton({game}: {readonly game: PapyrusGame}): React.R
         else posthogRef.current.capture('SearchModal closed', {source: 'button'});
     }, [isOpen, posthogRef]);
 
-    const useCompactWidthLayout = useMediaQuery('(max-width: 900px)');
 
     const pathname = usePathname();
     useEffect(closeModal, [pathname, closeModal]);
@@ -36,29 +35,50 @@ export function SearchModalButton({game}: {readonly game: PapyrusGame}): React.R
         </button>
         <Dialog open={isOpen} onClose={closeModal} className={styles.searchModalBackdrop!} unmount={false}>
             <DialogPanel className={styles.searchModalDialog!}>
-                <div className={styles.searchModalHeader!}>
-                    <button
-                        type='button' onClick={closeModal}
-                        className={styles.searchModalReturnButton!}
-                        disabled={useCompactWidthLayout} hidden={useCompactWidthLayout}
-                    >
-                        <FontAwesomeIcon icon={faArrowLeftLong} />
-                        <span>Return to Page</span>
-                    </button>
-                    <DialogTitle>
-                        <FontAwesomeIcon icon={faMagnifyingGlass} />
-                        <span>Papyrus Index Search</span>
-                    </DialogTitle>
-                    <button type='button' onClick={closeModal} className={styles.searchModalCloseButton!}>
-                        <FontAwesomeIcon icon={faXmark} />
-                    </button>
-                </div>
-                <div className={styles.searchModalBody!}>
-                    <div className={styles.searchModalBodyContentWrapper!}>
-                        <SearchBar game={game} />
-                    </div>
-                </div>
+                <SearchModalContents game={game} closeModal={closeModal} Title={DialogTitle} />
             </DialogPanel>
         </Dialog>
+    </>;
+}
+
+export function SearchModalStandalone({game}: {readonly game: PapyrusGame}): React.ReactElement {
+    return <div className={styles.searchModalBackdrop!}>
+        <div className={styles.searchModalDialog!}>
+            <SearchModalContents game={game} Title='h2' />
+        </div>
+    </div>;
+}
+
+function SearchModalContents({game, closeModal, Title}: {
+    readonly game: PapyrusGame;
+    readonly closeModal?: () => void;
+    readonly Title: keyof React.JSX.IntrinsicElements | React.ComponentType<{children: React.ReactNode}>;
+}): React.ReactElement {
+
+    const useCompactWidthLayout = useMediaQuery('(max-width: 900px)');
+
+    return <>
+        <div className={styles.searchModalHeader!}>
+            <button
+                type='button' onClick={closeModal}
+                className={styles.searchModalReturnButton!}
+                disabled={useCompactWidthLayout} hidden={useCompactWidthLayout}
+            >
+                <FontAwesomeIcon icon={faArrowLeftLong} />
+                <span>Return to Page</span>
+            </button>
+            <Title>
+                <FontAwesomeIcon icon={faMagnifyingGlass} />
+                <span>Papyrus Index Search</span>
+            </Title>
+            <button type='button' onClick={closeModal} className={styles.searchModalCloseButton!}>
+                <FontAwesomeIcon icon={faXmark} />
+            </button>
+        </div>
+        <div className={styles.searchModalBody!}>
+            <div className={styles.searchModalBodyContentWrapper!}>
+                <SearchBar game={game} />
+            </div>
+        </div>
     </>;
 }
