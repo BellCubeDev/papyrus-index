@@ -1,19 +1,20 @@
 'use client';
 
+import { useRouter } from '@bprogress/next/app';
+import { faChess, faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react';
+import { PrefetchKind } from "next/dist/client/components/router-reducer/router-reducer-types";
+import { usePostHog } from "posthog-js/react";
 import React, { useEffect, useState } from "react";
+import { preload } from "react-dom";
 import { PapyrusGame } from "../../../papyrus/data-structures/pure/game";
 import { getGameName } from "../../../utils/getGameName";
-import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react';
-import styles from './NavBar.module.scss';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChess, faChevronDown } from "@fortawesome/free-solid-svg-icons";
-import { useRouter } from '@bprogress/next/app';
+import { prepareUrlParts } from "../../../utils/prepareUrlParts";
 import { toLowerCase } from "../../../utils/toLowerCase";
-import Link from "next/link";
-import { PrefetchKind } from "next/dist/client/components/router-reducer/router-reducer-types";
 import { useUpdatedRef } from "../../hooks/useUpdatedRef";
-import { usePostHog } from "posthog-js/react";
-import { preload } from "react-dom";
+import { InternalLink } from "../Link";
+import styles from './NavBar.module.scss';
 
 const games = Object.values(PapyrusGame);
 
@@ -52,15 +53,15 @@ export function GameDropdown({currentGame}: {readonly currentGame: PapyrusGame |
                     className={styles.gameDropdownOptions!}
                 >
                     {games.map((game) =>
-                        <Link key={game}
-                            href={`/${toLowerCase(game)}/`}
+                        <InternalLink key={game}
+                            href={prepareUrlParts(game)}
                             className={styles.gameDropdownLink!}
                         >
                             <ListboxOption value={game} className={styles.gameDropdownOption!} enterKeyHint="enter">
                                 <img src={`/images/${game}/poster.jpg`} alt={`Poster for the game ${getGameName(game)}`} className={styles.gameDropdownOptionImage!} />
                                 <span>{getGameName(game)}</span>
                             </ListboxOption>
-                        </Link>
+                        </InternalLink>
                     )}
                 </ListboxOptions>
             </Listbox>

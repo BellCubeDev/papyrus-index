@@ -11,8 +11,9 @@ import styles from "./GamePage.module.scss";
 import { getGameFromParams, type GameRouteParams } from "./getGameFromParams";
 import { PapyrusTypeValueToken } from "../components/papyrus/type/PapyrusType";
 import { PapyrusScriptTypeArchetype } from "../../papyrus/data-structures/pure/type";
-import { Link } from "../components/Link";
+import { InternalLink } from "../components/Link";
 import { SourcePlate } from "../components/papyrus/SourcesList";
+import { prepareUrlParts } from "../../utils/prepareUrlParts";
 
 
 export function generateStaticParams() {
@@ -41,9 +42,9 @@ export default async function GamePage({params}: {readonly params: Promise<GameR
             <InheritanceDisplay game={game} data={gameData.topLevelScripts} />
         </div>
         <div className={styles.sourceGrid}>
-            {Object.values(gameData.scriptSources).map(source => <Link
+            {Object.values(gameData.scriptSources).map(source => <InternalLink
                 key={source.sourceIdentifier}
-                href={`/${toLowerCase(game)}/source/${source.sourceIdentifier}` as const}
+                href={prepareUrlParts(game, 'source', source.sourceIdentifier)}
                 className={styles.source}
                 data-no-link-style
             ><div
@@ -66,7 +67,7 @@ export default async function GamePage({params}: {readonly params: Promise<GameR
                         <h3><SourceName source={source} long /></h3>
                     </span>
                 </div>
-            </div></Link>)}
+            </div></InternalLink>)}
         </div>
     </main>;
 }

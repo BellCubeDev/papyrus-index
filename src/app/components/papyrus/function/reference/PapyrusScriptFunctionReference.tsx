@@ -3,8 +3,8 @@ import type { PapyrusScriptFunctionIndexed, PapyrusScriptFunctionIndexedAggregat
 import type { PapyrusGame } from "../../../../../papyrus/data-structures/pure/game";
 import { UnreachableError } from "../../../../../UnreachableError";
 import { getBestStringVariant } from "../../../../../utils/getBestName";
-import { toLowerCase } from "../../../../../utils/toLowerCase";
-import { Link } from "../../../Link";
+import { prepareUrlParts } from "../../../../../utils/prepareUrlParts";
+import { InternalLink } from "../../../Link";
 import { Tooltip } from "../../../tooltip/Tooltip";
 import { getScriptNameFromProps, PapyrusScriptReference } from "../../script/PapyrusScriptReference";
 import styles from './PapyrusScriptFunctionReference.module.scss';
@@ -29,9 +29,9 @@ export function PapyrusScriptFunctionReference<TGame extends PapyrusGame>(propsO
                     {parameterElement}
                 </>
                 : <Tooltip role='tooltip' tooltipContents={<PapyrusScriptFunctionReferenceTooltip {...propsObj} />}>
-                    <Link className={styles.functionName} href={`/${toLowerCase(game)}/script/${toLowerCase(scriptName)}/function/${toLowerCase(func.name)}` as const} data-ref=''>
+                    <InternalLink className={styles.functionName} href={prepareUrlParts(game, 'script', scriptName, 'function', func.name)} data-ref=''>
                         {func.name}
-                    </Link>
+                    </InternalLink>
                     {parameterElement}
                 </Tooltip> }
 
@@ -48,9 +48,9 @@ export function PapyrusScriptFunctionReference<TGame extends PapyrusGame>(propsO
                     {parameterElement}
                 </>
                 : <Tooltip role='tooltip' tooltipContents={<PapyrusScriptFunctionReferenceTooltip {...propsObj} />}>
-                    <Link className={styles.functionName} href={`/${toLowerCase(game)}/script/${toLowerCase(scriptName)}/function/${toLowerCase(funcName)}` as const} data-ref=''>
+                    <InternalLink className={styles.functionName} href={prepareUrlParts(game, 'script', scriptName, 'function', funcName)} data-ref=''>
                         {funcName}
-                    </Link>
+                    </InternalLink>
                     {parameterElement}
                 </Tooltip> }
         </span>;
