@@ -52,7 +52,7 @@ export function MultiBox<T extends MultiBoxOption>({ options, onChange: parentOn
             <ul className={styles.selectedOptionsList}>
                 {optionsFilled.map((option) => <Transition as='li' key={option.key} show={selected.includes(option)} className={styles.selectedOptionsListItem}>
                     {option.displayNode}
-                    <button type="button" onClick={option.deselect} className={styles.deselectSelectedOptionsListItemButton}>×</button>
+                    <button type="button" onClick={option.deselect} className={styles.deselectSelectedOptionsListItemButton} aria-label={`Deselect${typeof option.displayNode === 'string' ? `: ${option.displayNode}` : ' this option'}`}>×</button>
                 </Transition>)}
             </ul>
         </Listbox>
