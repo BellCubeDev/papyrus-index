@@ -26,6 +26,11 @@ export interface WorkerMessageInputInit extends WorkerMessageBase {
 export interface WorkerMessageInputSearch extends WorkerMessageBase {
     type: 'SEARCH';
     query: string;
+    /**
+     * ⚠️ An array passed to any filter array means "let nothing through"! ⚠️
+     *
+     * If you instead want "let everything through", use an array with all possible values!
+     */
     filter: SearchFilter<SearchIndexEntityType>;
     id: number;
 }
@@ -46,6 +51,11 @@ export interface WorkerMessageOutputSearchIndexReady extends WorkerMessageBase {
 
 export type WorkerMessageOutput = WorkerMessageOutputSearchResult<PapyrusGame, SearchIndexEntityType> | WorkerMessageOutputSearchIndexReady;
 
+/**
+ * ⚠️ An empty array passed to any filter means "let nothing through"! ⚠️
+ *
+ * If you instead want "let everything through", use an array with all possible values!
+ */
 export interface SearchFilter<TEntityTypes extends SearchIndexEntityType> {
     entityTypes: TEntityTypes[];
     sourceTypes: PapyrusSourceType[];

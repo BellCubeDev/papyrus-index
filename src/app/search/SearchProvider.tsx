@@ -59,6 +59,11 @@ export type SearchContextLoaded = {
     sources: Promise<WorkerMessageOutputSearchIndexReady['sources']>;
     DEVELOPMENT__LOADING_HASH: false;
     LOADING_FROM_SSR: false;
+    /**
+     * ⚠️ An empty array passed to any filter means "let nothing through"! ⚠️
+     *
+     * If you instead want "let everything through", use an array with all possible values!
+     */
     search<TTypes extends SearchIndexEntityType>(query: string, filter: SearchFilter<TTypes>, signal?: undefined): Promise<DeepUnpreparedValue<WorkerMessageOutputSearchResult<PapyrusGame, TTypes>['results']>>;
     search<TTypes extends SearchIndexEntityType>(query: string, filter: SearchFilter<TTypes>, signal?: AbortSignal | undefined): Promise<null | DeepUnpreparedValue<WorkerMessageOutputSearchResult<PapyrusGame, TTypes>['results']>>;
     search<TTypes extends SearchIndexEntityType>(query: string, filter: SearchFilter<TTypes>, signal: AbortSignal | undefined): Promise<null | DeepUnpreparedValue<WorkerMessageOutputSearchResult<PapyrusGame, TTypes>['results']>>;
