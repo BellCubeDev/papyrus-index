@@ -41,7 +41,8 @@ export function SearchModalButton({game}: {readonly game: PapyrusGame}): React.R
     </>;
 }
 
-export function SearchModalStandalone({game}: {readonly game: PapyrusGame}): React.ReactElement {
+export function SearchModalDeveloperStandalone({game}: {readonly game: PapyrusGame}): React.ReactElement {
+    if (process.env.NODE_ENV === 'production') throw new Error('SearchModalDeveloperStandalone should not be used in production!');
     return <div className={styles.searchModalBackdrop!}>
         <div className={styles.searchModalDialog!}>
             <SearchModalContents game={game} Title='h2' />
