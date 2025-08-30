@@ -321,9 +321,8 @@ self.addEventListener('message', async function searchWorkerMessageHandler(e: Me
             performance.mark('startSearch');
 
             const filter = {
-                entityTypes: new Set(message.filter.entityTypes),
                 sourceTypes: new Set(message.filter.sourceTypes),
-            };
+            } satisfies Record<Exclude<keyof typeof message.filter, 'entityTypes'>, any>;
 
             const [entities, sources] = await searchIndexPromise;
 
