@@ -54,7 +54,7 @@ const lockPromisePoolObj = memoizeDevServerConst('lockPromisePoolObj', ()=>({
     lockPromisePoolCursor: 0,
 }));
 
-const lockPromisePool: Promise<any>[] = lockPromisePoolObj.lockPromisePool;
+const lockPromisePool: Promise<unknown>[] = lockPromisePoolObj.lockPromisePool;
 let lockPromisePoolCursor = lockPromisePoolObj.lockPromisePoolCursor;
 function getLockPromise<T = void>(then: ()=>Promise<T>): Promise<T> {
     const promise = lockPromisePool[lockPromisePoolCursor]!;
@@ -118,7 +118,7 @@ async function ingestLatestChanges(wiki: PapyrusWiki, storageIndex: WikiStorageI
 
         console.log(`Got a filled change list from the ${wiki.wikiTrueGame} wiki!`, changeList.query.recentchanges);
 
-        const recentChanges: [MediaWikiRecentChange, ...MediaWikiRecentChange[]] = changeList.query.recentchanges as [any, ...any[]];
+        const recentChanges = changeList.query.recentchanges as [MediaWikiRecentChange, ...MediaWikiRecentChange[]];
 
         let latestChangeDate: Date|null = new Date(storageIndex.lastKnownChange);
         for (const change of recentChanges) {
@@ -240,7 +240,7 @@ const writePromisePoolObj = memoizeDevServerConst('writePromisePoolObj', ()=>({
     writePromisePoolCursor: 0,
 }));
 
-const writePromisePool: Promise<any>[] = writePromisePoolObj.writePromisePool;
+const writePromisePool: Promise<unknown>[] = writePromisePoolObj.writePromisePool;
 let writePromisePoolCursor = writePromisePoolObj.writePromisePoolCursor;
 
 function getQueuedWritePromise<T = void>(then: ()=>Promise<T>): Promise<T> {

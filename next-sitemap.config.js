@@ -16,6 +16,7 @@ function getPathType(path) {
 }
 
 /** @type {import('next-sitemap').IConfig} */
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
 	siteUrl: 'https://papyrus.bellcube.dev',
 	output: 'export',

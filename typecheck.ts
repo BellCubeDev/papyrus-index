@@ -18,14 +18,14 @@ let cleanupFunction = async () => {};
 if (writeLogToFile) {
     logFile = await fs.open('typecheck.log', 'w');
     const oldSTDOUTWrite = process.stdout.write;
-    // @ts-ignore
+    // @ts-expect-error -- the signatures don't match exactly but they match well enough for our purposes
     process.stdout.write = function write(this: ThisParameterType<typeof oldSTDOUTWrite>, ...args: Parameters<typeof oldSTDOUTWrite>) {
         logFile!.write(args[0].toString());
         oldSTDOUTWrite.call(this, ...args);
     };
 
     const oldSTDERRWrite = process.stderr.write;
-    // @ts-ignore
+    // @ts-expect-error -- the signatures don't match exactly but they match well enough for our purposes
     process.stderr.write = function write(this: ThisParameterType<typeof oldSTDERRWrite>, ...args: Parameters<typeof oldSTDERRWrite>) {
         logFile!.write(args[0].toString());
         oldSTDERRWrite.call(this, ...args);
@@ -153,23 +153,23 @@ const targetLogMessage = ` ${Log.prefixes.info} Collecting page data ...`;
 const isOurLog = Symbol('isOurLog');
 const reallyOldLog = console.log;
 function patchLog(isInitialRun = false) {
-    if ((console.log as any)[isOurLog]) return;
+    if ((console.log as {[isOurLog]?: boolean})[isOurLog]) return;
     const oldLog = console.log;
     //writeFileSync('typecheck.log.json', JSON.stringify(logsSoFar));
     //currentLog = '';
-    console.log = function log(...args: any[]) {
+    console.log = function log(...args: unknown[]) {
         if (args[0] === targetLogMessage) {
             Log.info('Typechecking finished without errors! Throwing an escape hatch, nominal "error" up the stack...');
             throw new PleaseExitTypecheckNowError();
         }
         oldLog(...args);
     };
-    (console.log as any)[isOurLog] = true;
+    (console.log as  {[isOurLog]?: boolean})[isOurLog] = true;
     if (isInitialRun) Log.event('Typecheck script successfully monkey-patched console.log! To detect when typechecking ends, we look for the message:', targetLogMessage);
     else Log.info('Reestablished console.log monkey patch.');
 }
 const oldSTDOUTWrite = process.stdout.write;
-// @ts-ignore
+// @ts-expect-error -- the signatures don't match exactly but they match well enough for our purposes
 process.stdout.write = function write(this: ThisParameterType<typeof oldSTDOUTWrite>, ...args: Parameters<typeof oldSTDOUTWrite>) {
     //currentLog += args[0].toString();
     oldSTDOUTWrite.call(this, ...args);

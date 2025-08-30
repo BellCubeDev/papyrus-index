@@ -5,7 +5,7 @@ import { memoizeDevServerConst } from "../../../utils/memoizeDevServerConst";
 import type { PapyrusWiki } from "../getWiki";
 
 const wikiFetchPromisesByURL = memoizeDevServerConst('wikiFetchCache', ()=>{
-    const map = new Map<string, Promise<{}|null|typeof WIKI_FETCH_403FORBIDDEN>>();
+    const map = new Map<string, Promise<object|null|typeof WIKI_FETCH_403FORBIDDEN>>();
 
     //
     // In ye olden times, this code stopped memory leaks because we'our code would fetch a TON of data from the wiki
@@ -39,7 +39,7 @@ const wikiFetchPromisesByURL = memoizeDevServerConst('wikiFetchCache', ()=>{
 
 // MediaWiki API instances can be... finnicky. We don't want to overload the server with requests, so we'll queue them up.
 // This isn't fast, but it's safe.
-const fetchQueuePromisesByHostname = new Map<string, Promise<{}|null|typeof WIKI_FETCH_403FORBIDDEN>>();
+const fetchQueuePromisesByHostname = new Map<string, Promise<object|null|typeof WIKI_FETCH_403FORBIDDEN>>();
 
 const MAX_RETRIES = 5;
 
@@ -53,9 +53,9 @@ if (process.env.NODE_ENV !== 'development') {
     }, 60000).unref();
 }
 
-export const WIKI_FETCH_403FORBIDDEN: unique symbol = memoizeDevServerConst('WIKI_FETCH_403FORBIDDEN', () => Symbol.for('PAPYRUS_INDEX_WIKI_FETCH_403FORBIDDEN')) as any;
+export const WIKI_FETCH_403FORBIDDEN: unique symbol = memoizeDevServerConst('WIKI_FETCH_403FORBIDDEN', () => Symbol.for('PAPYRUS_INDEX_WIKI_FETCH_403FORBIDDEN')) as never;
 
-export async function wikiFetchGet(wiki: PapyrusWiki, path: `/${string}`): Promise<{}|null|typeof WIKI_FETCH_403FORBIDDEN> {
+export async function wikiFetchGet(wiki: PapyrusWiki, path: `/${string}`): Promise<object|null|typeof WIKI_FETCH_403FORBIDDEN> {
     const url = new URL(path, wiki.wikiBaseUrl);
 
     const deduped = wikiFetchPromisesByURL.get(url.href);
@@ -110,7 +110,7 @@ export async function wikiFetchGet(wiki: PapyrusWiki, path: `/${string}`): Promi
     return await wikiFetchGetInternalCreatedPromise;
 }
 
-async function wikiFetchGetInternalWithParseJsonAndHandleErrors(wiki: PapyrusWiki, path: `/${string}`, retriesSoFar: number, url: URL): Promise<{}|null|typeof WIKI_FETCH_403FORBIDDEN> {
+async function wikiFetchGetInternalWithParseJsonAndHandleErrors(wiki: PapyrusWiki, path: `/${string}`, retriesSoFar: number, url: URL): Promise<object|null|typeof WIKI_FETCH_403FORBIDDEN> {
     const waitingInternalFetchInterval = setInterval(() => {
         Log.trace(`wikiFetchGetInternalWithParseJsonAndHandleErrors: still waiting for internal, low-level fetch to complete for ${url}`);
     }, 60000);
@@ -122,7 +122,7 @@ async function wikiFetchGetInternalWithParseJsonAndHandleErrors(wiki: PapyrusWik
     const waitingParseJsonInterval = setInterval(() => {
         Log.trace(`wikiFetchGetInternalWithParseJsonAndHandleErrors: still waiting for JSON streaming and parsing to complete for ${url}`);
     }, 60000);
-    const json = await res.json() as {};
+    const json = await res.json() as object;
     clearInterval(waitingParseJsonInterval);
     if ('error' in json && json.error) {
         if (typeof json.error === 'object' && 'info' in json.error && typeof json.error.info === 'string') {

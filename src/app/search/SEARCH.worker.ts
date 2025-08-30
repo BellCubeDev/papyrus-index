@@ -183,7 +183,8 @@ async function getSearchIndexOnWorkerLoad(): Promise<[DeepPreparedObject<SearchI
         for (const scriptBySources of Object.values(indexedScripts.scripts)) {
             const extraScriptEntityData = searchData.extraEntityData[scriptBySources[AllSourcesCombined].$entityId] as SingleExtraEntityDataRecord[SearchIndexEntityType.Script] | undefined;
             if (!extraScriptEntityData) throw new Error(`[SEARCH WORKER] Failed to find extra entity data for script ${scriptBySources[AllSourcesCombined].nameWithoutNamespace[0]![1]}!`);
-            entitiesPromises[SearchIndexEntityType.Script].push(Object.assign(scriptBySources[AllSourcesCombined], {...extraScriptEntityData, $entityType: SearchIndexEntityType.Script}));            for (const func of Object.values(scriptBySources[AllSourcesCombined].functions)) {
+            entitiesPromises[SearchIndexEntityType.Script].push(Object.assign(scriptBySources[AllSourcesCombined], {...extraScriptEntityData, $entityType: SearchIndexEntityType.Script}));
+            for (const func of Object.values(scriptBySources[AllSourcesCombined].functions)) {
                 const extraEntityData = searchData.extraEntityData[func.$entityId] as SingleExtraEntityDataRecord[SearchIndexEntityType.Function] | undefined;
                 if (!extraEntityData) throw new Error(`[SEARCH WORKER] Failed to find extra entity data for function ${func.name[0]![1]} in script ${scriptBySources[AllSourcesCombined].nameWithoutNamespace[0]![1]}!`);
                 entitiesPromises[SearchIndexEntityType.Function].push(Object.assign(func, {...extraEntityData, $entityType: SearchIndexEntityType.Function}));
@@ -245,8 +246,7 @@ async function getSearchIndexOnWorkerLoad(): Promise<[DeepPreparedObject<SearchI
 }
 
 const searchIndexPromise = getSearchIndexOnWorkerLoad();
-
-(searchIndexPromise as Promise<any>).then((searchIndex) => {
+searchIndexPromise.then((searchIndex) => {
     console.log('[SEARCH WORKER] Got search index:', searchIndex);
 });
 
@@ -322,7 +322,7 @@ self.addEventListener('message', async function searchWorkerMessageHandler(e: Me
 
             const filter = {
                 sourceTypes: new Set(message.filter.sourceTypes),
-            } satisfies Record<Exclude<keyof typeof message.filter, 'entityTypes'>, any>;
+            } satisfies Record<Exclude<keyof typeof message.filter, 'entityTypes'>, unknown>;
 
             const [entities, sources] = await searchIndexPromise;
 
@@ -347,7 +347,7 @@ self.addEventListener('message', async function searchWorkerMessageHandler(e: Me
                         const nextMultiplier = getSourceTypeMultiplier(source.type);
                         if (nextMultiplier > acc[0]) return [nextMultiplier, source] as const;
                         return acc;
-                    }, [-Infinity, null] as any as readonly [number, PapyrusScriptSourceIndexedNoScriptsProp<PapyrusGame>]);
+                    }, [-Infinity, null] as unknown as readonly [number, PapyrusScriptSourceIndexedNoScriptsProp<PapyrusGame>]);
 
                     newScore *= coolestSourceMultiplier;
 
@@ -399,7 +399,7 @@ self.addEventListener('message', async function searchWorkerMessageHandler(e: Me
                             break;
                         }
                         default:
-                            throw new UnreachableError(obj, `Unexpected SearchIndexEntity type: ${(obj as any as SearchIndexEntity<PapyrusGame>).$entityType}`);
+                            throw new UnreachableError(obj, `Unexpected SearchIndexEntity type: ${(obj as unknown as SearchIndexEntity<PapyrusGame>).$entityType}`);
                     }
                     return newScore;
                 },

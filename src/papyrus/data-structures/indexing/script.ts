@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { PapyrusGame } from "../pure/game";
 import type { PapyrusScriptEventOrBaseFunctionIndexed, PapyrusScriptEventOrBaseFunctionIndexedAggregate, PapyrusScriptFunctionIndexed, PapyrusScriptFunctionIndexedAggregate } from "./function";
 import type { PapyrusScriptPropertyGroupIndexed, PapyrusScriptPropertyGroupIndexedAggregate } from "./propertyGroup";

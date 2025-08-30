@@ -1,7 +1,7 @@
 import { memoizeDevServerConst } from "../../../utils/memoizeDevServerConst";
 
 
-export const DoNotIncludeInAggregate: unique symbol = memoizeDevServerConst('DoNotIncludeInAggregate', ()=>Symbol.for('PAPYRUS_INDEX_DoNotIncludeInAggregate')) as any;
+export const DoNotIncludeInAggregate: unique symbol = memoizeDevServerConst('DoNotIncludeInAggregate', ()=>Symbol.for('PAPYRUS_INDEX_DoNotIncludeInAggregate')) as never;
 
 /** Aggregates a value based on the provided predicate function. */
 export function aggregateGenericValue<T, TAggregated, TIdentifierType>(

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-empty-object-type */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import NexusModsAPI_ from '@nexusmods/nexus-api';
 import packageJson from '../../package.json';
 

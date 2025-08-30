@@ -72,7 +72,7 @@ enum PapyrusKeyword {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- this is here for type-checking purposes
 declare function ENSURE_KEYWORDS_ARE_LOWERCASE<T extends Lowercase<PapyrusKeyword> = PapyrusKeyword>(value: never): never;
 
-const PapyrusKeywords = new Set(Object.values(PapyrusKeyword)) as any as Omit<ReadonlySet<PapyrusKeyword>, 'has'> & {
+const PapyrusKeywords = new Set(Object.values(PapyrusKeyword)) as unknown as Omit<ReadonlySet<PapyrusKeyword>, 'has'> & {
     has(value: string): value is PapyrusKeyword;
 };
 
@@ -90,7 +90,7 @@ const PapyrusKeywordsToSearchFor_ = new Set([
 
 type PapyrusKeywordToSearchFor = typeof PapyrusKeywordsToSearchFor_ extends ReadonlySet<infer T> ? T : never;
 
-const PapyrusKeywordsToSearchFor = PapyrusKeywordsToSearchFor_ as any as Omit<ReadonlySet<PapyrusKeywordToSearchFor>, 'has'> & {
+const PapyrusKeywordsToSearchFor = PapyrusKeywordsToSearchFor_ as unknown as Omit<ReadonlySet<PapyrusKeywordToSearchFor>, 'has'> & {
     has(value: string): value is PapyrusKeywordToSearchFor;
 };
 
@@ -269,12 +269,12 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
             }
         }
 
-        const sourceToGrabFrom = caseSensitive ? this.sourceCodeCased : this.sourceCodeLowercase;
+        const sourceToGrabFrom = caseSensitive ? this.sourceCodeCased : this.sourceCodeLowercase as (TIsCaseSensitive extends true ? string : never) | (TIsCaseSensitive extends false ? Lowercase<string> : never);
 
-        let str = sourceToGrabFrom.slice(tokenIndex, this.index);
+        let str = sourceToGrabFrom.slice(tokenIndex, this.index) as (TIsCaseSensitive extends true ? string : never) | (TIsCaseSensitive extends false ? Lowercase<string> : never);
         if (str === '') {
             if (this.index < this.sourceCodeCased.length) {
-                str = sourceToGrabFrom[this.index]!;
+                str = sourceToGrabFrom[this.index]! as (TIsCaseSensitive extends true ? string : never) | (TIsCaseSensitive extends false ? Lowercase<string> : never);
                 tokenIndex = this.index;
                 this.index++;
             } else {
@@ -286,11 +286,11 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
         //console.debug('Discovered new token', {token: str, tokenIndex, newIndex: this.index});
 
         //console.log({tokenIndex, str});
-        return [tokenIndex, str as any];
+        return [tokenIndex, str];
     }
 
     static normalizeDocumentationWhitespace<TStr extends string | null>(str: TStr): (TStr extends null ? null : never) | (TStr extends string ? string : never) {
-        if (!str) return str as any as (TStr extends null ? null : never) | (TStr extends string ? string : never);
+        if (!str) return str as unknown as (TStr extends null ? null : never) | (TStr extends string ? string : never);
         let lines = str.split('\n').map(line => line.trimEnd());
 
         lines = lines.slice(lines.findIndex(line => line.length > 0));
@@ -1289,7 +1289,7 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
         }
     }
 
-    parseMaybeArrayValue<TIsArray extends boolean, TValue, TModifierFunction extends (this: void, value: TValue) => any>(index: number, isArray: TIsArray, value: TValue, modifier: TModifierFunction): (TIsArray extends true ? null : never) | (TIsArray extends false ? ReturnType<TModifierFunction> : never) {
+    parseMaybeArrayValue<TIsArray extends boolean, TValue, TModifierFunction extends (this: void, value: TValue) => unknown>(index: number, isArray: TIsArray, value: TValue, modifier: TModifierFunction): (TIsArray extends true ? null : never) | (TIsArray extends false ? ReturnType<TModifierFunction> : never) {
         if (isArray) {
             if (value !== null) throw new PapyrusParserError('Expected "none" for array value, but got something else!', index, this.document);
             return null as (TIsArray extends true ? null : never);

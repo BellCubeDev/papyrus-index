@@ -9,7 +9,6 @@ import { UnreachableError } from "../../../UnreachableError";
 import { memoizeDevServerConst } from "../../../utils/memoizeDevServerConst";
 import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { CLEAR_ANY_TIMER, useStoredInterval } from "../../hooks/useStoredTimeout";
-import { useUpdatedRef } from "../../hooks/useUpdatedRef";
 import { SearchIndexEntityType, type SearchIndexEntity } from "../../search/Entity";
 import { DeepUnpreparedValue } from "../../search/Preparation";
 import type { WorkerMessageOutputSearchResult } from "../../search/SEARCH.worker";
@@ -23,8 +22,8 @@ import { MultiBox, type MultiBoxOption, type MultiBoxOptionFilled } from "../for
 import { PapyrusSourceType } from "../../../papyrus/data-structures/pure/scriptSource";
 import { useEffectEvent } from "@floating-ui/react/utils";
 
-const EMPTY_QUERY: unique symbol = memoizeDevServerConst('<SearchBar> EMPTY_QUERY', ()=>Symbol('<SearchBar> EMPTY_QUERY')) as any;
-const AWAITING_SEARCH: unique symbol = memoizeDevServerConst('<SearchBar> AWAITING_SEARCH', ()=>Symbol('<SearchBar> AWAITING_SEARCH')) as any;
+const EMPTY_QUERY: unique symbol = memoizeDevServerConst('<SearchBar> EMPTY_QUERY', ()=>Symbol('<SearchBar> EMPTY_QUERY')) as never;
+const AWAITING_SEARCH: unique symbol = memoizeDevServerConst('<SearchBar> AWAITING_SEARCH', ()=>Symbol('<SearchBar> AWAITING_SEARCH')) as never;
 
 const ENTITY_TYPE_FILTER_OPTIONS = [
     { value: SearchIndexEntityType.Script, key: SearchIndexEntityType.Script, displayNode: 'Scripts' },

@@ -1,6 +1,6 @@
 import type { PapyrusGame } from "../../../papyrus/data-structures/pure/game";
 import { memoizeDevServerConst } from "../../../utils/memoizeDevServerConst";
-import { GET } from "./route";
+import * as SearchDataJsonRoute from "./route";
 
 
 const InMemoryHashCache = memoizeDevServerConst('SEARCH__JSON__PER__GAME__HASH_CACHE', ()=> new Map<PapyrusGame, Promise<string>>());
@@ -8,7 +8,7 @@ const InMemoryHashCache = memoizeDevServerConst('SEARCH__JSON__PER__GAME__HASH_C
 export async function generateSearchJsonHash(game: PapyrusGame): Promise<string> {
     if (InMemoryHashCache.has(game)) return await InMemoryHashCache.get(game)!;
 
-    const str = await (await GET(null as any, {params: Promise.resolve({game})})).text();
+    const str = await (await SearchDataJsonRoute.GET(null, {params: Promise.resolve({game})})).text();
 
     const promise = crypto.subtle.digest('SHA-256', new TextEncoder().encode(str)).then(hashBuffer => {
         const hashArray = Array.from(new Uint32Array(hashBuffer));

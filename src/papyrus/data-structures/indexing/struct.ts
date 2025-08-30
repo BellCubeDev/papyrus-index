@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { PapyrusScriptDocumentable } from "../pure/documentable";
 import type { PapyrusGame } from "../pure/game";
 import type { PapyrusGameDataIndexed } from "./game";

@@ -48,7 +48,7 @@ export default async function GamePage({params}: {readonly params: Promise<GameR
                 data-no-link-style
             ><div
                 style={{
-                    // @ts-ignore I know this isn't a real prop, but I need my css variables
+                    // @ts-expect-error I know this isn't a real prop, but I need my css variables
                     "--random-tilt-factor": 2 ** (1.2 * Math.random()),
                     "--random-tilt-direction": Math.random() >= 0.5 ? 1 : -1,
                 }}

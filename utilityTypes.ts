@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-
+/* eslint-disable @typescript-eslint/no-empty-object-type */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 type Awaitable<T> = T | Promise<T>;
 
 type SingleEntryForObject<T extends {}> = { [K in keyof T]-?: [K, T[K]] }[keyof T];

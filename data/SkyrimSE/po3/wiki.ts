@@ -337,7 +337,7 @@ Processing was aborted.
                             events[recipient][name] = existingObj ? mergeEventDataObjs(eventUnderConstruction.node, existingObj, newObj) : newObj;
                         }
 
-                        for (const [funcNameLowercase, func] of eventUnderConstruction.registrationControllerEntries)  {
+                        for (const [funcNameLowercase, _func] of eventUnderConstruction.registrationControllerEntries)  {
                             const newObj: GitHubWikiFunctionData = {
                                 descriptionMD: null,
                                 linkToWikiData,

@@ -96,5 +96,5 @@ export type SearchIndexEntityGroup<TGame extends PapyrusGame> = SearchIndexEntit
 
 export type SelectEntityGroups<TGame extends PapyrusGame, TAllGroups extends SearchIndexEntityGroupRecordBlank<TGame>, TTypes extends SearchIndexEntityType> = (TAllGroups[TTypes] extends readonly (infer U)[] ? U : never)[];
 export function selectEntityGroups<TGame extends PapyrusGame, TAllGroups extends SearchIndexEntityGroupRecordBlank<TGame>, TTypes extends SearchIndexEntityType>(allGroups: TAllGroups, ...types: TTypes[]): SelectEntityGroups<TGame, TAllGroups, TTypes> {
-    return types.flatMap((type) => allGroups[type] as any as TAllGroups[TTypes][]) as SelectEntityGroups<TGame, TAllGroups, TTypes>;
+    return types.flatMap((type) => allGroups[type] as unknown as TAllGroups[TTypes][]) as SelectEntityGroups<TGame, TAllGroups, TTypes>;
 }

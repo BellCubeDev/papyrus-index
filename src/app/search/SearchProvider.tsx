@@ -12,7 +12,7 @@ import { useUpdatedRef } from '../hooks/useUpdatedRef';
 
 type SearchWorker =  Omit<Worker, 'postMessage'> & {
     postMessage(message: Exclude<WorkerMessageInput, WorkerMessageInputInit>): void;
-    addEventListener(type: 'message', listener: (this: Worker, ev: MessageEvent<WorkerMessageOutput>) => any, options?: boolean | AddEventListenerOptions): void;
+    addEventListener(type: 'message', listener: (this: Worker, ev: MessageEvent<WorkerMessageOutput>) => void, options?: boolean | AddEventListenerOptions): void;
     readyPromise: Promise<WorkerMessageOutputSearchIndexReady|null>;
     searchIndexGame: PapyrusGame;
     searchIndexHash: string;
@@ -87,7 +87,7 @@ export function useSearchContext(advanced?: boolean): SearchContext | null {
     return res;
 }
 
-export const LOADING_IN_DEV_MODE: unique symbol = memoizeDevServerConst('SEARCH__LOADING_IN_DEV_MODE', () => Symbol.for('PAPYRUS_INDEX_LOADING_IN_DEV_MODE')) as any;
+export const LOADING_IN_DEV_MODE: unique symbol = memoizeDevServerConst('SEARCH__LOADING_IN_DEV_MODE', () => Symbol.for('PAPYRUS_INDEX_LOADING_IN_DEV_MODE')) as never;
 
 export function SearchProvider({children, game, searchIndexHash}: {readonly children: React.ReactNode, readonly game: PapyrusGame, readonly searchIndexHash: string | typeof LOADING_IN_DEV_MODE}) {
     const posthog = usePostHog();
@@ -134,7 +134,7 @@ export function SearchProvider({children, game, searchIndexHash}: {readonly chil
     const searchIdRef = React.useRef(0);
 
     const search = React.useCallback<SearchContextLoaded['search']>(
-        async function search<TTypes extends SearchIndexEntityType>(query: string, filter: SearchFilter<TTypes>, signal?: AbortSignal): Promise<any> {
+        async function search<TTypes extends SearchIndexEntityType>(query: string, filter: SearchFilter<TTypes>, signal?: AbortSignal): Promise<Awaited<ReturnType<SearchContextLoaded['search']>>> {
             if (!worker) throw new Error('Cannot call search() from the server! Must be called on the client, with Web Workers enabled.');
             const start = performance.now();
             const searchId = ++searchIdRef.current;

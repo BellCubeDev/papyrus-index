@@ -24,7 +24,7 @@ export interface SearchDataGETResponse {
     extraEntityData: Record<number, SingleExtraEntityData>;
 }
 
-export async function GET(_request: NextRequest, opts : { params: Promise<{ game: string }> }) {
+export async function GET(_request: NextRequest | null, opts : { params: Promise<{ game: string }> }) {
     const { game } = getGameFromParams(await opts.params);
 
     const properCaseGame = PapyrusGamesCaseMapped.get(game.toLowerCase());

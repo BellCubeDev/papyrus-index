@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import ts from "typescript";
 import fs from "fs";
 import os from "os";
@@ -13,7 +14,7 @@ function writeLog(message: string): void {
     fs.appendFileSync(logFile, `[${timestamp}] ${message}\n`, 'utf8');
 }
 
-export = function init(modules: { typescript: typeof import("typescript/lib/tsserverlibrary"); }) {
+export = function init(_modules: { typescript: typeof import("typescript/lib/tsserverlibrary"); }) {
 
     function create(info: ts.server.PluginCreateInfo) {
         // Get configuration from tsconfig.json

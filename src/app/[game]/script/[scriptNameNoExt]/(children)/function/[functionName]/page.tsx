@@ -71,7 +71,7 @@ export default async function FunctionPage({params}: {readonly params: Promise<F
 
         <SuspenseIfDevelopment fallback={<p>[Development] Loading caveats...</p>}>
             <Caveats
-                func={func} scriptNamespaceName={scriptNamespaceName}
+                func={func}
                 ckWikiDataPromise={ckWikiDataPromise} githubWikiDataPromise={githubWikiDataPromise}
             />
         </SuspenseIfDevelopment>
@@ -145,7 +145,7 @@ function Examples({func, ckWikiDataPromise, githubWikiDataPromise, scriptNamespa
     </>;
 }
 
-function Caveats({func, scriptNamespaceName, ckWikiDataPromise, githubWikiDataPromise}: {readonly func: PapyrusScriptFunctionIndexedAggregate<PapyrusGame>, readonly scriptNamespaceName: string, readonly ckWikiDataPromise: ReturnType<typeof getMediaWikiFunctionData>, readonly githubWikiDataPromise: Promise<Awaited<ReturnType<typeof getGitHubWikiFunctionData>>>}) {
+function Caveats({func, ckWikiDataPromise, githubWikiDataPromise}: {readonly func: PapyrusScriptFunctionIndexedAggregate<PapyrusGame>, readonly ckWikiDataPromise: ReturnType<typeof getMediaWikiFunctionData>, readonly githubWikiDataPromise: Promise<Awaited<ReturnType<typeof getGitHubWikiFunctionData>>>}) {
     const ckWikiData = use(ckWikiDataPromise);
     const githubWikiData = use(githubWikiDataPromise);
 

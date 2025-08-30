@@ -67,5 +67,5 @@ export function aggregateScript<TGame extends PapyrusGame>(possibleScripts: Papy
             : aggregateStructsRecord(scriptEntries.map(([sourceIdentifier, script]) => [sourceIdentifier, script.structs as Record<Lowercase<string>, PapyrusScriptStructIndexed<TGameNoSkyrim>>]), aggregateScriptContext as AggregateScriptContext<TGameNoSkyrim>) as (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? Record<Lowercase<string>, PapyrusScriptStructIndexedAggregate<Exclude<TGame, PapyrusGame.SkyrimSE>>> : never) ,
         events: aggregateEventsOrBaseFunctionsRecord(scriptEntries.map(([sourceIdentifier, script]) => [sourceIdentifier, script.events] as const), aggregateScriptContext),
         propertyGroups: aggregatePropertyGroupsRecord(scriptEntries.map(([sourceIdentifier, script]) => [sourceIdentifier, script.propertyGroups]), aggregateScriptContext),
-    } satisfies ObjectAssignDiff<{}, PapyrusScriptIndexedAggregate<TGame>>);
+    } satisfies ObjectAssignDiff<typeof ref, PapyrusScriptIndexedAggregate<TGame>>);
 }

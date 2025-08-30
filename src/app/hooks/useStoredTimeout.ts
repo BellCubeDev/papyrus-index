@@ -13,7 +13,7 @@ type UseTimerHookReturn<T, TCurrentStr extends string> = Record<`current${TCurre
     isCurrent: IsCurrentF<T>;
 }
 
-export const CLEAR_ANY_TIMER: unique symbol = memoizeDevServerConst('<useStoredTimeout/useStoredInterval> CLEAR_ANY_TIMER', () => Symbol('<useStoredTimeout/useStoredInterval> CLEAR_ANY_TIMER')) as any;
+export const CLEAR_ANY_TIMER: unique symbol = memoizeDevServerConst('<useStoredTimeout/useStoredInterval> CLEAR_ANY_TIMER', () => Symbol('<useStoredTimeout/useStoredInterval> CLEAR_ANY_TIMER')) as never;
 
 /**
  * @returns A stable object with the following properties:

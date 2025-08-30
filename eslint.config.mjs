@@ -19,6 +19,7 @@ const compat = new FlatCompat({
 });
 
 /** @type {import("eslint").Linter.Config[]}*/
+// eslint-disable-next-line import/no-anonymous-default-export
 export default [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
@@ -109,6 +110,8 @@ export default [
       //'react-native/no-single-element-style-arrays': "off",
 
 
+      // Semi-disabled rules
+      "@typescript-eslint/no-empty-object-type": ["warn", { allowInterfaces: 'with-single-extends' }],
 
       // Disabled Rules
       "no-unused-vars": "off",
@@ -166,6 +169,7 @@ export default [
       "no-labels": "off",
       "no-extra-label": "off",
       "consistent-this": "off",
+      "@next/next/no-img-element": "off", // static website; no benefit to using next/image
     }
   }
 ];

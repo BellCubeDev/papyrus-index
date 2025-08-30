@@ -31,7 +31,7 @@ export function aggregatePropertyGroup<TGame extends PapyrusGame>(
         game: ctx.unfinishedGameRef,
         collapsed: aggregateGenericValue(valuesBySource, ([source, value]) => [source, value.collapsed, value.collapsed], null),
         properties: aggregatePropertiesRecord(valuesBySource.map(([source, value]) => [source, value.properties]), groupContext),
-    } satisfies ObjectAssignDiff<{}, PapyrusScriptPropertyGroupIndexedAggregate<TGame>>);
+    } satisfies ObjectAssignDiff<typeof ref, PapyrusScriptPropertyGroupIndexedAggregate<TGame>>);
 }
 
 export function aggregatePropertyGroupsRecord<TGame extends PapyrusGame>(

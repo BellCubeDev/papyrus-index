@@ -194,7 +194,7 @@ https://www.nexusmods.com/newvegas/mods/64745?tab=files
             if (!download.body) throw new Error('No body in BSArch download response');
 
             await new Promise<void>((resolve, reject) => {
-                ReadStream.fromWeb(download.body as ReadableStream<any>)
+                ReadStream.fromWeb(download.body as ReadableStream<Buffer>)
                     .pipe(unzip.Extract({ path: thisDirPath }))
                     .on('close', resolve)
                     .on('error', reject);

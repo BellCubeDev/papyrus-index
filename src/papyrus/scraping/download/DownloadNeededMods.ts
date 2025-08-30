@@ -143,7 +143,7 @@ Please download the file at https://www.nexusmods.com/Core/Libs/Common/Widgets/D
             let cleanupPromise: Promise<void> | undefined;
             if (download.headers.get('Content-Type') === 'application/zip') {
                 await new Promise<void>((resolve, reject) => {
-                    ReadStream.fromWeb(download.body as ReadableStream<any>)
+                    ReadStream.fromWeb(download.body as ReadableStream<Buffer>)
                         .pipe(unzip.Extract({ path: destinationFolder }))
                         .on('close', resolve)
                         .on('error', reject);
@@ -158,7 +158,7 @@ Please download the file at https://www.nexusmods.com/Core/Libs/Common/Widgets/D
                     const archiveFileStream = archiveFile.createWriteStream();
                     console.log(`Created download stream for ${tempFileName}...`);
                     await new Promise<void>((resolve, reject) => {
-                        ReadStream.fromWeb(download.body as ReadableStream<any>).pipe(archiveFileStream)
+                        ReadStream.fromWeb(download.body as ReadableStream<Buffer>).pipe(archiveFileStream)
                             .on('close', ()=> { archiveFileStream.close((err) => err ? reject(err) : resolve()) })
                             .on('error', reject);
                     });

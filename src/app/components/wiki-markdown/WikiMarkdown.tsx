@@ -18,7 +18,7 @@ import { getWiki } from "../../../wiki-data-extraction/ck-wiki/getWiki";
 import { CodeBlock, CodeBlockLanguage } from "../code-block/CodeBlock";
 import { Link } from "../Link";
 
-export const AUTOMATIC_BASE_URL: unique symbol = memoizeDevServerConst('AUTOMATIC_BASE_URL', () => Symbol.for('PAPYRUS_INDEX_AUTOMATIC_BASE_URL')) as any;
+export const AUTOMATIC_BASE_URL: unique symbol = memoizeDevServerConst('AUTOMATIC_BASE_URL', () => Symbol.for('PAPYRUS_INDEX_AUTOMATIC_BASE_URL')) as never;
 
 function ckWikiMatchesGame(game: PapyrusGame, url: URL): boolean {
     const correctWikidata = getWiki(game);
@@ -42,7 +42,7 @@ function WikiMarkdownLink(gameData: PapyrusGameDataIndexed<PapyrusGame>, inToolt
         const [gameLowerCase, pathnameVariable1, ...remainingPathnameParts] = pathnameParts;
 
         if (!gameLowerCase) throw new Error(`WikiMarkdownLink: 'papyrus-index:' protocol with pathname '${url.pathname}' is missing game name.`);
-        const game = ValidPapyrusGames.get(gameLowerCase as any);
+        const game = ValidPapyrusGames.get(gameLowerCase);
         if (!game) throw new Error(`WikiMarkdownLink: 'papyrus-index:' protocol with pathname '${url.pathname}' references an unsupported game: ${gameLowerCase}. Supported games are: ${Array.from(ValidPapyrusGames.keys()).join(', ')}.`);
 
         if (game !== gameData.game) return getFallbackComponent();

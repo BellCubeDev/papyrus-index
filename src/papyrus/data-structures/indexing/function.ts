@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { PapyrusCompilerOptional } from "../pure/compilerOptional";
 import type { PapyrusScriptDocumentable, PapyrusScriptDocumentableOnlyByComment } from "../pure/documentable";
 import type { PapyrusGame } from "../pure/game";

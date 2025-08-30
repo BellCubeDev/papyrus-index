@@ -19,8 +19,8 @@ export function PostHogProvider({ children }: { readonly children: React.ReactNo
             persistence: 'sessionStorage', // Use sessionStorage to avoid tracking across sessions
         });
 
-        // @ts-ignore
-        window.posthog = posthogJS; // Make PostHog available globally for debugging
+        // @ts-expect-error -- just setting Posthog on window for debugging purposes
+        window.posthog = posthogJS;
     }, []);
 
     return <PHProvider client={posthogJS}>
