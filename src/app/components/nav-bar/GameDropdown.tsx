@@ -30,11 +30,11 @@ export function GameDropdown({currentGame}: {readonly currentGame: PapyrusGame |
         setDesiredGame(newGame);
 
         posthog?.capture('Game dropdown selection', { game: newGame });
-        router.push(`/${toLowerCase(newGame)}/`);
+        router.push(prepareUrlParts(newGame));
     }, [desiredGameRef, posthog, router]);
 
     useEffect(() => {
-        for (const game of games) router.prefetch(`/${toLowerCase(game)}`, { kind: PrefetchKind.FULL });
+        for (const game of games) router.prefetch(prepareUrlParts(game), { kind: PrefetchKind.FULL });
     }, [router]);
 
     for (const game of games) preload(`/images/${game}/poster.jpg`, {as: 'image', fetchPriority: 'low'});
@@ -72,7 +72,7 @@ export function GameDropdown({currentGame}: {readonly currentGame: PapyrusGame |
                 {games.map((game) =>
                     <a
                         key={game}
-                        href={`/${toLowerCase(game)}/`}
+                        href={prepareUrlParts(game)}
                         className={styles.gameDropdownLink!}
                     >
                         {getGameName(game)}
