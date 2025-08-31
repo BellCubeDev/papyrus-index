@@ -120,43 +120,6 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { readonly children: React.ReactNode }) {
     return <html lang='en' suppressHydrationWarning>
         <head>
-            {/* eslint-disable-next-line react/no-danger -- we're using JSON.stringify to set a <script> tag's contents; it's fine */}
-            <script type="application/ld+json" dangerouslySetInnerHTML={{__html: JSON.stringify({
-                "@context": "http://schema.org",
-                "@type": "SoftwareApplication",
-                name: metadata.applicationName,
-                image: "https://papyrus.bellcube.dev/logo/logo.webp",
-                url: "https://papyrus.bellcube.dev/",
-                author: {
-                    "@type": "Person",
-                    name: "BellCube",
-                    givenName: "Zack",
-                },
-                applicationCategory: "BrowserApplication",
-                applicationSubCategory: "WebApp",
-                dateModified: new Date().toISOString(),
-                isAccessibleForFree: true,
-                license: 'MIT',
-                maintainer: {
-                    "@type": "Person",
-                    name: "BellCube",
-                    givenName: "Zack",
-                },
-                offers: {
-                    "@type": "Offer",
-                    price: 0,
-                    priceCurrency: "USD",
-                },
-                aggregateRating: {
-                    "@type": "AggregateRating",
-                    ratingValue: 5,
-                    reviewCount: 0,
-                },
-                operatingSystem: "Windows, Mac, Linux"//, Android, iOS",
-            }) }} />
-
-
-
             <noscript><style>
                 {`
 
@@ -165,9 +128,6 @@ export default function RootLayout({ children }: { readonly children: React.Reac
                     * { transition: none !important; }
                 `.split('\n').map(l=>l.trim()).join(' ').trim()}
             </style></noscript>
-
-
-
         </head>
         <body className={`${roboto.className} ${roboto.variable} ${SourceCodePro.variable}`} suppressHydrationWarning><PostHogProvider>
             <ProgressBarProvider>

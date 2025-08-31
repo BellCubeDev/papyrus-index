@@ -3,6 +3,7 @@
 import NextLink, { type LinkProps } from "next/link";
 import { usePathname } from "next/navigation";
 import { forwardRef, useMemo } from "react";
+import type { PreparedURLParts } from "../../utils/prepareUrlParts";
 
 function stripFinalSlash(url: string) {
     return url.endsWith('/') ? url.slice(0, -1) : url;
@@ -28,3 +29,5 @@ function LinkComponent({href, children, ...props}: Omit<React.AnchorHTMLAttribut
 }
 
 export const Link = forwardRef(LinkComponent);
+
+export const InternalLink = Link as ReturnType<typeof forwardRef<HTMLAnchorElement, React.ComponentProps<typeof Link> & {href: PreparedURLParts}>>;

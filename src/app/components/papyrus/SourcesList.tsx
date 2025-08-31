@@ -1,13 +1,13 @@
+import { use } from "react";
 import type { PapyrusGame } from "../../../papyrus/data-structures/pure/game";
+import { getSourceTypeMultiplier } from "../../../utils/getSourceTypeMultiplier";
+import { prepareUrlParts } from "../../../utils/prepareUrlParts";
+import type { WorkerMessageOutputSearchIndexReady } from "../../search/SEARCH.worker";
+import { useSearchContext, type SearchContextLoaded } from "../../search/SearchProvider";
+import { InternalLink } from "../Link";
+import { SourceIcon } from "./SourceIcon";
 import { SourceName } from "./SourceName";
 import styles from './SourcesList.module.scss';
-import { SourceIcon } from "./SourceIcon";
-import { Link } from "../Link";
-import { toLowerCase } from "../../../utils/toLowerCase";
-import { getSourceTypeMultiplier } from "../../../utils/getSourceTypeMultiplier";
-import { useSearchContext, type SearchContextLoaded } from "../../search/SearchProvider";
-import type { WorkerMessageOutputSearchIndexReady } from "../../search/SEARCH.worker";
-import { use } from "react";
 
 async function loadSourceListOnServer(game: PapyrusGame) {
     return (await import(typeof window !== 'undefined' ? '@/empty' : "../../../papyrus/indexing/index-all")).AllScriptsIndexed[game].scriptSources;
@@ -58,8 +58,8 @@ export function SourcePlate({sourceId, game, className, noLink}: {readonly sourc
             {children}
         </div>;
     } else {
-    return <Link href={`/${toLowerCase(game)}/source/${source.sourceIdentifier}` as const} className={classNamesCombined} data-no-link-style>
+    return <InternalLink href={prepareUrlParts(game, 'source', source.sourceIdentifier)} className={classNamesCombined} data-no-link-style>
         {children}
-    </Link>;
+    </InternalLink>;
     }
 }

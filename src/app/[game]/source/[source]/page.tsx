@@ -13,6 +13,8 @@ import { AllScriptsIndexed } from "../../../../papyrus/indexing/index-all";
 import { PapyrusScriptReference } from "../../../components/papyrus/script/PapyrusScriptReference";
 import { wikisBySource } from "../../../../wiki-data-extraction/individual-github-wikis/wikisBySource";
 import { WikiMarkdown } from "../../../components/wiki-markdown/WikiMarkdown";
+import { JsonLDGraph } from "../../../components/JsonLDGraph";
+import { prepareUrlParts } from "../../../../utils/prepareUrlParts";
 
 export function generateStaticParams(): SourceRouteParams[] {
     const params = [];
@@ -40,27 +42,45 @@ export default async function SourcePage({params}: {readonly params: Promise<Sou
 
     const githubWikiData = wikisBySource[game].get(source.sourceIdentifier)?.getData();
 
-    return <main>
-        <SourcePageSourceData game={game} sourceData={source} />
-        <h2>Scripts In This Source</h2>
-        <ul>
-            {Object.entries(gameData.scriptSources[source.sourceIdentifier]!.scripts).map(([scriptIdentifier, script]) =>
-                <li key={scriptIdentifier}>
-                    <PapyrusScriptReference
-                        game={game}
-                        script={script}
-                        inTooltip={false}
-                    />
-                </li>
-            )}
-        </ul>
-        <Suspense fallback={<p>Loading GitHub wiki data...</p>}>
-            {githubWikiData?.then(data => !data.sourceDescriptionMD ? null : <>
-                <h2>Description from <a href={data.linkToWikiData}>GitHub Wiki</a></h2>
-                <WikiMarkdown md={data.sourceDescriptionMD} baseURL={data.linkToWikiData} gameData={gameData} />
-            </>)}
-        </Suspense>
-    </main>;
+    return <>
+        <main>
+            <SourcePageSourceData game={game} sourceData={source} />
+            <h2>Scripts In This Source</h2>
+            <ul>
+                {Object.entries(gameData.scriptSources[source.sourceIdentifier]!.scripts).map(([scriptIdentifier, script]) =>
+                    <li key={scriptIdentifier}>
+                        <PapyrusScriptReference
+                            game={game}
+                            script={script}
+                            inTooltip={false}
+                        />
+                    </li>
+                )}
+            </ul>
+            <Suspense fallback={<p>Loading GitHub wiki data...</p>}>
+                {githubWikiData?.then(data => !data.sourceDescriptionMD ? null : <>
+                    <h2>Description from <a href={data.linkToWikiData}>GitHub Wiki</a></h2>
+                    <WikiMarkdown md={data.sourceDescriptionMD} baseURL={data.linkToWikiData} gameData={gameData} />
+                </>)}
+            </Suspense>
+        </main>
+        <JsonLDGraph data={[
+            {
+                "@id": `https://papyrus.bellcube.dev${prepareUrlParts(game, 'source', source.sourceIdentifier)}#source`,
+                "@type": "CollectionPage",
+                url: `https://papyrus.bellcube.dev${prepareUrlParts(game, 'source', source.sourceIdentifier)}`,
+                mainEntityOfPage: `https://papyrus.bellcube.dev${prepareUrlParts(game, 'source', source.sourceIdentifier)}#source`,
+                isPartOf: "https://papyrus.bellcube.dev/#website",
+                name: `Papyrus scripts from ${SourceName({source, long: true})} for ${getGameName(game)}`,
+                description: `Contains all known Papyrus scripts from the source ${SourceName({source, long: true})} for ${getGameName(game)}.`,
+                hasPart: [
+                    ...Object.values(gameData.scriptSources[source.sourceIdentifier]!.scripts).map(script => ({
+                        "@id": `https://papyrus.bellcube.dev${prepareUrlParts(game, 'script', script.namespaceName)}#script`,
+                    }))
+                ],
+            }
+        ]} />
+    </>;
 }
 
 function SourcePageVanillaGameData<TGame extends PapyrusGame>({game, sourceData: _sourceData}: {readonly game: TGame, readonly sourceData: PapyrusScriptSourceMetadataVanilla<TGame>}) {

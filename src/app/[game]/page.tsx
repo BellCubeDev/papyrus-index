@@ -11,8 +11,13 @@ import styles from "./GamePage.module.scss";
 import { getGameFromParams, type GameRouteParams } from "./getGameFromParams";
 import { PapyrusTypeValueToken } from "../components/papyrus/type/PapyrusType";
 import { PapyrusScriptTypeArchetype } from "../../papyrus/data-structures/pure/type";
-import { Link } from "../components/Link";
+import { InternalLink } from "../components/Link";
 import { SourcePlate } from "../components/papyrus/SourcesList";
+import { JsonLDGraph } from "../components/JsonLDGraph";
+import type { BreadcrumbList, CollectionPage } from "schema-dts";
+import { AllSourcesCombined } from "../../papyrus/data-structures/indexing/game";
+import { prepareUrlParts } from "../../utils/prepareUrlParts";
+import { UnreachableError } from "../../UnreachableError";
 
 
 export function generateStaticParams() {
@@ -35,38 +40,93 @@ export default async function GamePage({params}: {readonly params: Promise<GameR
 
     const gameData = AllScriptsIndexed[game];
 
-    return <main>
-        <h1>{game}</h1>
-        <div className={styles.inheritanceTree}>
-            <InheritanceDisplay game={game} data={gameData.topLevelScripts} />
-        </div>
-        <div className={styles.sourceGrid}>
-            {Object.values(gameData.scriptSources).map(source => <Link
-                key={source.sourceIdentifier}
-                href={`/${toLowerCase(game)}/source/${source.sourceIdentifier}` as const}
-                className={styles.source}
-                data-no-link-style
-            ><div
-                style={{
-                    // @ts-expect-error I know this isn't a real prop, but I need my css variables
-                    "--random-tilt-factor": 2 ** (1.2 * Math.random()),
-                    "--random-tilt-direction": Math.random() >= 0.5 ? 1 : -1,
-                }}
-            >
-                <div className={styles.sourceTop}>
-                    <SourcePlate sourceId={source.sourceIdentifier} game={game} noLink className={styles.sourcePlate!} />
-                    <PapyrusTypeValueToken game={game} type={{type: PapyrusScriptTypeArchetype.String, isArray: false, value: source.sourceIdentifier}} />
-                </div>
-                <div className={styles.sourceMiddle}>
-                    <SourceIcon sourceType={source.type} />
-                    <span><SourceTypeString sourceType={source.type} /></span>
-                </div>
-                <div className={styles.sourceBody}>
-                    <span className={styles.sourceNameAndPlate}>
-                        <h3><SourceName source={source} long /></h3>
-                    </span>
-                </div>
-            </div></Link>)}
-        </div>
-    </main>;
+    return <>
+        <main>
+            <h1>{game}</h1>
+            <div className={styles.inheritanceTree}>
+                <InheritanceDisplay game={game} data={gameData.topLevelScripts} />
+            </div>
+            <div className={styles.sourceGrid}>
+                {Object.values(gameData.scriptSources).map(source => <InternalLink
+                    key={source.sourceIdentifier}
+                    href={prepareUrlParts(game, 'source', source.sourceIdentifier)}
+                    className={styles.source}
+                    data-no-link-style
+                ><div
+                    style={{
+                        // @ts-expect-error I know this isn't a real prop, but I need my css variables
+                        "--random-tilt-factor": 2 ** (1.2 * Math.random()),
+                        "--random-tilt-direction": Math.random() >= 0.5 ? 1 : -1,
+                    }}
+                >
+                    <div className={styles.sourceTop}>
+                        <SourcePlate sourceId={source.sourceIdentifier} game={game} noLink className={styles.sourcePlate!} />
+                        <PapyrusTypeValueToken game={game} type={{type: PapyrusScriptTypeArchetype.String, isArray: false, value: source.sourceIdentifier}} />
+                    </div>
+                    <div className={styles.sourceMiddle}>
+                        <SourceIcon sourceType={source.type} />
+                        <span><SourceTypeString sourceType={source.type} /></span>
+                    </div>
+                    <div className={styles.sourceBody}>
+                        <span className={styles.sourceNameAndPlate}>
+                            <h3><SourceName source={source} long /></h3>
+                        </span>
+                    </div>
+                </div></InternalLink>)}
+            </div>
+        </main>
+        <JsonLDGraph data={[
+            {
+                "@type": "CollectionPage",
+                "@id": `https://papyrus.bellcube.dev${prepareUrlParts(game)}#game`,
+                url: `https://papyrus.bellcube.dev${prepareUrlParts(game)}`,
+                mainEntityOfPage: `https://papyrus.bellcube.dev${prepareUrlParts(game)}#game`,
+                isPartOf: "https://papyrus.bellcube.dev/#website",
+                name: `Papyrus scripts for ${getGameName(game)}`,
+                description: `Contains all known Papyrus scripts for ${getGameName(game)}, including both vanilla and modded scripts. Also includes places where you can find scripts, such as the vanilla game, xSE, and various mods.`,
+                hasPart: [
+                    ...Object.values(gameData.scriptSources).map(source => ({
+                        "@type": "WebPage",
+                        "@id": `https://papyrus.bellcube.dev${prepareUrlParts(game, 'source', source.sourceIdentifier)}#source`
+                    } )),
+                    ...Object.values(gameData.scripts).map(script => ({
+                        "@type": "WebPage",
+                        "@id": `https://papyrus.bellcube.dev${prepareUrlParts(game, 'script', script[AllSourcesCombined].namespaceName[0]![1])}#script`
+                    })),
+                ],
+                about: {
+                    "@id": (()=>{
+                        switch (game) {
+                            case PapyrusGame.SkyrimSE: return "https://en.wikipedia.org/wiki/The_Elder_Scrolls_V:_Skyrim";
+                            case PapyrusGame.Fallout4: return "https://en.wikipedia.org/wiki/Fallout_4";
+                            case PapyrusGame.Fallout76: return "https://en.wikipedia.org/wiki/Fallout_76";
+                            case PapyrusGame.Starfield: return "https://en.wikipedia.org/wiki/Starfield_(video_game)";
+                            default: throw new UnreachableError(game, "Unknown game in /[game]/ page schema.org about field");
+                        }
+                    })()
+                },
+                breadcrumb: {
+                    "@id": `https://papyrus.bellcube.dev${prepareUrlParts(game)}#breadcrumb`
+                },
+            } satisfies CollectionPage,
+            {
+                "@type": "BreadcrumbList",
+                "@id": `https://papyrus.bellcube.dev${prepareUrlParts(game)}#breadcrumb`,
+                itemListElement: [
+                    {
+                        "@type": "ListItem",
+                        position: 1,
+                        name: "Home",
+                        item: "https://papyrus.bellcube.dev/",
+                    },
+                    {
+                        "@type": "ListItem",
+                        position: 2,
+                        name: getGameName(game),
+                        item: `https://papyrus.bellcube.dev${prepareUrlParts(game)}`,
+                    }
+                ]
+            } satisfies BreadcrumbList,
+        ]} />
+    </>;
 }

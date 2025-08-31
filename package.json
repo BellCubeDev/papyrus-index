@@ -87,6 +87,7 @@
     "remark-gfm": "^4.0.1",
     "sass": "^1.91.0",
     "scheduler-polyfill": "^1.3.0",
+    "schema-dts": "^1.1.5",
     "server-only": "^0.0.1",
     "strip-markdown": "^6.0.0",
     "tsx": "^4.20.5",

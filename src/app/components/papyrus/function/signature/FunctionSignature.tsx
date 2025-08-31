@@ -1,8 +1,8 @@
 import type { PapyrusScriptFunctionIndexed } from "../../../../../papyrus/data-structures/indexing/function";
 import type { PapyrusGame } from "../../../../../papyrus/data-structures/pure/game";
 import { joinJSXWithElementByWrapping } from "../../../../../utils/joinJSX";
-import { toLowerCase } from "../../../../../utils/toLowerCase";
-import { Link } from "../../../Link";
+import { prepareUrlParts } from "../../../../../utils/prepareUrlParts";
+import { InternalLink } from "../../../Link";
 import { SuspenseIfServer } from "../../../SuspenseIfServer";
 import { TextWithTooltip } from "../../../text-with-tooltip/TooltipText";
 import { PapyrusType, PapyrusTypeNamed, PapyrusTypeWithValue } from "../../type/PapyrusType";
@@ -22,7 +22,7 @@ export function PapyrusFunctionSignature<TGame extends PapyrusGame>({game, func,
                     {
                         inTooltip
                             ? <span className={styles.functionName}>{func.name}</span>
-                            : <Link className={styles.functionName} href={`/${toLowerCase(game)}/script/${toLowerCase(scriptName)}/function/${toLowerCase(func.name)}` as const}>{func.name}</Link>
+                            : <InternalLink className={styles.functionName} href={prepareUrlParts(game, 'script', scriptName, 'function', func.name)}>{func.name}</InternalLink>
                     }
                     <span className={styles.functionParametersStart}>(</span>
                     <PapyrusFunctionSignatureParamSeparator isInWrapper noComma />
