@@ -3,12 +3,11 @@ import { UnknownPapyrusScript } from "../../../../papyrus/data-structures/indexi
 import type { PapyrusGame } from "../../../../papyrus/data-structures/pure/game";
 import { UnreachableError } from "../../../../UnreachableError";
 import { getBestString, getBestStringVariant } from "../../../../utils/getBestName";
-import { toLowerCase } from "../../../../utils/toLowerCase";
-import { InternalLink, Link } from "../../Link";
+import { prepareUrlParts } from "../../../../utils/prepareUrlParts";
+import { InternalLink } from "../../Link";
 import { Tooltip } from "../../tooltip/Tooltip";
 import styles from './PapyrusScriptReference.module.scss';
 import { PapyrusScriptReferenceTooltip } from "./PapyrusScriptReferenceTooltip";
-import { prepareUrlParts } from "../../../../utils/prepareUrlParts";
 
 export function getScriptNameFromProps<TGame extends PapyrusGame>(propsObj: ComponentProps<typeof PapyrusScriptReferenceTooltip<TGame>> & {missingName?: string | null|undefined}): string {
     const {script, scriptAggregate, possibleScripts, missingName} = propsObj;

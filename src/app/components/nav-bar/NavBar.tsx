@@ -1,12 +1,12 @@
 'use client';
 
-import styles from './NavBar.module.scss';
+import Link from 'next/link';
 import type { PapyrusGame } from "../../../papyrus/data-structures/pure/game";
 import { useSearchContext } from '../../search/SearchProvider';
 import { ThePapyrusIndexLogo } from '../logo/ThePapyrusIndexLogo';
-import { GameDropdown } from './GameDropdown';
 import { SearchModalButton } from '../search/SearchModal';
-import Link from 'next/link';
+import { GameDropdown } from './GameDropdown';
+import styles from './NavBar.module.scss';
 
 export function NavBar({game}: {
     readonly game: PapyrusGame | null,
