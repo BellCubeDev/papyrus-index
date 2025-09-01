@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Only An Extender)
+nameProper: aTweaks and Utilities
+nameShort: aTweaks & Utils
+indexedVersion: "2.1.1"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/107741
+nexusIndexedFileId: 655107
+gitRepo: https://github.com/MaybeAsrak/MagicUtils
