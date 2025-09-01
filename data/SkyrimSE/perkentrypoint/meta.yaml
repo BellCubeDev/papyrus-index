@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Only An Extender)
+nameProper: Perk Entry Point Extender
+nameShort: Perk Entry Point Ext.
+indexedVersion: "2.2.3.4"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/91192
+nexusIndexedFileId: 658031
+gitRepo: https://github.com/NoahBoddie/perk-entry-point-extender
