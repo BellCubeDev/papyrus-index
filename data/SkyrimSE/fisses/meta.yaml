@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Only An Extender)
+nameProper: FileAccess Interface for Skyrim SE Scripts - FISSES
+nameShort: FISSES
+indexedVersion: "1.4.1"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/13956
+gitRepo: https://github.com/noxsidereum/FISSES # NOTE: This is only the GOG port. Main source code is hosted on the mod page under the "Miscellaneous files" section, labeled "FISSES DLL Source Code YYYY-NN-DD"
+nexusIndexedFileId: 319211
