@@ -20,6 +20,12 @@
         display: contents;
     }
 
+    > :first-child {
+        font-size: 1.15em;
+        align-self: center;
+        align-self: center;
+        opacity: 0.7;
+    }
 }
 
 .sourcePlate {

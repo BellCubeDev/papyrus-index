@@ -42,6 +42,7 @@ export function SourcesList({sourceIDs, game}: {readonly sourceIDs: Lowercase<st
     const sourceObjects = sourceIDs.map(sourceID => sources[sourceID]!).sort(sourcesSortFn);
 
     return <ul className={styles.sourcesList}>
+        <span>Found in:</span>
         {sourceObjects.map(source => <li key={source.sourceIdentifier}>
             <SourcePlate sourceId={source.sourceIdentifier} game={game} />
         </li>)}
