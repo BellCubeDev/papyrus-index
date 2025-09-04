@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Only An Extender)
+nameProper: Custom Skills Framework
+nameShort: Custom Skills
+indexedVersion: "3.1.0"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/41780
+gitRepo: https://github.com/Exit-9B/CustomSkills/
+nexusIndexedFileId: 496520
