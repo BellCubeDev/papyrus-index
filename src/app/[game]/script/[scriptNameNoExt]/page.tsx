@@ -11,7 +11,7 @@ import { getGameAndScriptFromParams, type ScriptRouteParams } from "./getGameAnd
 import styles from './ScriptPage.module.scss';
 import { PapyrusTypeWithValue } from "../../../components/papyrus/type/PapyrusType";
 import { toLowerCase } from "../../../../utils/toLowerCase";
-import { SourcesList } from "../../../components/papyrus/SourcesList";
+import { SourcesList, sourcesSortFn } from "../../../components/papyrus/SourcesList";
 import { JsonLDGraph } from "../../../components/JsonLDGraph";
 import { prepareUrlParts } from "../../../../utils/prepareUrlParts";
 import type { APIReference, BreadcrumbList, ComputerLanguage } from "schema-dts";
@@ -37,16 +37,16 @@ export async function generateMetadata({params}: {readonly params: Promise<Scrip
     const {game, scriptBySources} = getGameAndScriptFromParams(await params);
 
     const sourceIDs = Object.keys(scriptBySources);
-    const sourceNamespaceNames = sourceIDs.map((sourceId)=>SourceName({source: AllScriptsIndexed[game].scriptSources[sourceId]!, long: true}));
+    const sourceNames = sourceIDs.map(sourceId => AllScriptsIndexed[game].scriptSources[sourceId]!).sort(sourcesSortFn).map((source)=>SourceName({source, long: true}));
 
-    if (sourceNamespaceNames.length === 0) throw new Error('A script should have at least one source! Makes no sense for it to not have a source! Something is VERY wrong here.');
-    const sourcesList = sourceNamespaceNames.length === 1 ? sourceNamespaceNames[0] : sourceNamespaceNames.length === 2 ? sourceNamespaceNames.join(' and ') : `${sourceNamespaceNames.slice(0, -1).join(', ')}, and ${sourceNamespaceNames.at(-1)}`;
+    if (sourceNames.length === 0) throw new Error('A script should have at least one source! Makes no sense for it to not have a source! Something is VERY wrong here.');
+    const sourcesList = sourceNames.length === 1 ? sourceNames[0] : sourceNames.length === 2 ? sourceNames.join(' and ') : `${sourceNames.slice(0, -1).join(', ')}, and ${sourceNames.at(-1)}`;
 
     const scriptName = getBestStringVariant(scriptBySources[AllSourcesCombined].namespaceName)![1];
 
     return {
         title: scriptName,
-        description: `Reference page for the ${scriptName} script in ${getGameName(game)}. This script is provided by ${sourcesList}.`,
+        description: `Reference page for the ${scriptName} script in ${getGameName(game)}. This script is found in ${sourcesList}.`,
     };
 }
 

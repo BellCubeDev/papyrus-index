@@ -8,6 +8,7 @@ import { InternalLink } from "../Link";
 import { SourceIcon } from "./SourceIcon";
 import { SourceName } from "./SourceName";
 import styles from './SourcesList.module.scss';
+import type { PapyrusScriptSourceIndexedNoScriptsProp } from "../../../papyrus/data-structures/indexing/scriptSource";
 
 async function loadSourceListOnServer(game: PapyrusGame) {
     return (await import(typeof window !== 'undefined' ? '@/empty' : "../../../papyrus/indexing/index-all")).AllScriptsIndexed[game].scriptSources;
@@ -30,11 +31,15 @@ export function SourceListUser({game}: {readonly game: PapyrusGame}) {
     return null;
 }
 
+export function sourcesSortFn(a: PapyrusScriptSourceIndexedNoScriptsProp<PapyrusGame>, b: PapyrusScriptSourceIndexedNoScriptsProp<PapyrusGame>) {
+    return getSourceTypeMultiplier(b.type) - getSourceTypeMultiplier(a.type);
+}
+
 export function SourcesList({sourceIDs, game}: {readonly sourceIDs: Lowercase<string> | Lowercase<string>[], readonly game: PapyrusGame}) {
     sourceIDs = Array.isArray(sourceIDs) ? sourceIDs : [sourceIDs];
 
     const sources = useLoadSourceList(game);
-    const sourceObjects = sourceIDs.map(sourceID => sources[sourceID]!).sort((a, b) => getSourceTypeMultiplier(b.type) - getSourceTypeMultiplier(a.type));
+    const sourceObjects = sourceIDs.map(sourceID => sources[sourceID]!).sort(sourcesSortFn);
 
     return <ul className={styles.sourcesList}>
         {sourceObjects.map(source => <li key={source.sourceIdentifier}>

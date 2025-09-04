@@ -24,6 +24,7 @@ import { TextWithTooltip } from "../../../../../../components/text-with-tooltip/
 import { WikiMarkdown } from "../../../../../../components/wiki-markdown/WikiMarkdown";
 import styles from './FunctionPage.module.scss';
 import { getGameAndScriptAndFunctionFromParams, type FunctionRouteParams } from "./getGameAndScriptAndFunctionFromParams";
+import { sourcesSortFn } from "../../../../../../components/papyrus/SourcesList";
 
 export function generateStaticParams(): FunctionRouteParams[] {
     const params: FunctionRouteParams[] = [];
@@ -41,7 +42,7 @@ export async function generateMetadata({params}: {readonly params: Promise<Funct
     const {game, scriptBySources, func} = getGameAndScriptAndFunctionFromParams(await params);
 
     const sourceIDs = Object.keys(scriptBySources);
-    const sourceNames = sourceIDs.map((sourceId)=>SourceName({source: AllScriptsIndexed[game].scriptSources[sourceId]!, long: true}));
+    const sourceNames = sourceIDs.map(sourceId => AllScriptsIndexed[game].scriptSources[sourceId]!).sort(sourcesSortFn).map((source)=>SourceName({source, long: true}));
 
     if (sourceNames.length === 0) throw new Error('A script should have at least one source! Makes no sense for it to not have a source! Something is VERY wrong here.');
     const sourcesList = sourceNames.length === 1 ? sourceNames[0] : sourceNames.length === 2 ? sourceNames.join(' and ') : `${sourceNames.slice(0, -1).join(', ')}, and ${sourceNames.at(-1)}`;
@@ -53,7 +54,7 @@ export async function generateMetadata({params}: {readonly params: Promise<Funct
 
     return {
         title: functionName,
-        description: `Reference page for the ${func.isGlobal.some(v=>v[1]) ? 'Global (static)' : 'Member'} function ${scriptNamespaceName}.${functionName} for the game ${getGameName(game)}. This script is provided by ${sourcesList}.${description ? `\n\n${description}` : ''}`,
+        description: `Reference page for the ${func.isGlobal.some(v=>v[1]) ? 'Global (static)' : 'Member'} function ${scriptNamespaceName}.${functionName} for the game ${getGameName(game)}. This function is provided by the ${scriptNamespaceName} script found in ${sourcesList}.${description ? `\n\n${description}` : ''}`,
         // TODO: Add keywords relevant to the function.
         // Possibly break its name down into parts, take its parameters into account, return type, parent script, and all that fun stuff.
     };
