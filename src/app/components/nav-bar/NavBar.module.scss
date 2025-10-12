@@ -20,16 +20,6 @@
     grid-template-rows: 100%;
     align-items: center;
     justify-items: center;
-
-    > :nth-child(2) > div { // Papyrus Index Logo
-        margin: 0;
-        width: unset;
-        font-size: 0.75em;
-        margin-bottom: 0.25em;
-        > h1 {
-            margin: 0;
-        }
-    }
 }
 
 @media (max-height: 600px) {
@@ -97,7 +87,17 @@
 }
 
 .logo {
-    font-size: css-min(1em, 1.4vw)
+    font-size: css-clamp(0.4em, 1vw, 0.8em);
+    > div {
+        margin: 0;
+        width: unset;
+        margin-bottom: 0.25em;
+        min-width: 32em;
+        padding: 0 2em;
+        > h1 {
+            margin: 0;
+        }
+    }
 }
 
 .searchButton {
@@ -111,16 +111,17 @@
     }
 }
 
-@media (max-width: 750px) {
+@media (max-width: 900px) {
     .nav {
         display: flex;
         justify-content: space-around;
     }
     .logo {
         > div {
-            font-size: css-min(1em, 8vw);
-            width: 20em;
             margin: 0;
+            width: unset;
+            margin-bottom: 0.25em;
+            min-width: unset;
             > h1 {
                 margin: 0;
             }
