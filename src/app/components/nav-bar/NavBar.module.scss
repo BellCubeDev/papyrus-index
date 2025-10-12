@@ -21,8 +21,11 @@
     align-items: center;
     justify-items: center;
 
-    > :nth-child(2) { // Papyrus Index Logo
-        margin: 0rem;
+    > :nth-child(2) > div { // Papyrus Index Logo
+        margin: 0;
+        width: unset;
+        font-size: 0.75em;
+        margin-bottom: 0.25em;
         > h1 {
             margin: 0;
         }
