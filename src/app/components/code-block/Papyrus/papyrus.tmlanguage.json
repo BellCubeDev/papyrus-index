@@ -1,12 +1,16 @@
 {
     "comment": "File taken, converted from XML to JSON, and modified from https://github.com/joelday/papyrus-lang \n Copyright (c) 2019 Joel Day",
+    "name": "papyrus",
+    "aliases": ["psc"],
+    "displayName": "Papyrus",
     "fileTypes": [
         "psc"
     ],
+
+
     "firstLineMatch": "(?i)^scriptname",
     "foldingStartMarker": "(?i)^\\s*(if|while|property|struct|group|state|event|(\\S+\\s+)?function)",
     "foldingStopMarker": "(?i)^\\s*(endif|endwhile|endproperty|endstruct|endgroup|endstate|endevent|endfunction)",
-    "name": "papyrus",
     "patterns": [
         {
             "match": "(?im)^\\s*(?:(int|string|float|bool|var)|((?!return|import|if|while|property|struct|group|state|event|elseIf)\\w+?))(?:\\[\\])?\\s+(\\w+)\\s*$",
@@ -467,5 +471,11 @@
         }
     },
     "scopeName": "source.papyrus",
-    "uuid": "9222FE11-FBF1-49B0-B158-FD20C68E95AF"
+    "uuid": "9222FE11-FBF1-49B0-B158-FD20C68E95AF",
+    "balancedBracketSelectors": [
+        "meta.function.papyrus",
+        "meta.property.papyrus",
+        "meta.scriptname-declaration.papyrus"
+    ],
+    "unbalancedBracketSelectors": []
 }

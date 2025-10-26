@@ -1,11 +1,11 @@
-pre > code > [data-l] {
-    counter-incement: linenumber;
+pre.line-numbers > code .line {
+    counter-increment: linenumber;
     position: relative;
     padding-left: 4em;
     &::before {
         display: inline-block;
         width: 2em;
-        color: #444;
+        color: #fff4;
         text-align: right;
         padding-right: 1.5em;
         user-select: none;
@@ -20,9 +20,9 @@ pre > code > [data-l] {
         content: ' ';
         position: absolute;
         top: -0.35em;
-        left: 3em;
+        left: 2.75em;
         width: 2px;
         height: 170%;
-        background: #3a3a3a;
+        background: #444;
     }
 }
