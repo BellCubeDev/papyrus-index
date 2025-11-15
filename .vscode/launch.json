@@ -1,6 +1,16 @@
 {
     "version": "0.2.0",
     "configurations": [
+		{
+			"name": "Papyrus Grammar Test Extension",
+			"type": "extensionHost",
+			"request": "launch",
+            "cwd": "${workspaceFolder}/vscode-language-dev-ext",
+			"args": [
+				"--extensionDevelopmentPath=${workspaceFolder}/vscode-language-dev-ext",
+                "${workspaceFolder}/vscode-language-dev-ext/testing.psc"
+			]
+		},
         {
             "name": "Attach: Chromium Browser",
             "port": 9222,

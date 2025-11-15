@@ -9,6 +9,7 @@ typecheck.log
 eslint_report.json
 *.sock
 /typescript-plugin/dist
+/vscode-language-dev-ext/testing.psc
 
 # Don't store the raw data JSON file since it's just regenerated every time
 /public/raw.json

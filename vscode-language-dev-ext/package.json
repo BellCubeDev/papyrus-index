@@ -1,0 +1,26 @@
+{
+  "name": "papyrus-index-vscode-language-dev-ext",
+  "description": "VS Code extension to debug the TextMate grammar for the Papyrus language",
+  "version": "0.0.1",
+  "private": true,
+  "categories": [
+    "Programming Languages"
+  ],
+  "displayName": "papyrus-index-vscode-language-dev-ext",
+  "engines": {
+    "vscode": "^1.106.0"
+  },
+  "contributes": {
+    "languages": [{
+      "id": "papyrus",
+      "aliases": ["Papyrus", "papyrus"],
+      "extensions": [".psc"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "papyrus",
+      "scopeName": "source.papyrus",
+      "path": "./papyrus.tmlanguage.json"
+    }]
+  }
+}
