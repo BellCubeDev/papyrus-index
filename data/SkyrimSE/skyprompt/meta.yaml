@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: Standalone Mod
+nameProper: SkyPrompt
+nameShort: SkyPrompt
+indexedVersion: "2.3.4"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/148703
+gitRepo: https://github.com/QTR-Modding/SkyPrompt
+nexusIndexedFileId: 662759

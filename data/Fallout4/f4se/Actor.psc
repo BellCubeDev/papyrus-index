@@ -1101,13 +1101,13 @@ bool Function CanMoveVertical() native debugOnly
 ; Check to see if the actor can strafe side to side.
 bool Function CanStrafe() native debugOnly
 
-; F4SE additions built 2024-05-10 04:02:33.679000 UTC
+; F4SE additions built 2025-11-11 02:05:33.464000 UTC
 struct WornItem
 	Form item ; Can be ARMO, WEAP or ARMA
 	Form model ; Can be ARMA or WEAP depending on item
 	string modelName ; Model override name
 	Form materialSwap ; Material swap form
-	TextureSet texture ; TextureSet override
+	TextureSet texture ; TextureSet override 
 EndStruct
 
 ; Slot index is valid from 0-43
