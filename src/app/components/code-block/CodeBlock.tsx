@@ -4,8 +4,9 @@ import { jsx, jsxs } from 'react/jsx-runtime';
 import { createHighlighterCore } from 'shiki/core';
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma';
 import { FloatingDelayGroup } from '../tooltip/FloatingUIClient';
-import { transformerColorizedBrackets } from '@shikijs/colorized-brackets'
+import { transformerColorizedBrackets } from '@shikijs/colorized-brackets';
 import './CodeBlock.scss';
+import { transformerRenderIndentGuides } from '@shikijs/transformers';
 
 const shikiPromise = createHighlighterCore({
     themes: [
@@ -47,6 +48,9 @@ async function HighlightCodeContentsAsync({ language, code }: { readonly languag
         theme: 'dark-plus',
         transformers: [
             transformerColorizedBrackets({}),
+            transformerRenderIndentGuides({
+                indent: 4,
+            }),
         ],
     });
 
