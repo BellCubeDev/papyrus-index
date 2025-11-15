@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: Standalone Mod
+nameProper: Dynamic Wetness
+nameShort: Dynamic Wetness
+indexedVersion: "1.5.0a"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/158207
+gitRepo: https://github.com/DanjelPiDev/TES5-DynamicWetness
+nexusIndexedFileId: 663682
