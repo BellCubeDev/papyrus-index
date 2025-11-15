@@ -1,5 +1,9 @@
 {
     "comment": "File taken, converted from XML to JSON, and modified from https://github.com/joelday/papyrus-lang \n Copyright (c) 2019 Joel Day",
+
+    "comment": "In place of \\s+, handle comments by using (?:(?:\\s*(;\/(?:(?!\/;).)*\/;))\\s*|\\s+) where appropriate",
+    "comment": "In place of \\s*, handle comments by using \\s*(?:(;\/(?:(?!\/;).)*\/;)\\s*)? where appropriate",
+
     "name": "papyrus",
     "aliases": ["psc"],
     "displayName": "Papyrus",
