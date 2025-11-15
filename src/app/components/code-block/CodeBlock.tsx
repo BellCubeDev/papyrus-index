@@ -1,14 +1,14 @@
-import './CodeBlock.scss';
-import type { ElementContent, Root, RootContent, Text } from 'hast';
-import { UnreachableError } from '../../../UnreachableError';
-import React, { Suspense } from 'react';
-import { FloatingDelayGroup } from '../tooltip/FloatingUIClient';
+import { toJsxRuntime } from 'hast-util-to-jsx-runtime';
+import { Fragment, Suspense } from 'react';
+import { jsx, jsxs } from 'react/jsx-runtime';
 import { createHighlighterCore } from 'shiki/core';
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma';
+import { FloatingDelayGroup } from '../tooltip/FloatingUIClient';
+import './CodeBlock.scss';
 
 const shikiPromise = createHighlighterCore({
     themes: [
-        import('@shikijs/themes/github-dark'),
+        import('@shikijs/themes/dark-plus'),
     ],
     langs: [
         import('./Papyrus/papyrusTMLanguage').then(m => m.PapyrusTMLanguage),
@@ -21,7 +21,7 @@ export enum CodeBlockLanguage {
     Papyrus = 'papyrus',
 }
 
-export function CodeBlock({ language, code, doLineNumbers }: { readonly language: CodeBlockLanguage, readonly code: string, doLineNumbers?: boolean }) {
+export function CodeBlock({ language, code, doLineNumbers }: { readonly language: CodeBlockLanguage, readonly code: string, readonly doLineNumbers?: boolean; }) {
     return <FloatingDelayGroup delay={300}>
         <pre className={doLineNumbers ? 'line-numbers' : undefined}>
             <code data-language={language}>
@@ -32,44 +32,33 @@ export function CodeBlock({ language, code, doLineNumbers }: { readonly language
 }
 
 
-async function HighlightCode({ language, code }: { readonly language: CodeBlockLanguage, readonly code: string }) {
+function HighlightCode({ language, code }: { readonly language: CodeBlockLanguage, readonly code: string; }) {
     return <Suspense fallback={code}>
         <HighlightCodeAsync language={language} code={code} />
     </Suspense>;
 }
 
-async function HighlightCodeAsync({ language, code }: { readonly language: CodeBlockLanguage, readonly code: string }) {
+async function HighlightCodeAsync({ language, code }: { readonly language: CodeBlockLanguage, readonly code: string; }) {
     const shiki = await shikiPromise;
 
-    const out = await shiki.codeToHtml(code, {
+    const out = shiki.codeToHast(code, {
         lang: language,
-        theme: 'github-dark',
+        theme: 'dark-plus',
         transformers: [
-            {
-                root(rootNode) {
-                    let hasError = true;
-                    try {
-                        if (rootNode.children.length !== 1) throw new Error('Unexpected number of children in root of shiki output.');
-                        const preElement = rootNode.children[0]!;
-                        if (preElement.type !== 'element' || preElement.tagName !== 'pre') throw new Error('Unexpected root child in shiki output; expected <pre>.');
-                        const codeElement = preElement.children[0]!;
-                        if (codeElement.type !== 'element' || codeElement.tagName !== 'code') throw new Error('Unexpected <pre> child in shiki output; expected <code>.');
+            await import('@shikijs/colorized-brackets').then(m => m.transformerColorizedBrackets({
 
-                        const newRoot: Root = {
-                            ...rootNode,
-                            children: codeElement.children,
-                        }
-
-                        hasError = false;
-                        return newRoot;
-                    } finally {
-                        if (hasError) console.log('Shiki output root node for debugging:\n\n' + JSON.stringify(rootNode, null, 4) + '\n\n', rootNode);
-                    }
-                }
-            }
-        ]
+            })),
+        ],
     });
 
-    return <div dangerouslySetInnerHTML={{ __html: out }} />;
-
+    return toJsxRuntime(out, {
+        Fragment,
+        jsx,
+        jsxs,
+        components: {
+            // we handle our own pre/code tags
+            pre: props => props.children,
+            code: props => props.children,
+        },
+    });
 }

@@ -64,6 +64,9 @@ importers:
       '@nimpl/classnames-minifier':
         specifier: ^4.0.1
         version: 4.0.1(css-loader@7.1.2)
+      '@shikijs/colorized-brackets':
+        specifier: ^3.14.0
+        version: 3.14.0
       '@shikijs/themes':
         specifier: ^3.14.0
         version: 3.14.0
@@ -133,6 +136,9 @@ importers:
       globals:
         specifier: ^16.3.0
         version: 16.3.0
+      hast-util-to-jsx-runtime:
+        specifier: ^2.3.6
+        version: 2.3.6
       husky:
         specifier: ^9.1.7
         version: 9.1.7
@@ -1286,6 +1292,9 @@ packages:
 
   '@sec-ant/readable-stream@0.4.1':
     resolution: {integrity: sha512-831qok9r2t8AlxLko40y2ebgSDhenenCatLVeW/uBtnHPyhHOvG0C7TvfgecV+wHzIm5KUICgzmVpWS+IMEAeg==}
+
+  '@shikijs/colorized-brackets@3.14.0':
+    resolution: {integrity: sha512-kI2ppSSKykx2Cx6amgVJmPQVp69gOfry3kgb5KttYtfDb4DraaKGkAa1PwE/hKFb7f1CCMqS1aFaEG6HCDvJAg==}
 
   '@shikijs/core@3.14.0':
     resolution: {integrity: sha512-qRSeuP5vlYHCNUIrpEBQFO7vSkR7jn7Kv+5X3FO/zBKVDGQbcnlScD3XhkrHi/R8Ltz0kEjvFR9Szp/XMRbFMw==}
@@ -5583,6 +5592,10 @@ snapshots:
   '@rushstack/eslint-patch@1.12.0': {}
 
   '@sec-ant/readable-stream@0.4.1': {}
+
+  '@shikijs/colorized-brackets@3.14.0':
+    dependencies:
+      shiki: 3.14.0
 
   '@shikijs/core@3.14.0':
     dependencies:
