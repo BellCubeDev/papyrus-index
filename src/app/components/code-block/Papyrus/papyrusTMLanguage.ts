@@ -7,6 +7,6 @@
 //  Copyright (c) 2019 Joel Day
 //
 import type { LanguageRegistration } from "shiki";
-import PapyrusTMLanguage_ from "./papyrus.tmlanguage.json" with { type: "json" };
+import PapyrusTMLanguage_ from "../../../../../vscode-language-dev-ext/papyrus.tmlanguage.json" with { type: "json" };
 
 export const PapyrusTMLanguage = PapyrusTMLanguage_ satisfies LanguageRegistration;
