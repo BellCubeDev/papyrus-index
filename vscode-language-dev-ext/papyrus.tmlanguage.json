@@ -51,22 +51,19 @@
                 },
                 {
                     "include": "#quoted-string"
+                },
+                {
+                    "include": "#comments"
                 }
             ],
-            "end": "\\n",
+            "end": "\\n|^",
             "name": "meta.variable.papyrus"
         },
         {
             "include": "#quoted-string"
         },
         {
-            "begin": ";/",
-            "end": "/;",
-            "name": "comment.block.papyrus"
-        },
-        {
-            "match": "(;).*$\\n?",
-            "name": "comment.line.semicolon.papyrus"
+            "include": "#comments"
         },
         {
             "begin": "{",
@@ -89,16 +86,15 @@
                     "name": "entity.other.inherited-class.papyrus"
                 }
             },
-            "end": "\\n",
+            "end": "\\n|^",
             "name": "meta.scriptname-declaration.papyrus",
             "patterns": [
                 {
-                    "match": ";([^\\n]*)",
-                    "name": "comment.line.semicolon.papyrus"
+                    "include": "#comments"
                 },
                 {
                     "match": "(?i)(?:\\s+|(?<=/;))(betaOnly|debugOnly|global|hidden|native|const|conditional|requiresguard|protectsfunctionlogic|selfonly|private|protected|internal)(?=\\s|;|$)",
-                    "name": "support.other.papyrus-flag"
+                    "name": "keyword.language.papyrus-flag"
                 }
             ]
         },
@@ -148,7 +144,7 @@
                 },
                 {
                     "match": "(?i)\\b(auto|autoreadonly|const|conditional|mandatory|hidden)\\b",
-                    "name": "support.other.papyrus-flag"
+                    "name": "keyword.language.papyrus-flag"
                 },
                 {
                     "match": "\\=",
@@ -268,7 +264,7 @@
         },
         {
             "match": "(?i)\\b(betaOnly|debugOnly|global|hidden|native|const|conditional|requiresguard|protectsfunctionlogic|selfonly|private|protected|internal)\\b",
-            "name": "support.other.papyrus-flag"
+            "name": "keyword.language.papyrus-flag"
         },
         {
             "match": "(?i)\\b(self|parent)\\b",
@@ -440,6 +436,19 @@
                 }
             ]
         },
+        "comments": {
+            "patterns": [
+                {
+                    "begin": ";/",
+                    "end": "/;",
+                    "name": "comment.block.papyrus"
+                },
+                {
+                    "match": "(;).*$\\n?",
+                    "name": "comment.line.semicolon.papyrus"
+                }
+            ]
+        },
         "params": {
             "patterns": [
                 {
@@ -462,6 +471,9 @@
                 },
                 {
                     "include": "#parameter-newline-escape-without-comma"
+                },
+                {
+                    "include": "#comments"
                 },
                 {
                     "match": "^.+|[^\\s\\)]+?",
