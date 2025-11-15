@@ -13,35 +13,47 @@
     "foldingStopMarker": "(?i)^\\s*(endif|endwhile|endproperty|endstruct|endgroup|endstate|endevent|endfunction)",
     "patterns": [
         {
-            "match": "(?im)^\\s*(?:(int|string|float|bool|var)|((?!return|import|if|while|property|struct|group|state|event|elseIf)\\w+?))(?:\\[\\])?\\s+(\\w+)\\s*$",
+            "match": "(?im)^\\s*(?:(;\/(?:(?!\/;).)*\/;)\\s*)?(?:(int|string|float|bool|var)|((?!return|import|if|while|property|struct|group|state|event|elseIf)\\w+?))(?:\\[\\])?(?:(?:\\s*(;\/(?:(?!\/;).)*\/;))\\s*|\\s+)(\\w+)\\s*(?=\\s|;|$)",
             "captures": {
                 "1": {
-                    "name": "storage.type.variable.papyrus"
+                    "name": "comment.block.papyrus"
                 },
                 "2": {
-                    "name": "entity.name.class.papyrus"
+                    "name": "storage.type.variable.papyrus"
                 },
                 "3": {
-                    "name": "variable.parameter.papyrus"
+                    "name": "entity.name.class.papyrus"
                 },
                 "4": {
-                    "name": "keyword.operator.assignment.papyrus"
+                    "name": "comment.block.papyrus"
+                },
+                "5": {
+                    "name": "variable.parameter.papyrus"
                 }
             }
         },
         {
-            "begin": "(?im)^\\s*(?:(int|string|float|bool|var)|((?!return|import|if|while|property|struct|group|state|event|elseIf)\\w+?))(?:\\[\\])?\\s+(\\w+)\\s*(=)",
+            "begin": "(?im)^\\s*(?:(;\/(?:(?!\/;).)*\/;)\\s*)?(?:(int|string|float|bool|var)|((?!return|import|if|while|property|struct|group|state|event|elseIf)\\w+?))(?:\\[\\])?(?:(?:\\s*(;\/(?:(?!\/;).)*\/;))\\s*|\\s+)(\\w+)(?:(?:\\s*(;\/(?:(?!\/;).)*\/;))\\s*|\\s+)(=)",
             "beginCaptures": {
                 "1": {
-                    "name": "storage.type.variable.papyrus"
+                    "name": "comment.block.papyrus"
                 },
                 "2": {
-                    "name": "entity.name.class.papyrus"
+                    "name": "storage.type.variable.papyrus"
                 },
                 "3": {
-                    "name": "variable.papyrus"
+                    "name": "entity.name.class.papyrus"
                 },
                 "4": {
+                    "name": "comment.block.papyrus"
+                },
+                "5": {
+                    "name": "variable.papyrus"
+                },
+                "6": {
+                    "name": "comment.block.papyrus"
+                },
+                "7": {
                     "name": "keyword.operator.assignment.papyrus"
                 }
             },
@@ -71,18 +83,30 @@
             "name": "comment.documentation.papyrus"
         },
         {
-            "begin": "(?i)^\\s*(scriptname)\\s+([:\\w]+)(\\s+(extends)\\s+(\\S+))?",
+            "begin": "(?i)^\\s*(?:(;\\/(?:(?!\\/;).)*\\/;)\\s*)?(scriptname)(?:(?:\\s*(;\\/(?:(?!\\/;).)*\\/;))\\s*|\\s+)([:\\w]+)((?:(?:\\s*(;\\/(?:(?!\\/;).)*\\/;))\\s*|\\s+)(extends)(?:(?:\\s*(;\\/(?:(?!\\/;).)*\\/;))\\s*|\\s+)(\\S+))?",
             "beginCaptures": {
                 "1": {
-                    "name": "support.type.other.scriptname-declaration.papyrus"
+                    "name": "comment.block.papyrus"
                 },
                 "2": {
-                    "name": "entity.type.scriptname.papyrus"
+                    "name": "support.type.other.scriptname-declaration.papyrus"
+                },
+                "3": {
+                    "name": "comment.block.papyrus"
                 },
                 "4": {
-                    "name": "keyword.language.extends.papyrus"
+                    "name": "entity.type.scriptname.papyrus"
                 },
                 "5": {
+                    "name": "comment.block.papyrus"
+                },
+                "6": {
+                    "name": "keyword.language.extends.papyrus"
+                },
+                "7": {
+                    "name": "comment.block.papyrus"
+                },
+                "8": {
                     "name": "entity.other.inherited-class.papyrus"
                 }
             },
@@ -93,7 +117,7 @@
                     "include": "#comments"
                 },
                 {
-                    "match": "(?i)(?:\\s+|(?<=/;))(betaOnly|debugOnly|global|hidden|native|const|conditional|requiresguard|protectsfunctionlogic|selfonly|private|protected|internal)(?=\\s|;|$)",
+                    "match": "(?i)(?:\\s+|(?<=/;))(betaOnly|debugOnly|global|hidden|native|const|conditional|requiresguard|protectsfunctionlogic|selfonly|private|protected|internal)\\s*(?=\\s|;|$)",
                     "name": "keyword.language.papyrus-flag"
                 }
             ]
@@ -129,7 +153,7 @@
                     "name": "variable.property.papyrus"
                 }
             },
-            "end": "\\n",
+            "end": "\\n|^",
             "name": "meta.property.papyrus",
             "patterns": [
                 {
@@ -139,8 +163,7 @@
                     "include": "#quoted-string"
                 },
                 {
-                    "match": ";([^\\n]*)",
-                    "name": "comment.line.semicolon.papyrus"
+                    "include": "#comments"
                 },
                 {
                     "match": "(?i)\\b(auto|autoreadonly|const|conditional|mandatory|hidden)\\b",
@@ -153,7 +176,7 @@
             ]
         },
         {
-            "begin": "(?i)\\b(?:(?:(int|string|float|bool|var)|(\\S+?))(?:\\[\\])?\\s+)?(function|event)\\s+([^\\(]*)\\(",
+            "begin": "(?i)\\b(?:(?:(int|string|float|bool|var)|(\\S+?))(?:\\[\\])?(?:(?:\\s*(;\\/(?:(?!\\/;).)*\\/;))\\s*|\\s+))?(function|event)(?:(?:\\s*(;\\/(?:(?!\\/;).)*\\/;))\\s*|\\s+)([^\\(]*)\\(",
             "beginCaptures": {
                 "1": {
                     "name": "storage.type.variable.papyrus"
@@ -162,9 +185,15 @@
                     "name": "entity.name.class.papyrus"
                 },
                 "3": {
-                    "name": "keyword.control.functionstart.papyrus"
+                    "name": "comment.block.papyrus"
                 },
                 "4": {
+                    "name": "keyword.control.functionstart.papyrus"
+                },
+                "5": {
+                    "name": "comment.block.papyrus"
+                },
+                "6": {
                     "name": "entity.name.function.papyrus"
                 }
             },
@@ -177,43 +206,58 @@
             ]
         },
         {
-            "match": "(?i)\\b(auto\\s+)?(state)\\s+(.*)\\n",
+            "match": "(?i)\\b(?:(auto)(?:\\s*(;\\/(?:(?!\\/;).)*\\/;)\\s*|\\s+))?(state)(?:\\s*(;\\/(?:(?!\\/;).)*\\/;)\\s*|\\s+)((?:(?!\\n|;).)*)(?=\\s*(;|\\n))",
             "name": "meta.state.papyrus",
             "captures": {
                 "1": {
                     "name": "keyword.language.state-flag.papyrus"
                 },
                 "2": {
-                    "name": "keyword.control.statestart.papyrus"
+                    "name": "comment.block.papyrus"
                 },
                 "3": {
+                    "name": "keyword.control.statestart.papyrus"
+                },
+                "4": {
+                    "name": "comment.block.papyrus"
+                },
+                "5": {
                     "name": "entity.name.section.papyrus"
                 }
             }
         },
         {
-            "match": "(?i)\\b(struct)\\s+(.*)\\n",
+            "match": "(?i)\\b(struct)(?:\\s*(;\\/(?:(?!\\/;).)*\\/;)\\s*|\\s+)(.*)\\n",
             "name": "meta.struct.papyrus",
             "captures": {
                 "1": {
                     "name": "keyword.control.structstart.papyrus"
                 },
                 "2": {
+                    "name": "comment.block.papyrus"
+                },
+                "3": {
                     "name": "entity.name.struct.papyrus"
                 }
             }
         },
         {
-            "match": "(?i)\\b(group)\\s+(\\S*)\\s*(CollapsedOnRef|CollapsedOnBase|Collapsed)?\\s*\\n",
+            "match": "(?i)\\b(group)(?:\\s*(;\\/(?:(?!\\/;).)*\\/;)\\s*|\\s+)(\\S*)(?:(?:\\s*(;\\/(?:(?!\\/;).)*\\/;)\\s*|\\s+)(CollapsedOnRef|CollapsedOnBase|Collapsed))?(?=\\s*(;|\\n))",
             "name": "meta.group.papyrus",
             "captures": {
                 "1": {
                     "name": "keyword.control.groupstart.papyrus"
                 },
                 "2": {
-                    "name": "entity.name.section.papyrus"
+                    "name": "comment.block.papyrus"
                 },
                 "3": {
+                    "name": "entity.name.section.papyrus"
+                },
+                "4": {
+                    "name": "comment.block.papyrus"
+                },
+                "5": {
                     "name": "variable.language.groupflag.papyrus"
                 }
             }
@@ -226,7 +270,7 @@
             "name": "keyword.operator.logical.papyrus"
         },
         {
-            "match": "\\+|\\-\b|\\*|/|!|%",
+            "match": "\\+|\\-\\b|\\*|/|!|%",
             "name": "keyword.operator.arithmetic.papyrus"
         },
         {
@@ -238,26 +282,32 @@
             "name": "keyword.control.flow.papyrus"
         },
         {
-            "match": "(?i)\\b(import)\\s+(\\S+)\\b",
+            "match": "(?i)\\b(import)(?:\\s*(;\\/(?:(?!\\/;).)*\\/;)\\s*|\\s+)(\\S+)\\b",
             "captures": {
                 "1": {
                     "name": "keyword.other.import.papyrus"
                 },
                 "2": {
+                    "name": "comment.block.papyrus"
+                },
+                "3": {
                     "name": "entity.name.class.papyrus"
                 }
             }
         },
         {
-            "match": "(?i)\\b(new)\\s+(?:(int|string|float|bool|var)|(\\S+?))(?:\\[\\])?\\b",
+            "match": "(?i)\\b(new)(?:\\s*(;\\/(?:(?!\\/;).)*\\/;)\\s*|\\s+)(?:(int|string|float|bool|var)|(\\S+?))(?:\\[\\])?\\b",
             "captures": {
                 "1": {
                     "name": "keyword.control.new.papyrus"
                 },
                 "2": {
-                    "name": "storage.type.variable.papyrus"
+                    "name": "comment.block.papyrus"
                 },
                 "3": {
+                    "name": "storage.type.variable.papyrus"
+                },
+                "4": {
                     "name": "entity.name.class.papyrus"
                 }
             }
@@ -341,49 +391,75 @@
             "name": "constant.character.escape.papyrus"
         },
         "parameter-start-comma": {
-            "match": ",\\s*(?:(int|string|float|bool|var)|([\\w:]+?))(?:\\[\\])?\\s+(\\w+)\\b(?:\\s*(=))?",
+            "match": ",\\s*(?:(;\\/(?:(?!\\/;).)*\\/;)\\s*)?(?:(int|string|float|bool|var)|([\\w:]+?))(?:\\[\\])?(?:\\s*(;\\/(?:(?!\\/;).)*\\/;)\\s*|\\s+)(\\w+)\\b(?:\\s*(?:(;\\/(?:(?!\\/;).)*\\/;)\\s*)?(=))?",
             "captures": {
                 "1": {
-                    "name": "storage.type.variable.papyrus"
+                    "name": "comment.block.papyrus"
                 },
                 "2": {
-                    "name": "entity.name.class.papyrus"
+                    "name": "storage.type.variable.papyrus"
                 },
                 "3": {
-                    "name": "variable.parameter.papyrus"
+                    "name": "entity.name.class.papyrus"
                 },
                 "4": {
+                    "name": "comment.block.papyrus"
+                },
+                "5": {
+                    "name": "variable.parameter.papyrus"
+                },
+                "6": {
+                    "name": "comment.block.papyrus"
+                },
+                "7": {
                     "name": "keyword.operator.assignment.papyrus"
                 }
             },
             "name": "meta.parameter.papyrus"
         },
         "parameter-start-pattern": {
-            "match": "\\G\\s*(?:(int|string|float|bool|var)|([\\w:]+?))(?:\\[\\])?\\s+(\\w+)\\b(?:\\s*(=))?",
+            "match": "\\G\\s*(?:(;\\/(?:(?!\\/;).)*\\/;)\\s*)?(?:(int|string|float|bool|var)|([\\w:]+?))(?:\\[\\])?(?:(?:\\s*(;\/(?:(?!\/;).)*\/;))\\s*|\\s+)(\\w+)\\b(?:\\s*(?:(;\\/(?:(?!\\/;).)*\\/;)\\s*)?(=))?",
             "captures": {
                 "1": {
-                    "name": "storage.type.variable.papyrus"
+                    "name": "comment.block.papyrus"
                 },
                 "2": {
-                    "name": "entity.name.class.papyrus"
+                    "name": "storage.type.variable.papyrus"
                 },
                 "3": {
-                    "name": "variable.parameter.papyrus"
+                    "name": "entity.name.class.papyrus"
                 },
                 "4": {
+                    "name": "comment.block.papyrus"
+                },
+                "5": {
+                    "name": "variable.parameter.papyrus"
+                },
+                "6": {
+                    "name": "comment.block.papyrus"
+                },
+                "7": {
                     "name": "keyword.operator.assignment.papyrus"
                 }
             },
             "name": "meta.parameter.papyrus"
         },
         "parameter-comma-at-start": {
-            "match": "\\G\\s*,",
-            "name": "invalid.illegal.function.papyrus"
+            "match": "\\G\\s*(?:(;\\/(?:(?!\\/;).)*\\/;)\\s*)?,",
+            "name": "invalid.illegal.function.papyrus",
+            "captures": {
+                "1": {
+                    "name": "comment.block.papyrus"
+                }
+            }
         },
         "parameter-newline-escape-with-comma": {
-            "begin": ",\\s*(\\\\)\\s*\\n",
+            "begin": ",\\s*(?:(;\\/(?:(?!\\/;).)*\\/;)\\s*)?(\\\\)\\s*\\n",
             "beginCaptures": {
                 "1": {
+                    "name": "comment.block.papyrus"
+                },
+                "2": {
                     "name": "constant.character.escape.papyrus"
                 }
             },
@@ -444,7 +520,7 @@
                     "name": "comment.block.papyrus"
                 },
                 {
-                    "match": "(;).*$\\n?",
+                    "match": "(?m)(;).*$",
                     "name": "comment.line.semicolon.papyrus"
                 }
             ]
