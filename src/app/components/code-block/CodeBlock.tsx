@@ -4,6 +4,7 @@ import { jsx, jsxs } from 'react/jsx-runtime';
 import { createHighlighterCore } from 'shiki/core';
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma';
 import { FloatingDelayGroup } from '../tooltip/FloatingUIClient';
+import { transformerColorizedBrackets } from '@shikijs/colorized-brackets'
 import './CodeBlock.scss';
 
 const shikiPromise = createHighlighterCore({
@@ -45,9 +46,7 @@ async function HighlightCodeAsync({ language, code }: { readonly language: CodeB
         lang: language,
         theme: 'dark-plus',
         transformers: [
-            await import('@shikijs/colorized-brackets').then(m => m.transformerColorizedBrackets({
-
-            })),
+            transformerColorizedBrackets({}),
         ],
     });
 
