@@ -26,20 +26,20 @@ export function CodeBlock({ language, code, doLineNumbers }: { readonly language
     return <FloatingDelayGroup delay={300}>
         <pre className={doLineNumbers ? 'line-numbers' : undefined}>
             <code data-language={language}>
-                <HighlightCode language={language} code={code.replaceAll('\t', '    ')} />
+                <HighlightCodeContents language={language} code={code.replaceAll('\t', '    ')} />
             </code>
         </pre>
     </FloatingDelayGroup>;
 }
 
 
-function HighlightCode({ language, code }: { readonly language: CodeBlockLanguage, readonly code: string; }) {
+function HighlightCodeContents({ language, code }: { readonly language: CodeBlockLanguage, readonly code: string; }) {
     return <Suspense fallback={code}>
-        <HighlightCodeAsync language={language} code={code} />
+        <HighlightCodeContentsAsync language={language} code={code} />
     </Suspense>;
 }
 
-async function HighlightCodeAsync({ language, code }: { readonly language: CodeBlockLanguage, readonly code: string; }) {
+async function HighlightCodeContentsAsync({ language, code }: { readonly language: CodeBlockLanguage, readonly code: string; }) {
     const shiki = await shikiPromise;
 
     const out = shiki.codeToHast(code, {
