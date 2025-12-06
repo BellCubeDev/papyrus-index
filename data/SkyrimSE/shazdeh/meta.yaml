@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Only An Extender)
+nameProper: Shazdeh Papyrus Utils
+nameShort: Shazdeh
+indexedVersion: "1.0.0"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/166147
+gitRepo: https://github.com/shazdeh/Shazdeh-Papyrus-Utils
+nexusIndexedFileId: 694692
