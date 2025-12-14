@@ -43,13 +43,15 @@ const nextConfig = classnamesMinifier({
         }
     } satisfies NextConfig['sassOptions'] & import('sass').Options<'sync' | 'async'>,
 
+    reactCompiler: {
+        panicThreshold: 'none',
+    },
+
     experimental: {
+        turbopackFileSystemCacheForDev: true,
         cpus: isCI ? cpus().length : cpus().length - 2,
         staleTimes: {
             static: 24*60*60,
-        },
-        reactCompiler: {
-            panicThreshold: 'NONE',
         },
     },
 

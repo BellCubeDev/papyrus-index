@@ -6,6 +6,7 @@ const closeStepSummaryWorker = await spawnStepSummaryWorker();
 
 // pnpm run download-mods; pnpm run parse
 
+const $ = execa({stdio: ["inherit", "inherit", "inherit"]});
 
 let hasError = true;
 try {
@@ -13,9 +14,7 @@ try {
 
     console.log('\n\n');
 
-    await execa("pnpm",  ["run", "download-mods"], {
-        stdio: ["inherit", "inherit", "inherit"],
-    });
+    await $`pnpm run download-mods`;
 
     console.log('\n\n');
 
@@ -26,9 +25,7 @@ try {
 
     console.log('\n\n');
 
-    await execa("pnpm",  ["run", "parse"], {
-        stdio: ["inherit", "inherit", "inherit"],
-    });
+    await $`pnpm run parse`;
 
     console.log('\n\n');
 
@@ -40,9 +37,7 @@ try {
 
     console.log('\n\n');
 
-    await execa("next",  ["build"],{//, "--turbo"], {
-        stdio: ["inherit", "inherit", "inherit"],
-    });
+    await $`next build --webpack`;
 
     console.log('\n\n');
 
