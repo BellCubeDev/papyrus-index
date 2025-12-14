@@ -188,7 +188,7 @@ function Examples({func, ckWikiDataPromise, githubWikiDataPromise, scriptNamespa
     return <>
         <br />
         <h2>Examples</h2>
-        {/* eslint-disable-next-line react/jsx-no-bind, react/no-unstable-nested-components -- these components are server components, so we don't really care */}
+        {/* eslint-disable-next-line react/no-unstable-nested-components -- these components are server components, so we don't really care */}
         <GuardEmptyList replacement={<p>No human-generated examples found for this function.</p>} Wrapper={({children}) =>
             <div data-analytics-id="docs-examples">
                 {children}
@@ -225,7 +225,7 @@ function Caveats({func, ckWikiDataPromise, githubWikiDataPromise}: {readonly fun
     const ckWikiData = use(ckWikiDataPromise);
     const githubWikiData = use(githubWikiDataPromise);
 
-    // eslint-disable-next-line react/jsx-no-bind, react/no-unstable-nested-components -- these components are server components, so we don't really care
+    // eslint-disable-next-line react/no-unstable-nested-components -- these components are server components, so we don't really care
     return <GuardEmptyList replacement={null} Wrapper={({children}) => <>
         <br />
         <div data-analytics-id="docs-caveats">
@@ -254,7 +254,7 @@ function Parameters({func, ckWikiDataPromise, githubWikiDataPromise}: {readonly 
     const ckWikiData = use(ckWikiDataPromise);
     const githubWikiData = use(githubWikiDataPromise);
 
-    // eslint-disable-next-line react/jsx-no-bind, react/no-unstable-nested-components -- these components are server components, so we don't really care
+    // eslint-disable-next-line react/no-unstable-nested-components -- these components are server components, so we don't really care
     return <GuardEmptyList replacement={null} Wrapper={({children}) => <>
         <br />
         <h2>Parameters</h2>
@@ -304,7 +304,7 @@ function Parameters({func, ckWikiDataPromise, githubWikiDataPromise}: {readonly 
 function RelatedPages({gameData, ckWikiDataPromise}: {readonly gameData: PapyrusGameDataIndexed<PapyrusGame>, readonly ckWikiDataPromise: ReturnType<typeof getMediaWikiFunctionData>}) {
     const ckWikiData = use(ckWikiDataPromise);
 
-    // eslint-disable-next-line react/jsx-no-bind, react/no-unstable-nested-components -- these components are server components, so we don't really care
+    // eslint-disable-next-line react/no-unstable-nested-components -- these components are server components, so we don't really care
     return <GuardEmptyList replacement={null} Wrapper={({children}) => <>
         <br />
         <div data-analytics-id="docs-related">
@@ -320,7 +320,7 @@ function AdditionalReferences({game, ckWikiDataPromise, githubWikiDataPromise}: 
     const ckWikiData = use(ckWikiDataPromise);
     const githubWikiData = use(githubWikiDataPromise);
 
-    // eslint-disable-next-line react/jsx-no-bind, react/no-unstable-nested-components -- these components are server components, so we don't really care
+    // eslint-disable-next-line react/no-unstable-nested-components -- these components are server components, so we don't really care
     return <GuardEmptyList replacement={null} Wrapper={({children}) => <>
         <br />
         <div data-analytics-id="docs-additional-references">
