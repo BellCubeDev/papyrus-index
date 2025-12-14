@@ -1,5 +1,6 @@
 /* eslint-disable max-classes-per-file */
 import buildModule from 'next/dist/build/index.js';
+import { Bundler } from 'next/dist/lib/bundler';
 import * as Log from 'next/dist/build/output/log';
 //import { writeFileSync } from 'node:fs';
 import fs, { type FileHandle } from 'node:fs/promises';
@@ -193,27 +194,32 @@ process.on('beforeExit', () => {
 });
 
 const build = buildModule as unknown as typeof import('next/dist/build/index.js'); // Next.js' types are screwed up here
+
+const BUNDLER = Bundler.Webpack as Bundler;
+
 build.default(
     //dir: string,
     process.cwd(),
+    // experimentalAnalyze: boolean | undefined,
+    BUNDLER === Bundler.Turbopack,
     //reactProductionProfiling = false,
     false,
     //debugOutput = false,
     false,
     //debugPrerender = false,
     false,
-    //runLint = true,
-    false,
     //noMangling = false,
     true,
     //appDirOnly = false,
     false,
-    //isTurbopack = false,
-    false,
-    //experimentalBuildMode: 'default' | 'compile' | 'generate',
+    // bundler: Bundler | undefined
+    BUNDLER,
+    //experimentalBuildMode: 'default' | 'compile' | 'generate' | 'generate-env',
     'default',
     //traceUploadUrl: string | undefined})
     undefined
+    // debugBuildAppPaths?: string[]
+    // debugBuildPagePaths?: string[]
 ).catch(async (err: Error) => {
     const isBenign =err instanceof PleaseExitTypecheckNowError;
 

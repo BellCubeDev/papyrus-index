@@ -2,7 +2,9 @@ import type { NextConfig } from 'next';
 import { cpus } from 'node:os';
 import { isCI } from 'next/dist/server/ci-info';
 import classnamesMinifier from '@nimpl/classnames-minifier';
-import { appendToStepSummarySection, StepSummarySection } from './src/utils/stepSummary';
+
+// Next.js 16 broke something with their TypeScript support for next.config.ts and this no longer works without significant refactors
+//import { appendToStepSummarySection, StepSummarySection } from './src/utils/stepSummary';
 
 //if (process.env.NODE_ENV === 'production') {
 //    process.env.DEBUG = '*';
@@ -38,7 +40,7 @@ const nextConfig = classnamesMinifier({
         logger: {
             warn(message, _options) {
                 console.warn(`⚠️  Sass Warning:\n${['',...message.split('\n')].join('\n  [96m|[0m ')}\n`);
-                appendToStepSummarySection(message, StepSummarySection.SassWarnings);
+                //appendToStepSummarySection(message, StepSummarySection.SassWarnings);
             },
         }
     } satisfies NextConfig['sassOptions'] & import('sass').Options<'sync' | 'async'>,
