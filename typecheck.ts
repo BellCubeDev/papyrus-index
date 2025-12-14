@@ -160,7 +160,7 @@ function patchLog(isInitialRun = false) {
     //currentLog = '';
     console.log = function log(...args: unknown[]) {
         if (typeof args[0] === 'string' && args[0].startsWith(TARGET_LOG_MESSAGE)) {
-            Log.info('Typechecking finished without errors! Throwing an escape hatch, nominal "error" up the stack...');
+            Log.trace('Typechecking finished without errors! Throwing an escape hatch, nominal "error" up the stack...');
             throw new PleaseExitTypecheckNowError();
         }
         oldLog(...args);
