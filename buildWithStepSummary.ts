@@ -4,7 +4,12 @@ import Log from 'next/dist/build/output/log';
 
 const closeStepSummaryWorker = await spawnStepSummaryWorker();
 
-// pnpm run download-mods; pnpm run parse
+if (process.env.NODE_ENV === 'production') {
+    process.env.DEBUG = '*';
+    process.env.DEBUG_HIDE_DATE = 'true';
+    process.env.DEBUG_DEPTH = '3';
+    process.env.DEBUG_SHOW_HIDDEN = 'true';
+}
 
 const $ = execa({stdio: ["inherit", "inherit", "inherit"]});
 

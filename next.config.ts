@@ -6,13 +6,6 @@ import classnamesMinifier from '@nimpl/classnames-minifier';
 // Next.js 16 broke something with their TypeScript support for next.config.ts and this no longer works without significant refactors
 //import { appendToStepSummarySection, StepSummarySection } from './src/utils/stepSummary';
 
-//if (process.env.NODE_ENV === 'production') {
-//    process.env.DEBUG = '*';
-//    process.env.DEBUG_HIDE_DATE = 'true';
-//    process.env.DEBUG_DEPTH = '3';
-//    process.env.DEBUG_SHOW_HIDDEN = 'true';
-//}
-
 const nextConfig = classnamesMinifier({
   prefix: '',
   reservedNames: [],
