@@ -174,7 +174,7 @@ async function wikiFetchGetInternalFetch(originalUrl: URL, retriesSoFar: number)
         });
     } catch (e) {
         if (retriesSoFar >= MAX_RETRIES) {
-            throw new Error(`[wikiFetchGetInternalFetch - OUT_OF_RETRIES] Failed to fetch ${noCacheUrl} after ${retriesSoFar} retries due to a fetch error; giving up.`);
+            throw new Error(`[wikiFetchGetInternalFetch - OUT_OF_RETRIES] Failed to fetch ${noCacheUrl} after ${retriesSoFar} retries due to a fetch error; giving up.`, {cause: e});
         } else {
             Log.trace(`Fetch error while fetching ${noCacheUrl} (fetch error); retrying in 60s`, e);
             await new Promise(resolve => setTimeout(resolve, 60000));

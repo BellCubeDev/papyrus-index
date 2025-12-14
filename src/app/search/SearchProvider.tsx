@@ -7,8 +7,7 @@ import { deepUnprepare, DeepUnpreparedValue } from './Preparation';
 import type { SearchFilter, WorkerMessageInput, WorkerMessageInputInit, WorkerMessageOutput, WorkerMessageOutputSearchIndexReady, WorkerMessageOutputSearchResult } from './SEARCH.worker';
 import { memoizeDevServerConst } from '../../utils/memoizeDevServerConst';
 import { SourceListUser } from '../components/papyrus/SourcesList';
-import { usePostHog } from 'posthog-js/react';
-import { useUpdatedRef } from '../hooks/useUpdatedRef';
+import { useCurrentPostHog } from '@/app/hooks/useCurrentPostHog';
 
 type SearchWorker =  Omit<Worker, 'postMessage'> & {
     postMessage(message: Exclude<WorkerMessageInput, WorkerMessageInputInit>): void;
@@ -90,8 +89,7 @@ export function useSearchContext(advanced?: boolean): SearchContext | null {
 export const LOADING_IN_DEV_MODE: unique symbol = memoizeDevServerConst('SEARCH__LOADING_IN_DEV_MODE', () => Symbol.for('PAPYRUS_INDEX_LOADING_IN_DEV_MODE')) as never;
 
 export function SearchProvider({children, game, searchIndexHash}: {readonly children: React.ReactNode, readonly game: PapyrusGame, readonly searchIndexHash: string | typeof LOADING_IN_DEV_MODE}) {
-    const posthog = usePostHog();
-    const posthogRef = useUpdatedRef(posthog); // because the sources promise is async, we don't want to start *another* promise just because Posthog loaded; just use whatever the current Posthog instance is
+    const posthog = useCurrentPostHog();
 
     const isLoadingHash = searchIndexHash === LOADING_IN_DEV_MODE;
     const typeofWorker = typeof Worker;
@@ -99,15 +97,17 @@ export function SearchProvider({children, game, searchIndexHash}: {readonly chil
         if (isLoadingHash) return {worker: null, sources: Promise.resolve(null as never)};
         if (typeofWorker === 'undefined') return {worker: null, sources: Promise.resolve(null as never)};
 
+        // eslint-disable-next-line react-hooks/purity -- not used for actual render logic
         const startLoad = performance.now();
         const takingTooLongInterval = setInterval(function takingTooLongLogger() {
             const debugObj = {
                 game,
                 searchIndexHash,
+                // eslint-disable-next-line react-hooks/purity -- not used for actual render logic
                 time: performance.now() - startLoad,
             };
             console.warn('SearchIndex taking too long to load', {...debugObj, worker, startLoad});
-            posthogRef.current?.capture('SearchIndex taking too long to load', debugObj);
+            posthog.capture?.('SearchIndex taking too long to load', debugObj);
         }, 2000);
 
         // eslint-disable-next-line no-shadow
@@ -117,14 +117,14 @@ export function SearchProvider({children, game, searchIndexHash}: {readonly chil
             clearInterval(takingTooLongInterval);
             if (!e) return; // worker was terminated before it was ready
             console.log('[SearchProvider] Search index loaded for', game, {e, searchIndexHash});
-            posthogRef.current?.capture('Search index loaded', {
+            posthog.capture?.('Search index loaded', {
                 search_index_hash: searchIndexHash,
                 game,
             });
         });
 
         return {worker, sources: worker.readyPromise.then((e) => e?.sources )};
-    }, [game, isLoadingHash, posthogRef, searchIndexHash, typeofWorker]);
+    }, [game, isLoadingHash, posthog, searchIndexHash, typeofWorker]);
 
     React.useEffect(() => {
         const previousWorker = worker;
@@ -160,7 +160,7 @@ export function SearchProvider({children, game, searchIndexHash}: {readonly chil
             const res = await resultPromise;
             const end = performance.now();
             console.log('Search took', end - start, 'ms', {res});
-            posthog?.capture('Search query completed', {
+            posthog.capture?.('Search query completed', {
                 game,
                 query,
                 filter,

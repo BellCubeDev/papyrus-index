@@ -1,8 +1,7 @@
 
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions, Transition, type ListboxOptionsProps } from '@headlessui/react';
-import { useEffect, useMemo, useState, type Key } from 'react';
+import { useEffect, useState, type Key, useEffectEvent } from 'react';
 import styles from './MultiBox.module.scss';
-import { useEffectEvent } from '@floating-ui/react/utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons/faCheck';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown';
@@ -24,21 +23,17 @@ export function MultiBox<T extends MultiBoxOption>({ options, onChange: parentOn
     const parentOnChange = useEffectEvent(parentOnChange_);
 
     const [selected, setSelected] = useState<readonly MultiBoxOptionFilled<T>[]>([]);
-    useEffect(() => { parentOnChange(selected) }, [selected, parentOnChange]);
+    useEffect(() => { parentOnChange(selected) }, [selected]);
 
-    const deselectOption = useEffectEvent((option: T)=>{
-        setSelected((prevSelected) => prevSelected.filter((o) => o.key !== option.key));
-    });
-
-    const optionsFilled = useMemo(() =>
-        options.map((option) => ({
-            ...option,
-            deselect: () => deselectOption(option),
-        }))
-    , [options, deselectOption]);
+    const optionsFilled = options.map((option) => ({
+        ...option,
+        deselect: () => setSelected((currentSelected) => currentSelected.filter((o) => o.key !== option.key)),
+    }));
 
     useEffect(() => {
-        setSelected((prevSelected) => prevSelected.map((o) => optionsFilled.find((opt) => opt.key === o.key)).filter((o): o is NonNullable<typeof o> => Boolean(o)));
+        const newFilledOptions = optionsFilled;
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- needed to remove options no longer in the `options` list from the `selected` list
+        setSelected((oldFilledOption) => oldFilledOption.map((oldFilled) => newFilledOptions.find((newFilled) => newFilled.key === oldFilled.key)).filter((o): o is NonNullable<typeof o> => Boolean(o)));
     }, [optionsFilled]);
 
     return <div className={styles.listBoxWrapper}>

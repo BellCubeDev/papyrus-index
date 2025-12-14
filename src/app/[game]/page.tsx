@@ -55,7 +55,9 @@ export default async function GamePage({params}: {readonly params: Promise<GameR
                 ><div
                     style={{
                         // @ts-expect-error I know this isn't a real prop, but I need my css variables
+                        // eslint-disable-next-line react-hooks/purity -- these components are only rendered once during SSG
                         "--random-tilt-factor": 2 ** (1.2 * Math.random()),
+                        // eslint-disable-next-line react-hooks/purity -- these components are only rendered once during SSG
                         "--random-tilt-direction": Math.random() >= 0.5 ? 1 : -1,
                     }}
                 >

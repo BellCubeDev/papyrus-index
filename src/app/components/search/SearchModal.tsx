@@ -3,17 +3,15 @@ import { faArrowLeftLong, faMagnifyingGlass, faXmark } from '@fortawesome/free-s
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { usePathname } from 'next/navigation';
-import { usePostHog } from 'posthog-js/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { PapyrusGame } from '../../../papyrus/data-structures/pure/game';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
-import { useUpdatedRef } from '../../hooks/useUpdatedRef';
 import styles from './Search.module.scss';
 import SearchBar from './SearchBar';
+import { useCurrentPostHog } from '@/app/hooks/useCurrentPostHog';
 
 export function SearchModalButton({game}: {readonly game: PapyrusGame}): React.ReactElement {
-    const posthog = usePostHog();
-    const posthogRef = useUpdatedRef(posthog);
+    const posthog = useCurrentPostHog();
 
     const [isOpen, setIsOpen] = useState(false);
     const closeModal  = useCallback(() => setIsOpen(false), []);
@@ -21,13 +19,14 @@ export function SearchModalButton({game}: {readonly game: PapyrusGame}): React.R
 
     const wasOpenRef = useRef(false);
     useEffect(() => {
-        if (isOpen) posthogRef.current.capture('SearchModal opened', {source: 'button'});
-        else if (wasOpenRef.current) posthogRef.current.capture('SearchModal closed', {source: 'button'});
+        if (isOpen) posthog.capture?.('SearchModal opened', {source: 'button'});
+        else if (wasOpenRef.current) posthog.capture?.('SearchModal closed', {source: 'button'});
         wasOpenRef.current = isOpen;
-    }, [isOpen, posthogRef]);
+    }, [isOpen, posthog]);
 
 
     const pathname = usePathname();
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- needs to synchronize with route changes and should do so immediately; no useTransition delay
     useEffect(closeModal, [pathname, closeModal]);
 
     return <>

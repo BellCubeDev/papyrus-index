@@ -2,8 +2,7 @@
 
 import { faBan, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { usePostHog } from "posthog-js/react";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useEffectEvent } from "react";
 import type { PapyrusGame } from "../../../papyrus/data-structures/pure/game";
 import { UnreachableError } from "../../../UnreachableError";
 import { memoizeDevServerConst } from "../../../utils/memoizeDevServerConst";
@@ -20,7 +19,7 @@ import styles from './Search.module.scss';
 import { usePrefersReducedMotion } from "../../hooks/usePrefersReducedMotion";
 import { MultiBox, type MultiBoxOption, type MultiBoxOptionFilled } from "../form-fields/MultiBox";
 import { PapyrusSourceType } from "../../../papyrus/data-structures/pure/scriptSource";
-import { useEffectEvent } from "@floating-ui/react/utils";
+import { useCurrentPostHog } from "@/app/hooks/useCurrentPostHog";
 
 const EMPTY_QUERY: unique symbol = memoizeDevServerConst('<SearchBar> EMPTY_QUERY', ()=>Symbol('<SearchBar> EMPTY_QUERY')) as never;
 const AWAITING_SEARCH: unique symbol = memoizeDevServerConst('<SearchBar> AWAITING_SEARCH', ()=>Symbol('<SearchBar> AWAITING_SEARCH')) as never;
@@ -45,7 +44,7 @@ function orDefaultIfEmpty<T>(arr: null | undefined | readonly T[], defaultIfEmpt
 }
 
 export default function SearchBar({game}: {readonly game: PapyrusGame}): React.ReactElement {
-    const posthog = usePostHog();
+    const posthog = useCurrentPostHog();
     const useCompactWidthLayout = useMediaQuery('(max-width: 900px)', false);
 
     const searchProvider = useSearchContext();
@@ -56,21 +55,28 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
 
     const tookTooLongInterval = useStoredInterval();
 
-    const searchProviderLoadedPromiseRef = React.useRef<{resolve?:null|((res:SearchContextLoaded)=>void),promise: Promise<SearchContextLoaded>}>(null);
     const isLoading = searchProvider.LOADING_FROM_SSR || searchProvider.DEVELOPMENT__LOADING_HASH;
-    searchProviderLoadedPromiseRef.current ??= (()=>{
-        if (!isLoading) return {promise: Promise.resolve(searchProvider as SearchContextLoaded)};
-        let hoistedResolveF: (res:SearchContextLoaded)=>void;
-        const promise = new Promise<SearchContextLoaded>((resolve) => {
-            hoistedResolveF = (loaded)=> {
-                resolve(loaded);
-                searchProviderLoadedPromiseRef.current!.resolve = null;
-            };
-        });
-        return {resolve: hoistedResolveF!, promise} as const;
-    })();
-    if (!isLoading && searchProviderLoadedPromiseRef.current.resolve) searchProviderLoadedPromiseRef.current.resolve(searchProvider as SearchContextLoaded);
+    const searchProviderLoadedPromiseRef = React.useRef<{resolve?:null|((res:SearchContextLoaded)=>void),promise: Promise<SearchContextLoaded>}>(
+        (()=>{
+            if (!isLoading) return {promise: Promise.resolve(searchProvider as SearchContextLoaded)};
+            let hoistedResolveF: (res:SearchContextLoaded)=>void;
+            const promise = new Promise<SearchContextLoaded>((resolve) => {
+                hoistedResolveF = (loaded)=> {
+                    resolve(loaded);
+                    searchProviderLoadedPromiseRef.current!.resolve = null;
+                };
+            });
+            return {resolve: hoistedResolveF!, promise} as const;
+        })()
+    );
 
+    const resolveSearchProviderLoadedPromise = useEffectEvent(()=> {
+        if (searchProviderLoadedPromiseRef.current.resolve) searchProviderLoadedPromiseRef.current.resolve(searchProvider as SearchContextLoaded);
+    });
+
+    useEffect(() => {
+        if (!isLoading) resolveSearchProviderLoadedPromise();
+    }, [isLoading, searchProvider]);
 
 
 
@@ -91,7 +97,9 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
 
 
 
-    const search = useEffectEvent(async function search(query: string) {
+
+    // eslint-disable-next-line func-style -- declaring as a const allows TypeScript and React Compiler to do smarter inference
+    const searchPassable = async function searchPassable(query: string) {
         console.log('Searching for', query);
         setHasText(query !== '');
 
@@ -114,7 +122,7 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
                 search_time_since_query: performance.now() - startTimeLoadSearchProvider,
             };
             console.warn('Search taking too long!', debugData);
-            posthog?.capture('Search taking too long', debugData);
+            posthog.capture?.('Search taking too long', debugData);
         });
 
         // debounce
@@ -129,22 +137,24 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
         if (!isCurrent) return;
 
         setResult(res);
-    });
+    };
+    const search = useEffectEvent(searchPassable);
 
+    const onChangePassable = (e: React.ChangeEvent<HTMLInputElement>) => searchPassable(e.target.value);
     const onChange = useEffectEvent((e: React.ChangeEvent<HTMLInputElement>) => search(e.target.value));
 
     // Make search gets run any time anything changes
     const searchInputRef = React.useRef<HTMLInputElement>(null);
     React.useEffect(() => {
         if (searchInputRef.current) onChange({target: searchInputRef.current} as React.ChangeEvent<HTMLInputElement>);
-    }, [onChange, filter]);
+    }, [filter]);
 
     React.useEffect(() => {
         if (searchInputRef.current) {
             searchInputRef.current.value = '';
             onChange({target: searchInputRef.current} as React.ChangeEvent<HTMLInputElement>);
         }
-    }, [game, onChange]);
+    }, [game]);
 
     const clearSearch = React.useCallback(() => {
         setResult(EMPTY_QUERY);
@@ -160,10 +170,10 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
         tookTooLongInterval.clear(CLEAR_ANY_TIMER);
         if (result === EMPTY_QUERY) return;
         if (result instanceof Error) {
-            posthog?.capture('SearchBar rendered error', {game, error: result, inputValue: searchInputRef.current?.value ?? null});
+            posthog.capture?.('SearchBar rendered error', {game, error: result, inputValue: searchInputRef.current?.value ?? null});
             return;
         }
-        posthog?.capture('SearchBar rendered result', {game, result: result.map(res => res.obj.$entityId)});
+        posthog.capture?.('SearchBar rendered result', {game, result: result.map(res => res.obj.$entityId)});
     }, [isLoading, game, posthog, result, tookTooLongInterval]);
 
     const searchResultsULRef = React.useRef<HTMLUListElement>(null);
@@ -191,7 +201,7 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
             <input type="search" placeholder="Search..."
                 enterKeyHint="search"
                 ref={searchInputRef}
-                onChange={onChange}
+                onChange={onChangePassable}
                 onKeyUp={focusSearchResultsOnEnter}
                 data-autofocus
             />

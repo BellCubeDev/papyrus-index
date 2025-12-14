@@ -1,5 +1,4 @@
 import React from 'react';
-import { updateRef } from './updateRef';
 
 /**
  * Returns a ref that is updated every time the value changes.
@@ -13,7 +12,7 @@ import { updateRef } from './updateRef';
 export function useUpdatedRef<T>(value: T) {
     const ref = React.useRef(value);
     React.useEffect(() => {
-        updateRef(ref, value);
+        ref.current = value;
     }, [value]);
     return ref;
 }

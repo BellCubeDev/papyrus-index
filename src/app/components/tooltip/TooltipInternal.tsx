@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/refs -- Floating UI is not designed with React Compiler in mind, so we're forced to bail on the Tooltip component */
 'use client';
 
 import { arrow, autoUpdate, flip, FloatingArrow, FloatingPortal, offset, shift, useDismiss, useFloating, useFocus, useHover, useInteractions, useRole } from './FloatingUIClient';

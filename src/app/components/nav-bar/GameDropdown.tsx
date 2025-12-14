@@ -5,16 +5,15 @@ import { faChess, faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react';
 import { PrefetchKind } from "next/dist/client/components/router-reducer/router-reducer-types";
-import { usePostHog } from "posthog-js/react";
 import React, { useEffect, useState } from "react";
 import { preload } from "react-dom";
 import { PapyrusGame } from "../../../papyrus/data-structures/pure/game";
 import { getGameName } from "../../../utils/getGameName";
 import { prepareUrlParts } from "../../../utils/prepareUrlParts";
-import { toLowerCase } from "../../../utils/toLowerCase";
 import { useUpdatedRef } from "../../hooks/useUpdatedRef";
 import { InternalLink } from "../Link";
 import styles from './NavBar.module.scss';
+import { useCurrentPostHog } from '@/app/hooks/useCurrentPostHog';
 
 const games = Object.values(PapyrusGame);
 
@@ -22,15 +21,17 @@ export function GameDropdown({currentGame}: {readonly currentGame: PapyrusGame |
     const [desiredGame, setDesiredGame] = useState<PapyrusGame | null>(currentGame);
     const isLoading = desiredGame !== currentGame;
     const router = useRouter();
-    const posthog = usePostHog();
+    const posthog = useCurrentPostHog();
 
     const desiredGameRef = useUpdatedRef(desiredGame);
-    const handleOnChange = React.useCallback((newGame: PapyrusGame) => {
+    const handleOnChange = React.useCallback((newGame: PapyrusGame | null) => {
         if (newGame === desiredGameRef.current) return;
         setDesiredGame(newGame);
 
-        posthog?.capture('Game dropdown selection', { game: newGame });
-        router.push(prepareUrlParts(newGame));
+        posthog.capture?.('Game dropdown selection', { game: newGame });
+
+        if (newGame === null) router.push('/');
+        else router.push(prepareUrlParts(newGame));
     }, [desiredGameRef, posthog, router]);
 
     useEffect(() => {

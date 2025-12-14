@@ -3,8 +3,9 @@
 import { usePathname } from "next/navigation";
 import { useEffect, Suspense } from "react";
 import posthogJS from 'posthog-js';
-import { PostHogProvider as PHProvider, usePostHog } from 'posthog-js/react';
+import { PostHogProvider as PHProvider } from 'posthog-js/react';
 import * as Log from 'next/dist/build/output/log';
+import { useCurrentPostHog } from "@/app/hooks/useCurrentPostHog";
 
 export function PostHogProvider({ children }: { readonly children: React.ReactNode; }) {
     useEffect(() => {
@@ -31,11 +32,11 @@ export function PostHogProvider({ children }: { readonly children: React.ReactNo
 
 function PostHogPageViewInternal() {
     const pathname = usePathname();
-    const posthog = usePostHog();
+    const posthog = useCurrentPostHog();
 
     // Track pageviews
     useEffect(() => {
-        if (pathname && posthog) posthog.capture('$pageview', { '$current_url': new URL(pathname, window.location.origin).href });
+        if (pathname && posthog) posthog.capture?.('$pageview', { '$current_url': new URL(pathname, window.location.origin).href });
     }, [pathname, posthog]);
 
     return null;

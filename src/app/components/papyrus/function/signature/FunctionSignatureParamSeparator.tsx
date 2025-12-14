@@ -13,7 +13,7 @@ const CanceledNominalError = new Error('This is not a real error! This "error" o
 export function PapyrusFunctionSignatureParamSeparator({isInWrapper, noComma = false}: {readonly isInWrapper: boolean, readonly noComma?: boolean}) {
     const [isEndOfLine, setIsEndOfLine] = useState(false);
     const sepRef = useRef<HTMLSpanElement>(null);
-    const [storedWrapableSection, setStoredWrapableSection] = useState<Element | null>(null);
+    const storedWrapableSection = useRef<Element | null>(null);
 
     useEffect(() => {
         const sep = sepRef.current;
@@ -23,11 +23,11 @@ export function PapyrusFunctionSignatureParamSeparator({isInWrapper, noComma = f
         if (!wrapper) return console.warn('No wrapper found for function parameter separator component! This should... not be possible?');
 
         const wrapableSection = sep.parentElement?.parentElement;
-        if (!wrapableSection) return setStoredWrapableSection(null);
-        if (wrapableSection !== storedWrapableSection) setStoredWrapableSection(wrapableSection);
+        storedWrapableSection.current = wrapableSection ?? null;
+        if (!wrapableSection) return;
 
         const mutationObserver = new MutationObserver((_mutations) => {
-            if (wrapableSection.parentElement !== storedWrapableSection) setStoredWrapableSection(sep.parentElement);
+            if (wrapableSection.parentElement !== storedWrapableSection.current) storedWrapableSection.current = (sep.parentElement);
         });
         mutationObserver.observe(wrapableSection, {childList: true});
 
@@ -76,7 +76,7 @@ export function PapyrusFunctionSignatureParamSeparator({isInWrapper, noComma = f
             mutationObserver.disconnect();
             resizeObserver?.disconnect();
         };
-    }, [sepRef, storedWrapableSection, isInWrapper]);
+    }, [sepRef, isInWrapper]);
 
 
     return <span ref={sepRef} className={styles.functionParametersSeparator}>
