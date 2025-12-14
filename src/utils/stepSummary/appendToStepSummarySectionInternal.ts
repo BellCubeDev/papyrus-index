@@ -2,7 +2,7 @@ import { isCI } from "next/dist/server/ci-info";
 import fs from "node:fs/promises";
 import net from "node:net";
 import { StepSummaryWorkerMessageType, type StepSummarySection, type StepSummaryWorkerMessage } from ".";
-import { socketPath } from "./spawnWorker";
+import { socketPath } from "./socketPath";
 
 let client: net.Socket | null = null;
 

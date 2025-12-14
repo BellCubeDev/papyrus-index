@@ -7,7 +7,6 @@ import { fork } from "node:child_process";
 const thisFilePath = url.fileURLToPath(import.meta.url);
 const fileExt = path.extname(thisFilePath);
 const thisFolder = path.dirname(thisFilePath);
-export const socketPath = path.join(thisFolder, "stepSummarySocket.sock");
 
 
 /** Spawns the worker and returns a function to close the worker once finished. */
@@ -34,7 +33,10 @@ export async function spawnStepSummaryWorker(): Promise<()=>void> {
                     TSX_DEV_WORKER_SCRIPT_PATH: scriptPath,
                 },
             });
-            childProcess.on("error", reject);
+            childProcess.on("error", (err) => {
+                console.error("[STEP SUMMARY MANAGER] Error in worker process:", err);
+                reject(err);
+            });
             let didExitIntentionally = false;
             childProcess.once("message", (message) => {
                 if (message === 'ready') {

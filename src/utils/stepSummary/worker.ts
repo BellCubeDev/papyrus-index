@@ -1,7 +1,7 @@
 import net from "node:net";
 import fs from "node:fs";
 import { StepSummarySection, StepSummaryWorkerMessageType, type StepSummaryWorkerMessage } from '.';
-import { socketPath } from "./spawnWorker";
+import { socketPath } from "./socketPath";
 
 console.log('[STEP SUMMARY WORKER] Starting step summary worker...');
 
