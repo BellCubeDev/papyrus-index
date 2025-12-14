@@ -147,7 +147,7 @@ class WorkerExitedError extends Error {
 }
 
 process.stdout.isTTY = false;
-const targetLogMessage = ` ${Log.prefixes.info} Collecting page data ...`;
+const TARGET_LOG_MESSAGE = ` ${Log.prefixes.info} Collecting page data using`;
 
 /** The log since the last time patchLog() ran successfully */
 //let currentLog = '';
@@ -159,14 +159,14 @@ function patchLog(isInitialRun = false) {
     //writeFileSync('typecheck.log.json', JSON.stringify(logsSoFar));
     //currentLog = '';
     console.log = function log(...args: unknown[]) {
-        if (args[0] === targetLogMessage) {
+        if (typeof args[0] === 'string' && args[0].startsWith(TARGET_LOG_MESSAGE)) {
             Log.info('Typechecking finished without errors! Throwing an escape hatch, nominal "error" up the stack...');
             throw new PleaseExitTypecheckNowError();
         }
         oldLog(...args);
     };
     (console.log as  {[isOurLog]?: boolean})[isOurLog] = true;
-    if (isInitialRun) Log.event('Typecheck script successfully monkey-patched console.log! To detect when typechecking ends, we look for the message:', targetLogMessage);
+    if (isInitialRun) Log.event('Typecheck script successfully monkey-patched console.log! To detect when typechecking ends, we look for the message:', TARGET_LOG_MESSAGE);
     else Log.info('Reestablished console.log monkey patch.');
 }
 const oldSTDOUTWrite = process.stdout.write;
