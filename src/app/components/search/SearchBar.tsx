@@ -46,7 +46,7 @@ function orDefaultIfEmpty<T>(arr: null | undefined | readonly T[], defaultIfEmpt
 
 export default function SearchBar({game}: {readonly game: PapyrusGame}): React.ReactElement {
     const posthog = usePostHog();
-    const useCompactWidthLayout = useMediaQuery('(max-width: 900px)');
+    const useCompactWidthLayout = useMediaQuery('(max-width: 900px)', false);
 
     const searchProvider = useSearchContext();
     type ResultForRendering = DeepUnpreparedValue<WorkerMessageOutputSearchResult<PapyrusGame, SearchIndexEntityType>['results']>;

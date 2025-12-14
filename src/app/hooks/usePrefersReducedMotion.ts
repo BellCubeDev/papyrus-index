@@ -5,5 +5,5 @@ import { useMediaQuery } from "./useMediaQuery";
  * @returns `true` if user prefers reduced motion and `false` if they do not have a preference set.
  */
 export function usePrefersReducedMotion() {
-    return useMediaQuery('(prefers-reduced-motion: reduce)');
+    return useMediaQuery('(prefers-reduced-motion: reduce)', false);
 }

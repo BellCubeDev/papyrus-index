@@ -58,7 +58,7 @@ function SearchModalContents({game, closeModal, Title}: {
     readonly Title: keyof React.JSX.IntrinsicElements | React.ComponentType<{children: React.ReactNode}>;
 }): React.ReactElement {
 
-    const useCompactWidthLayout = useMediaQuery('(max-width: 900px)');
+    const useCompactWidthLayout = useMediaQuery('(max-width: 900px)', false);
 
     return <>
         <div className={styles.searchModalHeader!}>
