@@ -85,7 +85,7 @@ server.on('connection', (socket) => {
     let expectedLength = -1;
 
     socket.on('data', (data) => {
-        buffer = Buffer.concat([buffer, data]);
+        buffer = Buffer.concat([buffer, Buffer.from(data)]);
 
         // Process complete messages
         while (buffer.length > 4) {
