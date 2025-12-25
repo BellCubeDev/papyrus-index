@@ -110,12 +110,12 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
     const searchInputRef = React.useRef<HTMLInputElement | null>(null);
     const [searchInputDefaultValue, queryRaw] = useInputValue(searchInputRef, 'value', '');
     const query = queryRaw.trim();
-    
+
     const isEmptyQuery = query === '';
 
     // eslint-disable-next-line no-shadow
     const search = useEffectEvent(async function search(query: string, filter: SearchFilter<SearchIndexEntityType>) {
-        console.trace('Searching for', query);
+        console.debug('Searching for', {query, filter});
         registerSearchCallWithLoopDetector();
 
         if (!query) return setResult(EMPTY_QUERY);
@@ -155,7 +155,6 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
             entityTypes: orDefaultIfEmpty(filterEntityTypes, ENTITY_TYPE_FILTER_OPTIONS).map(o => o.value as SearchIndexEntityType),
             sourceTypes: orDefaultIfEmpty(filterSourceTypes, SOURCE_TYPE_FILTER_OPTIONS).map(o => o.value as PapyrusSourceType),
         };
-        console.log({query, filter});
         search(query, filter);
     }, [query, filterEntityTypes, filterSourceTypes]);
 

@@ -19,7 +19,7 @@ export function FunctionOfTheDayClient({options}:{readonly options: [number, Rea
                 rerender();
                 intervalId = setInterval(rerender, DAY_IN_MS);
             }, DAY_IN_MS - millisSinceDayStart);
-            
+
             const handleVisibilityChange = () => {
                 if (!document.hidden) rerender();
             };
@@ -37,6 +37,6 @@ export function FunctionOfTheDayClient({options}:{readonly options: [number, Rea
     );
 
     if (todaySinceEpoch === null) return <div>Loading...</div>;
-    console.log(options);
+    //console.log(options);
     return (options.find(([day, _]) => day === todaySinceEpoch) ?? options[1])?.[1] || <div>Function of the day not found! Something must have broken.</div>;
 }
