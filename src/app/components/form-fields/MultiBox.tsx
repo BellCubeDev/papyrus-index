@@ -1,6 +1,6 @@
 
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions, Transition, type ListboxOptionsProps } from '@headlessui/react';
-import { useEffect, useState, type Key, useEffectEvent } from 'react';
+import { useEffect, useState, type Key, useEffectEvent, useMemo } from 'react';
 import styles from './MultiBox.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons/faCheck';
@@ -25,10 +25,11 @@ export function MultiBox<T extends MultiBoxOption>({ options, onChange: parentOn
     const [selected, setSelected] = useState<readonly MultiBoxOptionFilled<T>[]>([]);
     useEffect(() => { parentOnChange(selected) }, [selected]);
 
-    const optionsFilled = options.map((option) => ({
+    // eslint-disable-next-line react-no-manual-memo/no-hook-memo -- React Compiler didn't actually memoize the `options.map` call unless I added this 🤔
+    const optionsFilled = useMemo(()=>options.map((option) => ({
         ...option,
         deselect: () => setSelected((currentSelected) => currentSelected.filter((o) => o.key !== option.key)),
-    }));
+    })), [options]);
 
     useEffect(() => {
         const newFilledOptions = optionsFilled;

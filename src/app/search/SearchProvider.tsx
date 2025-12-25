@@ -73,7 +73,7 @@ export type SearchContext = SearchContextLoaded | {
     LOADING_FROM_SSR: boolean;
 }
 
-const searchContext = React.createContext<SearchContext | null>(null);
+export const searchContext = React.createContext<SearchContext | null>(null);
 
 export function useSearchContext(advanced?: false): SearchContext;
 export function useSearchContext(advanced: boolean): SearchContext | null;
@@ -133,7 +133,7 @@ export function SearchProvider({children, game, searchIndexHash}: {readonly chil
 
     const searchIdRef = React.useRef(0);
 
-    const search: SearchContextLoaded['search'] = async function search<TTypes extends SearchIndexEntityType>(query: string, filter: SearchFilter<TTypes>, signal?: AbortSignal): Promise<Awaited<ReturnType<SearchContextLoaded['search']>>> {
+    const search = useStableCallback(async function search<TTypes extends SearchIndexEntityType>(query: string, filter: SearchFilter<TTypes>, signal?: AbortSignal): Promise<Awaited<ReturnType<SearchContextLoaded['search']>>> {
         if (!worker) throw new Error('Cannot call search() from the server! Must be called on the client, with Web Workers enabled.');
         const start = performance.now();
         const searchId = ++searchIdRef.current;
@@ -171,7 +171,7 @@ export function SearchProvider({children, game, searchIndexHash}: {readonly chil
             search_index_hash: searchIndexHash,
         });
         return res;
-    };
+    });
 
     const value = worker ? ({
         worker,

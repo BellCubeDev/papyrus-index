@@ -2,7 +2,7 @@
 
 import { faBan, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useEffect, useMemo, useEffectEvent } from "react";
+import React, { useEffect, useEffectEvent } from "react";
 import type { PapyrusGame } from "../../../papyrus/data-structures/pure/game";
 import { UnreachableError } from "../../../UnreachableError";
 import { memoizeDevServerConst } from "../../../utils/memoizeDevServerConst";
@@ -10,7 +10,7 @@ import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { CLEAR_ANY_TIMER, useStoredInterval } from "../../hooks/useStoredTimeout";
 import { SearchIndexEntityType, type SearchIndexEntity } from "../../search/Entity";
 import { DeepUnpreparedValue } from "../../search/Preparation";
-import type { WorkerMessageOutputSearchResult } from "../../search/SEARCH.worker";
+import type { SearchFilter, WorkerMessageOutputSearchResult } from "../../search/SEARCH.worker";
 import { useSearchContext, type SearchContextLoaded } from "../../search/SearchProvider";
 import { GuardEmptyList } from "../GuardEmptyList";
 import { PapyrusScriptFunctionReference } from "../papyrus/function/reference/PapyrusScriptFunctionReference";
@@ -19,7 +19,7 @@ import styles from './Search.module.scss';
 import { usePrefersReducedMotion } from "../../hooks/usePrefersReducedMotion";
 import { MultiBox, type MultiBoxOption, type MultiBoxOptionFilled } from "../form-fields/MultiBox";
 import { PapyrusSourceType } from "../../../papyrus/data-structures/pure/scriptSource";
-import { useCurrentPostHog } from "@/app/hooks/useCurrentPostHog";
+import { useInputValue } from "@/app/hooks/useInputValue";
 
 const EMPTY_QUERY: unique symbol = memoizeDevServerConst('<SearchBar> EMPTY_QUERY', ()=>Symbol('<SearchBar> EMPTY_QUERY')) as never;
 const AWAITING_SEARCH: unique symbol = memoizeDevServerConst('<SearchBar> AWAITING_SEARCH', ()=>Symbol('<SearchBar> AWAITING_SEARCH')) as never;
@@ -41,6 +41,24 @@ const SOURCE_TYPE_FILTER_OPTIONS = Object.entries(PapyrusSourceType).map(([key, 
 function orDefaultIfEmpty<T>(arr: null | undefined | readonly T[], defaultIfEmpty: readonly T[]): readonly T[] {
     if (!arr || arr.length === 0) return defaultIfEmpty;
     return arr;
+}
+
+let searchLoopDetectionCounter = 0;
+const SEARCH_LOOP_DETECTION_THRESHOLD_SEARCHES = 30 * 20;
+const SEARCH_LOOP_DETECTION_INTERVAL_MS = 1000 * 20;
+let searchLoopDetectionTimeout: ReturnType<typeof setTimeout> | null = null;
+
+function registerSearchCallWithLoopDetector() {
+    searchLoopDetectionCounter++;
+    if (searchLoopDetectionCounter > SEARCH_LOOP_DETECTION_THRESHOLD_SEARCHES) {
+        console.error('Search loop detected!');
+        searchLoopDetectionCounter = 0;
+    }
+
+    searchLoopDetectionTimeout ??= setTimeout(() => {
+        searchLoopDetectionCounter = 0;
+        searchLoopDetectionTimeout = null;
+    }, SEARCH_LOOP_DETECTION_INTERVAL_MS);
 }
 
 export default function SearchBar({game}: {readonly game: PapyrusGame}): React.ReactElement {
@@ -84,11 +102,6 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
     const [filterEntityTypes, setFilterEntityTypes] = React.useState<readonly MultiBoxOptionFilled<typeof ENTITY_TYPE_FILTER_OPTIONS[number]>[]>([]);
     const [filterSourceTypes, setFilterSourceTypes] = React.useState<readonly MultiBoxOptionFilled<typeof SOURCE_TYPE_FILTER_OPTIONS[number]>[]>([]);
 
-    const filter = {
-        entityTypes: orDefaultIfEmpty(filterEntityTypes, ENTITY_TYPE_FILTER_OPTIONS).map(o => o.value as SearchIndexEntityType),
-        sourceTypes: orDefaultIfEmpty(filterSourceTypes, SOURCE_TYPE_FILTER_OPTIONS).map(o => o.value as PapyrusSourceType),
-    };
-
     const filtersChildren = <>
         <MultiBox options={ENTITY_TYPE_FILTER_OPTIONS} onChange={setFilterEntityTypes}>Entity Types</MultiBox>
         <MultiBox options={SOURCE_TYPE_FILTER_OPTIONS} onChange={setFilterSourceTypes}>Source Types</MultiBox>
@@ -96,18 +109,19 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
     </>;
 
 
+    const searchInputRef = React.useRef<HTMLInputElement | null>(null);
+    const [searchInputDefaultValue, query] = useInputValue(searchInputRef, 'value', '');
 
-
-    // eslint-disable-next-line func-style -- declaring as a const allows TypeScript and React Compiler to do smarter inference
-    const searchPassable = async function searchPassable(query: string) {
-        console.log('Searching for', query);
+    // eslint-disable-next-line no-shadow
+    const search = useEffectEvent(async function search(query: string, filter: SearchFilter<SearchIndexEntityType>) {
+        console.trace('Searching for', query);
+        registerSearchCallWithLoopDetector();
         setHasText(query !== '');
 
         if (!query) return setResult(EMPTY_QUERY);
 
         setResult(AWAITING_SEARCH);
 
-        let hasResults = false;
 
         const startTimeLoadSearchProvider = performance.now();
         const loadedSearchProvider = searchProviderLoadedPromiseRef.current!.resolve ? await searchProviderLoadedPromiseRef.current!.promise : searchProvider as SearchContextLoaded;
@@ -117,7 +131,6 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
             const debugData = {
                 game,
                 query,
-                hasResults,
                 search_time: performance.now() - startTimeForSearch,
                 search_time_since_query: performance.now() - startTimeLoadSearchProvider,
             };
@@ -131,30 +144,20 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
 
         const res = await loadedSearchProvider.search(query, filter);
 
-        hasResults = true;
-
         const isCurrent = tookTooLongInterval.clear(newTookTooLongInterval);
         if (!isCurrent) return;
 
         setResult(res);
-    };
-    const search = useEffectEvent(searchPassable);
-
-    const onChangePassable = (e: React.ChangeEvent<HTMLInputElement>) => searchPassable(e.target.value);
-    const onChange = useEffectEvent((e: React.ChangeEvent<HTMLInputElement>) => search(e.target.value));
-
-    // Make search gets run any time anything changes
-    const searchInputRef = React.useRef<HTMLInputElement>(null);
-    React.useEffect(() => {
-        if (searchInputRef.current) onChange({target: searchInputRef.current} as React.ChangeEvent<HTMLInputElement>);
-    }, [filter]);
+    });
 
     React.useEffect(() => {
-        if (searchInputRef.current) {
-            searchInputRef.current.value = '';
-            onChange({target: searchInputRef.current} as React.ChangeEvent<HTMLInputElement>);
-        }
-    }, [game]);
+        const filter: SearchFilter<SearchIndexEntityType> = {
+            entityTypes: orDefaultIfEmpty(filterEntityTypes, ENTITY_TYPE_FILTER_OPTIONS).map(o => o.value as SearchIndexEntityType),
+            sourceTypes: orDefaultIfEmpty(filterSourceTypes, SOURCE_TYPE_FILTER_OPTIONS).map(o => o.value as PapyrusSourceType),
+        };
+        console.log({query, filter});
+        search(query, filter);
+    }, [query, filterEntityTypes, filterSourceTypes]);
 
     const clearSearch = () => {
         setResult(EMPTY_QUERY);
@@ -201,9 +204,9 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
             <input type="search" placeholder="Search..."
                 enterKeyHint="search"
                 ref={searchInputRef}
-                onChange={onChangePassable}
                 onKeyUp={focusSearchResultsOnEnter}
                 data-autofocus
+                defaultValue={searchInputDefaultValue}
             />
             <FontAwesomeIcon icon={faMagnifyingGlass} className={styles.searchModalSearchIcon!} />
             <button type='reset' onClick={clearSearch} hidden={!hasText} className={styles.searchModalCancelButton!}><FontAwesomeIcon icon={faBan} /></button>
