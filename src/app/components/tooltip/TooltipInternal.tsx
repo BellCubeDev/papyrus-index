@@ -36,6 +36,7 @@ export default function TooltipRenderPerformanceHelper({children, wrapperClassNa
     </Tooltip>;
 }
 
+/* eslint-disable react-no-manual-memo/no-hook-memo */ // this component can't be memoized due to variables ending in "Ref"
 function Tooltip({children, wrapperClassName, role: roleRaw, tooltipContents}: Parameters<typeof TooltipRenderPerformanceHelper>[0]) {
     const prefersReducedMotion = usePrefersReducedMotion();
 

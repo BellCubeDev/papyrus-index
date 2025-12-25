@@ -24,7 +24,7 @@ export function GameDropdown({currentGame}: {readonly currentGame: PapyrusGame |
     const posthog = useCurrentPostHog();
 
     const desiredGameRef = useUpdatedRef(desiredGame);
-    const handleOnChange = React.useCallback((newGame: PapyrusGame | null) => {
+    const handleOnChange = (newGame: PapyrusGame | null) => {
         if (newGame === desiredGameRef.current) return;
         setDesiredGame(newGame);
 
@@ -32,7 +32,7 @@ export function GameDropdown({currentGame}: {readonly currentGame: PapyrusGame |
 
         if (newGame === null) router.push('/');
         else router.push(prepareUrlParts(newGame));
-    }, [desiredGameRef, posthog, router]);
+    };
 
     useEffect(() => {
         for (const game of games) router.prefetch(prepareUrlParts(game), { kind: PrefetchKind.FULL });

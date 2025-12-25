@@ -3,7 +3,7 @@ import { faArrowLeftLong, faMagnifyingGlass, faXmark } from '@fortawesome/free-s
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react';
 import { usePathname } from 'next/navigation';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { PapyrusGame } from '../../../papyrus/data-structures/pure/game';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import styles from './Search.module.scss';
@@ -14,8 +14,8 @@ export function SearchModalButton({game}: {readonly game: PapyrusGame}): React.R
     const posthog = useCurrentPostHog();
 
     const [isOpen, setIsOpen] = useState(false);
-    const closeModal  = useCallback(() => setIsOpen(false), []);
-    const toggleOpen = useCallback(() => setIsOpen((prev) => !prev), []);
+    const closeModal  = () => setIsOpen(false);
+    const toggleOpen = () => setIsOpen((prev) => !prev);
 
     const wasOpenRef = useRef(false);
     useEffect(() => {

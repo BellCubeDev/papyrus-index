@@ -11,7 +11,7 @@ export function useCurrentPostHog() {
     const posthog = usePostHog() as ReturnType<typeof usePostHog> | null | undefined;
     const posthogRef = useUpdatedRef(posthog);
 
-    // eslint-disable-next-line react-hooks/refs -- this hook does funky things, man!
+    // eslint-disable-next-line react-hooks/refs, react-no-manual-memo/no-hook-memo -- this hook does funky things, man!
     const stableProxy = useMemo(() => new Proxy({} as Partial<NonNullable<typeof posthog>>, {
         get(_, prop: keyof NonNullable<typeof posthog>) {
             const currentPosthog = posthogRef.current;

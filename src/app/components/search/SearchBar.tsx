@@ -84,10 +84,10 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
     const [filterEntityTypes, setFilterEntityTypes] = React.useState<readonly MultiBoxOptionFilled<typeof ENTITY_TYPE_FILTER_OPTIONS[number]>[]>([]);
     const [filterSourceTypes, setFilterSourceTypes] = React.useState<readonly MultiBoxOptionFilled<typeof SOURCE_TYPE_FILTER_OPTIONS[number]>[]>([]);
 
-    const filter = useMemo(() => ({
+    const filter = {
         entityTypes: orDefaultIfEmpty(filterEntityTypes, ENTITY_TYPE_FILTER_OPTIONS).map(o => o.value as SearchIndexEntityType),
         sourceTypes: orDefaultIfEmpty(filterSourceTypes, SOURCE_TYPE_FILTER_OPTIONS).map(o => o.value as PapyrusSourceType),
-    }), [filterEntityTypes, filterSourceTypes]);
+    };
 
     const filtersChildren = <>
         <MultiBox options={ENTITY_TYPE_FILTER_OPTIONS} onChange={setFilterEntityTypes}>Entity Types</MultiBox>
@@ -156,13 +156,13 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
         }
     }, [game]);
 
-    const clearSearch = React.useCallback(() => {
+    const clearSearch = () => {
         setResult(EMPTY_QUERY);
         setHasText(false);
         const searchInput = searchInputRef.current;
         if (searchInput) searchInput.value = '';
         tookTooLongInterval.clear(CLEAR_ANY_TIMER);
-    }, [tookTooLongInterval]);
+    };
 
     useEffect(() => {
         if (isLoading) return;
@@ -180,21 +180,21 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
 
     const prefersReducedMotion = usePrefersReducedMotion();
 
-    const focusSearchResults = React.useCallback(() => {
+    const focusSearchResults = () => {
         const searchResultsUL = searchResultsULRef.current;
         if (!searchResultsUL) return;
         const firstChild = searchResultsUL.firstElementChild as HTMLLIElement | null;
         if (!firstChild) return;
         firstChild.scrollIntoView({behavior: prefersReducedMotion ? 'instant' : 'smooth', block: 'nearest', inline: 'nearest'});
         firstChild.focus({preventScroll: true});
-    }, [prefersReducedMotion]);
+    };
 
-    const focusSearchResultsOnEnter = React.useCallback((e: React.KeyboardEvent) => {
+    const focusSearchResultsOnEnter = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
             e.preventDefault();
             focusSearchResults();
         }
-    }, [focusSearchResults]);
+    };
 
     return <>
         <div className={styles.searchModalBodySplitRight1!}>
