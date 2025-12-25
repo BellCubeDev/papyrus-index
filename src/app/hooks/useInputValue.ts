@@ -30,6 +30,9 @@ type DefaultKeyForValueIshKey<T extends object, TValueKey extends keyof T & AnyV
  *
  * Requires that you bring your own ref for React's automatic inferences to work correctly (ESLint, React Compiler, etc.)
  *
+ * Under the hood, uses `useSyncExternalStore(...)` to subscribe to changes in the input element's value.
+ * Subscribes to the `input` and `change` events of the input element to keep the value in sync with the DOM.
+ *
  * @param defaultValue The default value of the input element. Will be returned for you to pass to the input element as its defaultValue prop, maintaining a single source of truth.
  * @param valueKey The key of the input element that holds its current value, typically "value," but could be any key that follows the pattern `value${string}` (such as "valueAsNumber" or "valueAsDate")
  * @returns A tuple containing the default value and the current value of the input element.
@@ -45,8 +48,10 @@ export function useInputValue<TElementType extends HTMLElement, TValueKey extend
             if (!input) return ()=>{/* empty */};
 
             input.addEventListener('input', sendChanged);
+            input.addEventListener('change', sendChanged);
             return () => {
                 input.removeEventListener('input', sendChanged);
+                input.removeEventListener('change', sendChanged);
             };
         },
         () => ref.current ? ref.current[valueKey] : defaultValue,
