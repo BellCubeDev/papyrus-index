@@ -147,7 +147,7 @@ class WorkerExitedError extends Error {
 }
 
 process.stdout.isTTY = false;
-const TARGET_LOG_MESSAGE = ` ${Log.prefixes.info} Collecting page data using`;
+const TARGET_LOG_MESSAGE = `${Log.prefixes.info} Collecting page data using`;
 
 /** The log since the last time patchLog() ran successfully */
 //let currentLog = '';
