@@ -1,7 +1,32 @@
 import posthogJS from 'posthog-js';
 import * as Log from 'next/dist/build/output/log';
 
-const TIME_LABEL = 'Welcome to the Papyrus Index! Bootstrapping took';
+console.log('');
+console.log('%cInitializing the Papyrus Index...', 'color: #ad5de6ff; font-weight: 600');
+console.log('');
+
+const TIME_LABEL = `%c
+       /$$$$$$$     /$$$$$$    /$$$$$$$   /$$     /$$   /$$$$$$$    /$$   /$$    /$$$$$$
+      | $$__  $$   /$$__  $$  | $$__  $$ |  $$   /$$/  | $$__  $$  | $$  | $$   /$$__  $$
+      | $$  \\ $$  | $$  \\ $$  | $$  \\ $$  \\  $$ /$$/   | $$  \\ $$  | $$  | $$  | $$  \\__/
+      | $$$$$$$/  | $$$$$$$$  | $$$$$$$/   \\  $$$$/    | $$$$$$$/  | $$  | $$  |  $$$$$$
+      | $$____/   | $$__  $$  | $$____/     \\  $$/     | $$__  $$  | $$  | $$   \\____  $$
+      | $$        | $$  | $$  | $$           | $$      | $$  \\ $$  | $$  | $$   /$$  \\ $$
+      | $$        | $$  | $$  | $$           | $$      | $$  | $$  |  $$$$$$/  |  $$$$$$/
+      |__/        |__/  |__/  |__/           |__/      |__/  |__/   \\______/    \\______/
+
+
+       /$$$$$$   /$$   /$$   /$$$$$$$    /$$$$$$$$   /$$    /‾$$/
+      |_  $$_/  | $$$ | $$  | $$__  $$  | $$_____/  |  $$  / $$/
+        | $$    | $$$$| $$  | $$  \\ $$  | $$         \\  $$/ $$/
+        | $$    | $$ $$ $$  | $$  | $$  | $$$$$       \\  $$$$<
+        | $$    | $$  $$$$  | $$  | $$  | $$__/       / $$  $$
+        | $$    | $$\\  $$$  | $$  | $$  | $$         / $$/ \\ $$
+       /$$$$$$  | $$ \\  $$  | $$$$$$$/  | $$$$$$$$  | $$/   \\ $$
+      |______/  |__/  \\__/  |_______/   |________/  |__/     \\__/
+
+
+%cWelcome to the Papyrus Index!%c Bootstrapping took`;
 
 console.time(TIME_LABEL);
 
@@ -24,4 +49,6 @@ if (!NEXT_PUBLIC_POSTHOG_KEY || !NEXT_PUBLIC_POSTHOG_HOST) {
     window.posthog = posthogJS;
 }
 
-console.timeLog(TIME_LABEL);
+console.timeLog(TIME_LABEL, 'color: #ad5de6ff; font-weight: 900', 'color: #13e941ff; font-weight: 600', 'color: #5ec073ff');
+console.log('');
+console.log('');
