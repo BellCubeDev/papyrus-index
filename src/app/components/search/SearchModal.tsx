@@ -8,21 +8,19 @@ import type { PapyrusGame } from '../../../papyrus/data-structures/pure/game';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import styles from './Search.module.scss';
 import SearchBar from './SearchBar';
-import { useCurrentPostHog } from '@/app/hooks/useCurrentPostHog';
+import posthog from 'posthog-js';
 
 export function SearchModalButton({game}: {readonly game: PapyrusGame}): React.ReactElement {
-    const posthog = useCurrentPostHog();
-
     const [isOpen, setIsOpen] = useState(false);
     const closeModal  = () => setIsOpen(false);
     const toggleOpen = () => setIsOpen((prev) => !prev);
 
     const wasOpenRef = useRef(false);
     useEffect(() => {
-        if (isOpen) posthog.capture?.('SearchModal opened', {source: 'button'});
-        else if (wasOpenRef.current) posthog.capture?.('SearchModal closed', {source: 'button'});
+        if (isOpen) posthog.capture('SearchModal opened', {source: 'button'});
+        else if (wasOpenRef.current) posthog.capture('SearchModal closed', {source: 'button'});
         wasOpenRef.current = isOpen;
-    }, [isOpen, posthog]);
+    }, [isOpen]);
 
 
     const pathname = usePathname();

@@ -129,7 +129,7 @@ export default function RootLayout({ children }: { readonly children: React.Reac
                 `.split('\n').map(l=>l.trim()).join(' ').trim()}
             </style></noscript>
         </head>
-        <body className={`${roboto.className} ${roboto.variable} ${SourceCodePro.variable}`} suppressHydrationWarning><PostHogProvider>
+        <body className={`${roboto.className} ${roboto.variable} ${SourceCodePro.variable}`} suppressHydrationWarning>
             <ProgressBarProvider>
                 <div>
                     {children}
@@ -164,7 +164,7 @@ export default function RootLayout({ children }: { readonly children: React.Reac
                 </div>
             </ProgressBarProvider>
             <div id='progress-bar-container' />
-        </PostHogProvider></body>
+        </body>
     </html>;
 }
 

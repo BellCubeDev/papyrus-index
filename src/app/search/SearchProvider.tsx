@@ -7,7 +7,8 @@ import { deepUnprepare, DeepUnpreparedValue } from './Preparation';
 import type { SearchFilter, WorkerMessageInput, WorkerMessageInputInit, WorkerMessageOutput, WorkerMessageOutputSearchIndexReady, WorkerMessageOutputSearchResult } from './SEARCH.worker';
 import { memoizeDevServerConst } from '../../utils/memoizeDevServerConst';
 import { SourceListUser } from '../components/papyrus/SourcesList';
-import { useCurrentPostHog } from '@/app/hooks/useCurrentPostHog';
+import posthog from 'posthog-js';
+import { useStableCallback } from '@/app/hooks/useStableCallback';
 
 type SearchWorker =  Omit<Worker, 'postMessage'> & {
     postMessage(message: Exclude<WorkerMessageInput, WorkerMessageInputInit>): void;
@@ -89,8 +90,6 @@ export function useSearchContext(advanced?: boolean): SearchContext | null {
 export const LOADING_IN_DEV_MODE: unique symbol = memoizeDevServerConst('SEARCH__LOADING_IN_DEV_MODE', () => Symbol.for('PAPYRUS_INDEX_LOADING_IN_DEV_MODE')) as never;
 
 export function SearchProvider({children, game, searchIndexHash}: {readonly children: React.ReactNode, readonly game: PapyrusGame, readonly searchIndexHash: string | typeof LOADING_IN_DEV_MODE}) {
-    const posthog = useCurrentPostHog();
-
     const isLoadingHash = searchIndexHash === LOADING_IN_DEV_MODE;
     const typeofWorker = typeof Worker;
     const {worker, sources}: {worker: null | SearchWorker, sources: Promise<undefined | WorkerMessageOutputSearchIndexReady['sources']>} = (() => {
@@ -107,7 +106,7 @@ export function SearchProvider({children, game, searchIndexHash}: {readonly chil
                 time: performance.now() - startLoad,
             };
             console.warn('SearchIndex taking too long to load', {...debugObj, worker, startLoad});
-            posthog.capture?.('SearchIndex taking too long to load', debugObj);
+            posthog.capture('SearchIndex taking too long to load', debugObj);
         }, 2000);
 
         // eslint-disable-next-line no-shadow
@@ -117,7 +116,7 @@ export function SearchProvider({children, game, searchIndexHash}: {readonly chil
             clearInterval(takingTooLongInterval);
             if (!e) return; // worker was terminated before it was ready
             console.log('[SearchProvider] Search index loaded for', game, {e, searchIndexHash});
-            posthog.capture?.('Search index loaded', {
+            posthog.capture('Search index loaded', {
                 search_index_hash: searchIndexHash,
                 game,
             });
@@ -159,7 +158,7 @@ export function SearchProvider({children, game, searchIndexHash}: {readonly chil
         const res = await resultPromise;
         const end = performance.now();
         console.log('Search took', end - start, 'ms', {res});
-        posthog.capture?.('Search query completed', {
+        posthog.capture('Search query completed', {
             game,
             query,
             filter,

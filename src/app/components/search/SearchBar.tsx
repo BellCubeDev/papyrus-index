@@ -19,6 +19,7 @@ import styles from './Search.module.scss';
 import { usePrefersReducedMotion } from "../../hooks/usePrefersReducedMotion";
 import { MultiBox, type MultiBoxOption, type MultiBoxOptionFilled } from "../form-fields/MultiBox";
 import { PapyrusSourceType } from "../../../papyrus/data-structures/pure/scriptSource";
+import posthog from "posthog-js";
 import { useInputValue } from "@/app/hooks/useInputValue";
 
 const EMPTY_QUERY: unique symbol = memoizeDevServerConst('<SearchBar> EMPTY_QUERY', ()=>Symbol('<SearchBar> EMPTY_QUERY')) as never;
@@ -62,7 +63,6 @@ function registerSearchCallWithLoopDetector() {
 }
 
 export default function SearchBar({game}: {readonly game: PapyrusGame}): React.ReactElement {
-    const posthog = useCurrentPostHog();
     const useCompactWidthLayout = useMediaQuery('(max-width: 900px)', false);
 
     const searchProvider = useSearchContext();
@@ -135,7 +135,7 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
                 search_time_since_query: performance.now() - startTimeLoadSearchProvider,
             };
             console.warn('Search taking too long!', debugData);
-            posthog.capture?.('Search taking too long', debugData);
+            posthog.capture('Search taking too long', debugData);
         });
 
         // debounce
@@ -173,11 +173,11 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
         tookTooLongInterval.clear(CLEAR_ANY_TIMER);
         if (result === EMPTY_QUERY) return;
         if (result instanceof Error) {
-            posthog.capture?.('SearchBar rendered error', {game, error: result, inputValue: searchInputRef.current?.value ?? null});
+            posthog.capture('SearchBar rendered error', {game, error: result, inputValue: searchInputRef.current?.value ?? null});
             return;
         }
-        posthog.capture?.('SearchBar rendered result', {game, result: result.map(res => res.obj.$entityId)});
-    }, [isLoading, game, posthog, result, tookTooLongInterval]);
+        posthog.capture('SearchBar rendered result', {game, result: result.map(res => res.obj.$entityId)});
+    }, [isLoading, game, result, tookTooLongInterval]);
 
     const searchResultsULRef = React.useRef<HTMLUListElement>(null);
 
