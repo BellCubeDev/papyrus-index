@@ -69,8 +69,6 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
     type ResultForRendering = DeepUnpreparedValue<WorkerMessageOutputSearchResult<PapyrusGame, SearchIndexEntityType>['results']>;
     const [result, setResult] = React.useState<typeof EMPTY_QUERY | typeof AWAITING_SEARCH | Error | ResultForRendering>(EMPTY_QUERY);
 
-    const [hasText, setHasText] = React.useState(false);
-
     const tookTooLongInterval = useStoredInterval();
 
     const isLoading = searchProvider.LOADING_FROM_SSR || searchProvider.DEVELOPMENT__LOADING_HASH;
@@ -110,13 +108,15 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
 
 
     const searchInputRef = React.useRef<HTMLInputElement | null>(null);
-    const [searchInputDefaultValue, query] = useInputValue(searchInputRef, 'value', '');
+    const [searchInputDefaultValue, queryRaw] = useInputValue(searchInputRef, 'value', '');
+    const query = queryRaw.trim();
+    
+    const isEmptyQuery = query === '';
 
     // eslint-disable-next-line no-shadow
     const search = useEffectEvent(async function search(query: string, filter: SearchFilter<SearchIndexEntityType>) {
         console.trace('Searching for', query);
         registerSearchCallWithLoopDetector();
-        setHasText(query !== '');
 
         if (!query) return setResult(EMPTY_QUERY);
 
@@ -161,9 +161,11 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
 
     const clearSearch = () => {
         setResult(EMPTY_QUERY);
-        setHasText(false);
         const searchInput = searchInputRef.current;
-        if (searchInput) searchInput.value = '';
+        if (searchInput) {
+            searchInput.value = '';
+            searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+        }
         tookTooLongInterval.clear(CLEAR_ANY_TIMER);
     };
 
@@ -209,7 +211,7 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
                 defaultValue={searchInputDefaultValue}
             />
             <FontAwesomeIcon icon={faMagnifyingGlass} className={styles.searchModalSearchIcon!} />
-            <button type='reset' onClick={clearSearch} hidden={!hasText} className={styles.searchModalCancelButton!}><FontAwesomeIcon icon={faBan} /></button>
+            <button type='reset' onClick={clearSearch} hidden={isEmptyQuery} className={styles.searchModalCancelButton!}><FontAwesomeIcon icon={faBan} /></button>
         </div>
         <div className={styles.searchModalBodySplitLeft!}>
             {
