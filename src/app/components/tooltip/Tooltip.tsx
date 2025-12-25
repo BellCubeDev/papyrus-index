@@ -14,6 +14,7 @@ const tooltipImport = memoizeDevServerConst('TOOLTIP_IMPORT_DYNAMIC',
     () => lazy(() => import('./TooltipInternal'))
 );
 
+// eslint-disable-next-line react-no-manual-memo/no-component-memo -- this tooltip component is _something else_
 const TooltipComponentNoSuspense = typeof window === 'undefined' ? TOOLTIP_WRAPPER_ONLY : memo(tooltipImport);
 
 export function Tooltip(props: Props) {

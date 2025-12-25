@@ -10,20 +10,25 @@ import { SourceName } from "./SourceName";
 import styles from './SourcesList.module.scss';
 import type { PapyrusScriptSourceIndexedNoScriptsProp } from "../../../papyrus/data-structures/indexing/scriptSource";
 
-async function loadSourceListOnServer(game: PapyrusGame) {
-    return (await import(typeof window !== 'undefined' ? '@/empty' : "../../../papyrus/indexing/index-all")).AllScriptsIndexed[game].scriptSources;
+function useLoadSourceListOnServer(game: PapyrusGame) {
+    const importedModule = use(import(typeof window !== 'undefined' ? '@/empty' : "../../../papyrus/indexing/index-all") as Promise<typeof import("../../../papyrus/indexing/index-all")>);
+    return importedModule.AllScriptsIndexed[game].scriptSources;
 }
 
 function useLoadSourceListOnClient() {
     const searchContext = useSearchContext();
-    if (searchContext.LOADING_FROM_SSR || searchContext.DEVELOPMENT__LOADING_HASH) return null as never;
+    if (searchContext.LOADING_FROM_SSR || searchContext.DEVELOPMENT__LOADING_HASH) {
+        console.warn("Search context is not ready yet, but tried to useLoadSourceListOnClient()!");
+        return null as never;
+    }
     return use((searchContext as SearchContextLoaded).sources);
 }
 
-function useLoadSourceList(game: PapyrusGame): WorkerMessageOutputSearchIndexReady['sources'] {
-    // eslint-disable-next-line react-compiler/react-compiler, react-hooks/rules-of-hooks
-    return typeof window === 'undefined' ? use(loadSourceListOnServer(game)) : useLoadSourceListOnClient();
-}
+// On server, use a pseudo-hook that just loads the sources list directly. On client, use a real hook that uses the search context.
+// By doing a dependency injection here, we can avoid having to call useSyncExternalStore, which would cause excessive re-renders
+// and cause issues with the search context not being ready before we tried to use it.
+const useLoadSourceList: (game: PapyrusGame) => WorkerMessageOutputSearchIndexReady['sources'] =
+    typeof window === 'undefined' ? useLoadSourceListOnServer : useLoadSourceListOnClient;
 
 /** This component is a hack to make React load the sources list promise */
 export function SourceListUser({game}: {readonly game: PapyrusGame}) {

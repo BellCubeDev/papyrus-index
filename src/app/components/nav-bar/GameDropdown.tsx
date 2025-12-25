@@ -13,7 +13,7 @@ import { prepareUrlParts } from "../../../utils/prepareUrlParts";
 import { useUpdatedRef } from "../../hooks/useUpdatedRef";
 import { InternalLink } from "../Link";
 import styles from './NavBar.module.scss';
-import { useCurrentPostHog } from '@/app/hooks/useCurrentPostHog';
+import posthog from 'posthog-js';
 
 const games = Object.values(PapyrusGame);
 
@@ -21,18 +21,17 @@ export function GameDropdown({currentGame}: {readonly currentGame: PapyrusGame |
     const [desiredGame, setDesiredGame] = useState<PapyrusGame | null>(currentGame);
     const isLoading = desiredGame !== currentGame;
     const router = useRouter();
-    const posthog = useCurrentPostHog();
 
     const desiredGameRef = useUpdatedRef(desiredGame);
-    const handleOnChange = React.useCallback((newGame: PapyrusGame | null) => {
+    const handleOnChange = (newGame: PapyrusGame | null) => {
         if (newGame === desiredGameRef.current) return;
         setDesiredGame(newGame);
 
-        posthog.capture?.('Game dropdown selection', { game: newGame });
+        posthog.capture('Game dropdown selection', { game: newGame });
 
         if (newGame === null) router.push('/');
         else router.push(prepareUrlParts(newGame));
-    }, [desiredGameRef, posthog, router]);
+    };
 
     useEffect(() => {
         for (const game of games) router.prefetch(prepareUrlParts(game), { kind: PrefetchKind.FULL });

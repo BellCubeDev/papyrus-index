@@ -6,6 +6,7 @@ import pluginNextVitals from "eslint-config-next/core-web-vitals";
 import pluginNextTs from "eslint-config-next/typescript";
 import reactCompiler from 'eslint-plugin-react-compiler';
 import reactHooks from "eslint-plugin-react-hooks";
+import reactNoManualMemo from "eslint-plugin-react-no-manual-memo";
 
 import { includeIgnoreFile } from "@eslint/compat";
 import path from "node:path";
@@ -55,6 +56,7 @@ export default defineConfig([
 		},
 	},
 	reactHooks.configs.flat["recommended-latest"],
+	reactNoManualMemo.configs['flat/recommended'],
 	{
 		settings: {
 			next: {
@@ -102,7 +104,10 @@ export default defineConfig([
 			"react/jsx-filename-extension": ["error", { extensions: [".jsx", ".tsx"] }],
 			"react-compiler/react-compiler": "error",
 			"react-hooks/rules-of-hooks": "error",
-			"react-hooks/exhaustive-deps": "error",
+
+			// Logic Rules handled by React Compiler
+			"react-hooks/exhaustive-deps": "off",
+			"react/jsx-no-constructed-context-values": "off",
 
 			//'react-native/no-unused-styles': "off",
 			//'react-native/no-inline-styles': "off",

@@ -49,3 +49,5 @@ type OptionalKeyof<T extends object> = Exclude<{
 type RestoreLegacyOptionalKeys<T extends object> = Omit<T, OptionalKeyof<T>> & {
     [K in OptionalKeyof<T>]?: T[K] | undefined
 }
+
+type UnionToIntersection<U> = (U extends any ? (x: U)=>void : never) extends ((x: infer I)=>void) ? I : never

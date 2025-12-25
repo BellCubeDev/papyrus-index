@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, type RefObject } from "react";
+import { useRef, type RefObject } from "react";
 import { memoizeDevServerConst } from "../../utils/memoizeDevServerConst";
 
 type TimeoutIdentifier = ReturnType<typeof setTimeout>;
@@ -25,30 +25,30 @@ export const CLEAR_ANY_TIMER: unique symbol = memoizeDevServerConst('<useStoredT
 export function useStoredTimeout(): UseTimerHookReturn<TimeoutIdentifier, 'Timeout'> {
     const currentTimeoutRef = useRef<TimeoutIdentifier>(null);
 
-    const start = useCallback((delay: number, callback: () => void) => {
+    const start = (delay: number, callback: () => void) => {
         const oldTimeout = currentTimeoutRef.current;
         if (oldTimeout) clearTimeout(oldTimeout);
         const newTimeout = setTimeout(callback, delay);
         currentTimeoutRef.current = newTimeout;
         return newTimeout;
-    }, []);
+    };
 
-    const clear = useCallback((knownTimeout: TimeoutIdentifier | typeof CLEAR_ANY_TIMER)=> {
+    const clear = (knownTimeout: TimeoutIdentifier | typeof CLEAR_ANY_TIMER)=> {
         const currentTimeout = currentTimeoutRef.current;
         if (knownTimeout !== currentTimeout && knownTimeout !== CLEAR_ANY_TIMER) return false;
         if (!currentTimeout) return knownTimeout === CLEAR_ANY_TIMER;
         clearTimeout(currentTimeout);
         currentTimeoutRef.current = null;
         return true;
-    }, []);
+    };
 
-    const isCurrent = useCallback((knownTimeout: TimeoutIdentifier | typeof CLEAR_ANY_TIMER) => {
+    const isCurrent = (knownTimeout: TimeoutIdentifier | typeof CLEAR_ANY_TIMER) => {
         const currentTimeout = currentTimeoutRef.current;
         if (knownTimeout !== currentTimeout && knownTimeout !== CLEAR_ANY_TIMER) return false;
         return true;
-    }, []);
+    };
 
-    return useMemo(()=>({ currentTimeoutRef, start, clear, isCurrent }), [clear, isCurrent, start]);
+    return { currentTimeoutRef, start, clear, isCurrent };
 }
 
 type IntervalIdentifier = ReturnType<typeof setInterval>;
@@ -63,28 +63,28 @@ type IntervalIdentifier = ReturnType<typeof setInterval>;
 export function useStoredInterval(): UseTimerHookReturn<IntervalIdentifier, 'Interval'> {
     const currentIntervalRef = useRef<IntervalIdentifier>(null);
 
-    const start = useCallback((delay: number, callback: () => void) => {
+    const start = (delay: number, callback: () => void) => {
         const oldInterval = currentIntervalRef.current;
         if (oldInterval) clearInterval(oldInterval);
         const newInterval = setInterval(callback, delay);
         currentIntervalRef.current = newInterval;
         return newInterval;
-    }, []);
+    };
 
-    const clear = useCallback((knownInterval: IntervalIdentifier | typeof CLEAR_ANY_TIMER) => {
+    const clear = (knownInterval: IntervalIdentifier | typeof CLEAR_ANY_TIMER) => {
         const currentInterval = currentIntervalRef.current;
         if (knownInterval !== currentInterval && knownInterval !== CLEAR_ANY_TIMER) return false;
         if (!currentInterval) return knownInterval === CLEAR_ANY_TIMER;
         clearInterval(currentInterval);
         currentIntervalRef.current = null;
         return true;
-    }, []);
+    };
 
-    const isCurrent = useCallback((knownInterval: IntervalIdentifier | typeof CLEAR_ANY_TIMER) => {
+    const isCurrent = (knownInterval: IntervalIdentifier | typeof CLEAR_ANY_TIMER) => {
         const currentInterval = currentIntervalRef.current;
         if (knownInterval !== currentInterval && knownInterval !== CLEAR_ANY_TIMER) return false;
         return true;
-    }, []);
+    };
 
-    return useMemo(() => ({ currentIntervalRef, start, clear, isCurrent }), [clear, isCurrent, start]);
+    return { currentIntervalRef, start, clear, isCurrent };
 }

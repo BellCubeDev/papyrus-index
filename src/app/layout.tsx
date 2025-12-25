@@ -13,7 +13,7 @@ import Markdown from 'react-markdown';
 import { ProgressBarProvider } from './ProgressBarProvider';
 import { Link } from './components/Link';
 import { ThePapyrusIndexLogo } from './components/logo/ThePapyrusIndexLogo';
-import { PostHogProvider } from './components/posthog/posthog-provider';
+import { ReactGeigerDevOnly } from '@/app/components/react-geiger-dev-only';
 
 const roboto = Roboto({
     display: 'block',
@@ -129,8 +129,8 @@ export default function RootLayout({ children }: { readonly children: React.Reac
                 `.split('\n').map(l=>l.trim()).join(' ').trim()}
             </style></noscript>
         </head>
-        <body className={`${roboto.className} ${roboto.variable} ${SourceCodePro.variable}`} suppressHydrationWarning><PostHogProvider>
-            <ProgressBarProvider>
+        <body className={`${roboto.className} ${roboto.variable} ${SourceCodePro.variable}`} suppressHydrationWarning>
+            <Providers>
                 <div>
                     {children}
                 </div>
@@ -162,10 +162,18 @@ export default function RootLayout({ children }: { readonly children: React.Reac
                         </div>
                     </footer>
                 </div>
-            </ProgressBarProvider>
+            </Providers>
             <div id='progress-bar-container' />
-        </PostHogProvider></body>
+        </body>
     </html>;
+}
+
+function Providers({ children }: { readonly children: React.ReactNode }) {
+    return <ReactGeigerDevOnly renderTimeThreshold={0} enabled phaseOption='both'>
+        <ProgressBarProvider>
+            {children}
+        </ProgressBarProvider>
+    </ReactGeigerDevOnly>;
 }
 
 

@@ -20,7 +20,7 @@ function LinkComponent({href, children, ...props}: Omit<React.AnchorHTMLAttribut
 } & React.RefAttributes<HTMLAnchorElement>, ref: React.Ref<HTMLAnchorElement>) {
 
     const currentPathname = usePathname();
-    const hrefAsUrl = useMemo(() => new URL(href, getWindowURL().href), [href]);
+    const hrefAsUrl = new URL(href, getWindowURL().href);
     const isCurrent = hrefAsUrl.origin === getWindowURL().origin && stripFinalSlash(hrefAsUrl.pathname) === stripFinalSlash(currentPathname);
 
     return <NextLink {...props} href={href} aria-current={isCurrent ? 'page' : undefined} ref={ref}>
