@@ -130,6 +130,9 @@ importers:
       eslint-plugin-react-hooks:
         specifier: ^7.0.1
         version: 7.0.1(eslint@9.39.2(jiti@1.21.7))
+      eslint-plugin-react-no-manual-memo:
+        specifier: ^1.0.4
+        version: 1.0.4(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3(patch_hash=b268284a738ba2396549bdbe068af5a4c07ff0f3604f2a2f7412412f2c826b6a))
       execa:
         specifier: ^9.6.1
         version: 9.6.1
@@ -2558,6 +2561,11 @@ packages:
     engines: {node: '>=18'}
     peerDependencies:
       eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0 || ^9.0.0
+
+  eslint-plugin-react-no-manual-memo@1.0.4:
+    resolution: {integrity: sha512-KMtuaB9GpnLelRLwnrm+nl534LuyR9LMOrisfSYlgwqhrHKKbQlycAiwZTmsrTNj5VV1mUyI361ROFLEk+b6DA==}
+    peerDependencies:
+      eslint: ^8.57.0 || ^9.0.0
 
   eslint-plugin-react@7.37.5:
     resolution: {integrity: sha512-Qteup0SqU15kdocexFNAJMvCJEfa2xUKNV4CC1xsVMrIIqEy3SQ/rqyxCWNzfrd3/ldy6HMlD2e0JDVpDg2qIA==}
@@ -7236,6 +7244,14 @@ snapshots:
       zod-validation-error: 4.0.2(zod@4.1.13)
     transitivePeerDependencies:
       - supports-color
+
+  eslint-plugin-react-no-manual-memo@1.0.4(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3(patch_hash=b268284a738ba2396549bdbe068af5a4c07ff0f3604f2a2f7412412f2c826b6a)):
+    dependencies:
+      '@typescript-eslint/utils': 8.49.0(eslint@9.39.2(jiti@1.21.7))(typescript@5.9.3(patch_hash=b268284a738ba2396549bdbe068af5a4c07ff0f3604f2a2f7412412f2c826b6a))
+      eslint: 9.39.2(jiti@1.21.7)
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
 
   eslint-plugin-react@7.37.5(eslint@9.39.2(jiti@1.21.7)):
     dependencies:
