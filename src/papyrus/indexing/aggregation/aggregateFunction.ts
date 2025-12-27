@@ -1,3 +1,4 @@
+import type { PapyrusFeature, PapyrusFeatureSupportedGames } from "@/papyrus/feature-support";
 import { UnreachableError } from "../../../UnreachableError";
 import type { PapyrusScriptEventOrBaseFunctionIndexedAggregate, PapyrusScriptFunctionIndexed, PapyrusScriptFunctionIndexedAggregate, PapyrusScriptFunctionIndexedAggregateReturnType } from "../../data-structures/indexing/function";
 import type { PapyrusScriptTypeScriptInstanceIndexed, PapyrusScriptTypeStructIndexed } from "../../data-structures/indexing/type";
@@ -26,7 +27,7 @@ export function aggregateFunction<TGame extends PapyrusGame>(_name: Lowercase<st
                     case PapyrusTypeMergeFailureReason.ScriptMismatch:
                         throw new Error(`Return type of Papyrus function ${nextFunction.script.namespaceName}${nextFunction.name}() has conflicting script names: ${(nextFunction.returnType as PapyrusScriptTypeScriptInstanceIndexed<boolean, true, TGame>).scriptName} (from source ${source}) and ${(acc as PapyrusScriptTypeScriptInstanceIndexed<boolean, true, TGame>).scriptName} (from sources ${Object.keys(acc.$sources).join(', ')})`);
                     case PapyrusTypeMergeFailureReason.StructMismatch:
-                        throw new Error(`Return type of Papyrus function ${nextFunction.script.namespaceName}${nextFunction.name}() has conflicting struct names: ${(nextFunction.returnType as PapyrusScriptTypeStructIndexed<boolean, true, Exclude<TGame, PapyrusGame.SkyrimSE>>).structName} (from source ${source}) and ${(acc as PapyrusScriptTypeStructIndexed<boolean, true, Exclude<TGame, PapyrusGame.SkyrimSE>>).structName} (from sources ${Object.keys(acc.$sources).join(', ')})`);
+                        throw new Error(`Return type of Papyrus function ${nextFunction.script.namespaceName}${nextFunction.name}() has conflicting struct names: ${(nextFunction.returnType as PapyrusScriptTypeStructIndexed<boolean, true, PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>).structName} (from source ${source}) and ${(acc as PapyrusScriptTypeStructIndexed<boolean, true, PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>).structName} (from sources ${Object.keys(acc.$sources).join(', ')})`);
                     default:
                         throw new UnreachableError(merged, `Unknown Papyrus type merge failure reason "${merged}" for return type of Papyrus function ${nextFunction.script.namespaceName}${nextFunction.name}() from source ${source}`);
                 }

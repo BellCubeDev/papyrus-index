@@ -1,3 +1,4 @@
+import type { PapyrusFeature, PapyrusFeatureSupportedGames } from "@/papyrus/feature-support";
 import { UnreachableError } from "../../../UnreachableError";
 import type { PapyrusScriptEventOrBaseFunctionIndexed, PapyrusScriptEventOrBaseFunctionIndexedAggregate, PapyrusScriptFunctionParameterIndexed } from "../../data-structures/indexing/function";
 import { type PapyrusScriptTypeScriptInstanceIndexed, type PapyrusScriptTypeStructIndexed } from "../../data-structures/indexing/type";
@@ -36,7 +37,7 @@ export function aggregateEventOrBaseFunction<TGame extends PapyrusGame>(
                     case PapyrusTypeMergeFailureReason.ScriptMismatch:
                         throw new Error(`Parameter ${i} of Papyrus function ${value.script.namespaceName}${value.name}() has conflicting script names: ${(newParameter.value as PapyrusScriptTypeScriptInstanceIndexed<boolean, true, TGame>).scriptName} (from source ${source}) and ${(existingParameter.value as PapyrusScriptTypeScriptInstanceIndexed<boolean, true, TGame>).scriptName} (from sources ${Object.keys(existingParameter.$sources).join(', ')})`);
                     case PapyrusTypeMergeFailureReason.StructMismatch:
-                        throw new Error(`Parameter ${i} of Papyrus function ${value.script.namespaceName}${value.name}() has conflicting struct names: ${(newParameter.value as PapyrusScriptTypeStructIndexed<boolean, true, Exclude<TGame, PapyrusGame.SkyrimSE>>).structName} (from source ${source}) and ${(existingParameter.value as PapyrusScriptTypeStructIndexed<boolean, true, Exclude<TGame, PapyrusGame.SkyrimSE>>).structName} (from sources ${Object.keys(existingParameter.$sources).join(', ')})`);
+                        throw new Error(`Parameter ${i} of Papyrus function ${value.script.namespaceName}${value.name}() has conflicting struct names: ${(newParameter.value as PapyrusScriptTypeStructIndexed<boolean, true, PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>).structName} (from source ${source}) and ${(existingParameter.value as PapyrusScriptTypeStructIndexed<boolean, true, PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>).structName} (from sources ${Object.keys(existingParameter.$sources).join(', ')})`);
                     case PapyrusValueMergeFailureReason.DefaultValueMismatch:
                         throw new Error(`Parameter ${i} of Papyrus function ${value.script.namespaceName}${value.name}() has conflicting default values: "${newParameter.value.value}" (from source ${source}) and "${existingParameter.value.value}" (from sources ${Object.keys(existingParameter.$sources).join(', ')})`);
                     default:

@@ -1,15 +1,15 @@
+import type { PapyrusFeature, PapyrusFeatureSupportedGames } from "@/papyrus/feature-support";
 import type { PapyrusScriptStructIndexed, PapyrusScriptStructIndexedAggregate } from "../../data-structures/indexing/struct";
-import type { PapyrusGame } from "../../data-structures/pure/game";
 import { aggregateGenericValue } from "./aggregateGenericValue";
 import type { AggregateScriptContext } from "./aggregateScript";
 import { aggregateSourceRecordWithNameRecordEntries } from "./aggregateSourceRecordWithNameRecord";
 import { aggregateStructMembersRecord } from "./aggregateStructMember";
 
-export interface AggregateStructContext<TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE>> extends AggregateScriptContext<TGame> {
+export interface AggregateStructContext<TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.Structs>> extends AggregateScriptContext<TGame> {
     unfinishedStructAggregateRef: PapyrusScriptStructIndexedAggregate<TGame>;
 }
 
-export function aggregateStruct<TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE>>(
+export function aggregateStruct<TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.Structs>>(
     _name: Lowercase<string>,
     valuesBySource: [source: Lowercase<string>, value: PapyrusScriptStructIndexed<TGame>][],
     ctx: AggregateScriptContext<TGame>,
@@ -36,7 +36,7 @@ export function aggregateStruct<TGame extends Exclude<PapyrusGame, PapyrusGame.S
     } satisfies PapyrusScriptStructIndexedAggregate<TGame>) as PapyrusScriptStructIndexedAggregate<TGame>;
 }
 
-export function aggregateStructsRecord<TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE>>(
+export function aggregateStructsRecord<TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.Structs>>(
     recordEntries: [Lowercase<string>, Record<Lowercase<string>, PapyrusScriptStructIndexed<TGame>>][],
     ctx: AggregateScriptContext<TGame>,
 ) {

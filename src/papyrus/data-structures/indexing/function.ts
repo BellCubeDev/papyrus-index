@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import type { PapyrusFeature, PapyrusFeatureSupportedGames } from "@/papyrus/feature-support";
 import type { PapyrusCompilerOptional } from "../pure/compilerOptional";
 import type { PapyrusScriptDocumentable, PapyrusScriptDocumentableOnlyByComment } from "../pure/documentable";
 import type { PapyrusGame } from "../pure/game";
@@ -30,8 +31,8 @@ type PapyrusScriptEventOrBaseFunctionIndexedAggregateBase<TGame extends PapyrusG
 type PapyrusScriptEventOrBaseFunctionIndexedAggregateSpecialKeys<TGame extends PapyrusGame> = {
     $entityId: number;
     $sources: Record<Lowercase<string>, PapyrusScriptEventOrBaseFunctionIndexed<TGame>>;
-    isBetaOnly: [Lowercase<string>[], false | (TGame extends PapyrusGame.Fallout4 | PapyrusGame.Fallout76 | PapyrusGame.Starfield ? boolean : never)][];
-    isDebugOnly: [Lowercase<string>[], false | (TGame extends PapyrusGame.Fallout4 | PapyrusGame.Fallout76 | PapyrusGame.Starfield ? boolean : never)][];
+    isBetaOnly: [Lowercase<string>[], false | (TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.CompilerTargets> ? boolean : never)][];
+    isDebugOnly: [Lowercase<string>[], false | (TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.CompilerTargets> ? boolean : never)][];
     script: PapyrusScriptIndexedAggregate<TGame>;
     game: PapyrusGameDataIndexed<TGame>;
     parameters: (PapyrusScriptFunctionParameterIndexed<TGame> & {$sources: Record<Lowercase<string>, PapyrusScriptFunctionParameterIndexed<TGame>>})[];

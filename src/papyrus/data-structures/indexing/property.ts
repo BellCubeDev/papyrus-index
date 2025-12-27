@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import type { PapyrusFeature, PapyrusFeatureSupportedGames } from "@/papyrus/feature-support";
 import type { PapyrusScriptDocumentable } from "../pure/documentable";
 import type { PapyrusGame } from "../pure/game";
 import type { PapyrusGameDataIndexed } from "./game";
@@ -30,9 +31,9 @@ export interface PapyrusScriptPropertyIndexed<TGame extends PapyrusGame> extends
     // Post-Skyrim additions:
 
     /** If false, the value is stored in the player's save. If true, the value is read from the plugin */
-    constant: (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? true : never) | false;
+    constant: false | (TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.ConstPropertyFlag> ? boolean : never);
     /** Whether the CK will spit out a warning when this is property is not filled */
-    mandatory: (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? true : never) | false;
+    mandatory: false | (TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.MandatoryPropertyFlag> ? boolean : never);
 }
 
 type PapyrusScriptPropertyIndexedAggregateBase<TGame extends PapyrusGame> = {
@@ -45,8 +46,8 @@ type PapyrusScriptPropertyIndexedAggregateBase<TGame extends PapyrusGame> = {
 type PapyrusScriptPropertyIndexedAggregateSpecialKeys<TGame extends PapyrusGame> = {
     $entityId: number;
     $sources: Record<Lowercase<string>, PapyrusScriptPropertyIndexed<TGame>>;
-    constant: [Lowercase<string>[], (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? true : never) | false][];
-    mandatory: [Lowercase<string>[], (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? true : never) | false][];
+    constant: [Lowercase<string>[], false | (TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.ConstPropertyFlag> ? boolean : never)][];
+    mandatory: [Lowercase<string>[], false | (TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.MandatoryPropertyFlag> ? boolean : never)][];
     script: PapyrusScriptIndexedAggregate<TGame>;
     game: PapyrusGameDataIndexed<TGame>;
     group: PapyrusScriptPropertyGroupIndexedAggregate<TGame>;

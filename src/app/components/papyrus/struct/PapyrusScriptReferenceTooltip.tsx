@@ -1,9 +1,9 @@
+import type { PapyrusFeature, PapyrusFeatureSupportedGames } from "@/papyrus/feature-support";
 import type { PapyrusScriptStructIndexed } from "../../../../papyrus/data-structures/indexing/struct";
 import { UnknownPapyrusScriptStruct } from "../../../../papyrus/data-structures/indexing/type";
-import type { PapyrusGame } from "../../../../papyrus/data-structures/pure/game";
 import styles from './PapyrusStructReference.module.scss';
 
-export function PapyrusStructReferenceTooltip<TGame extends PapyrusGame>(propsObj: {readonly struct: PapyrusScriptStructIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>, readonly possibleStructs?: undefined} | {readonly possibleStructs: typeof UnknownPapyrusScriptStruct | Record<Lowercase<string>, PapyrusScriptStructIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>>, readonly struct?: undefined}) {
+export function PapyrusStructReferenceTooltip(propsObj: {readonly struct: PapyrusScriptStructIndexed<PapyrusFeatureSupportedGames<PapyrusFeature.Structs>>, readonly possibleStructs?: undefined} | {readonly possibleStructs: typeof UnknownPapyrusScriptStruct | Record<Lowercase<string>, PapyrusScriptStructIndexed<PapyrusFeatureSupportedGames<PapyrusFeature.Structs>>>, readonly struct?: undefined}) {
     const {struct, possibleStructs} = propsObj;
     if (struct) {
         return <div className={styles.tooltip}>

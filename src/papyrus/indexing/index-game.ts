@@ -1,3 +1,4 @@
+import type { PapyrusFeature, PapyrusFeatureSupportedGames, PapyrusFeatureUnsupportedGames } from "@/papyrus/feature-support";
 import { toLowerCase } from "../../utils/toLowerCase";
 import type { PapyrusScriptEventOrBaseFunctionIndexed, PapyrusScriptFunctionIndexed, PapyrusScriptFunctionParameterIndexed } from "../data-structures/indexing/function";
 import { AllSourcesCombined, type AllSourcesCombinedObject, type PapyrusGameDataIndexed } from "../data-structures/indexing/game";
@@ -109,41 +110,41 @@ function indexScript<TGame extends PapyrusGame>(script: AnyScript<TGame>, ctx: I
         objectsThatMayNeedFutureBlacklistedSourcesRemoved,
     };
 
-    const indexedStructs = script.structs === null ? null as (TGame extends PapyrusGame.SkyrimSE ? null : never) : Object.fromEntries(Object.entries(
-        script.structs as Record<Lowercase<string>, PapyrusScriptStruct<Exclude<TGame, PapyrusGame.SkyrimSE>>> | Record<Lowercase<string>, PapyrusScriptStructIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>>
+    const indexedStructs = script.structs === null ? null as (TGame extends PapyrusFeatureUnsupportedGames<PapyrusFeature.Structs> ? null : never) : Object.fromEntries(Object.entries(
+        script.structs as Record<Lowercase<string>, PapyrusScriptStruct<PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>> | Record<Lowercase<string>, PapyrusScriptStructIndexed<PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>>
     ).map(([structName, struct]) => [
         structName,
         Object.assign(struct, {
-            game: ctx.unfinishedGameRef as PapyrusGameDataIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>,
-            script: script as unknown as PapyrusScriptIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>,
+            game: ctx.unfinishedGameRef as PapyrusGameDataIndexed<PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>,
+            script: script as unknown as PapyrusScriptIndexed<PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>,
             members: Object.fromEntries(Object.entries(struct.members).map(([memberName, member]) => [
                 memberName,
                 Object.assign(member, {
-                    value: indexTypeValue(member.value, scriptCtx) as  PapyrusScriptValueIndexed<false, false, Exclude<TGame, PapyrusGame.SkyrimSE>>,
-                    script: script as unknown as PapyrusScriptIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>,
-                    struct: struct as unknown as PapyrusScriptStructIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>,
-                    game: ctx.unfinishedGameRef as PapyrusGameDataIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>,
-                } satisfies Partial<PapyrusScriptStructMemberIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>>),
+                    value: indexTypeValue(member.value, scriptCtx) as  PapyrusScriptValueIndexed<false, false, PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>,
+                    script: script as unknown as PapyrusScriptIndexed<PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>,
+                    struct: struct as unknown as PapyrusScriptStructIndexed<PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>,
+                    game: ctx.unfinishedGameRef as PapyrusGameDataIndexed<PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>,
+                } satisfies Partial<PapyrusScriptStructMemberIndexed<PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>>),
             ] as const)),
-        } satisfies Partial<PapyrusScriptStructIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>>),
-    ] as const)) satisfies Record<Lowercase<string>, PapyrusScriptStructIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>>;
+        } satisfies Partial<PapyrusScriptStructIndexed<PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>>),
+    ] as const)) satisfies Record<Lowercase<string>, PapyrusScriptStructIndexed<PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>>;
 
     const res: PapyrusScriptIndexed<TGame> = Object.assign(script, {
         game: ctx.unfinishedGameRef,
         source: ctx.unfinishedSourceRef,
         functions: Object.fromEntries(Object.entries(script.functions).map(([funcNameLowercase, func]) => [funcNameLowercase, Object.assign(func, {
             game: ctx.unfinishedGameRef,
-            returnType: indexType(func.returnType, scriptCtx),
-            script: script as unknown as PapyrusScriptIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>,
+            returnType: indexType<TGame, boolean, false>(func.returnType, scriptCtx),
+            script: script as unknown as PapyrusScriptIndexed<TGame>,
             parameters: func.parameters.map(param => Object.assign(param, {
-                value: indexTypeValue(param.value, scriptCtx),
+                value: indexTypeValue<TGame, boolean, true>(param.value, scriptCtx),
             } satisfies Partial<PapyrusScriptFunctionParameterIndexed<TGame>>)),
         } satisfies Partial<PapyrusScriptFunctionIndexed<TGame>>)])),
         events: Object.fromEntries(Object.entries(script.events).map(([eventNameLowercase, event]) => [eventNameLowercase, Object.assign(event, {
             game: ctx.unfinishedGameRef,
-            script: script as unknown as PapyrusScriptIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>,
+            script: script as unknown as PapyrusScriptIndexed<TGame>,
             parameters: event.parameters.map(param => Object.assign(param, {
-                value: indexTypeValue(param.value, scriptCtx),
+                value: indexTypeValue<TGame, boolean, true>(param.value, scriptCtx),
             } satisfies Partial<PapyrusScriptFunctionParameterIndexed<TGame>>)),
         } satisfies Partial<PapyrusScriptEventOrBaseFunctionIndexed<TGame>>)])),
         extends: getPossibleScriptsFinal(script.extends ? toLowerCase(script.extends) : script.extends as null|'', ctx.scriptsByNameThenSource, objectsThatMayNeedFutureBlacklistedSourcesRemoved, ()=>{res.extends = UnknownPapyrusScript}),
@@ -154,19 +155,19 @@ function indexScript<TGame extends PapyrusGame>(script: AnyScript<TGame>, ctx: I
             groupName,
             Object.assign(group, {
                 game: ctx.unfinishedGameRef,
-                script: script as unknown as PapyrusScriptIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>,
+                script: script as unknown as PapyrusScriptIndexed<TGame>,
                 properties: Object.fromEntries(Object.entries(group.properties).map(([propertyName, property]) => [
                     propertyName,
                     Object.assign(property, {
                         game: ctx.unfinishedGameRef,
-                        script: script as unknown as PapyrusScriptIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>,
-                        group: group as unknown as PapyrusScriptPropertyGroupIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>,
-                        value: indexTypeValue(property.value, scriptCtx),
+                        script: script as unknown as PapyrusScriptIndexed<TGame>,
+                        group: group as unknown as PapyrusScriptPropertyGroupIndexed<TGame>,
+                        value: indexTypeValue<TGame, boolean, false>(property.value, scriptCtx),
                     } satisfies Partial<PapyrusScriptPropertyIndexed<TGame>>),
                 ] as const)),
             } satisfies Partial<PapyrusScriptPropertyGroupIndexed<TGame>>),
         ] as const)),
-        structs: indexedStructs as (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? Record<Lowercase<string>, PapyrusScriptStructIndexed<TGame>> : never) | (TGame extends PapyrusGame.SkyrimSE ? null : never),
+        structs: indexedStructs as (TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.Structs> ? Record<Lowercase<string>, PapyrusScriptStructIndexed<TGame>> : never) | (TGame extends PapyrusFeatureUnsupportedGames<PapyrusFeature.Structs> ? null : never),
     } satisfies Partial<PapyrusScriptIndexed<TGame>>);
 
     for (const object of objectsThatMayNeedFutureBlacklistedSourcesRemoved) {
@@ -284,7 +285,7 @@ function indexType<TGame extends PapyrusGame, TIsArray extends boolean, TIsParam
         case PapyrusScriptTypeArchetype.Struct: {
             if ('struct' in type) return type;
             const scriptNameLowercase = toLowerCase(type.scriptName);
-            const foundScriptAggregateRaw = scriptsByNameThenSource[scriptNameLowercase] as Record<Lowercase<string>, PapyrusScriptIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>> | undefined;
+            const foundScriptAggregateRaw = scriptsByNameThenSource[scriptNameLowercase] as Record<Lowercase<string>, PapyrusScriptIndexed<PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>> | undefined;
             if (!foundScriptAggregateRaw) {
                 return Object.assign(type, {
                     script: UnknownPapyrusScript,
@@ -301,7 +302,7 @@ function indexType<TGame extends PapyrusGame, TIsArray extends boolean, TIsParam
             });
             const finalScriptsAggregate = Object.fromEntries(applicableScripts);
             const onEmptied = ()=>{
-                const obj = (type as unknown as PapyrusScriptTypeStructIndexed<boolean, true, Exclude<TGame, PapyrusGame.SkyrimSE>>);
+                const obj = (type as unknown as PapyrusScriptTypeStructIndexed<boolean, true, PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>);
                 obj.script = UnknownPapyrusScript;
                 obj.struct = UnknownPapyrusScriptStruct;
                 obj.scriptWithStruct = UnknownPapyrusScriptStruct;
@@ -316,10 +317,10 @@ function indexType<TGame extends PapyrusGame, TIsArray extends boolean, TIsParam
             }
 
 
-            const res: PapyrusScriptTypeStructIndexed<TIsArray, TIsParameter, Exclude<TGame, PapyrusGame.SkyrimSE>> = Object.assign(type, {
+            const res: PapyrusScriptTypeStructIndexed<TIsArray, TIsParameter, PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>> = Object.assign(type, {
                 script: finalScriptsAggregate,
-                struct: Object.fromEntries(applicableScripts.map(([sourceIdentifier, script]) => [sourceIdentifier, (script.structs as Record<Lowercase<string>, PapyrusScriptStructIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>>)[structNameLowercase]!] as const)),
-                scriptWithStruct: Object.fromEntries(applicableScripts.map(([sourceIdentifier, script]) => [sourceIdentifier, [script, (script.structs as Record<Lowercase<string>, PapyrusScriptStructIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>>)[structNameLowercase]!] as const] as const)),
+                struct: Object.fromEntries(applicableScripts.map(([sourceIdentifier, script]) => [sourceIdentifier, (script.structs as Record<Lowercase<string>, PapyrusScriptStructIndexed<PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>>)[structNameLowercase]!] as const)),
+                scriptWithStruct: Object.fromEntries(applicableScripts.map(([sourceIdentifier, script]) => [sourceIdentifier, [script, (script.structs as Record<Lowercase<string>, PapyrusScriptStructIndexed<PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>>)[structNameLowercase]!] as const] as const)),
             } as const);
 
             ctx.objectsThatMayNeedFutureBlacklistedSourcesRemoved.add(Object.assign(res.struct, {[ON_EMPTIED]: onEmptied}));
@@ -329,12 +330,12 @@ function indexType<TGame extends PapyrusGame, TIsArray extends boolean, TIsParam
         }
         case PapyrusScriptTypeArchetype.ScriptInstanceOrStruct: {
             const thisScriptNameLowercase = toLowerCase(ctx.script.namespaceName);
-            const foundScriptAggregates = [scriptsByNameThenSource[thisScriptNameLowercase] as Record<Lowercase<string>, PapyrusScriptIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>>, ...getAllDownstreamScripts(ctx.script, ctx.scriptsByNameThenSource)];
+            const foundScriptAggregates = [scriptsByNameThenSource[thisScriptNameLowercase] as Record<Lowercase<string>, PapyrusScriptIndexed<PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>>, ...getAllDownstreamScripts(ctx.script, ctx.scriptsByNameThenSource)];
 
             const ambiguousNameLowercase = toLowerCase(type.ambiguousName);
-            const scriptsWithTargetStruct: AnyScriptPossibleScripts<Exclude<TGame, PapyrusGame.SkyrimSE>>[] = Array.from(foundScriptAggregates.map((scriptAggregate) => {
+            const scriptsWithTargetStruct: AnyScriptPossibleScripts<PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>[] = Array.from(foundScriptAggregates.map((scriptAggregate) => {
                 const sourcesToBlacklistIfStructFound: Lowercase<string>[] = [];
-                const filtered = Object.entries(scriptAggregate as AnyScriptPossibleScripts<Exclude<TGame, PapyrusGame.SkyrimSE>>).filter(([sourceIdentifier, script]) => {
+                const filtered = Object.entries(scriptAggregate as AnyScriptPossibleScripts<PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>).filter(([sourceIdentifier, script]) => {
                     const hasStruct = script.structs?.[ambiguousNameLowercase] !== undefined;
                     if (!hasStruct) sourcesToBlacklistIfStructFound.push(sourceIdentifier);
                     return hasStruct;
@@ -346,17 +347,17 @@ function indexType<TGame extends PapyrusGame, TIsArray extends boolean, TIsParam
 
             if (scriptsWithTargetStruct.length !== 0) {
                 if (scriptsWithTargetStruct.length > 1) console.warn('Multiple scripts with struct found for ScriptInstanceOrStruct type', {type, ctx});
-                const firstScriptAggregate = {...scriptsWithTargetStruct[0]! as PapyrusPossibleScripts<Exclude<TGame, PapyrusGame.SkyrimSE>>};
+                const firstScriptAggregate = {...scriptsWithTargetStruct[0]! as PapyrusPossibleScripts<PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>};
                 const res = Object.assign(type, {
                     type: PapyrusScriptTypeArchetype.Struct,
                     script: firstScriptAggregate,
                     scriptName: Object.values(firstScriptAggregate)[0]!.namespaceName,
-                    struct: Object.fromEntries(Object.entries(firstScriptAggregate).map(([sourceIdentifier, script]) => [sourceIdentifier, script.structs![ambiguousNameLowercase] as PapyrusScriptStructIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>] as const)),
+                    struct: Object.fromEntries(Object.entries(firstScriptAggregate).map(([sourceIdentifier, script]) => [sourceIdentifier, script.structs![ambiguousNameLowercase] as PapyrusScriptStructIndexed<PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>] as const)),
                     structName: type.ambiguousName,
-                    scriptWithStruct: Object.fromEntries(Object.entries(firstScriptAggregate).map(([sourceIdentifier, script]) => [sourceIdentifier, [script, script.structs![ambiguousNameLowercase] as PapyrusScriptStructIndexed<Exclude<TGame, PapyrusGame.SkyrimSE>>] as const] as const))
-                } as const) satisfies PapyrusScriptTypeStructIndexed<TIsArray, TIsParameter, Exclude<TGame, PapyrusGame.SkyrimSE>>;
+                    scriptWithStruct: Object.fromEntries(Object.entries(firstScriptAggregate).map(([sourceIdentifier, script]) => [sourceIdentifier, [script, script.structs![ambiguousNameLowercase] as PapyrusScriptStructIndexed<PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>] as const] as const))
+                } as const) satisfies PapyrusScriptTypeStructIndexed<TIsArray, TIsParameter, PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>;
                 const onEmptied = ()=>{
-                    const obj = (type as unknown as PapyrusScriptTypeStructIndexed<boolean, true, Exclude<TGame, PapyrusGame.SkyrimSE>>);
+                    const obj = (type as unknown as PapyrusScriptTypeStructIndexed<boolean, true, PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>);
                     obj.script = UnknownPapyrusScript;
                     obj.struct = UnknownPapyrusScriptStruct;
                     obj.scriptWithStruct = UnknownPapyrusScriptStruct;

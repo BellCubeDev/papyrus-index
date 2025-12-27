@@ -1,3 +1,4 @@
+import type { PapyrusFeature, PapyrusFeatureSupportedGames } from "@/papyrus/feature-support";
 import { memoizeDevServerConst } from "../../../utils/memoizeDevServerConst";
 import type { PapyrusGame } from "../pure/game";
 import type { PapyrusScriptTypeArchetype, PapyrusScriptTypeLiteral, PapyrusScriptTypeScriptInstance, PapyrusScriptTypeStruct, PapyrusScriptTypeVar, PapyrusScriptValueBase, PapyrusScriptValueBool, PapyrusScriptValueFloat, PapyrusScriptValueInt, PapyrusScriptValueString, PapyrusScriptValueVar } from "../pure/type";
@@ -11,13 +12,13 @@ export interface PapyrusScriptTypeScriptInstanceIndexed<TIsArray extends boolean
     script: PapyrusPossibleScripts<TGame> | typeof UnknownPapyrusScript;
 }
 
-export interface PapyrusScriptTypeStructIndexed<TIsArray extends boolean, TIsParameter extends boolean, TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE>> extends PapyrusScriptTypeStruct<TIsArray, TIsParameter> {
+export interface PapyrusScriptTypeStructIndexed<TIsArray extends boolean, TIsParameter extends boolean, TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.Structs>> extends PapyrusScriptTypeStruct<TIsArray, TIsParameter> {
     script: PapyrusPossibleScripts<TGame> | typeof UnknownPapyrusScript;
     struct: Record<Lowercase<string>, PapyrusScriptStructIndexed<TGame>> | typeof UnknownPapyrusScriptStruct;
     scriptWithStruct: Record<Lowercase<string>, readonly [PapyrusScriptIndexed<TGame>, PapyrusScriptStructIndexed<TGame>]> | typeof UnknownPapyrusScript | typeof UnknownPapyrusScriptStruct;
 }
 
-export type PapyrusScriptTypeIndexed<TIsArray extends boolean, TIsParameter extends boolean, TGame extends PapyrusGame> = PapyrusScriptTypeLiteral<TIsArray, TIsParameter> | PapyrusScriptTypeScriptInstanceIndexed<TIsArray, TIsParameter, TGame> | PapyrusScriptTypeStructIndexed<TIsArray, TIsParameter, Exclude<TGame, PapyrusGame.SkyrimSE>> | PapyrusScriptTypeVar<TIsArray, TIsParameter>;
+export type PapyrusScriptTypeIndexed<TIsArray extends boolean, TIsParameter extends boolean, TGame extends PapyrusGame> = PapyrusScriptTypeLiteral<TIsArray, TIsParameter> | PapyrusScriptTypeScriptInstanceIndexed<TIsArray, TIsParameter, TGame> | PapyrusScriptTypeStructIndexed<TIsArray, TIsParameter, PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>> | PapyrusScriptTypeVar<TIsArray, TIsParameter>;
 
 
 export interface PapyrusScriptValueScriptInstanceIndexed<TIsArray extends boolean, TIsParameter extends boolean, TGame extends PapyrusGame> extends PapyrusScriptValueBase<TIsArray, TIsParameter>, PapyrusScriptTypeScriptInstanceIndexed<TIsArray, TIsParameter, TGame> {
@@ -26,10 +27,10 @@ export interface PapyrusScriptValueScriptInstanceIndexed<TIsArray extends boolea
     value: null;
 }
 
-export interface PapyrusScriptValueStructIndexed<TIsArray extends boolean, TIsParameter extends boolean, TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE>> extends PapyrusScriptValueBase<TIsArray, TIsParameter>, PapyrusScriptTypeStructIndexed<TIsArray, TIsParameter, TGame> {
+export interface PapyrusScriptValueStructIndexed<TIsArray extends boolean, TIsParameter extends boolean, TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.Structs>> extends PapyrusScriptValueBase<TIsArray, TIsParameter>, PapyrusScriptTypeStructIndexed<TIsArray, TIsParameter, TGame> {
     type: PapyrusScriptTypeArchetype.Struct;
     /** The value of a PapyrusScriptValueStruct must be None for the purposes of this index. This is because you may not initialize structs outside of a function—nor may you reference properties. */
     value: null;
 }
 
-export type PapyrusScriptValueIndexed<TIsArray extends boolean, TIsParameter extends boolean, TGame extends PapyrusGame> = PapyrusScriptValueBool<TIsArray, TIsParameter> | PapyrusScriptValueInt<TIsArray, TIsParameter> | PapyrusScriptValueFloat<TIsArray, TIsParameter> | PapyrusScriptValueString<TIsArray, TIsParameter> | PapyrusScriptValueScriptInstanceIndexed<TIsArray, TIsParameter, TGame> | PapyrusScriptValueStructIndexed<TIsArray, TIsParameter, Exclude<TGame, PapyrusGame.SkyrimSE>> | PapyrusScriptValueVar<TIsArray, TIsParameter>;
+export type PapyrusScriptValueIndexed<TIsArray extends boolean, TIsParameter extends boolean, TGame extends PapyrusGame> = PapyrusScriptValueBool<TIsArray, TIsParameter> | PapyrusScriptValueInt<TIsArray, TIsParameter> | PapyrusScriptValueFloat<TIsArray, TIsParameter> | PapyrusScriptValueString<TIsArray, TIsParameter> | PapyrusScriptValueScriptInstanceIndexed<TIsArray, TIsParameter, TGame> | PapyrusScriptValueStructIndexed<TIsArray, TIsParameter, PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>> | PapyrusScriptValueVar<TIsArray, TIsParameter>;
