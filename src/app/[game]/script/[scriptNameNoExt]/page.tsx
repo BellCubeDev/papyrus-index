@@ -16,6 +16,7 @@ import { JsonLDGraph } from "../../../components/JsonLDGraph";
 import { prepareUrlParts } from "../../../../utils/prepareUrlParts";
 import type { APIReference, BreadcrumbList, ComputerLanguage } from "schema-dts";
 import { _ } from "ajv";
+import { isPapyrusFeatureSupported, PapyrusFeature } from "@/papyrus/feature-support";
 
 export function generateStaticParams(): ScriptRouteParams[] {
     const params: [complexity: number, paramObj: ScriptRouteParams][] = [];
@@ -69,10 +70,12 @@ export default async function ScriptPage({params}: {readonly params: Promise<Scr
                 <summary>Inheritance Tree</summary>
                 <InheritanceDisplay game={game} data={scriptBySources[AllSourcesCombined].extendedBy} />
             </details>
-            <details suppressHydrationWarning>
-                <summary>Structs</summary>
-                <div className={styles.structs}></div> { /* TODO: Add structs to the script page */ }
-            </details>
+            {isPapyrusFeatureSupported(PapyrusFeature.Structs, game) ?
+                <details suppressHydrationWarning>
+                    <summary>Structs</summary>
+                    <div className={styles.structs}></div> { /* TODO: Add structs to the script page */ }
+                </details>
+            : null}
             <details suppressHydrationWarning>
                 {/* Include property groups here too! */}
                 <summary>Properties</summary>
