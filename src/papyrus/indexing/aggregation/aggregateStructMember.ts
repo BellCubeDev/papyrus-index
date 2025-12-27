@@ -1,6 +1,5 @@
 import type { PapyrusFeature, PapyrusFeatureSupportedGames } from "@/papyrus/feature-support";
 import type { PapyrusScriptStructMemberIndexed, PapyrusScriptStructMemberIndexedAggregate } from "../../data-structures/indexing/struct";
-import type { PapyrusGame } from "../../data-structures/pure/game";
 import { aggregateGenericValue } from "./aggregateGenericValue";
 import { aggregateSourceRecordWithNameRecordEntries } from "./aggregateSourceRecordWithNameRecord";
 import type { AggregateStructContext } from "./aggregateStruct";
