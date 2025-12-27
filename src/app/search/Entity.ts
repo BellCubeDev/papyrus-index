@@ -1,3 +1,4 @@
+import type { PapyrusFeature, PapyrusFeatureSupportedGames } from "@/papyrus/feature-support";
 import type { PapyrusScriptEventOrBaseFunctionIndexedAggregate, PapyrusScriptFunctionIndexedAggregate } from "../../papyrus/data-structures/indexing/function";
 import type { PapyrusScriptPropertyIndexedAggregate } from "../../papyrus/data-structures/indexing/property";
 import type { PapyrusScriptIndexedAggregate } from "../../papyrus/data-structures/indexing/script";
@@ -61,7 +62,7 @@ export interface SearchEntityEvent<TGame extends PapyrusGame> extends SearchEnti
 export interface SearchEntityProperty<TGame extends PapyrusGame> extends SearchEntityPropertyAdditions, PapyrusScriptPropertyIndexedAggregate<TGame> {
 }
 
-export interface SearchEntityStruct<TGame extends PapyrusGame> extends SearchEntityStructAdditions, PapyrusScriptStructIndexedAggregate<Exclude<TGame, PapyrusGame.SkyrimSE>> {
+export interface SearchEntityStruct<TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.Structs>> extends SearchEntityStructAdditions, PapyrusScriptStructIndexedAggregate<TGame> {
 }
 
 export type SearchEntityBaseTypeMapping<TGame extends PapyrusGame> = {
@@ -69,13 +70,13 @@ export type SearchEntityBaseTypeMapping<TGame extends PapyrusGame> = {
     readonly [SearchIndexEntityType.Function]: PapyrusScriptFunctionIndexedAggregate<TGame>;
     readonly [SearchIndexEntityType.Event]: PapyrusScriptEventOrBaseFunctionIndexedAggregate<TGame>;
     readonly [SearchIndexEntityType.Property]: PapyrusScriptPropertyIndexedAggregate<TGame>;
-    readonly [SearchIndexEntityType.Struct]: PapyrusScriptStructIndexedAggregate<Exclude<TGame, PapyrusGame.SkyrimSE>>;
+    readonly [SearchIndexEntityType.Struct]: PapyrusScriptStructIndexedAggregate<PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>;
 }
 
 
 
-export type SearchIndexEntity<TGame extends PapyrusGame> = SearchEntityScript<TGame> | SearchEntityFunction<TGame> | SearchEntityEvent<TGame> | SearchEntityProperty<TGame> | SearchEntityStruct<TGame>;
-export type SearchIndexEntityKeys<TGame extends PapyrusGame> = keyof SearchEntityScript<TGame> | keyof SearchEntityFunction<TGame> | keyof SearchEntityEvent<TGame> | keyof SearchEntityProperty<TGame> | keyof SearchEntityStruct<TGame>;
+export type SearchIndexEntity<TGame extends PapyrusGame> = SearchEntityScript<TGame> | SearchEntityFunction<TGame> | SearchEntityEvent<TGame> | SearchEntityProperty<TGame> | SearchEntityStruct<PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>;
+export type SearchIndexEntityKeys<TGame extends PapyrusGame> = keyof SearchEntityScript<TGame> | keyof SearchEntityFunction<TGame> | keyof SearchEntityEvent<TGame> | keyof SearchEntityProperty<TGame> | keyof SearchEntityStruct<PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>;
 
 
 
@@ -84,7 +85,7 @@ export type SearchIndexEntitiesRecordRawType<TGame extends PapyrusGame> = {
     readonly [SearchIndexEntityType.Function]: SearchEntityFunction<TGame>,
     readonly [SearchIndexEntityType.Event]: SearchEntityEvent<TGame>,
     readonly [SearchIndexEntityType.Property]: SearchEntityProperty<TGame>,
-    readonly [SearchIndexEntityType.Struct]: SearchEntityStruct<TGame>,
+    readonly [SearchIndexEntityType.Struct]: SearchEntityStruct<PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>,
 }
 
 export type AnySearchIndexEntity<TGame extends PapyrusGame> = SearchIndexEntitiesRecordRawType<TGame>[keyof SearchIndexEntitiesRecordRawType<TGame>];

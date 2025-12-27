@@ -1,3 +1,4 @@
+import type { PapyrusFeature, PapyrusFeatureSupportedGames, PapyrusFeatureUnsupportedGames } from "@/papyrus/feature-support";
 import type { PapyrusCompilerOptional } from "./compilerOptional";
 import type { PapyrusScriptDocumentable } from "./documentable";
 import type { PapyrusScriptEventOrBaseFunction, PapyrusScriptFunction } from "./function";
@@ -61,8 +62,8 @@ export interface PapyrusScriptUnderConstruction<TGame extends PapyrusGame> exten
     isConst: boolean;
     isNative: boolean | null;
     default: boolean | null;
-    structs: Record<Lowercase<string>, PapyrusScriptStruct<Exclude<TGame, PapyrusGame.SkyrimSE>>> | null;
-    namespace: Exclude<string, ''> | null | undefined;
+    structs: Record<Lowercase<string>, PapyrusScriptStruct<PapyrusFeatureSupportedGames<PapyrusFeature.Structs>>> | null;
+    namespace: string | null | undefined;
     imports: string[];
 }
 
@@ -74,9 +75,9 @@ export interface PapyrusScript<TGame extends PapyrusGame> extends PapyrusScriptU
     extends: string | null;
     functions: Record<Lowercase<string>, PapyrusScriptFunction<TGame>>;
     propertyGroups: Record<Lowercase<string>, PapyrusScriptPropertyGroup<TGame>>;
-    isConst: (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? boolean : never) | false;
-    isNative: (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? boolean : never) | (TGame extends PapyrusGame.SkyrimSE ? null : never);
-    default: (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? boolean : never) | (TGame extends PapyrusGame.SkyrimSE ? null : never);
-    structs: (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? Record<Lowercase<string>, PapyrusScriptStruct<TGame>> : never) | (TGame extends PapyrusGame.SkyrimSE ? null : never);
-    namespace: null | (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? Exclude<string, ''> : never);
+    isConst: (TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.ConstScriptFlag> ? boolean : never) | false;
+    isNative: (TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.NativeScriptFlag> ? boolean : never) | (TGame extends PapyrusFeatureUnsupportedGames<PapyrusFeature.NativeScriptFlag> ? null : never);
+    default: (TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.DefaultScriptFlag> ? boolean : never) | (TGame extends PapyrusFeatureUnsupportedGames<PapyrusFeature.DefaultScriptFlag> ? null : never);
+    structs: (TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.Structs> ? Record<Lowercase<string>, PapyrusScriptStruct<TGame>> : never) | (TGame extends PapyrusFeatureUnsupportedGames<PapyrusFeature.Structs> ? null : never);
+    namespace: null | (TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.ScriptNamespaces> ? string : never);
 }

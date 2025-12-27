@@ -12,6 +12,7 @@ import type { PapyrusScriptStruct, PapyrusScriptStructMember } from '../data-str
 import { PapyrusScriptTypeArchetype, type PapyrusScriptType, type PapyrusScriptValue } from '../data-structures/pure/type';
 import { PapyrusParserError } from './PapyrusParserError';
 import type { PapyrusScriptDiscoveredDocument } from './parse-all-for-game';
+import { isPapyrusFeatureSupported, PapyrusFeature, type PapyrusFeatureSupportedGames, type PapyrusFeatureUnsupportedGames } from '@/papyrus/feature-support';
 
 /** Note that all keywords are case-insensitive. This enum's values must be lowercase. This is enforced by TypeScript in a declaration below this enum. */
 enum PapyrusKeyword {
@@ -203,9 +204,9 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
             isConst: false,
             extends: null,
             isHidden: false,
-            structs: this.game === PapyrusGame.SkyrimSE ? null : {},
-            default: this.game === PapyrusGame.SkyrimSE ? null : false,
-            isNative: this.game === PapyrusGame.SkyrimSE ? null : false,
+            structs: !isPapyrusFeatureSupported(PapyrusFeature.Structs, this.game) ? null : {},
+            default: !isPapyrusFeatureSupported(PapyrusFeature.DefaultScriptFlag, this.game) ? null : false,
+            isNative: !isPapyrusFeatureSupported(PapyrusFeature.NativeScriptFlag, this.game) ? null : false,
         };
     }
 
@@ -383,7 +384,7 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
             this.result.namespace = null;
             this.result.nameWithoutNamespace = namespaceOrScriptName;
         } else {
-            if (this.game === PapyrusGame.SkyrimSE) throw new PapyrusParserError('Script namespaces are not supported by Skyrim\'s Papyrus compiler. Expected identifier, but got ":".', tokenIndex, this.document);
+            if (!isPapyrusFeatureSupported(PapyrusFeature.ScriptNamespaces, this.game)) throw new PapyrusParserError('Script namespaces are not supported by Skyrim\'s Papyrus compiler. Expected identifier, but got ":".', tokenIndex, this.document);
             this.result.namespace = namespaceOrScriptName;
             this.result.nameWithoutNamespace = scriptNameIfHasNamespace;
         }
@@ -431,12 +432,12 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
                     this.result.default = true;
                     break;
                 case PapyrusKeyword.DebugOnly:
-                    if (this.game === PapyrusGame.SkyrimSE) throw new PapyrusParserError('Debug-only scripts are not supported by Skyrim\'s Papyrus compiler', nextTokenIndex, this.document);
-                    this.result.isDebugOnly = true as false | (TGame extends PapyrusGame.Fallout4 | PapyrusGame.Fallout76 | PapyrusGame.Starfield ? true : never);
+                    if (!isPapyrusFeatureSupported(PapyrusFeature.CompilerTargets, this.game)) throw new PapyrusParserError('Debug-only scripts are not supported by Skyrim\'s Papyrus compiler', nextTokenIndex, this.document);
+                    this.result.isDebugOnly = true as (TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.CompilerTargets> ? true : never)
                     break;
                 case PapyrusKeyword.BetaOnly:
-                    if (this.game === PapyrusGame.SkyrimSE) throw new PapyrusParserError('Beta-only scripts are not supported by Skyrim\'s Papyrus compiler', nextTokenIndex, this.document);
-                    this.result.isBetaOnly = true as false | (TGame extends PapyrusGame.Fallout4 | PapyrusGame.Fallout76 | PapyrusGame.Starfield ? true : never);
+                    if (!isPapyrusFeatureSupported(PapyrusFeature.CompilerTargets, this.game)) throw new PapyrusParserError('Beta-only scripts are not supported by Skyrim\'s Papyrus compiler', nextTokenIndex, this.document);
+                    this.result.isBetaOnly = true as (TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.CompilerTargets> ? true : never)
                     break;
                 case '{':
                     this.result.documentationString = this.parseDocumentationString(nextTokenIndex, false);
@@ -604,7 +605,7 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
         if (structNameLowercase in this.result.structs) throw new PapyrusParserError(`Struct "${structName}" already exists in this script!`, structNameIndex, this.document);
         if (PapyrusKeywords.has(structNameLowercase)) throw new PapyrusParserError(`Struct name "${structName}" is a reserved keyword!`, structNameIndex, this.document);
 
-        const members: PapyrusScriptStructMember<Exclude<TGame, PapyrusGame.SkyrimSE>>[] = [];
+        const members: PapyrusScriptStructMember<PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>[] = [];
         let [nextTokenIndex, nextTokenCased] = this.getNextToken(true);
         if (nextTokenCased === EOF) throw new PapyrusParserError('Expected struct body, but got the end of the file (EOF)!', this.originalIndex, this.document);
         let nextTokenLowercase = toLowerCase(nextTokenCased);
@@ -799,7 +800,7 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
                     if (maybeDocumentationComment !== EOF) documentationComment ??= maybeDocumentationComment;
                     break;
                 } case PapyrusKeyword.Const: {
-                    if (this.game === PapyrusGame.SkyrimSE) throw new PapyrusParserError('Const properties are not supported by Skyrim\'s Papyrus compiler', tokenIndex, this.document);
+                    if (!isPapyrusFeatureSupported(PapyrusFeature.ConstPropertyFlag, this.game)) throw new PapyrusParserError('Const properties are not supported by Skyrim\'s Papyrus compiler', tokenIndex, this.document);
                     isConstant = true;
                     const maybeDocumentationComment = this.getCommentBeforeNextTokenOrLineBreak();
                     if (maybeDocumentationComment !== EOF) documentationComment ??= maybeDocumentationComment;
@@ -815,7 +816,7 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
                     if (maybeDocumentationComment !== EOF) documentationComment ??= maybeDocumentationComment;
                     break;
                 } case PapyrusKeyword.Mandatory: {
-                    if (this.game === PapyrusGame.SkyrimSE) throw new PapyrusParserError('Mandatory properties are not supported by Skyrim\'s Papyrus compiler', tokenIndex, this.document);
+                    if (!isPapyrusFeatureSupported(PapyrusFeature.MandatoryPropertyFlag, this.game)) throw new PapyrusParserError('Mandatory properties are not supported by Skyrim\'s Papyrus compiler', tokenIndex, this.document);
                     isMandatory = true;
                     const maybeDocumentationComment = this.getCommentBeforeNextTokenOrLineBreak();
                     if (maybeDocumentationComment !== EOF) documentationComment ??= maybeDocumentationComment;
@@ -1000,14 +1001,14 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
                     isNative = true;
                     break;
                 } case PapyrusKeyword.DebugOnly: {
-                    if (this.game === PapyrusGame.SkyrimSE) throw new PapyrusParserError('Debug-only functions are not supported by Skyrim\'s Papyrus compiler', tokenIndex, this.document);
+                    if (!isPapyrusFeatureSupported(PapyrusFeature.CompilerTargets, this.game)) throw new PapyrusParserError('Debug-only functions are not supported by Skyrim\'s Papyrus compiler', tokenIndex, this.document);
                     //console.debug('Encountered Debug-only function flag');
                     const maybeDocumentationComment = this.getCommentBeforeNextTokenOrLineBreak();
                     if (maybeDocumentationComment !== EOF) documentationComment ??= maybeDocumentationComment;
                     isDebugOnly = true;
                     break;
                 } case PapyrusKeyword.BetaOnly: {
-                    if (this.game === PapyrusGame.SkyrimSE) throw new PapyrusParserError('Beta-only functions are not supported by Skyrim\'s Papyrus compiler', tokenIndex, this.document);
+                    if (!isPapyrusFeatureSupported(PapyrusFeature.CompilerTargets, this.game)) throw new PapyrusParserError('Beta-only functions are not supported by Skyrim\'s Papyrus compiler', tokenIndex, this.document);
                     //console.debug('Encountered Beta-only function flag');
                     const maybeDocumentationComment = this.getCommentBeforeNextTokenOrLineBreak();
                     if (maybeDocumentationComment !== EOF) documentationComment ??= maybeDocumentationComment;
@@ -1108,11 +1109,11 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
             const tokenLowercase = toLowerCase(tokenCased);
             switch(tokenLowercase) {
                 case PapyrusKeyword.DebugOnly:
-                    if (this.game === PapyrusGame.SkyrimSE) throw new PapyrusParserError('Debug-only events are not supported by Skyrim\'s Papyrus compiler', tokenIndex, this.document);
+                    if (!isPapyrusFeatureSupported(PapyrusFeature.CompilerTargets, this.game)) throw new PapyrusParserError('Debug-only events are not supported by Skyrim\'s Papyrus compiler', tokenIndex, this.document);
                     isDebugOnly = true;
                     break;
                 case PapyrusKeyword.BetaOnly:
-                    if (this.game === PapyrusGame.SkyrimSE) throw new PapyrusParserError('Beta-only events are not supported by Skyrim\'s Papyrus compiler', tokenIndex, this.document);
+                    if (!isPapyrusFeatureSupported(PapyrusFeature.CompilerTargets, this.game)) throw new PapyrusParserError('Beta-only events are not supported by Skyrim\'s Papyrus compiler', tokenIndex, this.document);
                     isBetaOnly = true;
                     break;
                 case PapyrusKeyword.Native: // so apparently Skyrim's compiler just... supports this? idk man but Better Third Person Selection uses it
@@ -1273,7 +1274,7 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
                     isArray,
                 };
             default:
-                if (this.game === PapyrusGame.SkyrimSE) {
+                if (!isPapyrusFeatureSupported(PapyrusFeature.Structs, this.game)) {
                     return {
                         type: PapyrusScriptTypeArchetype.ScriptInstance,
                         isArray,
@@ -1419,16 +1420,16 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
             isBetaOnly: this.result.isBetaOnly ?? false,
             isDebugOnly: this.result.isDebugOnly ?? false,
             isHidden: this.result.isHidden ?? false,
-            default: (this.result.default ?? null) as (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? boolean : never) | (TGame extends PapyrusGame.SkyrimSE ? null : never),
-            isNative: this.result.isNative as (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? boolean : never) | (TGame extends PapyrusGame.SkyrimSE ? null : never),
+            default: (this.result.default ?? null) as (TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.DefaultScriptFlag> ? boolean : never) | (TGame extends PapyrusFeatureUnsupportedGames<PapyrusFeature.DefaultScriptFlag> ? null : never),
+            isNative: this.result.isNative as (TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.NativeScriptFlag> ? boolean : never) | (TGame extends PapyrusFeatureUnsupportedGames<PapyrusFeature.NativeScriptFlag> ? null : never),
             isConditional: this.result.isConditional ?? false,
-            isConst: (this.result.isConst ?? false) as (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? boolean : never) | false,
+            isConst: (this.result.isConst ?? false) as (TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.ConstScriptFlag> ? boolean : never) | false,
             documentationComment: this.result.documentationComment ?? null,
             documentationString: this.result.documentationString ?? null,
             extends: this.result.extends ?? null,
             imports: this.result.imports,
             propertyGroups: this.result.propertyGroups,
-            structs: this.result.structs as (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? Record<Lowercase<string>, PapyrusScriptStruct<TGame>> : never) | (TGame extends PapyrusGame.SkyrimSE ? null : never),
+            structs: this.result.structs as (TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.Structs> ? Record<Lowercase<string>, PapyrusScriptStruct<TGame>> : never) | (TGame extends PapyrusFeatureUnsupportedGames<PapyrusFeature.Structs> ? null : never),
             events: this.result.events,
             functions: this.result.functions,
         };
@@ -1445,16 +1446,16 @@ export class PapyrusScriptParser<TGame extends PapyrusGame> {
             isBetaOnly: this.result.isBetaOnly ?? false,
             isDebugOnly: this.result.isDebugOnly ?? false,
             isHidden: this.result.isHidden ?? false,
-            default: (this.result.default ?? null) as (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? boolean : never) | (TGame extends PapyrusGame.SkyrimSE ? null : never),
-            isNative: this.result.isNative as (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? boolean : never) | (TGame extends PapyrusGame.SkyrimSE ? null : never),
+            default: (this.result.default ?? null) as (TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.DefaultScriptFlag> ? boolean : never) | (TGame extends PapyrusFeatureUnsupportedGames<PapyrusFeature.DefaultScriptFlag> ? null : never),
+            isNative: this.result.isNative as (TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.NativeScriptFlag> ? boolean : never) | (TGame extends PapyrusFeatureUnsupportedGames<PapyrusFeature.NativeScriptFlag> ? null : never),
             isConditional: this.result.isConditional ?? false,
-            isConst: (this.result.isConst ?? false) as (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? boolean : never) | false,
+            isConst: (this.result.isConst ?? false) as (TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.ConstScriptFlag> ? boolean : never) | false,
             documentationComment: this.result.documentationComment ?? null,
             documentationString: this.result.documentationString ?? null,
             extends: this.result.extends ?? null,
             imports: this.result.imports,
             propertyGroups: this.result.propertyGroups,
-            structs: this.result.structs as (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? Record<Lowercase<string>, PapyrusScriptStruct<TGame>> : never) | (TGame extends PapyrusGame.SkyrimSE ? null : never),
+            structs: this.result.structs as (TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.Structs> ? Record<Lowercase<string>, PapyrusScriptStruct<TGame>> : never) | (TGame extends PapyrusFeatureUnsupportedGames<PapyrusFeature.Structs> ? null : never),
             events: this.result.events,
             functions: this.result.functions,
         };

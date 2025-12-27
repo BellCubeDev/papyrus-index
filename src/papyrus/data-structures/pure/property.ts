@@ -1,3 +1,4 @@
+import type { PapyrusFeature, PapyrusFeatureSupportedGames } from "@/papyrus/feature-support";
 import type { PapyrusScriptDocumentable } from "./documentable";
 import type { PapyrusGame } from "./game";
 import type { PapyrusScriptValue } from "./type";
@@ -19,7 +20,7 @@ export interface PapyrusScriptProperty<TGame extends PapyrusGame> extends Papyru
     // Post-Skyrim additions:
 
     /** If false, the value is stored in the player's save. If true, the value is read from the plugin */
-    constant: (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? true : never) | false;
+    constant: (TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.ConstPropertyFlag> ? true : never) | false;
     /** Whether the CK will spit out a warning when this is property is not filled */
-    mandatory: (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? true : never) | false;
+    mandatory: (TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.MandatoryPropertyFlag> ? true : never) | false;
 }

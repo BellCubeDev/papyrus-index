@@ -33,8 +33,10 @@ type SimpleObjectAssign = {
 };
 
 /** A type representing the properties that must be specified to transform type TFromType into type TIntoType */
-type ObjectAssignDiff<TFromType extends {}, TIntoType extends {}> = Partial<TIntoType> & {
-    readonly [K in keyof TIntoType as K extends keyof TFromType ? TFromType[K] extends TIntoType[K] ? never : K : K]: TIntoType[K]
+type ObjectAssignDiff<TFromType extends {}, TIntoType extends {}> = {
+    readonly [K in keyof TIntoType as K extends keyof TFromType ? TFromType[K] extends TIntoType[K] ? never : K : K]: TIntoType[K];
+} & {
+    readonly [K in keyof TIntoType as K extends keyof TFromType ? TFromType[K] extends TIntoType[K] ? K : never : never]?: TIntoType[K];
 }
 
 type RecordOfPromises<T> = { [K in keyof T]: Awaitable<T[K]> };

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import type { PapyrusFeature, PapyrusFeatureSupportedGames } from "@/papyrus/feature-support";
 import type { PapyrusScriptDocumentable } from "../pure/documentable";
 import type { PapyrusGame } from "../pure/game";
 import type { PapyrusCollapsedSpecifier } from "../pure/propertyGroup";
@@ -7,7 +8,7 @@ import type { PapyrusScriptPropertyIndexed, PapyrusScriptPropertyIndexedAggregat
 import type { PapyrusScriptIndexed, PapyrusScriptIndexedAggregate } from "./script";
 
 export interface PapyrusScriptPropertyGroupIndexed<TGame extends PapyrusGame> extends PapyrusScriptDocumentable {
-    collapsed: PapyrusCollapsedSpecifier.Never | (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? PapyrusCollapsedSpecifier : never);
+    collapsed: PapyrusCollapsedSpecifier.Never | (TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.PropertyGroups> ? PapyrusCollapsedSpecifier : never);
     name: string;
     properties: Record<Lowercase<string>, PapyrusScriptPropertyIndexed<TGame>>;
     /** The script this property group originates from */
@@ -26,7 +27,7 @@ type PapyrusScriptPropertyGroupIndexedAggregateBase<TGame extends PapyrusGame> =
 type PapyrusScriptPropertyGroupIndexedAggregateSpecialKeys<TGame extends PapyrusGame> = {
     $entityId: number;
     $sources: Record<Lowercase<string>, PapyrusScriptPropertyGroupIndexed<TGame>>;
-    collapsed: [Lowercase<string>[], PapyrusCollapsedSpecifier.Never | (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? PapyrusCollapsedSpecifier : never)][];
+    collapsed: [Lowercase<string>[], PapyrusCollapsedSpecifier.Never | (TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.PropertyGroups> ? PapyrusCollapsedSpecifier : never)][];
     properties: Record<Lowercase<string>, PapyrusScriptPropertyIndexedAggregate<TGame>>;
     script: PapyrusScriptIndexedAggregate<TGame>;
     game: PapyrusGameDataIndexed<TGame>;

@@ -12,6 +12,7 @@ import type { SearchDataGETResponse, SingleExtraEntityDataRecord } from "../[gam
 import { SearchIndexEntityGroupRecord, SearchIndexEntityType, selectEntityGroups, type SearchIndexEntity, type SelectEntityGroups } from "./Entity";
 import { deepPrepareObject, getStringForSymbol, prepForBorderCrossing, SYMBOL_PREFIX, type DeepPreparedObject } from "./Preparation";
 import type { PapyrusSourceType } from "../../papyrus/data-structures/pure/scriptSource";
+import { isPapyrusFeatureSupported, PapyrusFeature, type PapyrusFeatureSupportedGames } from "@/papyrus/feature-support";
 
 export interface WorkerMessageBase {
     type: string;
@@ -298,7 +299,7 @@ function getTypeSearchKey(typeRaw: DeepPreparedObject<PapyrusScriptTypeIndexed<b
             return typeof type.script === 'string' ? type.script === getStringForSymbol(UnknownPapyrusScript) ? type.scriptName : '' : Object.values(type.script)[0]!.namespaceName;
         }
         case PapyrusScriptTypeArchetype.Struct: {
-            const type = typeRaw as DeepPreparedObject<PapyrusScriptTypeStructIndexed<boolean, false, Exclude<PapyrusGame, PapyrusGame.SkyrimSE>>>;
+            const type = typeRaw as DeepPreparedObject<PapyrusScriptTypeStructIndexed<boolean, false, PapyrusFeatureSupportedGames<PapyrusFeature.Structs>>>;
             return typeof type.struct === 'string' ? type.struct === getStringForSymbol(UnknownPapyrusScriptStruct) ? `${type.scriptName} ${type.structName}` : ''
                 : typeof type.script === 'string' ? type.script === getStringForSymbol(UnknownPapyrusScript) ? `${type.scriptName} ${Object.values(type.struct)[0]!.name}` : ''
                 : `${Object.values(type.script)[0]!.namespaceName} ${Object.values(type.struct)[0]!.name}`;
@@ -360,10 +361,10 @@ self.addEventListener('message', async function searchWorkerMessageHandler(e: Me
                             if (matchedKeys.find((value) => value.target === coolestSource.sourceIdentifier)) newScore *= 2;
                             if (matchedKeys.find((value) => value.target.toLowerCase() === obj.namespaceName[0]![1].target)) newScore *= 10;
 
-                            if (game === PapyrusGame.SkyrimSE) {
-                                if (obj.isHidden) newScore *= 8;
-                            } else {
+                            if (isPapyrusFeatureSupported(PapyrusFeature.NativeScriptFlag, game)) {
                                 if (obj.isNative.some(v => v[1])) newScore *= 8;
+                            } else {
+                                if (obj.isHidden) newScore *= 8;
                             }
 
                             break;

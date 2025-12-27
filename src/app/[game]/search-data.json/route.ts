@@ -13,6 +13,7 @@ import { getMediaWikiFunctionData } from "../../../wiki-data-extraction/ck-wiki/
 import { getBestStringVariant } from "../../../utils/getBestName";
 import { AllSourcesCombined } from "../../../papyrus/data-structures/indexing/game";
 import { getGitHubWikiFunctionData } from "../../components/papyrus/function/signature/getGitHubWikiFunctionDescription";
+import type { PapyrusFeature, PapyrusFeatureSupportedGames } from "@/papyrus/feature-support";
 
 const PapyrusGamesCaseMapped = new Map<string, PapyrusGame>(Object.values(PapyrusGame).map(game => [game.toLowerCase(), game]));
 
@@ -96,7 +97,7 @@ async function getExtraEntityDataForProperty(prop: PapyrusScriptPropertyIndexedA
         githubWikiData: null,
     }];
 }
-async function getExtraEntityDataForStruct(struct: PapyrusScriptStructIndexedAggregate<Exclude<PapyrusGame, PapyrusGame.SkyrimSE>>): Promise<[number, SingleExtraEntityDataRecord[SearchIndexEntityType.Struct]]> {
+async function getExtraEntityDataForStruct(struct: PapyrusScriptStructIndexedAggregate<PapyrusFeatureSupportedGames<PapyrusFeature.Structs>>): Promise<[number, SingleExtraEntityDataRecord[SearchIndexEntityType.Struct]]> {
     // TODO: Implement getExtraEntityDataForStruct()
     return [struct.$entityId, {
         ckWikiData: null,

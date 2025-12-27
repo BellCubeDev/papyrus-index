@@ -1,3 +1,4 @@
+import type { PapyrusFeature, PapyrusFeatureSupportedGames, PapyrusFeatureUnsupportedGames } from "@/papyrus/feature-support";
 import type { PapyrusPossibleScripts, PapyrusScriptIndexedAggregate } from "../../data-structures/indexing/script";
 import type { PapyrusScriptStructIndexed, PapyrusScriptStructIndexedAggregate } from "../../data-structures/indexing/struct";
 import type { PapyrusGame } from "../../data-structures/pure/game";
@@ -18,8 +19,6 @@ export function aggregateScript<TGame extends PapyrusGame>(possibleScripts: Papy
     if (scriptEntries.length === 0) throw new Error('No scripts to merge!');
 
     const ref = {};
-
-    type TGameNoSkyrim = Exclude<TGame, PapyrusGame.SkyrimSE>;
 
     const aggregateScriptContext: AggregateScriptContext<TGame> = {
         ...ctx,
@@ -62,9 +61,13 @@ export function aggregateScript<TGame extends PapyrusGame>(possibleScripts: Papy
 
         // Each of these will have its record values transformed into special aggregate types, similar to how aggregateScript itself works
         functions: aggregateFunctionsRecord(scriptEntries.map(([sourceIdentifier, script]) => [sourceIdentifier, script.functions]), aggregateScriptContext),
-        structs: scriptEntries.some(v=>v[1].structs === null)
-            ? null as TGame extends PapyrusGame.SkyrimSE ? null : never
-            : aggregateStructsRecord(scriptEntries.map(([sourceIdentifier, script]) => [sourceIdentifier, script.structs as Record<Lowercase<string>, PapyrusScriptStructIndexed<TGameNoSkyrim>>]), aggregateScriptContext as AggregateScriptContext<TGameNoSkyrim>) as (TGame extends Exclude<PapyrusGame, PapyrusGame.SkyrimSE> ? Record<Lowercase<string>, PapyrusScriptStructIndexedAggregate<Exclude<TGame, PapyrusGame.SkyrimSE>>> : never) ,
+        structs: (scriptEntries.some(v=>v[1].structs === null)
+            ? null
+            : aggregateStructsRecord(
+                scriptEntries.map(([sourceIdentifier, script]) => [sourceIdentifier, script.structs as Record<Lowercase<string>, PapyrusScriptStructIndexed<PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>>]),
+                aggregateScriptContext as AggregateScriptContext<PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>
+            )
+        ) as (TGame extends PapyrusFeatureSupportedGames<PapyrusFeature.Structs> ? Record<Lowercase<string>, PapyrusScriptStructIndexedAggregate<PapyrusFeatureSupportedGames<PapyrusFeature.Structs, TGame>>> : never) | (TGame extends PapyrusFeatureUnsupportedGames<PapyrusFeature.Structs> ? null : never),
         events: aggregateEventsOrBaseFunctionsRecord(scriptEntries.map(([sourceIdentifier, script]) => [sourceIdentifier, script.events] as const), aggregateScriptContext),
         propertyGroups: aggregatePropertyGroupsRecord(scriptEntries.map(([sourceIdentifier, script]) => [sourceIdentifier, script.propertyGroups]), aggregateScriptContext),
     } satisfies ObjectAssignDiff<typeof ref, PapyrusScriptIndexedAggregate<TGame>>);
