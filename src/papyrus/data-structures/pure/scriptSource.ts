@@ -119,6 +119,9 @@ export interface PapyrusScriptSourceMetadataWithGitHub<TGame extends PapyrusGame
 }
 
 export type PapyrusScriptSourceMetadataExternal<TGame extends PapyrusGame> = PapyrusScriptSourceMetadataXSE<TGame> | PapyrusScriptSourceMetadataWithGitHub<TGame>;
-export type PapyrusScriptSourceMetadataForSchema<TGame extends PapyrusGame> =PapyrusScriptSourceMetadataVanilla<TGame> | PapyrusScriptSourceMetadataExternal<TGame>;
+export type PapyrusScriptSourceMetadataForSchema<TGame extends PapyrusGame> = PapyrusScriptSourceMetadataVanilla<TGame> | PapyrusScriptSourceMetadataExternal<TGame>;
 export type PapyrusScriptSourceMetadata<TGame extends PapyrusGame> = PapyrusScriptSourceMetadataDynamicAdditions<TGame> & PapyrusScriptSourceMetadataForSchema<TGame>;
 export type PapyrusScriptSource<TGame extends PapyrusGame> = PapyrusScriptSourceScriptData<TGame> & PapyrusScriptSourceMetadata<TGame>;
+
+
+export type PapyrusScriptSourceMetadataForSchemaPapyrusGame = PapyrusScriptSourceMetadataForSchema<PapyrusGame>;
