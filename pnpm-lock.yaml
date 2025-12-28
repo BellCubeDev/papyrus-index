@@ -8,6 +8,9 @@ overrides:
   '@types/node': ^22.14.1
 
 patchedDependencies:
+  '@bprogress/next':
+    hash: 10a2256e65e730d3aab2809f141c217a09a8b3d5ae60039736b7768e8df0bf96
+    path: patches/@bprogress__next.patch
   fuzzysort:
     hash: 6aff75555c827b664753872db3e693f1cc1b781c346f18078c6a21d9cd1ba134
     path: patches/fuzzysort.patch
@@ -27,7 +30,7 @@ importers:
         version: 2.1.0
       '@bprogress/next':
         specifier: ^3.2.12
-        version: 3.2.12(next@16.1.1(@babel/core@7.28.5)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.97.1))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        version: 3.2.12(patch_hash=10a2256e65e730d3aab2809f141c217a09a8b3d5ae60039736b7768e8df0bf96)(next@16.1.1(@babel/core@7.28.5)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.97.1))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@eslint/compat':
         specifier: ^2.0.0
         version: 2.0.0(eslint@9.39.2(jiti@1.21.7))
@@ -5120,7 +5123,7 @@ snapshots:
 
   '@bprogress/core@1.3.4': {}
 
-  '@bprogress/next@3.2.12(next@16.1.1(@babel/core@7.28.5)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.97.1))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
+  '@bprogress/next@3.2.12(patch_hash=10a2256e65e730d3aab2809f141c217a09a8b3d5ae60039736b7768e8df0bf96)(next@16.1.1(@babel/core@7.28.5)(babel-plugin-react-compiler@19.1.0-rc.3)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(sass@1.97.1))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)':
     dependencies:
       '@bprogress/core': 1.3.4
       '@bprogress/react': 1.2.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3)

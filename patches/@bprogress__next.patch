@@ -1,0 +1,65 @@
+diff --git a/dist/app.cjs b/dist/app.cjs
+index 7d09375beb4eb1dbddf51bb57443afb84618d94b..008e41b5e5c90dd510f1103355bc8d2a20581a94 100755
+--- a/dist/app.cjs
++++ b/dist/app.cjs
+@@ -283,10 +283,8 @@ var import_react3 = require("@bprogress/react");
+ var import_navigation2 = require("next/navigation.js");
+ var AppProgressComponent = function(props) {
+     var pathname = (0, import_navigation2.usePathname)();
+-    var searchParams = (0, import_navigation2.useSearchParams)();
+     (0, import_react3.useAnchorProgress)(props, [
+         pathname,
+-        searchParams
+     ]);
+     return null;
+ };
+diff --git a/dist/app.js b/dist/app.js
+index 91bf8364ed152ee384b5a65180c521c3c3c7059a..429471e730eb57eba751f9681381ac8cc481f08e 100755
+--- a/dist/app.js
++++ b/dist/app.js
+@@ -206,13 +206,11 @@ function useRouter(options) {
+ import React2 from "react";
+ // src/components/app-progress.tsx
+ import { useAnchorProgress, withMemo } from "@bprogress/react";
+-import { usePathname, useSearchParams } from "next/navigation.js";
++import { usePathname } from "next/navigation.js";
+ var AppProgressComponent = function(props) {
+     var pathname = usePathname();
+-    var searchParams = useSearchParams();
+     useAnchorProgress(props, [
+         pathname,
+-        searchParams
+     ]);
+     return null;
+ };
+diff --git a/dist/index.cjs b/dist/index.cjs
+index 5196dd0b1ea6d0c1086054f746a3a56acb6653fb..cc465135dadc4b1d0731f7a26b5ef0d13fdb7807 100755
+--- a/dist/index.cjs
++++ b/dist/index.cjs
+@@ -307,10 +307,8 @@ var import_react3 = require("@bprogress/react");
+ var import_navigation2 = require("next/navigation.js");
+ var AppProgressComponent = function(props) {
+     var pathname = (0, import_navigation2.usePathname)();
+-    var searchParams = (0, import_navigation2.useSearchParams)();
+     (0, import_react3.useAnchorProgress)(props, [
+         pathname,
+-        searchParams
+     ]);
+     return null;
+ };
+diff --git a/dist/index.js b/dist/index.js
+index 08e44330da3958d882aaf5a3d7582ae06e309b93..5d8cb7fcf000cf3fc85596e6c3ee029daf6d7e19 100755
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -206,10 +206,9 @@ function useRouter(options) {
+ import React2 from "react";
+ // src/components/app-progress.tsx
+ import { useAnchorProgress, withMemo } from "@bprogress/react";
+-import { usePathname, useSearchParams } from "next/navigation.js";
++import { usePathname } from "next/navigation.js";
+ var AppProgressComponent = function(props) {
+     var pathname = usePathname();
+-    var searchParams = useSearchParams();
+     useAnchorProgress(props, [
+         pathname,
+         searchParams

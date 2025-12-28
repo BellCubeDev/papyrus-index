@@ -111,7 +111,8 @@
     "patchedDependencies": {
       "fuzzysort": "patches/fuzzysort.patch",
       "typescript": "patches/typescript.patch",
-      "scheduler-polyfill": "patches/scheduler-polyfill.patch"
+      "scheduler-polyfill": "patches/scheduler-polyfill.patch",
+      "@bprogress/next": "patches/@bprogress__next.patch"
     },
     "onlyBuiltDependencies": [
       "@parcel/watcher",
