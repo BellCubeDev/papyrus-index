@@ -359,7 +359,7 @@ self.addEventListener('message', async function searchWorkerMessageHandler(e: Me
                         case SearchIndexEntityType.Script: {
                             newScore *= getSourceTypeMultiplier(coolestSource.type);
                             if (matchedKeys.find((value) => value.target === coolestSource.sourceIdentifier)) newScore *= 2;
-                            if (matchedKeys.find((value) => value.target.toLowerCase() === obj.namespaceName[0]![1].target)) newScore *= 10;
+                            if (matchedKeys.find((value) => value.target.toLowerCase() === obj.namespaceName[0]![1].target.toLowerCase())) newScore *= 10;
 
                             if (isPapyrusFeatureSupported(PapyrusFeature.NativeScriptFlag, game)) {
                                 if (obj.isNative.some(v => v[1])) newScore *= 8;
