@@ -13,6 +13,7 @@ import { SearchIndexEntityGroupRecord, SearchIndexEntityType, selectEntityGroups
 import { deepPrepareObject, getStringForSymbol, prepForBorderCrossing, SYMBOL_PREFIX, type DeepPreparedObject } from "./Preparation";
 import type { PapyrusSourceType } from "../../papyrus/data-structures/pure/scriptSource";
 import { isPapyrusFeatureSupported, PapyrusFeature, type PapyrusFeatureSupportedGames } from "@/papyrus/feature-support";
+import { prepareUrlParts } from "@/utils/prepareUrlParts";
 
 export interface WorkerMessageBase {
     type: string;
@@ -148,7 +149,7 @@ async function getSearchIndexOnWorkerLoad(): Promise<[DeepPreparedObject<SearchI
 
     performance.mark('startDownloadRawData');
 
-    const res = await fetch(new URL(`/${toLowerCase(game)}/search-data.json?hash=${searchIndexHash}`, self.origin), {
+    const res = await fetch(new URL(`${prepareUrlParts(game, 'search-data.json')}?hash=${searchIndexHash}`, self.origin), {
         cache: 'force-cache',
     });
     if (!res.ok) {
@@ -359,11 +360,14 @@ self.addEventListener('message', async function searchWorkerMessageHandler(e: Me
                         case SearchIndexEntityType.Script: {
                             newScore *= getSourceTypeMultiplier(coolestSource.type);
                             if (matchedKeys.find((value) => value.target === coolestSource.sourceIdentifier)) newScore *= 2;
-                            if (matchedKeys.find((value) => value.target.toLowerCase() === obj.namespaceName[0]![1].target)) newScore *= 10;
+                            if (matchedKeys.find((value) => value.target.toLowerCase() === obj.namespaceName[0]![1].target.toLowerCase())) newScore *= 10;
 
                             if (isPapyrusFeatureSupported(PapyrusFeature.NativeScriptFlag, game)) {
                                 if (obj.isNative.some(v => v[1])) newScore *= 8;
                             } else {
+                                // Fall back to `isHidden` if `NativeScriptFlag` is not supported
+                                // because scripts that would be Native in later games are almost
+                                // always marked as Hidden in Skyrim
                                 if (obj.isHidden) newScore *= 8;
                             }
 

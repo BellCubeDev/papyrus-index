@@ -1,6 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { PapyrusGame, type PapyrusGameData } from "../../../papyrus/data-structures/pure/game";
-import { toLowerCase } from "../../../utils/toLowerCase";
 import { AllScripts } from "../../../papyrus/parsing/parse-or-load-all";
 import { SearchEntityBaseTypeMapping, SearchIndexEntitiesRecordRawType, SearchIndexEntityType } from "../../search/Entity";
 import { AllScriptsIndexed } from "../../../papyrus/indexing/index-all";
@@ -14,8 +13,7 @@ import { getBestStringVariant } from "../../../utils/getBestName";
 import { AllSourcesCombined } from "../../../papyrus/data-structures/indexing/game";
 import { getGitHubWikiFunctionData } from "../../components/papyrus/function/signature/getGitHubWikiFunctionDescription";
 import type { PapyrusFeature, PapyrusFeatureSupportedGames } from "@/papyrus/feature-support";
-
-const PapyrusGamesCaseMapped = new Map<string, PapyrusGame>(Object.values(PapyrusGame).map(game => [game.toLowerCase(), game]));
+import { prepareUrlPart } from "@/utils/prepareUrlParts";
 
 export type SingleExtraEntityDataRecord = { [TKey in keyof SearchIndexEntitiesRecordRawType<PapyrusGame>]: ObjectAssignDiff<SearchEntityBaseTypeMapping<PapyrusGame>[SearchIndexEntitiesRecordRawType<PapyrusGame>[TKey]['$entityType']], Omit<SearchIndexEntitiesRecordRawType<PapyrusGame>[TKey],'$entityType'>> };
 export type SingleExtraEntityData = SingleExtraEntityDataRecord[keyof SingleExtraEntityDataRecord];
@@ -25,11 +23,9 @@ export interface SearchDataGETResponse {
     extraEntityData: Record<number, SingleExtraEntityData>;
 }
 
-export async function GET(_request: NextRequest | null, opts : { params: Promise<{ game: string }> }) {
+export async function GET(__request: unknown, opts : { params: Promise<{ game: string }> }) {
+    const _request = __request as NextRequest | null; // Next.js checks route handler params using covariance (allows more specific types) rather than contravariance (allows less specific types, which is what they *should* be using)
     const { game } = getGameFromParams(await opts.params);
-
-    const properCaseGame = PapyrusGamesCaseMapped.get(game.toLowerCase());
-    if (properCaseGame === undefined) return NextResponse.json({ error: 'Invalid game' }, { status: 400 });
 
     const extraEntityData: Promise<[number, SingleExtraEntityData]>[] = [];
 
@@ -37,7 +33,7 @@ export async function GET(_request: NextRequest | null, opts : { params: Promise
         extraEntityData.push(getExtraEntityDataForScript(scriptBySources[AllSourcesCombined]));
 
         for (const func of Object.values(scriptBySources[AllSourcesCombined].functions))
-            extraEntityData.push(getExtraEntityDataForFunction(properCaseGame, func));
+            extraEntityData.push(getExtraEntityDataForFunction(game, func));
 
         for (const event of Object.values(scriptBySources[AllSourcesCombined].events))
             extraEntityData.push(getExtraEntityDataForEvent(event));
@@ -53,13 +49,13 @@ export async function GET(_request: NextRequest | null, opts : { params: Promise
     }
 
     return NextResponse.json({
-        rawData: AllScripts[properCaseGame],
+        rawData: AllScripts[game],
         extraEntityData: Object.fromEntries(await Promise.all(extraEntityData)),
     } satisfies SearchDataGETResponse);
 }
 
 export function generateStaticParams() {
-    return Object.values(PapyrusGame).map(game => ({ game: toLowerCase(game) }));
+    return Object.values(PapyrusGame).map(game => ({ game: prepareUrlPart(game) }));
 }
 
 async function getExtraEntityDataForScript(script: PapyrusScriptIndexedAggregate<PapyrusGame>): Promise<[number, SingleExtraEntityDataRecord[SearchIndexEntityType.Script]]> {

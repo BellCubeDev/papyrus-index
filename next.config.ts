@@ -26,7 +26,6 @@ const nextConfig = classnamesMinifier({
         alertColor: true,
         style: 'compressed',
         silenceDeprecations: [
-            'mixed-decls', // we don't depend on the order of CSS declarations being deterministic in the first place, so this deprecation is fine
             'legacy-js-api',
         ],
 
