@@ -13,7 +13,7 @@ import { PapyrusTypeWithValue } from "../../../components/papyrus/type/PapyrusTy
 import { toLowerCase } from "../../../../utils/toLowerCase";
 import { SourcesList, sourcesSortFn } from "../../../components/papyrus/SourcesList";
 import { JsonLDGraph } from "../../../components/JsonLDGraph";
-import { prepareUrlParts } from "../../../../utils/prepareUrlParts";
+import { prepareUrlPart, prepareUrlParts } from "../../../../utils/prepareUrlParts";
 import type { APIReference, BreadcrumbList, ComputerLanguage } from "schema-dts";
 import { _ } from "ajv";
 import { isPapyrusFeatureSupported, PapyrusFeature } from "@/papyrus/feature-support";
@@ -25,7 +25,7 @@ export function generateStaticParams(): ScriptRouteParams[] {
         for (const [scriptNameLowercase, scriptData] of Object.entries(gameData.scripts)) {
             params.push([
                 Object.keys(scriptData[AllSourcesCombined].functions).length + Object.keys(scriptData[AllSourcesCombined].propertyGroups).length + Object.keys(scriptData[AllSourcesCombined].events).length + Object.keys(scriptData[AllSourcesCombined].structs ?? {}).length,
-                {game: toLowerCase(game), scriptNameNoExt: scriptNameLowercase}
+                {game: prepareUrlPart(game), scriptNameNoExt: prepareUrlPart(scriptNameLowercase)}
             ]);
         }
     }

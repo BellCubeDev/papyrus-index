@@ -5,7 +5,7 @@ import type { PapyrusScriptFunctionIndexedAggregate } from "../../../../../../..
 import { AllSourcesCombined, type PapyrusGameDataIndexed } from "../../../../../../../papyrus/data-structures/indexing/game";
 import type { PapyrusGame } from "../../../../../../../papyrus/data-structures/pure/game";
 import { AllScriptsIndexed } from "../../../../../../../papyrus/indexing/index-all";
-import { prepareUrlParts } from "../../../../../../../utils/prepareUrlParts";
+import { prepareUrlPart, prepareUrlParts } from "../../../../../../../utils/prepareUrlParts";
 import { getBestStringVariant } from "../../../../../../../utils/getBestName";
 import { getGameName } from "../../../../../../../utils/getGameName";
 import { toLowerCase } from "../../../../../../../utils/toLowerCase";
@@ -31,7 +31,7 @@ export function generateStaticParams(): FunctionRouteParams[] {
     for (const [game, gameData] of Object.entries(AllScriptsIndexed)) {
         for (const [scriptNameLowercase, scriptData] of Object.entries(gameData.scripts)) {
             for (const funcName of Object.keys(scriptData[AllSourcesCombined].functions))
-                params.push({game: toLowerCase(game), scriptNameNoExt: scriptNameLowercase, functionName: funcName});
+                params.push({game: prepareUrlPart(game), scriptNameNoExt: prepareUrlPart(scriptNameLowercase), functionName: prepareUrlPart(funcName)});
         }
     }
 

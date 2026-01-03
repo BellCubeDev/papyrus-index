@@ -13,6 +13,7 @@ import { SearchIndexEntityGroupRecord, SearchIndexEntityType, selectEntityGroups
 import { deepPrepareObject, getStringForSymbol, prepForBorderCrossing, SYMBOL_PREFIX, type DeepPreparedObject } from "./Preparation";
 import type { PapyrusSourceType } from "../../papyrus/data-structures/pure/scriptSource";
 import { isPapyrusFeatureSupported, PapyrusFeature, type PapyrusFeatureSupportedGames } from "@/papyrus/feature-support";
+import { prepareUrlParts } from "@/utils/prepareUrlParts";
 
 export interface WorkerMessageBase {
     type: string;
@@ -148,7 +149,7 @@ async function getSearchIndexOnWorkerLoad(): Promise<[DeepPreparedObject<SearchI
 
     performance.mark('startDownloadRawData');
 
-    const res = await fetch(new URL(`/${toLowerCase(game)}/search-data.json?hash=${searchIndexHash}`, self.origin), {
+    const res = await fetch(new URL(`${prepareUrlParts(game, 'search-data.json')}?hash=${searchIndexHash}`, self.origin), {
         cache: 'force-cache',
     });
     if (!res.ok) {

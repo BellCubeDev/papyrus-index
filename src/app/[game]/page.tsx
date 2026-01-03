@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { PapyrusGame } from "../../papyrus/data-structures/pure/game";
 import { AllScriptsIndexed } from "../../papyrus/indexing/index-all";
 import { getGameName } from "../../utils/getGameName";
-import { toLowerCase } from "../../utils/toLowerCase";
 import { InheritanceDisplay } from "../components/inheritance-display/InheritanceDisplay";
 import { SourceIcon } from "../components/papyrus/SourceIcon";
 import { SourceName } from "../components/papyrus/SourceName";
@@ -16,13 +15,13 @@ import { SourcePlate } from "../components/papyrus/SourcesList";
 import { JsonLDGraph } from "../components/JsonLDGraph";
 import type { BreadcrumbList, CollectionPage } from "schema-dts";
 import { AllSourcesCombined } from "../../papyrus/data-structures/indexing/game";
-import { prepareUrlParts } from "../../utils/prepareUrlParts";
+import { prepareUrlPart, prepareUrlParts } from "../../utils/prepareUrlParts";
 import { UnreachableError } from "../../UnreachableError";
 
 
 export function generateStaticParams() {
     return Object.values(PapyrusGame).map(gameCased => ({
-        game: toLowerCase(gameCased)
+        game: prepareUrlPart(gameCased)
     }));
 }
 
