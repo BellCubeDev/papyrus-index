@@ -364,6 +364,9 @@ self.addEventListener('message', async function searchWorkerMessageHandler(e: Me
                             if (isPapyrusFeatureSupported(PapyrusFeature.NativeScriptFlag, game)) {
                                 if (obj.isNative.some(v => v[1])) newScore *= 8;
                             } else {
+                                // Fall back to `isHidden` if `NativeScriptFlag` is not supported
+                                // because scripts that would be Native in later games are almost
+                                // always marked as Hidden in Skyrim
                                 if (obj.isHidden) newScore *= 8;
                             }
 
