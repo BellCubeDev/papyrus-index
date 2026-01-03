@@ -8,19 +8,18 @@ import { getGameName } from "../../../../utils/getGameName";
 import { SourceName } from "../../../components/papyrus/SourceName";
 import { getGameAndSourceFromParams, type SourceRouteParams } from "./getGameAndSourceFromParams";
 import { AllScripts } from "../../../../papyrus/parsing/parse-or-load-all";
-import { toLowerCase } from "../../../../utils/toLowerCase";
 import { AllScriptsIndexed } from "../../../../papyrus/indexing/index-all";
 import { PapyrusScriptReference } from "../../../components/papyrus/script/PapyrusScriptReference";
 import { wikisBySource } from "../../../../wiki-data-extraction/individual-github-wikis/wikisBySource";
 import { WikiMarkdown } from "../../../components/wiki-markdown/WikiMarkdown";
 import { JsonLDGraph } from "../../../components/JsonLDGraph";
-import { prepareUrlParts } from "../../../../utils/prepareUrlParts";
+import { prepareUrlPart, prepareUrlParts } from "../../../../utils/prepareUrlParts";
 
 export function generateStaticParams(): SourceRouteParams[] {
     const params = [];
     for (const [game, gameData] of Object.entries(AllScripts)) {
         for (const source of Object.values(gameData.scriptSources))
-            params.push({game: toLowerCase(game), source: source.sourceIdentifier});
+            params.push({game: prepareUrlPart(game), source: prepareUrlPart(source.sourceIdentifier)});
     }
     return params;
 }

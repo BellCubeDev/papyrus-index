@@ -17,6 +17,7 @@ import { ValidPapyrusGames } from "../../../utils/ValidPapyrusGames";
 import { getWiki } from "../../../wiki-data-extraction/ck-wiki/getWiki";
 import { CodeBlock, CodeBlockLanguage } from "../code-block/CodeBlock";
 import { Link } from "../Link";
+import { unprepareUrlPart } from "@/utils/prepareUrlParts";
 
 export const AUTOMATIC_BASE_URL: unique symbol = memoizeDevServerConst('AUTOMATIC_BASE_URL', () => Symbol.for('PAPYRUS_INDEX_AUTOMATIC_BASE_URL')) as never;
 
@@ -37,7 +38,7 @@ function WikiMarkdownLink(gameData: PapyrusGameDataIndexed<PapyrusGame>, inToolt
 
         const getFallbackComponent = ()=> <Link href={url.pathname as Lowercase<string>}>{children}</Link>;
 
-        const pathnameParts = url.pathname.split('/').filter(Boolean).map((s)=> toLowerCase(decodeURI(s)));
+        const pathnameParts = url.pathname.split('/').filter(Boolean).map((s)=> unprepareUrlPart(s));
 
         const [gameLowerCase, pathnameVariable1, ...remainingPathnameParts] = pathnameParts;
 
@@ -54,7 +55,7 @@ function WikiMarkdownLink(gameData: PapyrusGameDataIndexed<PapyrusGame>, inToolt
             case 'script': {
                 const [scriptName, ...remainingScriptPathParts] = remainingPathnameParts;
                 if (!scriptName) throw new Error(`WikiMarkdownLink: 'papyrus-index:' protocol with pathname '${url.pathname}' is missing script name.`);
-                const script = gameData.scripts[toLowerCase(scriptName)];
+                const script = gameData.scripts[scriptName];
                 if (!script) {
                     if (process.env.SKIP_HIGH_LEVEL_DIAGNOSTIC_LOGS !== 'true') console.warn(`WikiMarkdownLink: 'papyrus-index:' protocol with pathname '${url.pathname}' references a script that does not exist: ${scriptName}.`);
                     appendToStepSummarySection(`\`<WikiMarkdownLink>\` component references a script that does not exist: \`${scriptName}\`.`, StepSummarySection.UnimplementedFeatures);
@@ -72,7 +73,7 @@ function WikiMarkdownLink(gameData: PapyrusGameDataIndexed<PapyrusGame>, inToolt
                 switch (pathnameVariable2) {
                     case 'function': {
                         if (!identifier) throw new Error(`WikiMarkdownLink: 'papyrus-index:' protocol with pathname '${url.pathname}' is missing function name.`);
-                        const funcAggregate = script[AllSourcesCombined].functions[toLowerCase(identifier)];
+                        const funcAggregate = script[AllSourcesCombined].functions[identifier];
                         if (!funcAggregate) {
                             if (process.env.SKIP_HIGH_LEVEL_DIAGNOSTIC_LOGS !== 'true') console.warn(`WikiMarkdownLink: 'papyrus-index:' protocol with pathname '${url.pathname}' references a function that does not exist: ${identifier}.`);
                             appendToStepSummarySection(`\`<WikiMarkdownLink>\` component references a function that does not exist: \`${identifier}\`.`, StepSummarySection.UnimplementedFeatures);
@@ -88,7 +89,7 @@ function WikiMarkdownLink(gameData: PapyrusGameDataIndexed<PapyrusGame>, inToolt
 
                     case 'event': {
                         if (!identifier) throw new Error(`WikiMarkdownLink: 'papyrus-index:' protocol with pathname '${url.pathname}' is missing event name.`);
-                        const eventAggregate = script[AllSourcesCombined].events[toLowerCase(identifier)];
+                        const eventAggregate = script[AllSourcesCombined].events[identifier];
                         if (!eventAggregate) {
                             if (process.env.SKIP_HIGH_LEVEL_DIAGNOSTIC_LOGS !== 'true') console.warn(`WikiMarkdownLink: 'papyrus-index:' protocol with pathname '${url.pathname}' references an event that does not exist: ${identifier}.`);
                             appendToStepSummarySection(`\`<WikiMarkdownLink>\` component references an event that does not exist: \`${identifier}\`.`, StepSummarySection.UnimplementedFeatures);
