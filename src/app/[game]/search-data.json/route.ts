@@ -28,16 +28,13 @@ export interface SearchDataGETResponse {
 export async function GET(_request: NextRequest | null, opts : { params: Promise<{ game: string }> }) {
     const { game } = getGameFromParams(await opts.params);
 
-    const properCaseGame = PapyrusGamesCaseMapped.get(game.toLowerCase());
-    if (properCaseGame === undefined) return NextResponse.json({ error: 'Invalid game' }, { status: 400 });
-
     const extraEntityData: Promise<[number, SingleExtraEntityData]>[] = [];
 
     for (const scriptBySources of Object.values(AllScriptsIndexed[game].scripts)) {
         extraEntityData.push(getExtraEntityDataForScript(scriptBySources[AllSourcesCombined]));
 
         for (const func of Object.values(scriptBySources[AllSourcesCombined].functions))
-            extraEntityData.push(getExtraEntityDataForFunction(properCaseGame, func));
+            extraEntityData.push(getExtraEntityDataForFunction(game, func));
 
         for (const event of Object.values(scriptBySources[AllSourcesCombined].events))
             extraEntityData.push(getExtraEntityDataForEvent(event));
@@ -53,7 +50,7 @@ export async function GET(_request: NextRequest | null, opts : { params: Promise
     }
 
     return NextResponse.json({
-        rawData: AllScripts[properCaseGame],
+        rawData: AllScripts[game],
         extraEntityData: Object.fromEntries(await Promise.all(extraEntityData)),
     } satisfies SearchDataGETResponse);
 }
