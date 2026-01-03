@@ -25,7 +25,8 @@ export interface SearchDataGETResponse {
     extraEntityData: Record<number, SingleExtraEntityData>;
 }
 
-export async function GET(_request: NextRequest | null, opts : { params: Promise<{ game: string }> }) {
+export async function GET(__request: unknown, opts : { params: Promise<{ game: string }> }) {
+    const _request = __request as NextRequest | null; // Next.js checks route handler params using covariance (allows more specific types) rather than contravariance (allows less specific types, which is what they *should* be using)
     const { game } = getGameFromParams(await opts.params);
 
     const extraEntityData: Promise<[number, SingleExtraEntityData]>[] = [];
