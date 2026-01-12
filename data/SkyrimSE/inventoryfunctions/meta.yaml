@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Only An Extender)
+nameProper: Inventory Functions SE
+nameShort: Inventory Functions
+indexedVersion: "2.03.00"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/13366
+gitRepo: https://github.com/kalivore/inventory-functions-se
+nexusIndexedFileId: 463066
