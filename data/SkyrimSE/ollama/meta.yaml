@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Only An Extender)
+nameProper: Papyrus Ollama Wrapper
+nameShort: Ollama Wrapper
+indexedVersion: "1.0.0"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/167456
+gitRepo: https://github.com/hydraaawr/Papyrus-Ollama-Wrapper
+nexusIndexedFileId: 699679
