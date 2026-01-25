@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../SourceMetadata.schema.json
+
+type: xSE Plugin (Only An Extender)
+nameProper: Fuzzy Actor Search
+nameShort: Fuzzy Actor Search
+indexedVersion: "0.1"
+nexusPage: https://www.nexusmods.com/skyrimspecialedition/mods/160174
+gitRepo: https://github.com/Balkoth-dev/Skyrim-FuzzyActorSearch
+nexusIndexedFileId: 670092
