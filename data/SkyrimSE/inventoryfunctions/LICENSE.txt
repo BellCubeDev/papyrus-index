@@ -1,0 +1,12 @@
+ORIGINAL MOD READS:
+
+Feel free to package this plugin with your own mods and use it for your own projects.
+Please just mention me (ie Quad2Core) in a footnote somewhere.
+
+---
+
+PORT READS:
+
+Anyone is free to use what I've done here and expand/tweak it in any way - after all, that's what I'm doing, based on the original work of Quad2Core.
+
+This represents my best guess of the permissions on the original file. If I've got anything wrong, PLEASE let me know - I don't want to misrepresent the original author in any way.
