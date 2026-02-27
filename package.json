@@ -78,7 +78,7 @@
     "node-fetch": "^3.3.2",
     "octokit": "^5.0.5",
     "papyrus-index-typescript-plugin": "file:typescript-plugin",
-    "parsoid-service": "file:./cache/parsoid-service",
+    "parsoid-service": "file:./parsoid-service",
     "posthog-js": "^1.310.1",
     "proper-lockfile": "^4.1.2",
     "react": "~19.2.3",

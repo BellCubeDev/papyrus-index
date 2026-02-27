@@ -30,7 +30,7 @@ jobs:
         # tj-actions/changed-files seems to require a directory to exist for each repo/submodule
         # so we'll create the submodules' directories before we run that action
         run: |
-          mkdir -p cache/parsoid-service
+          mkdir -p parsoid-service
 
 
       # only run subsequent steps if one of the changes includes a data/**/*.psc file
@@ -80,7 +80,7 @@ jobs:
         if: steps.changed_files.outputs.all_changed_files_count != '0'
         id: composer-cache
         run: |
-          cd cache/parsoid-service
+          cd parsoid-service
           echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Restore Composer Package Cache
@@ -88,7 +88,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('cache/parsoid-service/composer.json') }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('parsoid-service/composer.json') }}
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install NPM Dependencies
@@ -136,14 +136,14 @@ jobs:
       - name: Get Composer Cache Directory
         id: composer-cache
         run: |
-          cd cache/parsoid-service
+          cd parsoid-service
           echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Restore Composer Package Cache
         uses: actions/cache/restore@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('cache/parsoid-service/composer.json') }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('parsoid-service/composer.json') }}
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install NPM Dependencies
@@ -176,7 +176,7 @@ jobs:
         if: always() && steps.install-deps.outcome == 'success'
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('cache/parsoid-service/composer.json') }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('parsoid-service/composer.json') }}
 
   eslint-check:
     runs-on: ubuntu-latest
@@ -200,14 +200,14 @@ jobs:
       - name: Get Composer Cache Directory
         id: composer-cache
         run: |
-          cd cache/parsoid-service
+          cd parsoid-service
           echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Restore Composer Package Cache
         uses: actions/cache/restore@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('cache/parsoid-service/composer.json') }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('parsoid-service/composer.json') }}
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install NPM Dependencies
@@ -230,4 +230,4 @@ jobs:
         if: always() && steps.install-deps.outcome == 'success'
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('cache/parsoid-service/composer.json') }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('parsoid-service/composer.json') }}

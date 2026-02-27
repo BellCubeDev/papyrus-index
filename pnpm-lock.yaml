@@ -173,8 +173,8 @@ importers:
         specifier: file:typescript-plugin
         version: file:typescript-plugin(typescript@5.9.3(patch_hash=b268284a738ba2396549bdbe068af5a4c07ff0f3604f2a2f7412412f2c826b6a))
       parsoid-service:
-        specifier: file:./cache/parsoid-service
-        version: file:cache/parsoid-service
+        specifier: file:./parsoid-service
+        version: file:parsoid-service
       posthog-js:
         specifier: ^1.310.1
         version: 1.310.1
@@ -3216,8 +3216,8 @@ packages:
   js-tokens@9.0.1:
     resolution: {integrity: sha512-mxa9E9ITFOt0ban3j6L5MpjwegGz6lBQmM1IJkWeBZGcMxto50+eWdjC/52xDbS2vy0k7vIMK0Fe2wfL9OQSpQ==}
 
-  js-yaml@3.14.1:
-    resolution: {integrity: sha512-okMH7OXXJ7YrN9Ok3/SXrnu4iX9yOk+25nqX4imS2npuvTYDmo/QEZoqwZkYaIDk3jVvBOTOIEgEhaLOynBS9g==}
+  js-yaml@3.14.2:
+    resolution: {integrity: sha512-PMSmkqxr106Xa156c2M265Z+FTrPl+oxd/rgOQy2tijQeK5TxQ43psO1ZCwhVOSdnn+RzkzlRz/eY4BgJBYVpg==}
     hasBin: true
 
   js-yaml@4.1.0:
@@ -3752,8 +3752,8 @@ packages:
   parse5@8.0.0:
     resolution: {integrity: sha512-9m4m5GSgXjL4AjumKzq1Fgfp3Z8rsvjRNbnkVwfu2ImRqE5D0LnY2QfDen18FSY9C573YU5XxSapdHZTZ2WolA==}
 
-  parsoid-service@file:cache/parsoid-service:
-    resolution: {directory: cache/parsoid-service, type: directory}
+  parsoid-service@file:parsoid-service:
+    resolution: {directory: parsoid-service, type: directory}
 
   path-exists@4.0.0:
     resolution: {integrity: sha512-ak9Qy5Q7jYb2Wwcey5Fpvg2KoAc/ZIhLSLOSBmRmygPsGwkVVt0fZa0qrtMz+m6tJTAHfZQ8FnmB4MG4LWy7/w==}
@@ -4743,8 +4743,8 @@ packages:
   wikimedia-langconv@0.1.0:
     resolution: {integrity: sha512-nSiLDIIMAmnulDIRcophSU4oOLW1AGnQKNim+SI5MtzE5gwlD+VJNTkBbSYq8Nov8WjD9jWobaKxo+5yeiC1vA==}
 
-  wikipeg@4.0.0:
-    resolution: {integrity: sha512-TMvpr+y0DJFc3623kATXrGXZ2ZyPFZMuWYcI1+fLAUy7k3Frstldak6IeOIrFXlNLhhyKiDfXfJLJq5zgqqW7A==}
+  wikipeg@4.0.2:
+    resolution: {integrity: sha512-Cf/9BWBkRf+6wfbH2az/kQBg85bYlScUH7dts1g6ScbE5qK36L7Z51obGhhuIeCVobzSJV5WEvlvO8hL5wOsyw==}
     engines: {node: '>= 6.0.0'}
     hasBin: true
 
@@ -8007,7 +8007,7 @@ snapshots:
 
   js-tokens@9.0.1: {}
 
-  js-yaml@3.14.1:
+  js-yaml@3.14.2:
     dependencies:
       argparse: 1.0.10
       esprima: 4.0.1
@@ -8811,20 +8811,20 @@ snapshots:
     dependencies:
       entities: 6.0.1
 
-  parsoid-service@file:cache/parsoid-service:
+  parsoid-service@file:parsoid-service:
     dependencies:
       babybird: 0.0.1
       core-js: 2.6.12
       domino: 2.1.6
       entities: 1.1.2
-      js-yaml: 3.14.1
+      js-yaml: 3.14.2
       pn: 1.1.0
       prfun: 2.1.5
       request: 2.88.2
       semver: 6.3.1
       simplediff: 0.1.1
       wikimedia-langconv: 0.1.0
-      wikipeg: 4.0.0
+      wikipeg: 4.0.2
       yargs: 16.2.0
 
   path-exists@4.0.0: {}
@@ -10071,7 +10071,7 @@ snapshots:
 
   wikimedia-langconv@0.1.0: {}
 
-  wikipeg@4.0.0: {}
+  wikipeg@4.0.2: {}
 
   word-wrap@1.2.5: {}
 

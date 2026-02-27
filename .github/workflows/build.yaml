@@ -80,14 +80,14 @@ jobs:
       - name: Get Composer Cache Directory
         id: composer-cache
         run: |
-          cd cache/parsoid-service
+          cd parsoid-service
           echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
       - name: Restore Composer Package Cache
         uses: actions/cache/restore@v4
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('cache/parsoid-service/composer.json') }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('parsoid-service/composer.json') }}
           restore-keys: ${{ runner.os }}-composer-
 
       - name: Install NPM Dependencies
@@ -163,7 +163,7 @@ jobs:
         if: always() && steps.install-deps.outcome == 'success'
         with:
           path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('cache/parsoid-service/composer.json') }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('parsoid-service/composer.json') }}
 
       - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
