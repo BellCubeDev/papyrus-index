@@ -31,7 +31,7 @@ export default defineConfig([
 		files: ["**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx}"],
 	},
 	{
-		ignores: ["node_modules/**", ".next/**", "out/**", "build/**", "next-env.d.ts"]
+		ignores: ["node_modules/**", "parsoid-service/**", ".next/**", "out/**", "build/**", "next-env.d.ts"]
 	},
 	{
 		languageOptions: { globals: { ...globals.browser, ...globals.node } },
