@@ -1,0 +1,18 @@
+patchedDependencies:
+  fuzzysort: patches/fuzzysort.patch
+  typescript: patches/typescript.patch
+  scheduler-polyfill: patches/scheduler-polyfill.patch
+  '@bprogress/next': patches/@bprogress__next.patch
+overrides:
+  '@types/node': ^22.14.1
+scriptShell: pwsh
+enablePrePostScripts: true
+allowBuilds:
+  '@parcel/watcher': true
+  core-js: true
+  esbuild: true
+  papyrus-index-typescript-plugin: true
+  sharp: true
+  unrs-resolver: true
+
+verifyDepsBeforeRun: warn

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@10.14.0",
+  "packageManager": "pnpm@11.3.0+sha512.2c403d6594527287672b1f7056343a1f7c3634036a67ffabfcc2b3d7595d843768f8787148d1b57cf7956c90606bbd192857c363af19e96d2d0ec9ec5741d215",
   "scripts": {
     "dev": "$env:FORCE_COLOR = 'true'; pnpm run parse:reset; next dev --turbo",
     "start": "npx serve out",
@@ -106,25 +106,6 @@
     "unzip-stream": "^0.3.4",
     "vitest": "^4.0.16",
     "yaml": "^2.8.2"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "fuzzysort": "patches/fuzzysort.patch",
-      "typescript": "patches/typescript.patch",
-      "scheduler-polyfill": "patches/scheduler-polyfill.patch",
-      "@bprogress/next": "patches/@bprogress__next.patch"
-    },
-    "onlyBuiltDependencies": [
-      "@parcel/watcher",
-      "core-js",
-      "esbuild",
-      "papyrus-index-typescript-plugin",
-      "sharp",
-      "unrs-resolver"
-    ],
-    "overrides": {
-      "@types/node": "^22.14.1"
-    }
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.3",

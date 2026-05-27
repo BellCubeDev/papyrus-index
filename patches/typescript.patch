@@ -1,8 +1,8 @@
 diff --git a/lib/_tsc.js b/lib/_tsc.js
-index 586d0514b6842000c0869c18f737802b85bef13d..2f84569a6a23c6b58278f37b76646e5b2fdd20e2 100644
+index 612a1f7eed0fc030660b769480455aabe77b82c2..faf4d4b7b38c9785f4770c0d11e0b55d13120a31 100644
 --- a/lib/_tsc.js
 +++ b/lib/_tsc.js
-@@ -61658,7 +61658,10 @@ function createTypeChecker(host) {
+@@ -62552,7 +62552,10 @@ function createTypeChecker(host) {
      let extraTypes;
      let tailCount = 0;
      while (true) {
@@ -14,7 +14,7 @@ index 586d0514b6842000c0869c18f737802b85bef13d..2f84569a6a23c6b58278f37b76646e5b
          error(currentNode, Diagnostics.Type_instantiation_is_excessively_deep_and_possibly_infinite);
          return errorType;
        }
-@@ -62699,8 +62702,12 @@ function createTypeChecker(host) {
+@@ -63591,8 +63594,12 @@ function createTypeChecker(host) {
      if (!couldContainTypeVariables(type)) {
        return type;
      }
@@ -23,16 +23,16 @@ index 586d0514b6842000c0869c18f737802b85bef13d..2f84569a6a23c6b58278f37b76646e5b
 +    const instantiationCount__LIMIT = 5e7;
 +    if (instantiationDepth === instantiationDepth_LIMIT || instantiationCount >= instantiationCount__LIMIT) {
        (_a = tracing) == null ? void 0 : _a.instant(tracing.Phase.CheckTypes, "instantiateType_DepthLimit", { typeId: type.id, instantiationDepth, instantiationCount });
-+      const newDiag = diag(2589, 1 /* Error */, "Type_instantiation_is_excessively_deep_and_possibly_infinite_2589", `ENCOUNTERED TYPE INSTANTIATION ERROR: ${JSON.stringify({instantiationDepth, instantiationDepth_LIMIT, instantiationCount, instantiationCount__LIMIT})}`);
++      const newDiag = diag(2589, 1 /* Error */, "Type_instantiation_is_excessively_deep_and_possibly_infinite", `ENCOUNTERED TYPE INSTANTIATION ERROR: ${JSON.stringify({instantiationDepth, instantiationDepth_LIMIT, instantiationCount, instantiationCount__LIMIT})}`);
 +      error(currentNode, newDiag)
        error(currentNode, Diagnostics.Type_instantiation_is_excessively_deep_and_possibly_infinite);
        return errorType;
      }
 diff --git a/lib/typescript.js b/lib/typescript.js
-index dc0fe9a56bb4d9b08efe8b5948a60a74a4e9997b..350851b85674dd6081ce27a01a2d04c3de692fbb 100644
+index 0554fc3fc707ce3edbc3c4f8f4d77f8aa3def7ba..7bf9ef736b65d01807548358c1c3eed10db64492 100644
 --- a/lib/typescript.js
 +++ b/lib/typescript.js
-@@ -66268,7 +66268,10 @@ function createTypeChecker(host) {
+@@ -67163,7 +67163,10 @@ function createTypeChecker(host) {
      let extraTypes;
      let tailCount = 0;
      while (true) {
@@ -44,7 +44,7 @@ index dc0fe9a56bb4d9b08efe8b5948a60a74a4e9997b..350851b85674dd6081ce27a01a2d04c3
          error2(currentNode, Diagnostics.Type_instantiation_is_excessively_deep_and_possibly_infinite);
          return errorType;
        }
-@@ -67309,8 +67312,12 @@ function createTypeChecker(host) {
+@@ -68202,8 +68205,12 @@ function createTypeChecker(host) {
      if (!couldContainTypeVariables(type)) {
        return type;
      }
