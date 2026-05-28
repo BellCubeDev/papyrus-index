@@ -14,7 +14,7 @@ export interface LinearMediaWikiPageDataSection {
     contents: Element[];
 }
 
-const headerElementTagNames = new Set(['h1', 'h2', 'h3', 'h4', 'h5', 'h6']);
+const headerElementTagNames = new Set(['h1', 'h2', /*'h3', 'h4', 'h5', 'h6'*/]);
 
 
 function removeElement(el: Element): void {
