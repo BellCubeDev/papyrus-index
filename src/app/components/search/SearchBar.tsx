@@ -236,26 +236,27 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
                         : result.map((res, i) => {
                             const obj = res.obj;
                             const score = res.score;
+                            const scoreElement = <span className={styles.score}>{"   "} score: <code>{score.toFixed(3)}</code></span>;
                             switch (obj.$entityType) {
                                 case SearchIndexEntityType.Script:
                                     return <li key={obj.$entityId} tabIndex={i === 0 ? -1 : undefined}>
-                                        <PapyrusScriptReference game={game} scriptAggregate={obj} /> (score: <code>{score}</code>)
+                                        <PapyrusScriptReference game={game} scriptAggregate={obj} /> {scoreElement}
                                     </li>;
                                 case SearchIndexEntityType.Function:
                                     return <li key={obj.$entityId} tabIndex={i === 0 ? -1 : undefined}>
-                                        <PapyrusScriptFunctionReference game={game} scriptAggregate={obj.script} funcAggregate={obj} /> (score: <code>{score}</code>)
+                                        <PapyrusScriptFunctionReference game={game} scriptAggregate={obj.script} funcAggregate={obj} /> {scoreElement}
                                     </li>;
                                 case SearchIndexEntityType.Event:
                                     return <li key={obj.$entityId} tabIndex={i === 0 ? -1 : undefined}>
-                                        Event {obj.name} (score: <code>{score}</code>)
+                                        Event {obj.name} {scoreElement}
                                     </li>;
                                 case SearchIndexEntityType.Property:
                                     return <li key={obj.$entityId} tabIndex={i === 0 ? -1 : undefined}>
-                                        Property {obj.name} (score: <code>{score}</code>)
+                                        Property {obj.name} {scoreElement}
                                     </li>;
                                 case SearchIndexEntityType.Struct:
                                     return <li key={obj.$entityId} tabIndex={i === 0 ? -1 : undefined}>
-                                        Struct {obj.name} (score: <code>{score}</code>)
+                                        Struct {obj.name} {scoreElement}
                                     </li>;
                                 default:
                                     throw new UnreachableError(obj, `Unexpected SearchIndexEntity type: ${(obj as SearchIndexEntity<PapyrusGame>).$entityType}`);
