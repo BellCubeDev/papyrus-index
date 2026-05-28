@@ -104,7 +104,10 @@ async function ingestLatestChanges(wiki: PapyrusWiki, storageIndex: WikiStorageI
 
     do { // eslint-disable-next-line no-await-in-loop
         changeList = await wikiFetchGet(wiki, `/w/api.php?action=query&format=json&prop=&list=recentchanges&rcstart=${encodeURIComponent(storageIndex.lastKnownChange)}&rcdir=newer&rcprop=title%7Ctimestamp&rclimit=20&rctype=edit%7Cnew&rctoponly=1`);
-        if (!changeList) throw new Error('Fetching the change list failed!');
+        if (!changeList) {
+            if (process.env.DISABLE_NETWORK) return; // nothing to see here...
+            throw new Error('Fetching the change list failed!');
+        }
         if (changeList === WIKI_FETCH_403FORBIDDEN) {
             if (process.env.NODE_ENV === 'development') return;
             throw new Error(`The ${wiki.wikiTrueGame} wiki returned a 403 Forbidden error when trying to fetch the change list. This is likely due to the wiki's rate limiting settings, and is not an error on our end.`);
@@ -295,7 +298,8 @@ export async function getWikiPageHTMLString(wiki: PapyrusWiki, pageTitle: string
         }
     }
 
-    return await getQueuedWritePromise(()=>downloadWikiPageHTMLString(wiki, pageTitle, htmlFilePath));
+    if (process.env.DISABLE_NETWORK) return null;
+    else return await getQueuedWritePromise(()=>downloadWikiPageHTMLString(wiki, pageTitle, htmlFilePath));
 }
 
 async function downloadWikiPageHTMLString(wiki: PapyrusWiki, pageTitle: string, htmlFilePath: string): Promise<string | null> {

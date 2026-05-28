@@ -18,6 +18,11 @@ import { dataDir, getGameDir } from "../../../folders";
 
 if (typeof window !== 'undefined') throw new Error('This module is not meant to be used in the browser!');
 
+if (process.env.DISABLE_NETWORK) {
+    console.warn("Network access is disabled. Cleanly exiting mod download step.")
+    process.exit(0);
+}
+
 const thisFile = url.fileURLToPath(import.meta.url);
 const thisDir = path.dirname(thisFile);
 const tempDownloadDir = path.join(thisDir, 'tmp');

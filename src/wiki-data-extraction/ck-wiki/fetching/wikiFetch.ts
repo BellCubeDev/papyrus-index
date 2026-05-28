@@ -62,6 +62,11 @@ export const WIKI_FETCH_403FORBIDDEN: unique symbol = memoizeDevServerConst('WIK
 export async function wikiFetchGet(wiki: PapyrusWiki, path: `/${string}`): Promise<object|null|typeof WIKI_FETCH_403FORBIDDEN> {
     const url = new URL(path, wiki.wikiBaseUrl);
 
+    if (process.env.DISABLE_NETWORK) {
+        console.warn("Network access disabled. Returning `null` from wikiFetchGet()");
+        return null;
+    }
+
     const deduped = wikiFetchPromisesByURL.get(url.href);
     if (deduped) {
         //Log.debug(`wikiFetchGet: dedupe hit for ${url}`);
