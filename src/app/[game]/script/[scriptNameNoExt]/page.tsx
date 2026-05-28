@@ -73,22 +73,26 @@ export default async function ScriptPage({params}: {readonly params: Promise<Scr
             {isPapyrusFeatureSupported(PapyrusFeature.Structs, game) ?
                 <details suppressHydrationWarning>
                     <summary>Structs</summary>
+                    <p>The Papyrus Index is still under construction. Structs have not been implemented yet.</p>
                     <div className={styles.structs}></div> { /* TODO: Add structs to the script page */ }
                 </details>
             : null}
             <details suppressHydrationWarning>
                 {/* Include property groups here too! */}
                 <summary>Properties</summary>
-                {Object.entries(scriptBySources[AllSourcesCombined].propertyGroups).map(([groupName, group]) => <div key={groupName}>
-                    <h2>{group.name}</h2>
-                    <div className={styles.properties}>
-                        {Object.entries(group.properties).map(([propName, prop]) => <div key={propName}>
-                            <div className={styles.property}>
-                                <PapyrusTypeWithValue game={game} type={prop.value[0]![1]} name={propName} />
-                            </div>
-                        </div>)}
-                    </div>
-                </div>)}
+
+                <GuardEmptyList replacement={<p>No properties found.</p>}>
+                    {Object.entries(scriptBySources[AllSourcesCombined].propertyGroups).map(([groupName, group]) => <div key={groupName}>
+                        <h2>{group.name}</h2>
+                        <div className={styles.properties}>
+                            {Object.entries(group.properties).map(([propName, prop]) => <div key={propName}>
+                                <div className={styles.property}>
+                                    <PapyrusTypeWithValue game={game} type={prop.value[0]![1]} name={propName} />
+                                </div>
+                            </div>)}
+                        </div>
+                    </div>)}
+                </GuardEmptyList>
 
                 <div className={styles.properties}></div> { /* TODO: Add properties to the script page */ }
             </details>
