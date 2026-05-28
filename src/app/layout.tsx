@@ -5,8 +5,9 @@ import { config as FontAwesomeConfig } from '@fortawesome/fontawesome-svg-core';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 FontAwesomeConfig.autoAddCss = false;
 
-import { Roboto } from 'next/font/google';
-import { SourceCodePro } from './SourceCodePro';
+import { Roboto, SourceCodePro } from './Fonts';
+
+
 //import { ApolloWrapper } from '@/nexus-api/GraphQLClientClient';
 import Image from 'next/image';
 import Markdown from 'react-markdown';
@@ -15,12 +16,6 @@ import { Link } from './components/Link';
 import { ThePapyrusIndexLogo } from './components/logo/ThePapyrusIndexLogo';
 import { ReactGeigerDevOnly } from '@/app/components/react-geiger-dev-only';
 
-const roboto = Roboto({
-    display: 'block',
-    weight: ['400', '500', '700'],
-    subsets: ['latin-ext'],
-    variable: '--font',
-});
 
 // Exported directly in page.js as well to avoid a strange bugs or two
 export const metadata: Metadata = {
@@ -129,7 +124,7 @@ export default function RootLayout({ children }: { readonly children: React.Reac
                 `.split('\n').map(l=>l.trim()).join(' ').trim()}
             </style></noscript>
         </head>
-        <body className={`${roboto.className} ${roboto.variable} ${SourceCodePro.variable}`} suppressHydrationWarning>
+        <body className={`${Roboto.className} ${Roboto.variable} ${SourceCodePro.variable}`} suppressHydrationWarning>
             <Providers>
                 <div>
                     {children}
