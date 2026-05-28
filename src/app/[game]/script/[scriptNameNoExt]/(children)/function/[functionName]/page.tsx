@@ -236,11 +236,11 @@ function Caveats({func, ckWikiDataPromise, githubWikiDataPromise}: {readonly fun
         {ckWikiData?.notesMarkdown ? <>
             <h3>CK Wiki - Notes</h3>
             <WikiMarkdown data-analytics-id="docs-notes-ckwiki" gameData={func.game} md={ckWikiData.notesMarkdown} baseURL={ckWikiData.wikiPageUrl} />
-        </>: null}
+        </>: []}
         {ckWikiData?.bugsMarkdown ? <>
             <h3>CK Wiki - Known Bugs</h3>
             <WikiMarkdown data-analytics-id="docs-notes-ckwiki" gameData={func.game} md={ckWikiData.bugsMarkdown} baseURL={ckWikiData.wikiPageUrl} />
-        </>: null}
+        </>: []}
         {githubWikiData?.filter(([,wikiData])=>wikiData.notesMD).map(([sourceIdentifier, wikiData]) =>
             <Fragment key={sourceIdentifier}>
                 <h3>GitHub Wiki notes (<SourceName source={func.game.scriptSources[sourceIdentifier]!} />)</h3>
