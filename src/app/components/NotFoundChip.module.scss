@@ -1,0 +1,11 @@
+@use '../vars.scss' as *;
+
+.notFoundChip {
+    display: inline-block;
+    padding: 0.1em 0.3em;
+    background-color: $errorBG;
+    color: white;
+    font-size: 0.7em; // also used in the code
+    border-radius: 0.2em;
+    font-weight: 900;
+}
