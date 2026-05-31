@@ -18,7 +18,11 @@ import { getWiki } from "../../../wiki-data-extraction/ck-wiki/getWiki";
 import { CodeBlock, CodeBlockLanguage } from "../code-block/CodeBlock";
 import { Link } from "../Link";
 import { unprepareUrlPart } from "@/utils/prepareUrlParts";
+import { PapyrusScriptEventReference } from "../papyrus/event/reference/PapyrusScriptEventReference";
 
+/**
+ * Pass this to baseUrl to automatically make links use the Papyrus Index's URL as the base URL.
+ */
 export const AUTOMATIC_BASE_URL: unique symbol = memoizeDevServerConst('AUTOMATIC_BASE_URL', () => Symbol.for('PAPYRUS_INDEX_AUTOMATIC_BASE_URL')) as never;
 
 function ckWikiMatchesGame(game: PapyrusGame, url: URL): boolean {
@@ -95,9 +99,12 @@ function WikiMarkdownLink(gameData: PapyrusGameDataIndexed<PapyrusGame>, inToolt
                             appendToStepSummarySection(`\`<WikiMarkdownLink>\` component references an event that does not exist: \`${identifier}\`.`, StepSummarySection.UnimplementedFeatures);
                             return getFallbackComponent();
                         }
-                        if (process.env.SKIP_HIGH_LEVEL_DIAGNOSTIC_LOGS !== 'true') console.warn('<EventReference> component not implemented, but we needed it for a WikiMarkdownLink.');
-                        appendToStepSummarySection(`\`<EventReference>\` component not implemented, but we needed it for a WikiMarkdownLink.`, StepSummarySection.UnimplementedFeatures);
-                        return <>{children}</>; // TODO: Implement <EventReference> component
+                        return <PapyrusScriptEventReference
+                            game={gameData.game}
+                            possibleScripts={script}
+                            evtAggregate={eventAggregate} missingName={identifier}
+                            inTooltip={inTooltip}
+                        />;
                     }
 
                     default:
@@ -176,10 +183,13 @@ function WikiMarkdownLink(gameData: PapyrusGameDataIndexed<PapyrusGame>, inToolt
     }
 
     const asEvent = script[AllSourcesCombined].events[toLowerCase(functOrEvent)];
-    if (asEvent) {//return <EventReference game={gameData.game} scriptName={functOrEventScriptName} eventAggregate={asEvent} />;
-        if (process.env.SKIP_HIGH_LEVEL_DIAGNOSTIC_LOGS !== 'true') console.warn('<EventReference> component not implemented, but we needed it for a WikiMarkdownLink.');
-        appendToStepSummarySection(`\`<EventReference>\` component not implemented, but we needed it for a WikiMarkdownLink.`, StepSummarySection.UnimplementedFeatures);
-        return <a href={url.href}>{children}</a>;
+    if (asEvent) {
+        return <PapyrusScriptEventReference
+            game={gameData.game}
+            possibleScripts={script}
+            evtAggregate={asEvent} missingName={functOrEventScriptName}
+            inTooltip={inTooltip}
+        />;
     }
 
     const structName = functOrEvent.match(/(?<structName>.+)_struct/ui)?.groups?.structName;

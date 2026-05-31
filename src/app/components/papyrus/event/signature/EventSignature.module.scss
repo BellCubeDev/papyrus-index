@@ -1,0 +1,103 @@
+@use "../../../../vars" as *;
+
+.functionSignature, .wrapableSection, .functionParametersParamWrapper, .functionNameWrapper {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    gap: 1ch;
+    > .eventName, > span:not(.functionNameWrapper, .wrapableSection, .functionParametersStart, .functionParametersEnd,  .functionParametersSeparator, .functionParametersParamWrapper) {
+        background: $codeBG;
+        * { background: none; }
+        padding: 0.3em 0.5em 0.25em;
+        border-radius: 0.3em;
+    }
+    font-family: var(--code-font);
+    font-weight: 600;
+}
+
+.functionSignature {
+    align-items: baseline;
+    padding-right: 3ch;
+    font-size: css-clamp(.7em, 1.75svw, 1em);
+
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: auto;
+}
+
+.wrapableSection {
+    display: inline-flex;
+    flex-wrap: wrap;
+
+    min-width: min-content;
+    max-width: css-min(100%, css-max(87vw, 30em));
+    box-sizing: border-box;
+
+    padding-left: 4ch;
+    > :first-child {
+        margin-left: -4ch;
+    }
+
+    > wbr + * {
+        margin-left: -2ch;
+    }
+}
+
+.functionParametersStart {
+    margin-left: -.75ch;
+    margin-right: -.4ch;
+    font-size: 1.4em;
+}
+.functionParametersEnd {
+    margin-left: -.4ch;
+    font-size: 1.4em;
+}
+.functionParametersSeparator {
+    margin-left: -1ch;
+    font-size: 1em;
+    position: relative;
+    height: 1.3em;
+}
+.functionParametersSeparatorBackslash {
+    color: #d7ba7d;
+    font-weight: 900;
+    position: absolute;
+    right: -2ch;
+    &--no-comma {
+        right: unset;
+        left: 1.1ch;
+    }
+    &--no-wrapper {
+        right: unset;
+        left: 1ch;
+    }
+}
+
+.functionKeyword {
+    color: #c586c0;
+}
+
+.functionNameWrapper {
+    min-width: max-content;
+}
+
+.eventName {
+    color: hsl(60deg, 42%, 76%);
+
+    --link-txt-color-noncurrent-normal: hsl(60deg, 42%, 76%);
+    --link-udl-color-noncurrent-normal: hsl(60, 22%, 44%);
+
+    --link-txt-color-noncurrent-hover: hsl(0, 0%, 100%);
+    --link-udl-color-noncurrent-hover: hsla(60, 90%, 76%, 0.9);
+
+    --link-txt-color-current-normal: hsl(60deg, 42%, 76%);
+    --link-udl-color-current-normal: #0000;
+
+    --link-txt-color-current-hover: hsl(0, 0%, 100%);
+    --link-udl-color-current-hover: #0000;
+}
+
+.flag {
+    color: #569cd6;
+}

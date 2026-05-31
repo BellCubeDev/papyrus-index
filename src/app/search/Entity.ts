@@ -5,7 +5,8 @@ import type { PapyrusScriptIndexedAggregate } from "../../papyrus/data-structure
 import type { PapyrusScriptStructIndexedAggregate } from "../../papyrus/data-structures/indexing/struct";
 import type { PapyrusGame } from "../../papyrus/data-structures/pure/game";
 import type { CKWikiDataFunctionPage } from "../../wiki-data-extraction/ck-wiki/data-extraction/getMediaWikiFunctionData";
-import type { GitHubWikiFunctionData } from "../../wiki-data-extraction/individual-github-wikis/types";
+import type { CKWikiDataEventPage } from "../../wiki-data-extraction/ck-wiki/data-extraction/getMediaWikiEventData";
+import type { GitHubWikiEventData, GitHubWikiFunctionData } from "../../wiki-data-extraction/individual-github-wikis/types";
 
 export enum SearchIndexEntityType {
     Script,
@@ -33,8 +34,8 @@ export interface SearchEntityFunctionAdditions extends SearchEntityBase<SearchIn
 }
 
 export interface SearchEntityEventAdditions extends SearchEntityBase<SearchIndexEntityType.Event>  {
-    ckWikiData: null;
-    githubWikiData: null;
+    ckWikiData: CKWikiDataEventPage | null;
+    githubWikiData: [Lowercase<string>, GitHubWikiEventData][];
 }
 
 export interface SearchEntityPropertyAdditions extends SearchEntityBase<SearchIndexEntityType.Property>  {

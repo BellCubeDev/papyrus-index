@@ -375,8 +375,12 @@ self.addEventListener('message', async function searchWorkerMessageHandler(e: Me
                         }
                         case SearchIndexEntityType.Function: {
                             if (!matchedKeys.find((value) => value.target !== sourcesKey && value.target !== obj.script.namespaceName[0]![1].target)) {
-                                newScore = 0;
-                                break;
+                                if (message.filter.entityTypes.includes(SearchIndexEntityType.Script)) {
+                                    newScore = 0; // If we're searching only the script name, we don't also want to also show its members
+                                    break;
+                                } else {
+                                    newScore *= 1.2;
+                                }
                             }
 
                             if (hasGoodMatchFor(obj.name[0]![1], matchedKeys, -100)) newScore *= 8;
@@ -395,6 +399,24 @@ self.addEventListener('message', async function searchWorkerMessageHandler(e: Me
                             break;
                         }
                         case SearchIndexEntityType.Event: {
+                            if (!matchedKeys.find((value) => value.target !== sourcesKey && value.target !== obj.script.namespaceName[0]![1].target)) {
+                                if (message.filter.entityTypes.includes(SearchIndexEntityType.Script)) {
+                                    newScore = 0; // If we're searching only the script name, we don't also want to also show its members
+                                    break;
+                                } else {
+                                    newScore *= 1.2;
+                                }
+                            }
+
+                            if (hasGoodMatchFor(obj.name[0]![1], matchedKeys, -100)) newScore *= 8;
+                            else newScore *= .3;
+
+
+                            if (hasGoodMatchFor(obj.script.namespaceName[0]![1], matchedKeys, -1000)) newScore *= 2.6;
+                            if (hasGoodMatchFor(sourcesKey, matchedKeys, -1000)) newScore *= 1.4;
+
+                            newScore *= 1.2;
+
                             break;
                         }
                         case SearchIndexEntityType.Property: {

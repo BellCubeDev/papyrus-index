@@ -17,6 +17,7 @@ import { prepareUrlPart, prepareUrlParts } from "../../../../utils/prepareUrlPar
 import type { APIReference, BreadcrumbList, ComputerLanguage } from "schema-dts";
 import { _ } from "ajv";
 import { isPapyrusFeatureSupported, PapyrusFeature } from "@/papyrus/feature-support";
+import { PapyrusEventSignatureVariants } from "@/app/components/papyrus/event/signature/EventSignatureVariants";
 
 export function generateStaticParams(): ScriptRouteParams[] {
     const params: [complexity: number, paramObj: ScriptRouteParams][] = [];
@@ -98,7 +99,13 @@ export default async function ScriptPage({params}: {readonly params: Promise<Scr
             </details>
             <details suppressHydrationWarning>
                 <summary>Events</summary>
-                <div className={styles.events}></div> { /* TODO: Add events to the script page */ }
+                <div className={styles.events}>
+                    <GuardEmptyList replacement={<p>No events found.</p>}>
+                        {Object.entries(scriptBySources[AllSourcesCombined].events).map(([evtName, variants]) => <div key={evtName}>
+                            <PapyrusEventSignatureVariants game={game} evtAggregate={variants} scriptName={scriptNamespaceName} />
+                        </div>)}
+                    </GuardEmptyList>
+                </div>
             </details>
             <details suppressHydrationWarning>
                 <summary>Functions</summary>

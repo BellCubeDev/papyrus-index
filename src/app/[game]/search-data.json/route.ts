@@ -14,6 +14,8 @@ import { AllSourcesCombined } from "../../../papyrus/data-structures/indexing/ga
 import { getGitHubWikiFunctionData } from "../../components/papyrus/function/signature/getGitHubWikiFunctionDescription";
 import type { PapyrusFeature, PapyrusFeatureSupportedGames } from "@/papyrus/feature-support";
 import { prepareUrlPart } from "@/utils/prepareUrlParts";
+import { getMediaWikiEventData } from "@/wiki-data-extraction/ck-wiki/data-extraction/getMediaWikiEventData";
+import { getGitHubWikiEventData } from "@/app/components/papyrus/event/signature/getGitHubWikiEventDescription";
 
 export type SingleExtraEntityDataRecord = { [TKey in keyof SearchIndexEntitiesRecordRawType<PapyrusGame>]: ObjectAssignDiff<SearchEntityBaseTypeMapping<PapyrusGame>[SearchIndexEntitiesRecordRawType<PapyrusGame>[TKey]['$entityType']], Omit<SearchIndexEntitiesRecordRawType<PapyrusGame>[TKey],'$entityType'>> };
 export type SingleExtraEntityData = SingleExtraEntityDataRecord[keyof SingleExtraEntityDataRecord];
@@ -79,10 +81,14 @@ async function getExtraEntityDataForFunction(game: PapyrusGame, func: PapyrusScr
 }
 
 async function getExtraEntityDataForEvent(event: PapyrusScriptEventOrBaseFunctionIndexedAggregate<PapyrusGame>): Promise<[number, SingleExtraEntityDataRecord[SearchIndexEntityType.Event]]> {
-    // TODO: Implement getExtraEntityDataForEvent()
+    const [githubWikiData, ckWikiData] = await Promise.all([
+        getGitHubWikiEventData(event),
+        getMediaWikiEventData(event.game.game, event, getBestStringVariant(event.script.namespaceName)![1])
+    ]);
+
     return [event.$entityId, {
-        ckWikiData: null,
-        githubWikiData: null,
+        ckWikiData,
+        githubWikiData,
     }];
 }
 

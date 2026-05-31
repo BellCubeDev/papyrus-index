@@ -21,6 +21,7 @@ import { MultiBox, type MultiBoxOption, type MultiBoxOptionFilled } from "../for
 import { PapyrusSourceType } from "../../../papyrus/data-structures/pure/scriptSource";
 import posthog from "posthog-js";
 import { useInputValue } from "@/app/hooks/useInputValue";
+import { PapyrusScriptEventReference } from "../papyrus/event/reference/PapyrusScriptEventReference";
 
 const EMPTY_QUERY: unique symbol = memoizeDevServerConst('<SearchBar> EMPTY_QUERY', ()=>Symbol('<SearchBar> EMPTY_QUERY')) as never;
 const AWAITING_SEARCH: unique symbol = memoizeDevServerConst('<SearchBar> AWAITING_SEARCH', ()=>Symbol('<SearchBar> AWAITING_SEARCH')) as never;
@@ -28,7 +29,7 @@ const AWAITING_SEARCH: unique symbol = memoizeDevServerConst('<SearchBar> AWAITI
 const ENTITY_TYPE_FILTER_OPTIONS = [
     { value: SearchIndexEntityType.Script, key: SearchIndexEntityType.Script, displayNode: 'Scripts' },
     { value: SearchIndexEntityType.Function, key: SearchIndexEntityType.Function, displayNode: 'Functions' },
-    //{ value: SearchIndexEntityType.Event, key: SearchIndexEntityType.Event, displayNode: 'Events' },
+    { value: SearchIndexEntityType.Event, key: SearchIndexEntityType.Event, displayNode: 'Events' },
     //{ value: SearchIndexEntityType.Property, key: SearchIndexEntityType.Property, displayNode: 'Properties' },
     //{ value: SearchIndexEntityType.Struct, key: SearchIndexEntityType.Struct, displayNode: 'Structs' },
 ] satisfies MultiBoxOption[];
@@ -248,7 +249,7 @@ export default function SearchBar({game}: {readonly game: PapyrusGame}): React.R
                                     </li>;
                                 case SearchIndexEntityType.Event:
                                     return <li key={obj.$entityId} tabIndex={i === 0 ? -1 : undefined}>
-                                        Event {obj.name} {scoreElement}
+                                        <PapyrusScriptEventReference game={game} scriptAggregate={obj.script} evtAggregate={obj} /> {scoreElement}
                                     </li>;
                                 case SearchIndexEntityType.Property:
                                     return <li key={obj.$entityId} tabIndex={i === 0 ? -1 : undefined}>
