@@ -167,6 +167,7 @@ Processing was aborted.
                             returnValueDescriptionMD: acc.returnValueDescriptionMD || functionData.returnValueDescriptionMD,
                             exampleMDs: mergedExampleMDs.size > 0 ? Array.from(mergedExampleMDs) : [],
                             notesMD: [acc.notesMD, functionData.notesMD].filter(Boolean).join('\n\n') || null,
+                            seeAlso: [],
                         };
                     }, firstFunctionData);
                 }
@@ -191,6 +192,7 @@ Processing was aborted.
                         returnValueDescriptionMD: null,
                         exampleMDs: [],
                         notesMD: null,
+                        seeAlso: [],
                     };
 
                     for (const name of functionUnderConstruction.names) {
@@ -311,6 +313,7 @@ Processing was aborted.
                             parameters: {},
                             exampleMDs: mergedExampleMDs.size > 0 ? Array.from(mergedExampleMDs) : [],
                             notesMD: [acc.notesMD, eventData.notesMD].filter(Boolean).join('\n\n') || null,
+                            seeAlso: [],
                         };
                     }, firstEventData);
                 }
@@ -332,6 +335,7 @@ Processing was aborted.
                                 parameters: {},
                                 exampleMDs: [],
                                 notesMD: null,
+                                seeAlso: [],
                             };
                             const existingObj = events[recipient][name];
                             events[recipient][name] = existingObj ? mergeEventDataObjs(eventUnderConstruction.node, existingObj, newObj) : newObj;
@@ -349,6 +353,7 @@ Processing was aborted.
                                 returnValueDescriptionMD: null,
                                 exampleMDs: [],
                                 notesMD: null,
+                                seeAlso: [],
                             };
                             const existingObj = registrationControlFunctions[funcNameLowercase];
                             registrationControlFunctions[funcNameLowercase] = existingObj ? mergeFunctionDataObjs(existingObj, newObj) : newObj;

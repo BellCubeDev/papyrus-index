@@ -21,7 +21,7 @@ import { SourceName } from "../../../../../../components/papyrus/SourceName";
 import { PapyrusTypeNamed, PapyrusTypeWithValue } from "../../../../../../components/papyrus/type/PapyrusType";
 import { SuspenseIfDevelopment } from "../../../../../../components/SuspenseIfDevelopment";
 import { TextWithTooltip } from "../../../../../../components/text-with-tooltip/TooltipText";
-import { WikiMarkdown } from "../../../../../../components/wiki-markdown/WikiMarkdown";
+import { AUTOMATIC_BASE_URL, WikiMarkdown } from "../../../../../../components/wiki-markdown/WikiMarkdown";
 import styles from './FunctionPage.module.scss';
 import { getGameAndScriptAndFunctionFromParams, type FunctionRouteParams } from "./getGameAndScriptAndFunctionFromParams";
 import { sourcesSortFn } from "../../../../../../components/papyrus/SourcesList";
@@ -99,6 +99,7 @@ export default async function FunctionPage({params}: {readonly params: Promise<F
                 <RelatedPages
                     gameData={func.game}
                     ckWikiDataPromise={ckWikiDataPromise}
+                    githubWikiDataPromise={githubWikiDataPromise}
                 />
             </SuspenseIfDevelopment>
 
@@ -301,8 +302,20 @@ function Parameters({func, ckWikiDataPromise, githubWikiDataPromise}: {readonly 
     </GuardEmptyList>;
 }
 
-function RelatedPages({gameData, ckWikiDataPromise}: {readonly gameData: PapyrusGameDataIndexed<PapyrusGame>, readonly ckWikiDataPromise: ReturnType<typeof getMediaWikiFunctionData>}) {
+function RelatedPages({gameData, ckWikiDataPromise, githubWikiDataPromise}: {readonly gameData: PapyrusGameDataIndexed<PapyrusGame>, readonly ckWikiDataPromise: ReturnType<typeof getMediaWikiFunctionData>, readonly githubWikiDataPromise: Promise<Awaited<ReturnType<typeof getGitHubWikiFunctionData>>>}) {
     const ckWikiData = use(ckWikiDataPromise);
+    const githubWikiData = use(githubWikiDataPromise);
+
+    let seeAlsoMd = ckWikiData?.seeAlsoMarkdown ?? '';
+
+    const dedupedLinks = new Set<string>();
+    for (const [, wikiData] of githubWikiData) {
+        for (const link of wikiData.seeAlso) {
+            if (dedupedLinks.has(link.uri)) continue;
+            seeAlsoMd += `\n- [${link.name}](${link.uri})\n`;
+            dedupedLinks.add(link.uri);
+        }
+    }
 
     // eslint-disable-next-line react/no-unstable-nested-components -- these components are server components, so we don't really care
     return <GuardEmptyList replacement={null} Wrapper={({children}) => <>
@@ -312,7 +325,7 @@ function RelatedPages({gameData, ckWikiDataPromise}: {readonly gameData: Papyrus
             {children}
         </div>
     </>}>
-        {ckWikiData?.seeAlsoMarkdown ? <WikiMarkdown gameData={gameData} md={ckWikiData.seeAlsoMarkdown} baseURL={ckWikiData.wikiPageUrl} /> : null}
+        {seeAlsoMd.length === 0 ? [] : <WikiMarkdown gameData={gameData} md={seeAlsoMd} baseURL={ckWikiData?.wikiPageUrl ?? AUTOMATIC_BASE_URL} />}
     </GuardEmptyList>;
 }
 

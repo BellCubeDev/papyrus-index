@@ -71,6 +71,53 @@ export default class SkyrimSkyUIWiki extends GitHubWiki<PapyrusGame.SkyrimSE> {
             this.parseAPIReferenceForMCM()
         ]);
 
+        for (const event of Object.values(mcmAPIReferenceData.events)) {
+            const { eventRawName_ } = event.name.match(/^on(?:option|page)?(?<eventRawName_>\w+?)(?:st)?$/u)?.groups ?? {};
+            if (!eventRawName_) throw new Error(`Could not extract raw name from event name ${event.name}`);
+            const eventRawName = toLowerCase(eventRawName_);
+
+            const variants: Lowercase<string>[] = [
+                `on${eventRawName}st` as Lowercase<string>,
+                `on${eventRawName}` as Lowercase<string>,
+                `onpage${eventRawName}` as Lowercase<string>,
+                `onoption${eventRawName}` as Lowercase<string>,
+            ];
+
+            for (const variant of variants) {
+                if (variant === event.name) continue;
+                if (mcmAPIReferenceData.events[variant]) {
+                    event.seeAlso.push({
+                        name: variant,
+                        uri: `papyrus-index:/skyrimse/script/ski_configbase/event/${variant}`
+                    });
+                }
+            }
+        }
+
+        for (const func of Object.values(mcmAPIReferenceData.functions)) {
+            const { functionRawName_ } = func.name.match(/^(?<functionRawName_>\w+?)(?:st)?$/u)?.groups ?? {};
+            if (!functionRawName_) throw new Error(`Could not extract raw name from function name ${func.name}`);
+            const functionRawName = toLowerCase(functionRawName_);
+
+            const variants: Lowercase<string>[] = [
+                `${functionRawName}st` as Lowercase<string>,
+                `${functionRawName}` as Lowercase<string>,
+            ];
+
+            for (const variant of variants) {
+                console.log({original: func.name, rawName: functionRawName, variant, data: mcmAPIReferenceData.functions[variant]});
+                if (variant === func.name) continue;
+                if (mcmAPIReferenceData.functions[variant]) {
+                    func.seeAlso.push({
+                        name: variant,
+                        uri: `papyrus-index:/skyrimse/script/ski_configbase/function/${variant}`
+                    });
+                }
+            }
+            console.log({functionName: func.name, variants, seeAlso: func.seeAlso});
+        }
+
+
         return {
             linkToWikiData: 'https://github.com/schlangster/skyui/wiki',
             isPubliclyEditable: false,
@@ -150,7 +197,7 @@ export default class SkyrimSkyUIWiki extends GitHubWiki<PapyrusGame.SkyrimSE> {
         };
     }
 
-    async parseAPIReferenceForMCM(): Promise<Pick<GitHubWikiScriptData, 'events'|'functions'|'properties'>> {
+    async parseAPIReferenceForMCM(): Promise<Pick<GitHubWikiScriptData, 'events' | 'functions' | 'properties'>> {
         const mcmAPIReferenceFilePath = path.join(wikiPath, 'MCM-API-Reference.md');
 
         function panic(message: string, node: Node): never {
@@ -178,14 +225,14 @@ Processing was aborted.
         const parsedAPIReference = await remarkProcessor.parse(mcmAPIReferenceFileContent);
 
         const createFunctionUnderConstruction = (): typeof functionUnderConstruction =>
-            ({parameters: {}, exampleMDs: []});
-        let functionUnderConstruction: Partial<GitHubWikiFunctionData> & {headerNode?: RootContent} & Pick<GitHubWikiFunctionData, 'parameters'|'exampleMDs'> = createFunctionUnderConstruction();
+            ({ parameters: {}, exampleMDs: [], seeAlso: [] });
+        let functionUnderConstruction: Partial<GitHubWikiFunctionData> & { headerNode?: RootContent } & Pick<GitHubWikiFunctionData, 'parameters' | 'exampleMDs'> = createFunctionUnderConstruction();
         const functions: Record<Lowercase<string>, GitHubWikiFunctionData> = {};
         function finalizeFunction() {
             if (!functionUnderConstruction.headerNode) return;
             const node = functionUnderConstruction.headerNode;
             if (!functionUnderConstruction.name) panic(`Function under construction has no name: ${JSON.stringify(functionUnderConstruction)}`, node);
-            if (functions[functionUnderConstruction.name]) panic(`Duplicate functions with name ${functionUnderConstruction.name} in MCM API Reference: ${JSON.stringify({old: functions[functionUnderConstruction.name], new: functionUnderConstruction}, null, 4)}`, node);
+            if (functions[functionUnderConstruction.name]) panic(`Duplicate functions with name ${functionUnderConstruction.name} in MCM API Reference: ${JSON.stringify({ old: functions[functionUnderConstruction.name], new: functionUnderConstruction }, null, 4)}`, node);
             if (!functionUnderConstruction.linkToWikiData) panic(`Function under construction has no link to wiki data: ${JSON.stringify(functionUnderConstruction)}`, node);
             functions[functionUnderConstruction.name] = {
                 name: functionUnderConstruction.name,
@@ -198,23 +245,24 @@ Processing was aborted.
                 exampleMDs: functionUnderConstruction.exampleMDs,
                 returnValueDescriptionMD: functionUnderConstruction.returnValueDescriptionMD ?? null,
                 notesMD: functionUnderConstruction.notesMD ?? null,
+                seeAlso: functionUnderConstruction.seeAlso ?? [],
             };
             functionUnderConstruction = createFunctionUnderConstruction();
         }
 
 
         const createEventUnderConstruction = (): typeof eventUnderConstruction =>
-            ({parameters: {}, exampleMDs: []});
-        let eventUnderConstruction: Partial<GitHubWikiEventData> & {headerNode?: RootContent} & Pick<GitHubWikiEventData, 'parameters'|'exampleMDs'> = createEventUnderConstruction();
+            ({ parameters: {}, exampleMDs: [], seeAlso: [] });
+        let eventUnderConstruction: Partial<GitHubWikiEventData> & { headerNode?: RootContent } & Pick<GitHubWikiEventData, 'parameters' | 'exampleMDs'> = createEventUnderConstruction();
         const events: Record<Lowercase<string>, GitHubWikiEventData> = {};
         function finalizeEvent() {
             if (!eventUnderConstruction.headerNode) return;
             const node = eventUnderConstruction.headerNode;
             if (!eventUnderConstruction.name) panic(`Event under construction has no name: ${JSON.stringify(eventUnderConstruction)}`, node);
-            if (events[eventUnderConstruction.name]) panic(`Duplicate events with name ${eventUnderConstruction.name} in MCM API Reference: ${JSON.stringify({old: events[eventUnderConstruction.name], new: eventUnderConstruction}, null, 4)}`, node);
+            if (events[eventUnderConstruction.name]) panic(`Duplicate events with name ${eventUnderConstruction.name} in MCM API Reference: ${JSON.stringify({ old: events[eventUnderConstruction.name], new: eventUnderConstruction }, null, 4)}`, node);
             if (!eventUnderConstruction.linkToWikiData) panic(`Event under construction has no link to wiki data: ${JSON.stringify(eventUnderConstruction)}`, node);
 
-            events[eventUnderConstruction.name] = {
+            const evt: GitHubWikiEventData = {
                 name: eventUnderConstruction.name,
                 descriptionMD: eventUnderConstruction.descriptionMD ?? null,
                 registrationControlFunctions: eventUnderConstruction.registrationControlFunctions ?? null,
@@ -222,20 +270,24 @@ Processing was aborted.
                 linkToWikiData: eventUnderConstruction.linkToWikiData,
                 exampleMDs: eventUnderConstruction.exampleMDs,
                 notesMD: eventUnderConstruction.notesMD ?? null,
+                seeAlso: eventUnderConstruction.seeAlso ?? [],
             };
+
+            events[eventUnderConstruction.name] = evt;
+
             eventUnderConstruction = createEventUnderConstruction();
         }
 
 
         const createPropertyUnderConstruction = (): typeof propertyUnderConstruction =>
-            ({});
-        let propertyUnderConstruction: Partial<GitHubWikiPropertyData> & {headerNode?: RootContent} = createPropertyUnderConstruction();
+            ({ });
+        let propertyUnderConstruction: Partial<GitHubWikiPropertyData> & { headerNode?: RootContent } = createPropertyUnderConstruction();
         const properties: Record<Lowercase<string>, GitHubWikiPropertyData> = {};
         function finalizeProperty() {
             if (!propertyUnderConstruction.headerNode) return;
             const node = propertyUnderConstruction.headerNode;
             if (!propertyUnderConstruction.name) panic(`Property under construction has no name: ${JSON.stringify(propertyUnderConstruction)}`, node);
-            if (properties[propertyUnderConstruction.name]) panic(`Duplicate properties with name ${propertyUnderConstruction.name} in MCM API Reference: ${JSON.stringify({old: properties[propertyUnderConstruction.name], new: propertyUnderConstruction}, null, 4)}`, node);
+            if (properties[propertyUnderConstruction.name]) panic(`Duplicate properties with name ${propertyUnderConstruction.name} in MCM API Reference: ${JSON.stringify({ old: properties[propertyUnderConstruction.name], new: propertyUnderConstruction }, null, 4)}`, node);
 
             if (!propertyUnderConstruction.linkToWikiData) panic(`Property under construction has no link to wiki data: ${JSON.stringify(propertyUnderConstruction)}`, node);
 
@@ -246,13 +298,14 @@ Processing was aborted.
                 exampleMDs: [],
                 linkToWikiData: propertyUnderConstruction.linkToWikiData,
                 notesMD: propertyUnderConstruction.notesMD ?? null,
+                seeAlso: [],
             };
             propertyUnderConstruction = createPropertyUnderConstruction();
         }
 
         let currentSection: SkyUIWikiAPIReferenceSection | null = null;
 
-        for (let  i = 0; i < parsedAPIReference.children.length; i++) {
+        for (let i = 0; i < parsedAPIReference.children.length; i++) {
             const initialNode = parsedAPIReference.children[i]!;
 
             if (initialNode.type === 'thematicBreak') {
@@ -289,10 +342,10 @@ Processing was aborted.
 
                     const lastPropNameChild = initialNode.children.at(-1);
                     if (!lastPropNameChild || lastPropNameChild.type !== 'inlineCode') panic(`Expected last child of property header to be inlineCode, got ${lastPropNameChild?.type}`, initialNode);
-                    const {propertyName} = lastPropNameChild.value.match(/\s+(?<propertyName>\w+)$/u)?.groups ?? {};
+                    const { propertyName } = lastPropNameChild.value.match(/\s+(?<propertyName>\w+)$/u)?.groups ?? {};
                     if (!propertyName) panic(`Property name not found in header: ${JSON.stringify(initialNode, null, 4)}`, initialNode);
                     const propertyIdElement = initialNode.children[0]!;
-                    if (propertyIdElement.type !== 'html')  panic(`Expected first child of property header to be HTML, got ${propertyIdElement.type}`, initialNode);
+                    if (propertyIdElement.type !== 'html') panic(`Expected first child of property header to be HTML, got ${propertyIdElement.type}`, initialNode);
                     const propertyIdMatch = propertyIdElement.value.match(/^<a\s+id="(?<propertyId>\w+)"\s*\/?>/u);
                     const propertyId = propertyIdMatch?.groups?.propertyId;
                     if (!propertyId) panic(`Property ID not found in header ID element: ${JSON.stringify(propertyIdElement, null, 4)}`, propertyIdElement);
@@ -312,7 +365,7 @@ Processing was aborted.
 
                     const usageNodesAndRestOfNodes = parsedAPIReference.children.slice(i);
                     const usageNodesStopIndex = usageNodesAndRestOfNodes.findIndex(node => node.type === 'thematicBreak' || node.type === 'heading');
-                    const usageNodes =  usageNodesAndRestOfNodes.slice(0, usageNodesStopIndex);
+                    const usageNodes = usageNodesAndRestOfNodes.slice(0, usageNodesStopIndex);
                     i += usageNodes.length - 1;
                     propertyUnderConstruction.sdkUsageMD = stringifyNodes(usageNodes);
 
@@ -325,10 +378,10 @@ Processing was aborted.
 
                     const lastEventNameChild = initialNode.children.at(-1);
                     if (!lastEventNameChild || lastEventNameChild.type !== 'inlineCode') panic(`Expected last child of event header to be inlineCode, got ${lastEventNameChild?.type}`, initialNode);
-                    const {eventName} = lastEventNameChild.value.match(/^(?<eventName>\w+)\(.*\)$/u)?.groups ?? {};
+                    const { eventName } = lastEventNameChild.value.match(/^(?<eventName>\w+)\(.*\)$/u)?.groups ?? {};
                     if (!eventName) panic(`Event name not found in header: ${JSON.stringify(initialNode, null, 4)}`, initialNode);
                     const eventIdElement = initialNode.children[0]!;
-                    if (eventIdElement.type !== 'html')  panic(`Expected first child of event header to be HTML, got ${eventIdElement.type}`, initialNode);
+                    if (eventIdElement.type !== 'html') panic(`Expected first child of event header to be HTML, got ${eventIdElement.type}`, initialNode);
                     const eventIdMatch = eventIdElement.value.match(/^<a\s+id="(?<eventId>\w+)"\s*\/?>/u);
                     const eventId = eventIdMatch?.groups?.eventId;
                     if (!eventId) panic(`Event ID not found in header ID element: ${JSON.stringify(eventIdElement, null, 4)}`, eventIdElement);
@@ -356,7 +409,7 @@ Processing was aborted.
                         if (!parameterParagraph || parameterParagraph.type !== 'paragraph') panic(`Expected first child of list item to be a paragraph, got ${parameterParagraph?.type}`, parameterParagraph ?? listItem);
                         const [parameterFirstTextChild, ...otherParameterChildren] = parameterParagraph.children;
                         if (!parameterFirstTextChild || parameterFirstTextChild.type !== 'text') panic(`Expected first child of paragraph to be text, got ${parameterFirstTextChild?.type}`, parameterFirstTextChild ?? parameterParagraph);
-                        const {parameterName, restOfText} = parameterFirstTextChild.value.match(/^(?<parameterName>\w+)\s*-\s*(?<restOfText>.*)/u)?.groups ?? {};
+                        const { parameterName, restOfText } = parameterFirstTextChild.value.match(/^(?<parameterName>\w+)\s*-\s*(?<restOfText>.*)/u)?.groups ?? {};
                         if (!parameterName) panic(`Parameter name not found in paragraph: ${JSON.stringify(parameterParagraph, null, 4)}`, parameterParagraph);
                         if (!restOfText) panic(`Rest of text not found in paragraph: ${JSON.stringify(parameterParagraph, null, 4)}`, parameterParagraph);
 
@@ -379,6 +432,7 @@ Processing was aborted.
                             linkToWikiData: eventUnderConstruction.linkToWikiData,
                             notesMD: null,
                             exampleMDs: [],
+                            seeAlso: [],
                         };
                     }
 
@@ -389,7 +443,7 @@ Processing was aborted.
 
                     const usageNodesAndRestOfNodes = parsedAPIReference.children.slice(i);
                     const usageNodesStopIndex = usageNodesAndRestOfNodes.findIndex(node => node.type === 'thematicBreak' || node.type === 'heading');
-                    const usageNodes =  usageNodesAndRestOfNodes.slice(0, usageNodesStopIndex);
+                    const usageNodes = usageNodesAndRestOfNodes.slice(0, usageNodesStopIndex);
                     i += usageNodes.length - 1;
 
 
@@ -410,7 +464,7 @@ Processing was aborted.
                     if (!signatureMatch?.groups?.functionName) panic(`Function name not found in header: ${JSON.stringify(initialNode, null, 4)}`, initialNode);
 
                     const functionIdElement = initialNode.children[0]!;
-                    if (functionIdElement.type !== 'html')  panic(`Expected first child of function header to be HTML, got ${functionIdElement.type}`, initialNode);
+                    if (functionIdElement.type !== 'html') panic(`Expected first child of function header to be HTML, got ${functionIdElement.type}`, initialNode);
                     const functionIdMatch = functionIdElement.value.match(/^<a\s+id="(?<functionId>\w+)"\s*\/?>/u);
                     const functionId = functionIdMatch?.groups?.functionId;
                     if (!functionId) panic(`Function ID not found in header ID element: ${JSON.stringify(functionIdElement, null, 4)}`, functionIdElement);
@@ -491,17 +545,18 @@ Processing was aborted.
                                         exampleMDs: [],
                                         notesMD: null,
                                         linkToWikiData: functionUnderConstruction.linkToWikiData,
+                                        seeAlso: [],
                                     };
                                 }
                             }
 
                             const paramNotesNodesAndRestOfNodes = parsedAPIReference.children.slice(i);
-                            const paramNotesEndIndex = paramNotesNodesAndRestOfNodes.findIndex(n => n.type === 'thematicBreak' || n.type === 'heading' );
+                            const paramNotesEndIndex = paramNotesNodesAndRestOfNodes.findIndex(n => n.type === 'thematicBreak' || n.type === 'heading');
                             const paramNotesNodes = paramNotesNodesAndRestOfNodes.slice(0, paramNotesEndIndex === -1 ? paramNotesNodesAndRestOfNodes.length : paramNotesEndIndex);
                             i += paramNotesNodes.length;
 
                             const paramNotesMD = stringifyNodes(paramNotesNodes);
-                            if  (paramNotesMD) {
+                            if (paramNotesMD) {
                                 if (functionUnderConstruction.notesMD) functionUnderConstruction.notesMD += `\n\n${paramNotesMD}`;
                                 else functionUnderConstruction.notesMD = paramNotesMD;
                             }
@@ -510,7 +565,7 @@ Processing was aborted.
                         } else {
                             // Generically parse other sections
                             const sectionNodesAndRestOfNodes = parsedAPIReference.children.slice(i);
-                            const sectionEndIndex = sectionNodesAndRestOfNodes.findIndex(n => n.type === 'thematicBreak' || n.type === 'heading' );
+                            const sectionEndIndex = sectionNodesAndRestOfNodes.findIndex(n => n.type === 'thematicBreak' || n.type === 'heading');
                             const sectionNodes = sectionNodesAndRestOfNodes.slice(0, sectionEndIndex === -1 ? sectionNodesAndRestOfNodes.length : sectionEndIndex);
                             i += sectionNodes.length;
 

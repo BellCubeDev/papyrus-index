@@ -8,6 +8,7 @@ export interface GitHubWikiScriptDataPiece extends GitHubWikiDataPiece {
     exampleMDs: string[];
     descriptionMD: string | null;
     notesMD: string | null;
+    seeAlso: {name: string, uri: Lowercase<`papyrus-index:/${string}`>}[];
 }
 
 export interface GitHubWikiFunctionOrEventParameterData extends GitHubWikiScriptDataPiece {
