@@ -178,7 +178,7 @@ ${shortDescriptionMarkdown}
 
 
 
-    const exampleCodeElements = pageData.sectionsById.examples?.contents.filter(el=>el.getAttribute('typeof') === 'mw:Extension/source') ?? [];
+    const exampleCodeElements = (pageData.sectionsById.examples ?? pageData.sectionsById.example)?.contents.filter(el=>el.getAttribute('typeof') === 'mw:Extension/source') ?? [];
     const examplesData = exampleCodeElements.map(e => ({code: e.textContent || ''}));
 
     const returnValueDescriptionElements = pageData.sectionsById.return_value?.contents ?? [];
