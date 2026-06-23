@@ -132,29 +132,38 @@ export default function RootLayout({ children }: { readonly children: React.Reac
                 <div>
                     <footer>
                         <div>
-                            <Link href='/' data-no-link-style>
-                                <ThePapyrusIndexLogo />
-                            </Link>
+                            <div>
+                                <Link href='/' data-no-link-style>
+                                    <ThePapyrusIndexLogo />
+                                </Link>
+                            </div>
+                            <div>
+                                <p>
+                                    &copy; {new Date().getUTCFullYear()} BellCube. Source code <a href="https://github.com/BellCubeDev/papyrus-index">available on GitHub</a>.
+                                </p>
+                                <p>
+                                    Website code <a href="https://github.com/BellCubeDev/papyrus-index/blob/development/LICENSE.md">available for free under the MIT license</a>.
+                                    Papyrus source files are not covered by this license. Wiki&nbsp;data is covered by the respective licenses of the wikis, disclosed on individual pages where such data is used.
+                                </p>
+                                <Markdown skipHtml>{process.env.NEXT_PUBLIC_BUILD_SOURCE_MD}</Markdown>
+                            </div>
+                            <div>
+                                <a href='https://bellcube.dev' data-no-link-style target="_blank" rel="noopener noreferrer">
+                                    <Image alt='BellCube Logo'
+                                        src='/logo/logo.webp'
+                                        width={96} height={96}
+                                        loading='lazy'
+                                    />
+                                </a>
+                            </div>
                         </div>
-                        <div>
-                            <p>
-                                &copy; {new Date().getUTCFullYear()} BellCube. Source code <a href="https://github.com/BellCubeDev/papyrus-index">available on GitHub</a>.
-                            </p>
-                            <p>
-                                Website code <a href="https://github.com/BellCubeDev/papyrus-index/blob/development/LICENSE.md">available for free under the MIT license</a>.
-                                Papyrus source files are not covered by this license. Wiki&nbsp;data is covered by the respective licenses of the wikis, disclosed on individual pages where such data is used.
-                            </p>
-                            <Markdown skipHtml>{process.env.NEXT_PUBLIC_BUILD_SOURCE_MD}</Markdown>
-                        </div>
-                        <div>
-                            <a href='https://bellcube.dev' data-no-link-style target="_blank" rel="noopener noreferrer">
-                                <Image alt='BellCube Logo'
-                                    src='/logo/logo.webp'
-                                    width={96} height={96}
-                                    loading='lazy'
-                                />
-                            </a>
-                        </div>
+                        <hr />
+                        <p>
+                            The Papyrus Index is a reference for Papyrus scripts, functions, and events. It indexes scripts from countless xSE plugins, libraries, and other sources, and provides a uniquely granular search tool to find exactly what you&rsquo;re looking for. It is well-suited for beginners because it includes tooltips to explain Papyrus syntax and it integrates content directly from the CK Wiki. It is also perfectly designed for power users thanks to its well-structured rapid-feedback search tool and its display format rooted strongly in Papyrus syntax.
+                        </p>
+                        <p>
+                            This project is unaffiliated with Bethesda Softworks and is an entirely community-driven effort.
+                        </p>
                     </footer>
                 </div>
             </Providers>

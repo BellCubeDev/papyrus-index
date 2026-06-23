@@ -197,8 +197,12 @@ article, footer {
     text-wrap: pretty;
 }
 
-article, footer > :nth-child(2) {
+article, footer p {
     max-width: min(55em, calc(90vw - min(3vw, 48px)))
+}
+
+footer > hr, footer > p {
+    max-width: calc(min(85em, calc(90vw - min(1.5vw, 24px))));
 }
 
 div:has(> footer) {
@@ -210,28 +214,52 @@ div:has(> footer) {
 }
 
 footer {
-    text-align: center;
-    align-self: center;
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-    flex-wrap: wrap;
-
     > :first-child {
-        font-size: 0.65em;
-        flex: 1;
-        display:flex;
-        justify-content: center;
+        text-align: center;
+        align-self: center;
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+        flex-wrap: wrap;
+
+        row-gap: 1.5em;
+
+        > :first-child {
+            font-size: 0.65em;
+            flex: 1;
+            display:flex;
+            justify-content: center;
+        }
+
+        > :nth-child(2) {
+            min-width: 10em;
+
+            > :first-child { margin-top: 0; }
+            > :last-child { margin-bottom: 0; }
+        }
+
+        > :last-child {
+            padding: 0.5em;
+            flex: 1;
+            min-width: 96px;
+            box-sizing: border-box;
+
+            font-size: 0.65em;
+            margin: 1em 2em;
+            width: 25em;
+        }
     }
 
-    > :nth-child(2) {
-        min-width: 10em;
+    > hr {
+        margin: 1.5em auto;
+        border-color: #aaa;
+        border-width: 1.65px;
     }
 
-    > :last-child {
-        padding: 0.5em;
-        flex: 1;
-        min-width: 96px;
-        box-sizing: border-box;
+    > p {
+        margin-top: 0;
+        justify-self: center;
+        text-align: center;
+        font-size: 0.85em;
     }
 }
