@@ -14,7 +14,7 @@ export async function generateMetadata({params}: {readonly params: Promise<Scrip
     const scriptNamespaceName = getBestStringVariant(scriptBySources[AllSourcesCombined].namespaceName)![1];
     return {
         title: {
-            template: `%s - ${scriptNamespaceName} | ${gameName} - Papyrus Index`,
+            template: `%s - ${scriptNamespaceName} script | ${gameName} - Papyrus Index`,
             absolute: `~~ERROR~~ | ${gameName} - Papyrus Index`,
         }
     };

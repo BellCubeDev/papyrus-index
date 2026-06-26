@@ -14,7 +14,7 @@ import { toLowerCase } from "../../../../utils/toLowerCase";
 import { SourcesList, sourcesSortFn } from "../../../components/papyrus/SourcesList";
 import { JsonLDGraph } from "../../../components/JsonLDGraph";
 import { prepareUrlPart, prepareUrlParts } from "../../../../utils/prepareUrlParts";
-import type { APIReference, BreadcrumbList, ComputerLanguage } from "schema-dts";
+import type { APIReference, BreadcrumbList, ComputerLanguage, WebPage } from "schema-dts";
 import { _ } from "ajv";
 import { isPapyrusFeatureSupported, PapyrusFeature } from "@/papyrus/feature-support";
 import { PapyrusEventSignatureVariants } from "@/app/components/papyrus/event/signature/EventSignatureVariants";
@@ -46,9 +46,30 @@ export async function generateMetadata({params}: {readonly params: Promise<Scrip
 
     const scriptName = getBestStringVariant(scriptBySources[AllSourcesCombined].namespaceName)![1];
 
+    const canonicalUrl = `https://papyrus.bellcube.dev${prepareUrlParts(game, 'script', scriptBySources[AllSourcesCombined].namespaceName[0]![1])}`;
+
+    const includedDataTypes: string[] = [];
+
+    if (Object.keys(scriptBySources[AllSourcesCombined].functions).length > 0) includedDataTypes.push('functions');
+    if (Object.keys(scriptBySources[AllSourcesCombined].propertyGroups).length > 0) includedDataTypes.push('properties');
+    if (Object.keys(scriptBySources[AllSourcesCombined].events).length > 0) includedDataTypes.push('events');
+    if (Object.keys(scriptBySources[AllSourcesCombined].structs ?? {}).length > 0) includedDataTypes.push('structs');
+
+    const includedDataTypesText = includedDataTypes.length === 0 ? '' : `, including ${
+          includedDataTypes.length === 1 ? includedDataTypes[0]
+        : includedDataTypes.length === 2 ? includedDataTypes.join(' and ')
+        : `${includedDataTypes.slice(0, -1).join(', ')}, and ${includedDataTypes.at(-1)}`}`;
+
     return {
-        title: scriptName,
-        description: `Reference page for the ${scriptName} script in ${getGameName(game)}. This script is found in ${sourcesList}.`,
+        title: `${scriptName} script`,
+        description: `Reference for ${getGameName(game)}'s ${scriptName} script${includedDataTypesText}, found in ${sourcesList}.`,
+        alternates: {
+            canonical: canonicalUrl,
+        },
+        openGraph: {
+            type: 'website',
+            url: canonicalUrl,
+        }
     };
 }
 
@@ -136,6 +157,13 @@ export default async function ScriptPage({params}: {readonly params: Promise<Scr
                     name: "Papyrus",
                 } satisfies ComputerLanguage,
             } satisfies APIReference,
+            {
+                "@type": "WebPage",
+                "@id": `https://papyrus.bellcube.dev${prepareUrlParts(game, 'script', scriptBySources[AllSourcesCombined].namespaceName[0]![1])}#webpage`,
+                url: `https://papyrus.bellcube.dev${prepareUrlParts(game, 'script', scriptBySources[AllSourcesCombined].namespaceName[0]![1])}`,
+                mainEntity: { "@id": `https://papyrus.bellcube.dev${prepareUrlParts(game, 'script', scriptBySources[AllSourcesCombined].namespaceName[0]![1])}#script` },
+                isPartOf: { "@id": `https://papyrus.bellcube.dev${prepareUrlParts(game)}#game` },
+            } satisfies WebPage,
             {
                 "@type": "SoftwareSourceCode",
                 "@id": `https://papyrus.bellcube.dev${prepareUrlParts(game, 'script', scriptBySources[AllSourcesCombined].namespaceName[0]![1])}#code`,

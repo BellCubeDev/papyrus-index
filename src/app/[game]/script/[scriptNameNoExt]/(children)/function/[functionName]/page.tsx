@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Fragment, use } from "react";
-import type { APIReference, Graph, SoftwareSourceCode, TechArticle } from "schema-dts";
+import type { APIReference, Graph, SoftwareSourceCode, TechArticle, WebPage } from "schema-dts";
 import type { PapyrusScriptFunctionIndexedAggregate } from "../../../../../../../papyrus/data-structures/indexing/function";
 import { AllSourcesCombined, type PapyrusGameDataIndexed } from "../../../../../../../papyrus/data-structures/indexing/game";
 import type { PapyrusGame } from "../../../../../../../papyrus/data-structures/pure/game";
@@ -52,11 +52,22 @@ export async function generateMetadata({params}: {readonly params: Promise<Funct
 
     const functionName = getBestStringVariant(func.name)![1];
 
+    const canonicalUrl = `https://papyrus.bellcube.dev${prepareUrlParts(game, 'script', scriptBySources[AllSourcesCombined].namespaceName[0]![1], 'function', func.name[0]![1])}`;
+
     return {
-        title: functionName,
-        description: `Reference page for the ${func.isGlobal.some(v=>v[1]) ? 'Global (static)' : 'Member'} function ${scriptNamespaceName}.${functionName} for the game ${getGameName(game)}. This function is provided by the ${scriptNamespaceName} script found in ${sourcesList}.${description ? `\n\n${description}` : ''}`,
+        title: `${functionName} function`,
+        description: `Reference for ${getGameName(game)}'s ${scriptNamespaceName}.${functionName} ${func.isGlobal.some(v=>v[1]) ? 'Global (static)' : 'Member'} function. This function is provided by the ${scriptNamespaceName} script found in ${sourcesList}.${description ? `\n\n${description}` : ''}`,
+
         // TODO: Add keywords relevant to the function.
         // Possibly break its name down into parts, take its parameters into account, return type, parent script, and all that fun stuff.
+
+        alternates: {
+            canonical: canonicalUrl,
+        },
+        openGraph: {
+            type: 'website',
+            url: canonicalUrl,
+        }
     };
 }
 
@@ -136,6 +147,13 @@ export default async function FunctionPage({params}: {readonly params: Promise<F
                             } satisfies TechArticle)) as unknown as TechArticle[],
                         ] satisfies TechArticle[],
                     } satisfies APIReference,
+                    {
+                        "@type": "WebPage",
+                        "@id": `https://papyrus.bellcube.dev${prepareUrlParts(game, 'script', scriptBySources[AllSourcesCombined].namespaceName[0]![1], 'function', func.name[0]![1])}#webpage`,
+                        url: `https://papyrus.bellcube.dev${prepareUrlParts(game, 'script', scriptBySources[AllSourcesCombined].namespaceName[0]![1], 'function', func.name[0]![1])}`,
+                        mainEntity: { "@id": `https://papyrus.bellcube.dev${prepareUrlParts(game, 'script', scriptBySources[AllSourcesCombined].namespaceName[0]![1], 'function', func.name[0]![1])}#function` },
+                        isPartOf: { "@id": `https://papyrus.bellcube.dev${prepareUrlParts(game, 'script', scriptBySources[AllSourcesCombined].namespaceName[0]![1])}#script` },
+                    } satisfies WebPage,
                     {
                         "@type": "SoftwareSourceCode",
                         "@id": `https://papyrus.bellcube.dev${prepareUrlParts(game, 'script', scriptBySources[AllSourcesCombined].namespaceName[0]![1], 'function', func.name[0]![1])}#code`,

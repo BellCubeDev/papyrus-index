@@ -13,7 +13,7 @@ import { PapyrusScriptTypeArchetype } from "../../papyrus/data-structures/pure/t
 import { InternalLink } from "../components/Link";
 import { SourcePlate } from "../components/papyrus/SourcesList";
 import { JsonLDGraph } from "../components/JsonLDGraph";
-import type { BreadcrumbList, CollectionPage } from "schema-dts";
+import type { BreadcrumbList, CollectionPage, WebPage } from "schema-dts";
 import { AllSourcesCombined } from "../../papyrus/data-structures/indexing/game";
 import { prepareUrlPart, prepareUrlParts } from "../../utils/prepareUrlParts";
 import { UnreachableError } from "../../UnreachableError";
@@ -113,6 +113,13 @@ export default async function GamePage({params}: {readonly params: Promise<GameR
                     "@id": `https://papyrus.bellcube.dev${prepareUrlParts(game)}#breadcrumb`
                 },
             } satisfies CollectionPage,
+            {
+                "@type": "WebPage",
+                "@id": `https://papyrus.bellcube.dev${prepareUrlParts(game)}#webpage`,
+                url: `https://papyrus.bellcube.dev${prepareUrlParts(game)}`,
+                mainEntity: { "@id": `https://papyrus.bellcube.dev${prepareUrlParts(game)}#game` },
+                isPartOf: { "@id": "https://papyrus.bellcube.dev/#website" },
+            } satisfies WebPage,
             {
                 "@type": "BreadcrumbList",
                 "@id": `https://papyrus.bellcube.dev${prepareUrlParts(game)}#breadcrumb`,

@@ -74,7 +74,7 @@ export const metadata: Metadata = {
         'Mod',
     ],
     manifest: undefined, // TODO: Add manifest for PWA
-    metadataBase: new URL('https://ndt.bellcube.dev'),
+    metadataBase: new URL('https://papyrus.bellcube.dev'),
     openGraph: {
         type: 'website',
         siteName: 'Papyrus Index',
