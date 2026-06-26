@@ -9,7 +9,8 @@
     justify-content: space-between;
 
     counter-reset: index -1;
-    > div {
+    > li {
+        list-style: none;
 
         width: css-min(100%, 50em, css-max(calc(50% - 1em), 30em) );
         &:last-child { width: unset; min-width: css-min(100%, 50em, css-max(calc(50% - 1em), 30em) ); }

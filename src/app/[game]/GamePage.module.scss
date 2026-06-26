@@ -5,6 +5,10 @@
     gap: 48px;
     flex-wrap: wrap;
     justify-content: space-evenly;
+
+    > li {
+        list-style: none;
+    }
 }
 
 .source {

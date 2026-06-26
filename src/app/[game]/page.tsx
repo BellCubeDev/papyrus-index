@@ -45,36 +45,39 @@ export default async function GamePage({params}: {readonly params: Promise<GameR
             <div className={styles.inheritanceTree}>
                 <InheritanceDisplay game={game} data={gameData.topLevelScripts} />
             </div>
-            <div className={styles.sourceGrid}>
-                {Object.values(gameData.scriptSources).map(source => <InternalLink
-                    key={source.sourceIdentifier}
-                    href={prepareUrlParts(game, 'source', source.sourceIdentifier)}
-                    className={styles.source}
-                    data-no-link-style
-                ><div
-                    style={{
-                        // @ts-expect-error I know this isn't a real prop, but I need my css variables
-                        // eslint-disable-next-line react-hooks/purity -- these components are only rendered once during SSG
-                        "--random-tilt-factor": 2 ** (1.2 * Math.random()),
-                        // eslint-disable-next-line react-hooks/purity -- these components are only rendered once during SSG
-                        "--random-tilt-direction": Math.random() >= 0.5 ? 1 : -1,
-                    }}
-                >
-                    <div className={styles.sourceTop}>
-                        <SourcePlate sourceId={source.sourceIdentifier} game={game} noLink className={styles.sourcePlate!} />
-                        <PapyrusTypeValueToken game={game} type={{type: PapyrusScriptTypeArchetype.String, isArray: false, value: source.sourceIdentifier}} />
-                    </div>
-                    <div className={styles.sourceMiddle}>
-                        <SourceIcon sourceType={source.type} />
-                        <span><SourceTypeString sourceType={source.type} /></span>
-                    </div>
-                    <div className={styles.sourceBody}>
-                        <span className={styles.sourceNameAndPlate}>
-                            <h3><SourceName source={source} long /></h3>
-                        </span>
-                    </div>
-                </div></InternalLink>)}
-            </div>
+            <ul className={styles.sourceGrid}>
+                {Object.values(gameData.scriptSources).map(source => <li key={source.sourceIdentifier}>
+                    <InternalLink
+                        href={prepareUrlParts(game, 'source', source.sourceIdentifier)}
+                        className={styles.source}
+                        data-no-link-style
+                    >
+                        <div
+                            style={{
+                                // @ts-expect-error I know this isn't a real prop, but I need my css variables
+                                // eslint-disable-next-line react-hooks/purity -- these components are only rendered once during SSG
+                                "--random-tilt-factor": 2 ** (1.2 * Math.random()),
+                                // eslint-disable-next-line react-hooks/purity -- these components are only rendered once during SSG
+                                "--random-tilt-direction": Math.random() >= 0.5 ? 1 : -1,
+                            }}
+                        >
+                            <div className={styles.sourceTop}>
+                                <SourcePlate sourceId={source.sourceIdentifier} game={game} noLink className={styles.sourcePlate!} />
+                                <PapyrusTypeValueToken game={game} type={{type: PapyrusScriptTypeArchetype.String, isArray: false, value: source.sourceIdentifier}} />
+                            </div>
+                            <div className={styles.sourceMiddle}>
+                                <SourceIcon sourceType={source.type} />
+                                <span><SourceTypeString sourceType={source.type} /></span>
+                            </div>
+                            <div className={styles.sourceBody}>
+                                <span className={styles.sourceNameAndPlate}>
+                                    <h3><SourceName source={source} long /></h3>
+                                </span>
+                            </div>
+                        </div>
+                    </InternalLink>
+                </li>)}
+            </ul>
         </main>
         <JsonLDGraph data={[
             {

@@ -1,6 +1,15 @@
-.functions {
+.functions, .events, .propertyGroups, .propertyGroups {
     display: flex;
     flex-direction: column;
     margin-top: 0.8em;
     gap: 1em;
+    padding-left: 0;
+
+    > li {
+        list-style: none;
+    }
+}
+
+.propertyGroups {
+    gap: 0.33em;
 }

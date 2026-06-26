@@ -64,7 +64,7 @@ export default async function ScriptPage({params}: {readonly params: Promise<Scr
             <div className={styles.scriptHeader}>
                 <h1>{scriptNamespaceName}</h1>
                 <SourcesList sourceIDs={sourceIDs} game={game} />
-                <div className={styles.extendsList}></div> { /* TODO: Add the scripts that this script extends to the script page */ }
+                <ul className={styles.extendsList}></ul> { /* TODO: Add the scripts that this script extends to the script page */ }
             </div>
             <br />
             <details suppressHydrationWarning>
@@ -75,47 +75,47 @@ export default async function ScriptPage({params}: {readonly params: Promise<Scr
                 <details suppressHydrationWarning>
                     <summary>Structs</summary>
                     <p>The Papyrus Index is still under construction. Structs have not been implemented yet.</p>
-                    <div className={styles.structs}></div> { /* TODO: Add structs to the script page */ }
+                    <ul className={styles.structs}></ul> { /* TODO: Add structs to the script page */ }
                 </details>
             : null}
             <details suppressHydrationWarning>
                 {/* Include property groups here too! */}
                 <summary>Properties</summary>
 
-                <GuardEmptyList replacement={<p>No properties found.</p>}>
-                    {Object.entries(scriptBySources[AllSourcesCombined].propertyGroups).map(([groupName, group]) => <div key={groupName}>
+                <GuardEmptyList replacement={<p>No properties found.</p>} Wrapper={PropertiesWrapper}>
+                    {Object.entries(scriptBySources[AllSourcesCombined].propertyGroups).map(([groupName, group]) => <li key={groupName}>
                         <h2>{group.name}</h2>
-                        <div className={styles.properties}>
-                            {Object.entries(group.properties).map(([propName, prop]) => <div key={propName}>
+                        <ul className={styles.properties}>
+                            {Object.entries(group.properties).map(([propName, prop]) => <li key={propName}>
                                 <div className={styles.property}>
                                     <PapyrusTypeWithValue game={game} type={prop.value[0]![1]} name={propName} />
                                 </div>
-                            </div>)}
-                        </div>
-                    </div>)}
+                            </li>)}
+                        </ul>
+                    </li>)}
                 </GuardEmptyList>
 
-                <div className={styles.properties}></div> { /* TODO: Add properties to the script page */ }
+                <ul className={styles.properties}></ul> { /* TODO: Add properties to the script page */ }
             </details>
             <details suppressHydrationWarning>
                 <summary>Events</summary>
-                <div className={styles.events}>
+                <ul className={styles.events}>
                     <GuardEmptyList replacement={<p>No events found.</p>}>
-                        {Object.entries(scriptBySources[AllSourcesCombined].events).map(([evtName, variants]) => <div key={evtName}>
+                        {Object.entries(scriptBySources[AllSourcesCombined].events).map(([evtName, variants]) => <li key={evtName}>
                             <PapyrusEventSignatureVariants game={game} evtAggregate={variants} scriptName={scriptNamespaceName} />
-                        </div>)}
+                        </li>)}
                     </GuardEmptyList>
-                </div>
+                </ul>
             </details>
             <details suppressHydrationWarning>
                 <summary>Functions</summary>
-                <div className={styles.functions}>
+                <ul className={styles.functions}>
                     <GuardEmptyList replacement={<p>No functions found.</p>}>
-                        {Object.entries(scriptBySources[AllSourcesCombined].functions).map(([funcName, variants]) => <div key={funcName}>
+                        {Object.entries(scriptBySources[AllSourcesCombined].functions).map(([funcName, variants]) => <li key={funcName}>
                             <PapyrusFunctionSignatureVariants game={game} funcAggregate={variants} scriptName={scriptNamespaceName} />
-                        </div>)}
+                        </li>)}
                     </GuardEmptyList>
-                </div>
+                </ul>
             </details>
 
         </main>
@@ -188,4 +188,9 @@ export default async function ScriptPage({params}: {readonly params: Promise<Scr
             } satisfies BreadcrumbList,
         ]} />
     </>;
+}
+
+
+function PropertiesWrapper({children}: React.PropsWithChildren<object>) {
+  return <ul className={styles.propertyGroups}>{children}</ul>;
 }

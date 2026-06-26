@@ -259,9 +259,9 @@ function Parameters({func, ckWikiDataPromise, githubWikiDataPromise}: {readonly 
     return <GuardEmptyList replacement={null} Wrapper={({children}) => <>
         <br />
         <h2>Parameters</h2>
-        <div data-analytics-id="docs-parameters" className={styles.parameters}>
+        <ol data-analytics-id="docs-parameters" className={styles.parameters}>
             {children}
-        </div>
+        </ol>
     </>}>
         {func.parameters.map((param, index) => {
             const lowercaseParamName = toLowerCase(param.name);
@@ -280,7 +280,7 @@ function Parameters({func, ckWikiDataPromise, githubWikiDataPromise}: {readonly 
                 return null;
             }).filter((v): v is NonNullable<typeof v> => v !== null) ?? [];
 
-            return <div key={param.name}>
+            return <li key={param.name}>
                 <h3>
                     {param.isRequired
                         ? <PapyrusTypeNamed game={func.game.game} name={param.name} type={param.value} />
@@ -297,7 +297,7 @@ function Parameters({func, ckWikiDataPromise, githubWikiDataPromise}: {readonly 
                             md={paramWikiData.descriptionMD!} baseURL={paramWikiData.linkToWikiData} />
                     </Fragment>
                 )}
-            </div>;
+            </li>;
         })}
     </GuardEmptyList>;
 }
