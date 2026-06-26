@@ -69,7 +69,9 @@ export default async function ScriptPage({params}: {readonly params: Promise<Scr
             <br />
             <details suppressHydrationWarning>
                 <summary>Inheritance Tree</summary>
-                <InheritanceDisplay game={game} data={scriptBySources[AllSourcesCombined].extendedBy} />
+                <div className={styles.inheritanceTree}>
+                    <InheritanceDisplay game={game} data={scriptBySources[AllSourcesCombined].extendedBy} />
+                </div>
             </details>
             {isPapyrusFeatureSupported(PapyrusFeature.Structs, game) ?
                 <details suppressHydrationWarning>
