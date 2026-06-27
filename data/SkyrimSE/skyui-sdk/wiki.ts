@@ -105,7 +105,7 @@ export default class SkyrimSkyUIWiki extends GitHubWiki<PapyrusGame.SkyrimSE> {
             ];
 
             for (const variant of variants) {
-                console.log({original: func.name, rawName: functionRawName, variant, data: mcmAPIReferenceData.functions[variant]});
+                //console.log({original: func.name, rawName: functionRawName, variant, data: mcmAPIReferenceData.functions[variant]});
                 if (variant === func.name) continue;
                 if (mcmAPIReferenceData.functions[variant]) {
                     func.seeAlso.push({
@@ -114,7 +114,7 @@ export default class SkyrimSkyUIWiki extends GitHubWiki<PapyrusGame.SkyrimSE> {
                     });
                 }
             }
-            console.log({functionName: func.name, variants, seeAlso: func.seeAlso});
+            //console.log({functionName: func.name, variants, seeAlso: func.seeAlso});
         }
 
 
