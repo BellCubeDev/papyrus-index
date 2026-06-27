@@ -185,7 +185,7 @@ export function SearchProvider({children, game, searchIndexHash}: {readonly chil
 
     return <searchContext.Provider value={value}>
         {children}
-        <Suspense>
+        <Suspense fallback={null}>
             <SourceListUser game={game} />
         </Suspense>
     </searchContext.Provider>;

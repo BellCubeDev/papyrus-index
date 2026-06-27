@@ -1,6 +1,5 @@
 
 import type { Metadata } from "next";
-import React, { Suspense } from "react";
 import { UnreachableError } from "../../../../UnreachableError";
 import type { PapyrusGame } from "../../../../papyrus/data-structures/pure/game";
 import { PapyrusSourceType, type PapyrusScriptSourceMetadata, type PapyrusScriptSourceMetadataVanilla } from "../../../../papyrus/data-structures/pure/scriptSource";
@@ -15,6 +14,7 @@ import { WikiMarkdown } from "../../../components/wiki-markdown/WikiMarkdown";
 import { JsonLDGraph } from "../../../components/JsonLDGraph";
 import { prepareUrlPart, prepareUrlParts } from "../../../../utils/prepareUrlParts";
 import { getKeywords, type PapyrusDataType } from "@/app/SEO";
+import { SuspenseIfDevelopment } from "@/app/components/SuspenseIfDevelopment";
 
 export function generateStaticParams(): SourceRouteParams[] {
     const params = [];
@@ -71,12 +71,12 @@ export default async function SourcePage({params}: {readonly params: Promise<Sou
                     </li>
                 )}
             </ul>
-            <Suspense fallback={<p>Loading GitHub wiki data...</p>}>
+            <SuspenseIfDevelopment fallback={<p>Loading GitHub wiki data...</p>}>
                 {githubWikiData?.then(data => !data.sourceDescriptionMD ? null : <>
                     <h2>Description from <a href={data.linkToWikiData}>GitHub Wiki</a></h2>
                     <WikiMarkdown md={data.sourceDescriptionMD} baseURL={data.linkToWikiData} gameData={gameData} />
                 </>)}
-            </Suspense>
+            </SuspenseIfDevelopment>
         </main>
         <JsonLDGraph data={[
             {

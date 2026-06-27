@@ -3,7 +3,7 @@ import type { PapyrusGame } from "../../../../../papyrus/data-structures/pure/ga
 import { joinJSXWithElementByWrapping } from "../../../../../utils/joinJSX";
 import { prepareUrlParts } from "../../../../../utils/prepareUrlParts";
 import { InternalLink } from "../../../Link";
-import { SuspenseIfServer } from "../../../SuspenseIfServer";
+import { SuspenseIfDevServer } from "../../../SuspenseIfDevServer";
 import { TextWithTooltip } from "../../../text-with-tooltip/TooltipText";
 import { PapyrusTypeNamed, PapyrusTypeWithValue } from "../../type/PapyrusType";
 import { EventDocumentationStringAll, EventDocumentationStringBest } from "./DocumentationString";
@@ -44,13 +44,13 @@ export function PapyrusEventSignature<TGame extends PapyrusGame>({game, evt, scr
             </span>
         </div>
         {longerDescription
-            ? <div className={styles.longDescription}><SuspenseIfServer fallback={<p>[DEV SERVER] Loading description...</p>}>
+            ? <div className={styles.longDescription}><SuspenseIfDevServer fallback={<p>[DEV SERVER] Loading description...</p>}>
                 <br />
                 <EventDocumentationStringAll game={game} evt={evt} scriptName={scriptName} inTooltip={inTooltip} />
-            </SuspenseIfServer></div>
-            : <div className={styles.shortDescription}><SuspenseIfServer fallback={<p>[DEV SERVER] Loading description...</p>}>
+            </SuspenseIfDevServer></div>
+            : <div className={styles.shortDescription}><SuspenseIfDevServer fallback={<p>[DEV SERVER] Loading description...</p>}>
                 <EventDocumentationStringBest game={game} evt={evt} scriptName={scriptName} inTooltip={inTooltip} />
-            </SuspenseIfServer></div>}
+            </SuspenseIfDevServer></div>}
     </div>;
 }
 

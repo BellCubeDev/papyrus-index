@@ -1,5 +1,5 @@
 import { toJsxRuntime } from 'hast-util-to-jsx-runtime';
-import { Fragment, Suspense } from 'react';
+import { Fragment } from 'react';
 import { jsx, jsxs } from 'react/jsx-runtime';
 import { createHighlighterCore } from 'shiki/core';
 import { createOnigurumaEngine } from 'shiki/engine/oniguruma';
@@ -7,6 +7,7 @@ import { FloatingDelayGroup } from '../tooltip/FloatingUIClient';
 import { transformerColorizedBrackets } from '@shikijs/colorized-brackets';
 import './CodeBlock.scss';
 import { transformerRenderIndentGuides } from '@shikijs/transformers';
+import { SuspenseIfDevelopment } from '@/app/components/SuspenseIfDevelopment';
 
 const shikiPromise = createHighlighterCore({
     themes: [
@@ -35,9 +36,9 @@ export function CodeBlock({ language, code, doLineNumbers }: { readonly language
 
 
 function HighlightCodeContents({ language, code }: { readonly language: CodeBlockLanguage, readonly code: string; }) {
-    return <Suspense fallback={code}>
+    return <SuspenseIfDevelopment fallback={code}>
         <HighlightCodeContentsAsync language={language} code={code} />
-    </Suspense>;
+    </SuspenseIfDevelopment>;
 }
 
 async function HighlightCodeContentsAsync({ language, code }: { readonly language: CodeBlockLanguage, readonly code: string; }) {
