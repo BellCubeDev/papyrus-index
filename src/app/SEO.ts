@@ -115,5 +115,7 @@ export function getKeywords(settings: {
     if (additionalKeywords)
         for (const keyword of additionalKeywords) keywordSet.add(keyword);
 
+    for (const keyword of keywordSets.general) keywordSet.add(keyword);
+
     return Array.from(keywordSet);
 }
