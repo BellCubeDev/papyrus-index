@@ -9,7 +9,10 @@
     margin: 1em 2em;
     width: 25em;
     line-height: 1.4;
-    > h1 {
+    > div {
+        color: #fff;
+        font-size: 2em;
+        font-weight: bold;
         text-align: center;
         > .papyrus {
             font-family: 'Papyrus', sans-serif;
