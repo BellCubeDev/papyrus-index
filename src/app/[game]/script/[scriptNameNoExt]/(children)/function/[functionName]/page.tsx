@@ -25,6 +25,7 @@ import { AUTOMATIC_BASE_URL, WikiMarkdown } from "../../../../../../components/w
 import styles from './FunctionPage.module.scss';
 import { getGameAndScriptAndFunctionFromParams, type FunctionRouteParams } from "./getGameAndScriptAndFunctionFromParams";
 import { sourcesSortFn } from "../../../../../../components/papyrus/SourcesList";
+import { getKeywords } from "@/app/SEO";
 
 export function generateStaticParams(): FunctionRouteParams[] {
     const params: FunctionRouteParams[] = [];
@@ -58,8 +59,13 @@ export async function generateMetadata({params}: {readonly params: Promise<Funct
         title: `${functionName} function`,
         description: `Reference for ${getGameName(game)}'s ${scriptNamespaceName}.${functionName} ${func.isGlobal.some(v=>v[1]) ? 'Global (static)' : 'Member'} function. This function is provided by the ${scriptNamespaceName} script found in ${sourcesList}.${description ? `\n\n${description}` : ''}`,
 
-        // TODO: Add keywords relevant to the function.
-        // Possibly break its name down into parts, take its parameters into account, return type, parent script, and all that fun stuff.
+        keywords: getKeywords({
+            game,
+            dataTypes: ['function'],
+            // TODO: Add keywords relevant to the function.
+            // Possibly break its name down into parts, take its parameters into account, return type, parent script, and all that fun stuff.
+            additionalKeywords: null,
+        }),
 
         alternates: {
             canonical: canonicalUrl,

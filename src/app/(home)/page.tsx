@@ -8,9 +8,16 @@ import { FunctionOfTheDayClient } from "./FunctionOfTheDayClient";
 import { FunctionOfTheDayOptionsWithRendered } from "./FunctionOfTheDayServer";
 import styles from './page.module.scss';
 import { prepareUrlParts } from "../../utils/prepareUrlParts";
+import { getKeywords } from "@/app/SEO";
 
 export const metadata: Metadata = {
     title: { absolute: 'The Papyrus Index' },
+
+    keywords: getKeywords({
+        game: null,
+        dataTypes: ['game', 'script', 'function', 'event', 'property', 'struct'],
+        additionalKeywords: null,
+    }),
 };
 
 export default function HomePage() {

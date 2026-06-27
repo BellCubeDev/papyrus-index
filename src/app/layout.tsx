@@ -15,6 +15,7 @@ import { ProgressBarProvider } from './ProgressBarProvider';
 import { Link } from './components/Link';
 import { ThePapyrusIndexLogo } from './components/logo/ThePapyrusIndexLogo';
 import { ReactGeigerDevOnly } from '@/app/components/react-geiger-dev-only';
+import { getKeywords } from '@/app/SEO';
 
 
 // Exported directly in page.js as well to avoid a strange bugs or two
@@ -38,41 +39,12 @@ export const metadata: Metadata = {
         telephone: false,
         url: false,
     },
-    icons: undefined, // TODO: Create icon
-    keywords: [
-        'Papyrus',
-        'Skyrim',
-        'Fallout',
-        'Creation Engine',
-        'Creation Kit',
-        'Bethesda',
-        'Modding',
-        'Scripting',
-        'Functions',
-        'Events',
-        'Scripts',
-        'Index',
-        'Database',
-        'Search',
-        'Lookup',
-        'Extender',
-        'Script Extender',
-        'Papyrus Extender',
-        'xSE',
-        'SKSE',
-        'F4SE',
-        'SFSE',
-        'FO76',
-        'TESV',
-        'Skyrim Special Edition',
-        'Nexus Mods',
-        'Fallout 4',
-        'Fallout 76',
-        'The Elder Scrolls V',
-        'Starfield',
-        'CK',
-        'Mod',
-    ],
+    icons: undefined, // TODO: Create icon,
+    keywords: getKeywords({
+        game: null,
+        dataTypes: 'ERROR',
+        additionalKeywords: null,
+    }),
     manifest: undefined, // TODO: Add manifest for PWA
     metadataBase: new URL('https://papyrus.bellcube.dev'),
     openGraph: {

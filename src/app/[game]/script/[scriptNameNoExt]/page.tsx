@@ -18,6 +18,7 @@ import type { APIReference, BreadcrumbList, ComputerLanguage, WebPage } from "sc
 import { _ } from "ajv";
 import { isPapyrusFeatureSupported, PapyrusFeature } from "@/papyrus/feature-support";
 import { PapyrusEventSignatureVariants } from "@/app/components/papyrus/event/signature/EventSignatureVariants";
+import { getKeywords, type PapyrusDataType } from "@/app/SEO";
 
 export function generateStaticParams(): ScriptRouteParams[] {
     const params: [complexity: number, paramObj: ScriptRouteParams][] = [];
@@ -48,28 +49,33 @@ export async function generateMetadata({params}: {readonly params: Promise<Scrip
 
     const canonicalUrl = `https://papyrus.bellcube.dev${prepareUrlParts(game, 'script', scriptBySources[AllSourcesCombined].namespaceName[0]![1])}`;
 
-    const includedDataTypes: string[] = [];
 
-    if (Object.keys(scriptBySources[AllSourcesCombined].functions).length > 0) includedDataTypes.push('functions');
-    if (Object.keys(scriptBySources[AllSourcesCombined].propertyGroups).length > 0) includedDataTypes.push('properties');
-    if (Object.keys(scriptBySources[AllSourcesCombined].events).length > 0) includedDataTypes.push('events');
-    if (Object.keys(scriptBySources[AllSourcesCombined].structs ?? {}).length > 0) includedDataTypes.push('structs');
+    const includedDataTypes: PapyrusDataType[] = ['script'];
+    if (Object.keys(scriptBySources[AllSourcesCombined].functions).length > 0) includedDataTypes.push('function');
+    if (Object.keys(scriptBySources[AllSourcesCombined].propertyGroups).length > 0) includedDataTypes.push('property');
+    if (Object.keys(scriptBySources[AllSourcesCombined].events).length > 0) includedDataTypes.push('event');
+    if (Object.keys(scriptBySources[AllSourcesCombined].structs ?? {}).length > 0) includedDataTypes.push('struct');
 
-    const includedDataTypesText = includedDataTypes.length === 0 ? '' : `, including ${
+    const subDataTypesText = includedDataTypes.length === 0 ? '' : `, including ${
           includedDataTypes.length === 1 ? includedDataTypes[0]
-        : includedDataTypes.length === 2 ? includedDataTypes.join(' and ')
-        : `${includedDataTypes.slice(0, -1).join(', ')}, and ${includedDataTypes.at(-1)}`}`;
+        : `${includedDataTypes.slice(0, -1).join('s, ')}${includedDataTypes.length > 1 ? ', and ' : ''}${includedDataTypes[includedDataTypes.length - 1]}s`
+    }`;
 
     return {
         title: `${scriptName} script`,
-        description: `Reference for ${getGameName(game)}'s ${scriptName} script${includedDataTypesText}, found in ${sourcesList}.`,
+        description: `Reference for ${getGameName(game)}'s ${scriptName} script${subDataTypesText}, found in ${sourcesList}.`,
         alternates: {
             canonical: canonicalUrl,
         },
         openGraph: {
             type: 'website',
             url: canonicalUrl,
-        }
+        },
+        keywords: getKeywords({
+            game,
+            dataTypes: ['script', ...includedDataTypes],
+            additionalKeywords: null,
+        }),
     };
 }
 

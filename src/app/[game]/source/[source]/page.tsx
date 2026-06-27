@@ -14,6 +14,7 @@ import { wikisBySource } from "../../../../wiki-data-extraction/individual-githu
 import { WikiMarkdown } from "../../../components/wiki-markdown/WikiMarkdown";
 import { JsonLDGraph } from "../../../components/JsonLDGraph";
 import { prepareUrlPart, prepareUrlParts } from "../../../../utils/prepareUrlParts";
+import { getKeywords, type PapyrusDataType } from "@/app/SEO";
 
 export function generateStaticParams(): SourceRouteParams[] {
     const params = [];
@@ -29,9 +30,23 @@ export async function generateMetadata({params}: {params: Promise<SourceRoutePar
 
     const sourceName = SourceName({source, long: true});
 
+    const subDataTypes: PapyrusDataType[] = ['script'];
+    if (Object.values(source.scripts).some(script => Object.values(script.structs ?? {}).length > 0)) subDataTypes.push('struct');
+    if (Object.values(source.scripts).some(script => Object.values(script.propertyGroups).some(group => Object.values(group.properties).length > 0))) subDataTypes.push('property');
+    if (Object.values(source.scripts).some(script => Object.values(script.events).length > 0)) subDataTypes.push('event');
+    if (Object.values(source.scripts).some(script => Object.values(script.functions).length > 0)) subDataTypes.push('function');
+
+    const subDataTypesString = `${subDataTypes.slice(0, -1).join('s, ')}${subDataTypes.length > 1 ? ', and ' : ''}${subDataTypes[subDataTypes.length - 1]}s`;
+
     return {
-        title: `Source: ${sourceName}`,
-        description: `Reference page for the ${getGameName(game)} Papyrus source, ${sourceName}`,
+        title: `Reference: ${sourceName}`,
+        description: `Reference for the ${getGameName(game)} Papyrus source, ${sourceName}. Contains all known ${subDataTypesString} from this source, as well as data from other sources, indexed and searchable in one large, easy-to-use database.`,
+
+        keywords: getKeywords({
+            game,
+            dataTypes: ['source', ...subDataTypes],
+            additionalKeywords: null,
+        }),
     };
 }
 

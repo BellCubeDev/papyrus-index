@@ -17,6 +17,8 @@ import type { BreadcrumbList, CollectionPage, WebPage } from "schema-dts";
 import { AllSourcesCombined } from "../../papyrus/data-structures/indexing/game";
 import { prepareUrlPart, prepareUrlParts } from "../../utils/prepareUrlParts";
 import { UnreachableError } from "../../UnreachableError";
+import { getKeywords, type PapyrusDataType } from "@/app/SEO";
+import { isPapyrusFeatureSupported, PapyrusFeature } from "@/papyrus/feature-support";
 
 
 export function generateStaticParams() {
@@ -25,12 +27,53 @@ export function generateStaticParams() {
     }));
 }
 
+function hasFunctions(game: PapyrusGame) {
+    const gameData = AllScriptsIndexed[game];
+    const scripts = Object.values(gameData.scripts);
+    return scripts.some(script => Object.keys(script[AllSourcesCombined].functions).length > 0);
+}
+
+function hasEvents(game: PapyrusGame) {
+    const gameData = AllScriptsIndexed[game];
+    const scripts = Object.values(gameData.scripts);
+    return scripts.some(script => Object.keys(script[AllSourcesCombined].events).length > 0);
+}
+
+function hasProperties(game: PapyrusGame) {
+    const gameData = AllScriptsIndexed[game];
+    const scripts = Object.values(gameData.scripts);
+    return scripts.some(script => Object.values(script[AllSourcesCombined].propertyGroups).some(group => Object.keys(group.properties).length > 0));
+}
+
+function hasStructs(game: PapyrusGame) {
+    if (!isPapyrusFeatureSupported(PapyrusFeature.Structs, game)) return false;
+
+    const gameData = AllScriptsIndexed[game];
+    const scripts = Object.values(gameData.scripts);
+    return scripts.some(script => Object.keys(script[AllSourcesCombined].structs).length > 0);
+}
+
 export async function generateMetadata({params}: {readonly params: Promise<GameRouteParams>}): Promise<Metadata> {
     const { game } = getGameFromParams(await params);
     const gameName = getGameName(game);
+
+    const subDataTypes: PapyrusDataType[] = ['script'];
+    if (hasStructs(game)) subDataTypes.push('struct');
+    if (hasProperties(game)) subDataTypes.push('property');
+    if (hasEvents(game)) subDataTypes.push('event');
+    if (hasFunctions(game)) subDataTypes.push('function');
+
+    const subDataTypesString = `${subDataTypes.slice(0, -1).join('s, ')}${subDataTypes.length > 1 ? ', and ' : ''}${subDataTypes[subDataTypes.length - 1]}s`;
+
     return {
         title: gameName,
-        description: `All known Papyrus functions, events, and scripts for ${gameName}, indexed and searchable in one large, easy-to-use database.`,
+        description: `All known ${gameName} Papyrus ${subDataTypesString}, indexed and searchable in one large, easy-to-use database.`,
+
+        keywords: getKeywords({
+            game,
+            dataTypes: ['game', ...subDataTypes],
+            additionalKeywords: null,
+        }),
     };
 }
 
