@@ -1,12 +1,12 @@
 @use "../../../../vars" as *;
 
-.functionSignature, .wrapableSection, .functionParametersParamWrapper, .functionNameWrapper {
+.eventSignature, .wrapableSection, .eventParametersParamWrapper, .eventNameWrapper {
     display: flex;
     align-items: center;
     flex-wrap: nowrap;
     flex-direction: row;
     gap: 1ch;
-    > .eventName, > span:not(.functionNameWrapper, .wrapableSection, .functionParametersStart, .functionParametersEnd,  .functionParametersSeparator, .functionParametersParamWrapper) {
+    > .eventName, > span:not(.eventNameWrapper, .wrapableSection, .eventParametersStart, .eventParametersEnd,  .eventParametersSeparator, .eventParametersParamWrapper) {
         background: $codeBG;
         * { background: none; }
         padding: 0.3em 0.5em 0.25em;
@@ -16,7 +16,7 @@
     font-weight: 600;
 }
 
-.functionSignature {
+.eventSignature {
     align-items: baseline;
     padding-right: 3ch;
     font-size: css-clamp(.7em, 1.75svw, 1em);
@@ -44,22 +44,22 @@
     }
 }
 
-.functionParametersStart {
+.eventParametersStart {
     margin-left: -.75ch;
     margin-right: -.4ch;
     font-size: 1.4em;
 }
-.functionParametersEnd {
+.eventParametersEnd {
     margin-left: -.4ch;
     font-size: 1.4em;
 }
-.functionParametersSeparator {
+.eventParametersSeparator {
     margin-left: -1ch;
     font-size: 1em;
     position: relative;
     height: 1.3em;
 }
-.functionParametersSeparatorBackslash {
+.eventParametersSeparatorBackslash {
     color: #d7ba7d;
     font-weight: 900;
     position: absolute;
@@ -74,11 +74,11 @@
     }
 }
 
-.functionKeyword {
+.eventKeyword {
     color: #c586c0;
 }
 
-.functionNameWrapper {
+.eventNameWrapper {
     min-width: max-content;
 }
 
