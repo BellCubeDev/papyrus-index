@@ -11,7 +11,7 @@ import { getGameAndScriptFromParams, type ScriptRouteParams } from "./getGameAnd
 import styles from './ScriptPage.module.scss';
 import { PapyrusTypeWithValue } from "../../../components/papyrus/type/PapyrusType";
 import { toLowerCase } from "../../../../utils/toLowerCase";
-import { SourcesList, sourcesSortFn } from "../../../components/papyrus/SourcesList";
+import { SourcePlate, SourcesList, sourcesSortFn } from "../../../components/papyrus/SourcesList";
 import { JsonLDGraph } from "../../../components/JsonLDGraph";
 import { prepareUrlPart, prepareUrlParts } from "../../../../utils/prepareUrlParts";
 import type { APIReference, BreadcrumbList, ComputerLanguage, WebPage } from "schema-dts";
@@ -19,6 +19,7 @@ import { _ } from "ajv";
 import { isPapyrusFeatureSupported, PapyrusFeature } from "@/papyrus/feature-support";
 import { PapyrusEventSignatureVariants } from "@/app/components/papyrus/event/signature/EventSignatureVariants";
 import { getKeywords, type PapyrusDataType } from "@/app/SEO";
+import { PapyrusSourceType } from "@/papyrus/data-structures/pure/scriptSource";
 
 export function generateStaticParams(): ScriptRouteParams[] {
     const params: [complexity: number, paramObj: ScriptRouteParams][] = [];
@@ -86,30 +87,65 @@ export default async function ScriptPage({params}: {readonly params: Promise<Scr
 
     const scriptNamespaceName = getBestStringVariant(scriptBySources[AllSourcesCombined].namespaceName)![1];
 
+    const sources = Object.entries(AllScriptsIndexed[game].scriptSources).filter(([sourceId, _source]) => sourceIDs.includes(sourceId));
+
+    const contentsDescriptionElements = [
+        Object.entries(scriptBySources[AllSourcesCombined].events).length > 0 ? <li>{Object.entries(scriptBySources[AllSourcesCombined].events).length} event{Object.entries(scriptBySources[AllSourcesCombined].events).length === 1 ? "" : "s"}</li> : null,
+        Object.entries(scriptBySources[AllSourcesCombined].functions).length > 0 ? <li>{Object.entries(scriptBySources[AllSourcesCombined].functions).length} function{Object.entries(scriptBySources[AllSourcesCombined].functions).length === 1 ? "" : "s"}</li> : null,
+        Object.entries(scriptBySources[AllSourcesCombined].propertyGroups).length > 0 ? <li>{Object.entries(scriptBySources[AllSourcesCombined].propertyGroups).reduce((acc, [_groupName, group]) => acc + Object.entries(group.properties).length, 0)} propert{Object.entries(scriptBySources[AllSourcesCombined].propertyGroups).reduce((acc, [_groupName, group]) => acc + Object.entries(group.properties).length, 0) === 1 ? "y" : "ies"}</li> : null,
+        Object.entries(scriptBySources[AllSourcesCombined].structs ?? {}).length > 0 ? <li>{Object.entries(scriptBySources[AllSourcesCombined].structs ?? {}).length} struct{Object.entries(scriptBySources[AllSourcesCombined].structs ?? {}).length === 1 ? "" : "s"}</li> : null,
+    ].filter((el): el is NonNullable<typeof el> => Boolean(el));
+
+    const firstModdedSource = sources.find(([,source]) => source.type !== PapyrusSourceType.Vanilla)?.[1];
+
     return <>
-        <main>
+        <main className={styles.scriptPage}>
             <div className={styles.scriptHeader}>
-                <h1>{scriptNamespaceName}</h1>
+                <h1><span>The</span> {scriptNamespaceName} <span>Script</span></h1>
                 <SourcesList sourceIDs={sourceIDs} game={game} />
                 <ul className={styles.extendsList}></ul> { /* TODO: Add the scripts that this script extends to the script page */ }
             </div>
+            <section className={styles.scriptDescription}>
+                <p>
+                    The {scriptNamespaceName} script is a part of {getGameName(game)}&rsquo;s Papyrus scripting ecosystem.{' '}
+                    {
+                        sources.find(([,source]) => source.type === PapyrusSourceType.Vanilla) ? <>
+                            <b>It is included with the base game</b>{
+                                firstModdedSource ? <>, and is extended/modified by modded sources such as <SourceName source={firstModdedSource} long /> (<SourceName source={firstModdedSource} long={false} />).</>
+                                : "."
+                            }
+                        </> : <>
+                            This script <b>is not present</b> in the vanilla game, but can be found in modded sources like <SourceName source={firstModdedSource!} long /> (<SourceName source={firstModdedSource!} long={false} />).
+                        </>
+                    }
+                </p>
+                <p>
+                    <GuardEmptyList
+                        replacement="It does not contain any functions, properties, events, or structs."
+                        // eslint-disable-next-line react/no-unstable-nested-components -- this is SSR-only
+                        Wrapper={({children}) => <>For this script, the Papyrus index knows about: <ul style={{marginTop: '0.20em'}}>{children}</ul></>}
+                    >
+                        {contentsDescriptionElements}
+                    </GuardEmptyList>
+                </p>
+            </section>
             <br />
             <details suppressHydrationWarning>
-                <summary>Inheritance Tree</summary>
+                <summary><h2>Inheritance Tree</h2></summary>
                 <div className={styles.inheritanceTree}>
                     <InheritanceDisplay game={game} data={scriptBySources[AllSourcesCombined].extendedBy} />
                 </div>
             </details>
             {isPapyrusFeatureSupported(PapyrusFeature.Structs, game) ?
                 <details suppressHydrationWarning>
-                    <summary>Structs</summary>
+                    <summary><h2>Structs</h2></summary>
                     <p>The Papyrus Index is still under construction. Structs have not been implemented yet.</p>
                     <ul className={styles.structs}></ul> { /* TODO: Add structs to the script page */ }
                 </details>
             : null}
             <details suppressHydrationWarning>
                 {/* Include property groups here too! */}
-                <summary>Properties</summary>
+                <summary><h2>Properties</h2></summary>
 
                 <GuardEmptyList replacement={<p>No properties found.</p>} Wrapper={PropertiesWrapper}>
                     {Object.entries(scriptBySources[AllSourcesCombined].propertyGroups).map(([groupName, group]) => <li key={groupName}>
@@ -127,7 +163,7 @@ export default async function ScriptPage({params}: {readonly params: Promise<Scr
                 <ul className={styles.properties}></ul> { /* TODO: Add properties to the script page */ }
             </details>
             <details suppressHydrationWarning>
-                <summary>Events</summary>
+                <summary><h2>Events</h2></summary>
                 <ul className={styles.events}>
                     <GuardEmptyList replacement={<p>No events found.</p>}>
                         {Object.entries(scriptBySources[AllSourcesCombined].events).map(([evtName, variants]) => <li key={evtName}>
@@ -137,7 +173,7 @@ export default async function ScriptPage({params}: {readonly params: Promise<Scr
                 </ul>
             </details>
             <details suppressHydrationWarning>
-                <summary>Functions</summary>
+                <summary><h2>Functions</h2></summary>
                 <ul className={styles.functions}>
                     <GuardEmptyList replacement={<p>No functions found.</p>}>
                         {Object.entries(scriptBySources[AllSourcesCombined].functions).map(([funcName, variants]) => <li key={funcName}>

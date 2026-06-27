@@ -19,3 +19,23 @@
     overflow-x: auto;
 }
 
+.scriptHeader > h1 {
+    > span {
+        font-size: 0.5em;
+        opacity: 0.95;
+        &:first-child { margin-right: 0.22em; }
+        &:last-child { margin-left: 0.22em; }
+    }
+}
+
+.scriptPage {
+    h2 {
+        display: contents;
+        font-size: 1.5em;
+        line-height: 1.9;
+        margin-bottom: 0.25em;
+    }
+    details {
+        margin-bottom: 1em;
+    }
+}

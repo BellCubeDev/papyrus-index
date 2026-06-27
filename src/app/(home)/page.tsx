@@ -38,7 +38,7 @@ export default function HomePage() {
                 <p> The Papyrus Index is a <strong>work in progress</strong>. If you have suggestions, find bugs, or want to contribute, please visit the <a href="https://github.com/BellCubeDev/papyrus-index" target="_blank" rel="noopener noreferrer">GitHub repository</a>. </p>
 
                 <div className={styles.functionOfTheDayContainer}>
-                    <h1> Function of the Day </h1>
+                    <h2> Function of the Day </h2>
                     <FunctionOfTheDayClient options={FunctionOfTheDayOptionsWithRendered} />
                 </div>
             </article>

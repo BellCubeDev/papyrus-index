@@ -84,7 +84,7 @@ export default async function GamePage({params}: {readonly params: Promise<GameR
 
     return <>
         <main>
-            <h1>{game}</h1>
+            <h1>Papyrus for {getGameName(game)}</h1>
             <div className={styles.inheritanceTree}>
                 <InheritanceDisplay game={game} data={gameData.topLevelScripts} />
             </div>
