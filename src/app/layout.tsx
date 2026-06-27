@@ -131,7 +131,7 @@ export default function RootLayout({ children }: { readonly children: React.Reac
                         </div>
                         <hr />
                         <p>
-                            The Papyrus Index is a reference for Papyrus scripts, functions, and events. It indexes scripts from countless xSE plugins, libraries, and other sources, and provides a uniquely granular search tool to find exactly what you&rsquo;re looking for. It is well-suited for beginners because it includes tooltips to explain Papyrus syntax and it integrates content directly from the CK Wiki. It is also perfectly designed for power users thanks to its well-structured rapid-feedback search tool and its display format rooted strongly in Papyrus syntax.
+                            The Papyrus Index is a reference for Papyrus scripts, functions, and events. It indexes scripts from countless xSE plugins, libraries, and other sources, and provides a uniquely powerful search tool to find exactly what you&rsquo;re looking for. It is well-suited for beginners with its tooltips about Papyrus syntax, and it aggregates content from various community-maintained documentation sites (such as the CK Wiki) all in one place. It is also perfectly designed for power users thanks to its well-structured, rapid-feedback search tool, its display format rooted in Papyrus syntax, and core data generated straight from Papyrus source files.
                         </p>
                         <p>
                             This project is unaffiliated with Bethesda Softworks and is an entirely community-driven effort.
